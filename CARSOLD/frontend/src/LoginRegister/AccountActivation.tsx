@@ -52,6 +52,7 @@ function AccountActivation(): ReactElement {
         return (): void => clearInterval(interval)
     }, []);
 
+
     return (
         <div className="flex flex-col gap-3 text-xl sm:text-5xl justify-center items-center h-screen bg-lowLime">
             <p className="text-center">Your account is active!</p>
