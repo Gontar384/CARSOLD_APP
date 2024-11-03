@@ -2,6 +2,7 @@ package org.gontar.carsold.Service;
 
 import io.jsonwebtoken.Claims;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.JwtConfig.JwtService;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +34,16 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     AuthenticationManager authenticationManager;
     private final JavaMailSender emailSender;
+    private final UserDetailsService userDetailsService;
 
     public UserServiceImpl(UserRepository repository, Mapper<User, UserDto> mapper,
-                           BCryptPasswordEncoder encoder, JwtService jwtService, JavaMailSender emailSender) {
+                           BCryptPasswordEncoder encoder, JwtService jwtService, JavaMailSender emailSender, UserDetailsService userDetailsService) {
         this.repository = repository;
         this.mapper = mapper;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.emailSender = emailSender;
+        this.userDetailsService = userDetailsService;
     }
 
     //checks if username exists
@@ -68,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtService.generateToken(user.getUsername());
         String link = frontendUrl + "activate?token=" + token;
-
         sendVerificationEmail(user.getEmail(), link);
     }
 
@@ -111,20 +115,31 @@ public class UserServiceImpl implements UserService {
             if (!user.getActive()) {                               //activates account
                 user.setActive(true);
                 repository.save(user);
-
-                String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-                System.out.println(newToken);
-                ResponseCookie authCookie = createAuthCookie(newToken);
-                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
             }
+                String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
+                ResponseCookie authCookie = createCookie(newToken);
+                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
         } catch (Exception e) {
             System.err.println("Failed to activate account: " + e.getMessage());
         }
     }
 
+    public boolean checksAuthentication(HttpServletRequest request){
+        String jwt = jwtService.extractTokenFromCookie(request);
+        if (jwt == null) {
+            return false; // No token found
+        }
+        String username = jwtService.extractUsername(jwt);
+        if (username == null) {
+            return false; // Username not found in token
+        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return jwtService.validateToken(jwt, userDetails);
+    }
+
     //creates cookie
-    private ResponseCookie createAuthCookie(String token) {
-        return ResponseCookie.from("authToken1", token)    //creates new cookie with name "authToken"
+    private ResponseCookie createCookie(String token) {
+        return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
                 .httpOnly(true)                                 //cannot be accessed via JavaScript
                 .secure(false)                                  //enabled only for production
                 .path("/")                                      //can be sent to any endpoint

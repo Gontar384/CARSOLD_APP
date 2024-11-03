@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -40,16 +39,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {   //configures security filter chain
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request  //configures authorization for incoming requests
-                        .requestMatchers("api/auth/register", "api/auth/register/check-email",                    //no authentication required for those endpoints
-                                "api/auth/register/check-username", "api/auth/activate").not().authenticated()    //should also be blocked, when user is authenticated
+                        .requestMatchers(
+                                "api/auth/register",
+                                "api/auth/register/check-email",
+                                "api/auth/register/check-username",
+                                "api/auth/activate",
+                                "api/auth/csrf",
+                                "api/auth/check-authentication"
+                        ).permitAll()    //should also be blocked, when user is authenticated
                         .anyRequest().authenticated())     //for any other endpoints authentication required
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  //indicates no sessions usage, every request must be authenticated via token
                 .oauth2Login(oath2 -> {                                        //oauth2 configuration
-                    oath2.loginPage("/authenticate").permitAll();              //sets login page, allow access without authentication
                     oath2.successHandler(customAuthenticationSuccessHandler);  //custom handler for oauth2 logins
                 })
                 .build();

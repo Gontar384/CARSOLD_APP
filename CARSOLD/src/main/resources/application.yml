@@ -1,5 +1,5 @@
+# Database Connection Configuration
 spring:
-  # Database Connection Configuration
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USER}
@@ -30,3 +30,10 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
+  # Session Configuration
+server:
+  servlet:
+    session:
+      cookie:
+        name: CSRF
+      timeout: 60m

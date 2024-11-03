@@ -1,9 +1,9 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash, faCircleExclamation, faCircleCheck, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {ReactElement, useEffect, useState} from "react";
-import axios from "../RouterConfig/AxiosConfig.tsx";
 import {AxiosResponse} from "axios";
 import {NavigateFunction, useNavigate} from "react-router-dom";
+import api from "../Config/AxiosConfig.tsx";
 
 function Form({choose}: { choose: boolean }): ReactElement {
 
@@ -62,7 +62,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     //checks if email already exists
     const emailExists =
         async (): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await axios.get(`${url}`, {
+            return await api.get(`${url}`, {
                 params: {email: user.email},
             });
         };
@@ -70,7 +70,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     //checks if username already exists
     const usernameExists =
         async (): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await axios.get(`${url1}`, {
+            return await api.get(`${url1}`, {
                 params: {username: user.username},
             });
         };
@@ -108,7 +108,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 if (!termsCheck) {
                     return;
                 }
-                await axios.post(`${url2}`, user)
+                await api.post(`${url2}`, user)
                 console.log("Registered successfully");
                 //navigate
             } catch (error) {
@@ -276,19 +276,6 @@ function Form({choose}: { choose: boolean }): ReactElement {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, [token]);
-
-    //fetch token from url (for Google authentication)
-    //authenticate user and navigate to /home
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-
-        if (token) {
-            localStorage.setItem('token', token);
-            console.log(token);
-            navigate('/home');
-        }
-    }, [navigate]);
 
     if (choose) {
         return (

@@ -1,13 +1,15 @@
 import {ReactElement, useEffect, useState} from "react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import axios from "../RouterConfig/AxiosConfig.tsx";
 import {AxiosResponse} from "axios";
+import api from "../Config/AxiosConfig.tsx";
+import {useAuth} from "../Config/AuthProvider.tsx"; // Import your AuthProvider context
 
 //page only used when activating account through email
 function AccountActivation(): ReactElement {
 
     const navigate: NavigateFunction = useNavigate();
     const [count, setCount] = useState<number>(5);
+    const { checkAuth } = useAuth(); // Get the checkAuth function from context
 
     const url = `${import.meta.env.VITE_BACKEND_URL}api/auth/activate`;
 
@@ -19,12 +21,11 @@ function AccountActivation(): ReactElement {
 
         const activateAccount = async (token: string): Promise<void> => {
             try {
-                const response: AxiosResponse = await axios.get(`${url}`, {
+                const response: AxiosResponse = await api.get(`${url}`, {
                     params: {token},
-                    withCredentials: true,
                 });
                 if (response.data) {
-                    console.log("Account activated", response.data);
+                    console.log(response.data);
                 }
             } catch (error) {
                 console.error("Error activating account: ", error);
@@ -33,8 +34,8 @@ function AccountActivation(): ReactElement {
         };
         if (token) {
             activateAccount(token).then(()=>{
-                setTimeout((): void => {
-                    navigate("/home");
+                setTimeout(async(): Promise<void> => {
+                    await checkAuth();
                 }, 5500)
             });
         }

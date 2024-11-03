@@ -1,9 +1,11 @@
 package org.gontar.carsold.Controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Service.UserServiceImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -50,5 +52,18 @@ public class UserController {
                                            HttpServletResponse response) {
         service.activateAccount(token, response);
         return ResponseEntity.ok("Account activated");
+    }
+
+    @GetMapping("auth/csrf")
+    public CsrfToken getCsrfToken(CsrfToken token) {
+        return token;
+    }
+
+    @GetMapping("auth/check-authentication")
+    public ResponseEntity<Map<String, Boolean>> checkAuthentication(HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean isAuth = service.checksAuthentication(request);
+        response.put("isAuth", isAuth);
+        return ResponseEntity.ok(response);
     }
 }
