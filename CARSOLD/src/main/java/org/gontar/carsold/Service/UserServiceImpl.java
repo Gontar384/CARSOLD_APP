@@ -32,16 +32,18 @@ public class UserServiceImpl implements UserService {
     private final Mapper<User, UserDto> mapper;
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     private final JavaMailSender emailSender;
     private final UserDetailsService userDetailsService;
 
     public UserServiceImpl(UserRepository repository, Mapper<User, UserDto> mapper,
-                           BCryptPasswordEncoder encoder, JwtService jwtService, JavaMailSender emailSender, UserDetailsService userDetailsService) {
+                           BCryptPasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager,
+                           JavaMailSender emailSender, UserDetailsService userDetailsService) {
         this.repository = repository;
         this.mapper = mapper;
         this.encoder = encoder;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
         this.emailSender = emailSender;
         this.userDetailsService = userDetailsService;
     }
@@ -95,7 +97,7 @@ public class UserServiceImpl implements UserService {
                     "</div><br><hr>" +
                     "<p>This message was sent automatically. Do not reply.</p>";
 
-                    helper.setText(emailContent, true);
+            helper.setText(emailContent, true);
 
             emailSender.send(message);
         } catch (Exception e) {
@@ -108,7 +110,6 @@ public class UserServiceImpl implements UserService {
     public void activateAccount(String token, HttpServletResponse response) {
         try {
             Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
-
             String username = claims.getSubject();                 //gets username from claims
             User user = repository.findByUsername(username);
 
@@ -116,15 +117,17 @@ public class UserServiceImpl implements UserService {
                 user.setActive(true);
                 repository.save(user);
             }
-                String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-                ResponseCookie authCookie = createCookie(newToken);
-                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+
+            String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
+            ResponseCookie authCookie = createCookie(newToken, 5);
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
         } catch (Exception e) {
             System.err.println("Failed to activate account: " + e.getMessage());
         }
     }
 
-    public boolean checksAuthentication(HttpServletRequest request){
+    @Override
+    public boolean checkAuthentication(HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
         if (jwt == null) {
             return false; // No token found
@@ -137,14 +140,20 @@ public class UserServiceImpl implements UserService {
         return jwtService.validateToken(jwt, userDetails);
     }
 
+    @Override
+    public void logout(HttpServletResponse response) {
+        ResponseCookie deleteCookie = createCookie("", 0);
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+    }
+
     //creates cookie
-    private ResponseCookie createCookie(String token) {
+    private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
                 .httpOnly(true)                                 //cannot be accessed via JavaScript
                 .secure(false)                                  //enabled only for production
                 .path("/")                                      //can be sent to any endpoint
                 .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofHours(5))                    //lasts 5 hours
+                .maxAge(Duration.ofHours(time))                 //lasts 5 hours
                 .build();
     }
 }

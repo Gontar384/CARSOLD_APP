@@ -42,12 +42,12 @@ public class SecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request  //configures authorization for incoming requests
                         .requestMatchers(
-                                "api/auth/register",
+                                "api/auth/csrf",
+                                "api/auth/check-authentication",
                                 "api/auth/register/check-email",
                                 "api/auth/register/check-username",
-                                "api/auth/activate",
-                                "api/auth/csrf",
-                                "api/auth/check-authentication"
+                                "api/auth/register",
+                                "api/auth/activate"
                         ).permitAll()    //should also be blocked, when user is authenticated
                         .anyRequest().authenticated())     //for any other endpoints authentication required
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins

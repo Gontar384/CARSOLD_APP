@@ -62,8 +62,14 @@ public class UserController {
     @GetMapping("auth/check-authentication")
     public ResponseEntity<Map<String, Boolean>> checkAuthentication(HttpServletRequest request) {
         Map<String, Boolean> response = new HashMap<>();
-        boolean isAuth = service.checksAuthentication(request);
+        boolean isAuth = service.checkAuthentication(request);
         response.put("isAuth", isAuth);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        service.logout(response);
+        return ResponseEntity.ok("Logged out");
     }
 }
