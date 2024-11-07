@@ -12,4 +12,7 @@ public interface UserService {
     void activateAccount(String token, HttpServletResponse response);
     boolean checkAuthentication(HttpServletRequest request);
     void logout(HttpServletResponse response);
+    boolean checkActive(String login);
+    boolean checkOauth2(String login);
+    void authenticate(String login, String password, HttpServletResponse response);
 }

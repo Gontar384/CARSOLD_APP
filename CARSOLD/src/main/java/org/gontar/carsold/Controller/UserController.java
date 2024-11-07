@@ -72,4 +72,27 @@ public class UserController {
         service.logout(response);
         return ResponseEntity.ok("Logged out");
     }
+
+    @GetMapping("auth/check-active")
+    public ResponseEntity<Map<String, Boolean>> checkActive(@RequestParam("login") String login) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean comp = service.checkActive(login);
+        response.put("comp", comp);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/check-oauth2")
+    public ResponseEntity<Map<String, Boolean>> checkOauth2(@RequestParam("login") String login) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean comp = service.checkOauth2(login);
+        response.put("comp", comp);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/login")
+    public ResponseEntity<String>login(@RequestParam("login") String login, @RequestParam("password")
+                                       String password, HttpServletResponse response) {
+        service.authenticate(login, password, response);
+        return ResponseEntity.ok("User logged in");
+    }
 }

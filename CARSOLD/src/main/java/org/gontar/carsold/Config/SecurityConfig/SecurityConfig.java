@@ -47,7 +47,10 @@ public class SecurityConfig {
                                 "api/auth/register/check-email",
                                 "api/auth/register/check-username",
                                 "api/auth/register",
-                                "api/auth/activate"
+                                "api/auth/activate",
+                                "api/auth/check-active",
+                                "api/auth/check-oauth2",
+                                "api/auth/login"
                         ).permitAll()    //should also be blocked, when user is authenticated
                         .anyRequest().authenticated())     //for any other endpoints authentication required
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins
