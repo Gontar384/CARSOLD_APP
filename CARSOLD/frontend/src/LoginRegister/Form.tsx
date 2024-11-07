@@ -2,127 +2,27 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash, faCircleExclamation, faCircleCheck, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {ReactElement, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
-import {NavigateFunction, useNavigate} from "react-router-dom";
 import api from "../Config/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthProvider.tsx";
 
+//this function-component is basically handling register and login processes and
+//gives info about to user and navigates user
 function Form({choose}: { choose: boolean }): ReactElement {
 
-    //user object management
+    //user object for register
     interface User {
         email: string,
         username: string,
         password: string
     }
 
+    //user and repeated password states
     const [user, setUser] = useState<User>({
         email: "", username: "", password: ""
     })
     const [passwordRep, setPasswordRep] = useState<string>("");
-    const [login, setLogin] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
 
-    //for icon which change password input to visible
-    const [inputType, setInputType] = useState<string>("password")
-    const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
-    const toggleInput = (): void => {
-        setInputType(inputType === "password" ? "text" : "password");
-        setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
-    }
-
-    //for authorization management
-    const navigate: NavigateFunction = useNavigate();
-    const [token, setToken] = useState<string | null>(null);
-
-    //url's
-    const url = `${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-email`;
-    const url1 = `${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-username`;
-    const url2 = `${import.meta.env.VITE_BACKEND_URL}api/auth/register`;
-    const url3 = `${import.meta.env.VITE_BACKEND_URL}api/auth/check-active`;
-    const url4 = `${import.meta.env.VITE_BACKEND_URL}api/auth/check-oauth2`;
-    const url5 = `${import.meta.env.VITE_BACKEND_URL}api/auth/login`;
-
-    //live info management
-    const [emailIcon, setEmailIcon] = useState<IconDefinition | null>(null);
-    const [emailInfo, setEmailInfo] = useState<string>("");
-    const [emailActive, setEmailActive] = useState<boolean>(false);
-    const [usernameIcon, setUsernameIcon] = useState<IconDefinition | null>(null);
-    const [usernameInfo, setUsernameInfo] = useState<string>("");
-    const [usernameActive, setUsernameActive] = useState<boolean>(false);
-    const [passwordIcon, setPasswordIcon] = useState<IconDefinition | null>(null)
-    const [passwordInfo, setPasswordInfo] = useState<string>("");
-    const [passwordActive, setPasswordActive] = useState<boolean>(false);
-    const [passwordRepIcon, setPasswordRepIcon] = useState<IconDefinition | null>(null);
-    const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);
-    const [loginInfo, setLoginInfo] = useState<string>("");
-    const [loginActive, setLoginActive] = useState<boolean>(false);
-
-    const useDebouncedValue = <T, >(value: T, delay: number): T => {
-        const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedValue(value);
-            }, delay);
-
-            return () => {
-                clearTimeout(handler);
-            };
-        }, [value, delay]);
-
-        return debouncedValue;
-    }
-    const debouncedLogin = useDebouncedValue(login, 300);
-
-    //terms of use
-    const [termsCheck, setTermsCheck] = useState<boolean>(false);
-
-    //checks email format
-    const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    //checks if email already exists
-    const emailExists =
-        async (email: string): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await api.get(`${url}`, {
-                params: {email: email},
-            });
-        };
-
-    //checks if username already exists
-    const usernameExists =
-        async (username: string): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await api.get(`${url1}`, {
-                params: {username: username},
-            });
-        };
-
-    const isActive =
-        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
-            return await api.get(`${url3}`, {
-                params: {login: login},
-            });
-        };
-
-    const isOauth2 =
-        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
-            return await api.get(`${url4}`, {
-                params: {login: login},
-            });
-        };
-
-    //validate password
-    const checksPassword = (password: string): boolean => {
-
-        if (password.trim().length < 7 || password.trim().length > 25) {
-            return false;
-        }
-        return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
-    }
-
-    //handle whole register process with lots of conditions
+    //handles whole register process with some conditions
     const handleRegister = async (): Promise<void> => {
         if (user.email && user.username && user.password && passwordRep) {
             try {
@@ -147,9 +47,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 if (!termsCheck) {
                     return;
                 }
-                await api.post(`${url2}`, user)
-                console.log("Registered successfully");
-                //navigate
+                await api.post(`${import.meta.env.VITE_BACKEND_URL}api/auth/register`, user)
             } catch (error) {
                 if (error) {
                     console.log("Something went wrong");
@@ -159,73 +57,71 @@ function Form({choose}: { choose: boolean }): ReactElement {
         }
     }
 
-    const {checkAuth} = useAuth();
+    //checks if email is valid format
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
-    const handleLogin = async (): Promise<void> => {
-        if (login && password) {
-            try {
-                const emailResponse = await emailExists(login);
-                const usernameResponse = await usernameExists(login);
-                if (emailResponse.data.exists || usernameResponse.data.exists && password.length >= 7) {
-                    const response = await api.get(`${url5}`,{
-                        params: {login, password}
-                    });
-                    if (response){
-                        setTimeout(async(): Promise<void> => {
-                            await checkAuth();
-                        }, 1000)
-                        console.log(response.data);
-                    }
-                    if (!response.data) {
-                        console.log("Authentication failed");
-                    }
-                }
-            } catch (error) {
-                console.log("Error during login: ", error);
-            }
+    //checks if email already exists
+    const emailExists =
+        async (email: string): Promise<AxiosResponse<{ exists: boolean }>> => {
+            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-email`, {
+                params: {email: email},
+            });
+        };
+
+    //checks if username already exists
+    const usernameExists =
+        async (username: string): Promise<AxiosResponse<{ exists: boolean }>> => {
+            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-username`, {
+                params: {username: username},
+            });
+        };
+
+    //checks if user's account is active
+    const isActive =
+        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
+            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/check-active`, {
+                params: {login: login},
+            });
+        };
+
+    //validates password
+    const checksPassword = (password: string): boolean => {
+
+        if (password.trim().length < 7 || password.trim().length > 25) {
+            return false;
         }
+        return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
     }
 
-    //live checking login compatibility in DB
-    useEffect((): void => {
-        if (login.length >= 5) {
-            const checkLogin = async (): Promise<void> => {
-                try {
-                    const emailResponse = await emailExists(login);
-                    const usernameResponse = await usernameExists(login);
-                    if (emailResponse.data.exists || usernameResponse.data.exists) {
-                        setLoginIcon(faCircleCheck);
-                        const isActiveResponse = await isActive(login);
-                        const isOauth2Response = await isOauth2(login);
-                        if (isActiveResponse.data.comp) {
-                            setLoginInfo("")
-                            setLoginActive(false);
-                            if (isOauth2Response.data.comp) {
-                                setLoginInfo("Please authenticate using google.")
-                                setLoginActive(true);
-                            }
-                        } else {
-                            setLoginInfo("Please confirm your account on email.")
-                            setLoginActive(true);
-                        }
-                    } else {
-                        setLoginIcon(faCircleExclamation);
-                        setLoginInfo("");
-                        setLoginActive(false);
-                    }
-                } catch (error) {
-                    console.log("Error checking email: ", error);
-                }
-            }
-            checkLogin();
-        } else {
-            setLoginIcon(null);
-            setLoginInfo("");
-            setLoginActive(false);
-        }
-    }, [debouncedLogin])
+    //function which can set debounced value for useEffects to avoid too much requests sent
+    const useDebouncedValue = <T, >(value: T, delay: number): T => {
+        const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
-    //live checking if email is valid
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [value, delay]);
+
+        return debouncedValue;
+    }
+
+    //email info states
+    const [emailIcon, setEmailIcon] = useState<IconDefinition | null>(null);
+    const [emailInfo, setEmailInfo] = useState<string>("");
+    const [emailActive, setEmailActive] = useState<boolean>(false);
+
+    //useEffect activates, when this value changes, after 300millis user stops writing
+    const debouncedEmail = useDebouncedValue(user.email, 300);
+
+    //live checking if email is valid, displays info for user
     useEffect((): void => {
         if (user.email.length >= 5) {
             if (validateEmail(user.email)) {
@@ -263,9 +159,17 @@ function Form({choose}: { choose: boolean }): ReactElement {
             setEmailInfo("")
             setEmailActive(false);
         }
-    }, [user.email])
+    }, [debouncedEmail])
 
-    //live checking if username is valid
+    //username info states
+    const [usernameIcon, setUsernameIcon] = useState<IconDefinition | null>(null);
+    const [usernameInfo, setUsernameInfo] = useState<string>("");
+    const [usernameActive, setUsernameActive] = useState<boolean>(false);
+
+    //delays check 300 millis
+    const debouncedUsername = useDebouncedValue(user.username, 300);
+
+    //live checking if username is valid, displays info for user
     useEffect((): void => {
         if (user.username !== "") {
             if (user.username.length <= 15) {
@@ -303,9 +207,14 @@ function Form({choose}: { choose: boolean }): ReactElement {
             setUsernameInfo("")
             setUsernameActive(false);
         }
-    }, [user.username])
+    }, [debouncedUsername])
 
-    //live checking if password is valid
+    //password info states
+    const [passwordIcon, setPasswordIcon] = useState<IconDefinition | null>(null)
+    const [passwordInfo, setPasswordInfo] = useState<string>("");
+    const [passwordActive, setPasswordActive] = useState<boolean>(false);
+
+    //live checking if password is valid, displays info for user
     useEffect((): void => {
         if (user.password !== "") {
             if (user.password.length >= 7) {
@@ -336,6 +245,9 @@ function Form({choose}: { choose: boolean }): ReactElement {
         }
     }, [user.password])
 
+    //repeated password info state
+    const [passwordRepIcon, setPasswordRepIcon] = useState<IconDefinition | null>(null);
+
     //live checking if repeated password equals password
     useEffect((): void => {
         if (user.password !== "" && passwordRep !== "") {
@@ -353,52 +265,107 @@ function Form({choose}: { choose: boolean }): ReactElement {
         }
     }, [passwordRep, user.password])
 
-    //if token 'pops' in localStorage, it navigates to /home
-    //works on other tab, when user activates account using email
-    useEffect((): () => void => {
-        const storedToken: string | null = localStorage.getItem('token');
-        setToken(storedToken);
+    //terms of use state
+    const [termsCheck, setTermsCheck] = useState<boolean>(false);
 
-        if (storedToken) {
-            navigate('/home');
+    //login and password states
+    const [login, setLogin] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    //check if user is authenticated and automatically navigates (used after successful login)
+    const {checkAuth} = useAuth();
+
+    //handles login with some conditions
+    const handleLogin = async (): Promise<void> => {
+        if (login && password) {
+            try {
+                const emailResponse = await emailExists(login);
+                const usernameResponse = await usernameExists(login);
+                if (emailResponse.data.exists || usernameResponse.data.exists && password.length >= 7) {
+                    const response = await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/login`, {
+                        params: {login, password}
+                    });
+                    if (response) {
+                        setTimeout(async (): Promise<void> => {
+                            await checkAuth();
+                        }, 1000)
+                    }
+                    if (!response.data) {
+                        console.log("Authentication failed");
+                    }
+                }
+            } catch (error) {
+                console.log("Error during login: ", error);
+            }
         }
+    }
 
-        const handleStorageChange = (): void => {
-            const updatedToken: string | null = localStorage.getItem('token');
-            setToken(updatedToken);
+    //checks if user were authenticated via Google and when, prevents him from using normal login
+    const isOauth2 =
+        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
+            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/check-oauth2`, {
+                params: {login: login},
+            });
         };
 
-        window.addEventListener('storage', handleStorageChange);
+    //login info states
+    const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);
+    const [loginInfo, setLoginInfo] = useState<string>("");
+    const [loginActive, setLoginActive] = useState<boolean>(false);
 
-        return (): void => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, [token]);
+    //delays check 300 millis
+    const debouncedLogin = useDebouncedValue(login, 300);
 
-    if (choose) {
-        return (
-            <div className="flex flex-col items-center w-72 sm2:w-80 sm1:w-96 h-64 pt-6 mt-6 gap-6
-              text-xl sm1:text-2xl rounded-xl shadow-2xl ">
-                <div className="relative">
-                    <input className="w-64 sm1:w-80 p-1 mb-2 rounded-md" placeholder="E-mail or username" type="text"
-                           value={login} onChange={(e): void => setLogin(e.target.value.trim())}/>
-                    {loginIcon && <FontAwesomeIcon icon={loginIcon}
-                                                   className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                    <p className={loginActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{loginInfo}</p>
-                </div>
-                <input className="w-64 sm1:w-80 p-1 mb-6 rounded-md" placeholder="Password" type={inputType}
-                       value={password} onChange={(e): void => setPassword(e.target.value.trim())}/>
-                <div className="relative">
-                    <button className="w-20 sm1:w-24 h-9 mt-2 rounded-md shadow-xl hover:bg-white cursor-pointer"
-                    onClick={handleLogin}>Sign in
-                    </button>
-                    <button className="absolute left-32 cursor-pointer" onClick={toggleInput}><FontAwesomeIcon
-                        icon={eyeIcon}/>
-                    </button>
-                </div>
-            </div>
-        )
-    } else {
+    //live checking and validating login, displays info for user
+    useEffect((): void => {
+        if (login.length >= 5) {
+            const checkLogin = async (): Promise<void> => {
+                try {
+                    const emailResponse = await emailExists(login);
+                    const usernameResponse = await usernameExists(login);
+                    if (emailResponse.data.exists || usernameResponse.data.exists) {
+                        setLoginIcon(faCircleCheck);
+                        const isActiveResponse = await isActive(login);
+                        const isOauth2Response = await isOauth2(login);
+                        if (isActiveResponse.data.comp) {
+                            setLoginInfo("")
+                            setLoginActive(false);
+                            if (isOauth2Response.data.comp) {
+                                setLoginInfo("Please authenticate using google.")
+                                setLoginActive(true);
+                            }
+                        } else {
+                            setLoginInfo("Please confirm your account on email.")
+                            setLoginActive(true);
+                        }
+                    } else {
+                        setLoginIcon(faCircleExclamation);
+                        setLoginInfo("");
+                        setLoginActive(false);
+                    }
+                } catch (error) {
+                    console.log("Error checking email: ", error);
+                }
+            }
+            checkLogin().then();
+        } else {
+            setLoginIcon(null);
+            setLoginInfo("");
+            setLoginActive(false);
+        }
+    }, [debouncedLogin])
+
+    //states for icon, which changes password input
+    const [inputType, setInputType] = useState<string>("password")
+    const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
+
+    //changes password input
+    const toggleInput = (): void => {
+        setInputType(inputType === "password" ? "text" : "password");
+        setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
+    }
+
+    if (!choose) {
         return (
             <div className="flex flex-col items-center w-72 sm2:w-80 sm1:w-96 pt-6 mt-6 gap-6
              text-xl sm1:text-2xl rounded-xl shadow-2xl">
@@ -446,7 +413,33 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         className="w-20 sm1:w-24 h-9 mt-2 mb-8 rounded-md shadow-xl hover:bg-white cursor-pointer"
                         onClick={handleRegister}>Register
                     </button>
-                    <button className="absolute left-32 sm1:left-40 cursor-pointer" onClick={toggleInput}>
+                    <button className="absolute left-36 sm1:left-44 bottom-24 cursor-pointer" onClick={toggleInput}>
+                        <FontAwesomeIcon icon={eyeIcon}/>
+                    </button>
+                </div>
+            </div>
+        )
+    } else {
+        return (
+            <div className="flex flex-col items-center w-72 sm2:w-80 sm1:w-96 h-72 pt-6 mt-6 gap-6
+              text-xl sm1:text-2xl rounded-xl shadow-2xl ">
+                <div className="relative">
+                    <input className="w-64 sm1:w-80 p-1 mb-2 rounded-md" placeholder="E-mail or username" type="text"
+                           value={login} onChange={(e): void => setLogin(e.target.value.trim())}/>
+                    {loginIcon && <FontAwesomeIcon icon={loginIcon}
+                                                   className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
+                    <p className={loginActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{loginInfo}</p>
+                </div>
+                <input className="w-64 sm1:w-80 p-1 rounded-md" placeholder="Password" type={inputType}
+                       value={password} onChange={(e): void => setPassword(e.target.value.trim())}/>
+                <div className="flex flex-row justify-left w-64 sm1:w-80">
+                    <a href="" className="text-base underline">Forgot password?</a>
+                </div>
+                <div className="relative">
+                    <button className="w-20 sm1:w-24 h-9 mt-2 rounded-md shadow-xl hover:bg-white cursor-pointer"
+                            onClick={handleLogin}>Sign in
+                    </button>
+                    <button className="absolute left-36 sm1:left-44 bottom-16 cursor-pointer" onClick={toggleInput}>
                         <FontAwesomeIcon icon={eyeIcon}/>
                     </button>
                 </div>
