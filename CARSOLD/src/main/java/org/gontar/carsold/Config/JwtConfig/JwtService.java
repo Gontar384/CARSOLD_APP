@@ -41,7 +41,7 @@ public class JwtService {
                 .add(claims)
                 .subject(username)  //includes username in token
                 .issuedAt(new Date(System.currentTimeMillis()))   //creation time
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))   //expiration time
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))   //expiration time
                 .and()
                 .signWith(getKey())   //signed with secret key
                 .compact();           //returned as string

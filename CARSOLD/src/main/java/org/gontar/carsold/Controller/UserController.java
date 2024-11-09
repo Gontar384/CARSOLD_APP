@@ -95,4 +95,9 @@ public class UserController {
         service.authenticate(login, password, response);
         return ResponseEntity.ok("User logged in");
     }
+
+    @GetMapping("keep-alive")
+    public ResponseEntity<Void>keepAlive(){
+        return ResponseEntity.ok().build();
+    }
 }

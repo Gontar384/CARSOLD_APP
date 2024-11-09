@@ -206,7 +206,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-            ResponseCookie authCookie = createCookie(token, 5);
+            ResponseCookie authCookie = createCookie(token, 15);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
         }
     }
@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserService {
                 .secure(false)                                  //enabled only for production
                 .path("/")                                      //can be sent to any endpoint
                 .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofHours(time))                 //lasts 5 hours
+                .maxAge(Duration.ofMinutes(time))                 //lasts 5 hours
                 .build();
     }
 }

@@ -22,8 +22,12 @@ function Form({choose}: { choose: boolean }): ReactElement {
     })
     const [passwordRep, setPasswordRep] = useState<string>("");
 
+    //state which will prevent user from spamming button
+    const [isDisabledReg, setIsDisabledReg] = useState<boolean>(false);
+
     //handles whole register process with some conditions
     const handleRegister = async (): Promise<void> => {
+        if (isDisabledReg) return;
         if (user.email && user.username && user.password && passwordRep) {
             try {
                 if (user.email.length > 30 || !validateEmail(user.email)) {
@@ -47,15 +51,17 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 if (!termsCheck) {
                     return;
                 }
+                setIsDisabledReg(true);
                 await api.post(`${import.meta.env.VITE_BACKEND_URL}api/auth/register`, user)
             } catch (error) {
-                if (error) {
-                    console.log("Something went wrong");
-                }
                 console.log("Error during register:", error)
+            } finally {
+                setTimeout((): void => {
+                    setIsDisabledReg(false);
+                }, 2000)
             }
         }
-    }
+    };
 
     //checks if email is valid format
     const validateEmail = (email: string): boolean => {
@@ -122,7 +128,9 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const debouncedEmail = useDebouncedValue(user.email, 300);
 
     //live checking if email is valid, displays info for user
-    useEffect((): void => {
+    useEffect(() => {
+        let isMounted: boolean = true;
+
         if (user.email.length >= 5) {
             if (validateEmail(user.email)) {
                 if (user.email.length <= 30) {
@@ -130,20 +138,27 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         try {
                             const response = await emailExists(user.email);
                             const isActiveResponse = await isActive(user.email);
-                            if (response.data.exists && isActiveResponse.data.comp) {
-                                setEmailIcon(faCircleExclamation);
-                                setEmailInfo("Email is already taken.")
-                                setEmailActive(true);
-                            } else {
-                                setEmailIcon(faCircleCheck);
-                                setEmailInfo("");
-                                setEmailActive(false);
+                            if (isMounted) {
+                                if (response.data.exists && isActiveResponse.data.comp) {
+                                    setEmailIcon(faCircleExclamation);
+                                    setEmailInfo("Email is already taken.")
+                                    setEmailActive(true);
+                                } else {
+                                    setEmailIcon(faCircleCheck);
+                                    setEmailInfo("");
+                                    setEmailActive(false);
+                                }
                             }
                         } catch (error) {
                             console.log("Error checking email: ", error)
                         }
                     }
-                    checkEmail().then();
+                    checkEmail();
+
+                    return () => {
+                        isMounted = false;
+                    };
+
                 } else {
                     setEmailIcon(faCircleExclamation);
                     setEmailInfo("Email is too long.")
@@ -170,7 +185,9 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const debouncedUsername = useDebouncedValue(user.username, 300);
 
     //live checking if username is valid, displays info for user
-    useEffect((): void => {
+    useEffect(() => {
+        let isMounted: boolean = true;
+
         if (user.username !== "") {
             if (user.username.length <= 15) {
                 if (user.username.length >= 3) {
@@ -178,20 +195,26 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         try {
                             const response = await usernameExists(user.username);
                             const isActiveResponse = await isActive(user.username);
-                            if (response.data.exists && isActiveResponse.data.comp) {
-                                setUsernameIcon(faCircleExclamation);
-                                setUsernameInfo("Username already exists.")
-                                setUsernameActive(true);
-                            } else {
-                                setUsernameIcon(faCircleCheck);
-                                setUsernameInfo("")
-                                setUsernameActive(false);
+                            if (isMounted) {
+                                if (response.data.exists && isActiveResponse.data.comp) {
+                                    setUsernameIcon(faCircleExclamation);
+                                    setUsernameInfo("Username already exists.")
+                                    setUsernameActive(true);
+                                } else {
+                                    setUsernameIcon(faCircleCheck);
+                                    setUsernameInfo("")
+                                    setUsernameActive(false);
+                                }
                             }
                         } catch (error) {
                             console.log("Error checking username: ", error);
                         }
                     }
                     checkUsername().then();
+
+                    return () => {
+                        isMounted = false;
+                    }
                 } else {
                     setUsernameIcon(faCircleExclamation);
                     setUsernameInfo("Username is too short.")
@@ -275,13 +298,18 @@ function Form({choose}: { choose: boolean }): ReactElement {
     //check if user is authenticated and automatically navigates (used after successful login)
     const {checkAuth} = useAuth();
 
+    //state which will prevent user from spamming button
+    const [isDisabledLog, setIsDisabledLog] = useState<boolean>(false);
+
     //handles login with some conditions
     const handleLogin = async (): Promise<void> => {
+        if (isDisabledLog) return;
         if (login && password) {
             try {
                 const emailResponse = await emailExists(login);
                 const usernameResponse = await usernameExists(login);
                 if (emailResponse.data.exists || usernameResponse.data.exists && password.length >= 7) {
+                    setIsDisabledLog(true);
                     const response = await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/login`, {
                         params: {login, password}
                     });
@@ -296,6 +324,10 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 }
             } catch (error) {
                 console.log("Error during login: ", error);
+            } finally {
+                setTimeout((): void => {
+                    setIsDisabledLog(false);
+                }, 2000)
             }
         }
     }
@@ -317,37 +349,47 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const debouncedLogin = useDebouncedValue(login, 300);
 
     //live checking and validating login, displays info for user
-    useEffect((): void => {
+    useEffect(() => {
+        let isMounted = true;
+
         if (login.length >= 5) {
             const checkLogin = async (): Promise<void> => {
                 try {
                     const emailResponse = await emailExists(login);
                     const usernameResponse = await usernameExists(login);
-                    if (emailResponse.data.exists || usernameResponse.data.exists) {
-                        setLoginIcon(faCircleCheck);
-                        const isActiveResponse = await isActive(login);
-                        const isOauth2Response = await isOauth2(login);
-                        if (isActiveResponse.data.comp) {
-                            setLoginInfo("")
-                            setLoginActive(false);
-                            if (isOauth2Response.data.comp) {
-                                setLoginInfo("Please authenticate using google.")
-                                setLoginActive(true);
+                    if (isMounted) {
+                        if (emailResponse.data.exists || usernameResponse.data.exists) {
+                            setLoginIcon(faCircleCheck);
+                            const isActiveResponse = await isActive(login);
+                            const isOauth2Response = await isOauth2(login);
+                            if (isMounted) {
+                                if (isActiveResponse.data.comp) {
+                                    setLoginInfo("")
+                                    setLoginActive(false);
+                                    if (isOauth2Response.data.comp) {
+                                        setLoginInfo("Please authenticate using google.")
+                                        setLoginActive(true);
+                                    }
+                                } else {
+                                    setLoginInfo("Please confirm your account on email.")
+                                    setLoginActive(true);
+                                }
                             }
                         } else {
-                            setLoginInfo("Please confirm your account on email.")
-                            setLoginActive(true);
+                            setLoginIcon(faCircleExclamation);
+                            setLoginInfo("");
+                            setLoginActive(false);
                         }
-                    } else {
-                        setLoginIcon(faCircleExclamation);
-                        setLoginInfo("");
-                        setLoginActive(false);
                     }
                 } catch (error) {
                     console.log("Error checking email: ", error);
                 }
             }
-            checkLogin().then();
+            checkLogin();
+
+            return () => {
+                isMounted = false;
+            }
         } else {
             setLoginIcon(null);
             setLoginInfo("");
@@ -411,7 +453,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 <div className="relative">
                     <button
                         className="w-20 sm1:w-24 h-9 mt-2 mb-8 rounded-md shadow-xl hover:bg-white cursor-pointer"
-                        onClick={handleRegister}>Register
+                        onClick={handleRegister} disabled={isDisabledReg}>Register
                     </button>
                     <button className="absolute left-36 sm1:left-44 bottom-24 cursor-pointer" onClick={toggleInput}>
                         <FontAwesomeIcon icon={eyeIcon}/>
@@ -437,7 +479,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 </div>
                 <div className="relative">
                     <button className="w-20 sm1:w-24 h-9 mt-2 rounded-md shadow-xl hover:bg-white cursor-pointer"
-                            onClick={handleLogin}>Sign in
+                            onClick={handleLogin} disabled={isDisabledLog}>Sign in
                     </button>
                     <button className="absolute left-36 sm1:left-44 bottom-16 cursor-pointer" onClick={toggleInput}>
                         <FontAwesomeIcon icon={eyeIcon}/>

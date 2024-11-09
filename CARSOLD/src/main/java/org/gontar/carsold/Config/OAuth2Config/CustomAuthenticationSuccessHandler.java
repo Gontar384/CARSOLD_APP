@@ -69,7 +69,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .secure(false)                                  //enabled only for production
                 .path("/")                                      //can be sent to any endpoint
                 .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofHours(5))                    //lasts 5 hours
+                .maxAge(Duration.ofMinutes(15))
                 .build();
     }
 }

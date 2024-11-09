@@ -1,6 +1,5 @@
 import {ReactElement, useEffect, useState} from "react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import {AxiosResponse} from "axios";
 import api from "../Config/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthProvider.tsx"; // Import your AuthProvider context
 
@@ -21,12 +20,9 @@ function AccountActivation(): ReactElement {
 
         const activateAccount = async (token: string): Promise<void> => {
             try {
-                const response: AxiosResponse = await api.get(`${url}`, {
+                await api.get(`${url}`, {
                     params: {token},
                 });
-                if (response.data) {
-                    console.log(response.data);
-                }
             } catch (error) {
                 console.error("Error activating account: ", error);
             }

@@ -30,10 +30,10 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
-  # Session Configuration
+  # Session Configuration (CSRF)
 server:
   servlet:
     session:
       cookie:
         name: CSRF
-      timeout: 60m
+      timeout: 1m
