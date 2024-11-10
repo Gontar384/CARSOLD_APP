@@ -36,4 +36,4 @@ server:
     session:
       cookie:
         name: CSRF
-      timeout: 1m
+      timeout: 600m

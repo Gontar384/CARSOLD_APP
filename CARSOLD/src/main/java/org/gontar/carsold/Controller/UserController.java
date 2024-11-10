@@ -96,8 +96,9 @@ public class UserController {
         return ResponseEntity.ok("User logged in");
     }
 
-    @GetMapping("keep-alive")
-    public ResponseEntity<Void>keepAlive(){
-        return ResponseEntity.ok().build();
+    @GetMapping("auth/refresh")
+    public ResponseEntity<String>refreshToken(HttpServletRequest request, HttpServletResponse response){
+        service.refreshJwt(request, response);
+        return ResponseEntity.ok("JWT refreshed");
     }
 }

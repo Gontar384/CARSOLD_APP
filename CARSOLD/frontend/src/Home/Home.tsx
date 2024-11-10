@@ -1,6 +1,6 @@
 import NavBar from "../NavBar/NavBar.tsx";
 import {ReactElement} from "react";
-import api from "../Config/AxiosConfig.tsx";
+import {api} from "../Config/AxiosConfig.tsx";
 import {useAuth} from '../Config/AuthProvider.tsx'
 
 function Home(): ReactElement {

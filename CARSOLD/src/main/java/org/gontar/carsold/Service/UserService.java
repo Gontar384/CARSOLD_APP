@@ -15,4 +15,5 @@ public interface UserService {
     boolean checkActive(String login);
     boolean checkOauth2(String login);
     void authenticate(String login, String password, HttpServletResponse response);
+    void refreshJwt(HttpServletRequest request, HttpServletResponse response);
 }

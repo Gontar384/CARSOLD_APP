@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
             }
 
             String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-            ResponseCookie authCookie = createCookie(newToken, 5);
+            ResponseCookie authCookie = createCookie(newToken, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
         } catch (Exception e) {
             System.err.println("Failed to activate account: " + e.getMessage());
@@ -206,8 +206,23 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-            ResponseCookie authCookie = createCookie(token, 15);
+            ResponseCookie authCookie = createCookie(token, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+        }
+    }
+
+    @Override
+    public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
+        String jwt = jwtService.extractTokenFromCookie(request);
+        if (jwt != null) {
+            String username = jwtService.extractUsername(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            boolean isValid = jwtService.validateToken(jwt, userDetails);
+            if (isValid) {
+                String newToken = jwtService.generateToken(username);
+                ResponseCookie jwtCookie = createCookie(newToken, 10);
+                response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+            }
         }
     }
 
@@ -218,7 +233,7 @@ public class UserServiceImpl implements UserService {
                 .secure(false)                                  //enabled only for production
                 .path("/")                                      //can be sent to any endpoint
                 .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofMinutes(time))                 //lasts 5 hours
+                .maxAge(Duration.ofHours(time))                 //lasts 5 hours
                 .build();
     }
 }

@@ -6,15 +6,13 @@ import LoginRegister from "./LoginRegister/LoginRegister.tsx";
 import AccountActivation from "./LoginRegister/AccountActivation.tsx";
 import Home from "./Home/Home.tsx";
 import {AuthProvider} from "./Config/AuthProvider.tsx";
-import {useTrackUserActivity} from "./Config/AxiosConfig.tsx";
+import {useFetchCsrf, useRefreshJwt} from "./Config/AxiosConfig.tsx";
 
 function App(): ReactElement {
 
-    useTrackUserActivity();
-
     return (
         <AuthProvider>
-        <BrowserRouter>
+            <BrowserRouter>
                 <Routes>
                     <Route element={<PublicRoute/>}>
                         <Route path="/authenticate" element={<LoginRegister/>}/>
@@ -27,9 +25,17 @@ function App(): ReactElement {
 
                     <Route path="*" element={<Navigate to="/home"/>}/>
                 </Routes>
-        </BrowserRouter>
+                <TokenManagement/>
+            </BrowserRouter>
         </AuthProvider>
     )
+
+    // Component for side effects
+    function TokenManagement() {
+        useFetchCsrf();
+        useRefreshJwt();
+        return null; // No UI to render
+    }
 }
 
 export default App

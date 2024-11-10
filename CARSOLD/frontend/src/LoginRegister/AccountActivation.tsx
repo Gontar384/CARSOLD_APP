@@ -1,6 +1,6 @@
 import {ReactElement, useEffect, useState} from "react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import api from "../Config/AxiosConfig.tsx";
+import {api} from "../Config/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthProvider.tsx"; // Import your AuthProvider context
 
 //page only used when activating account through email
@@ -25,15 +25,13 @@ function AccountActivation(): ReactElement {
                 });
             } catch (error) {
                 console.error("Error activating account: ", error);
-            }
-
-        };
+            }};
         if (token) {
-            activateAccount(token).then(()=>{
                 setTimeout(async(): Promise<void> => {
+                    await activateAccount(token);
                     await checkAuth();
                 }, 5500)
-            });
+
         }
     }, [navigate]);
 

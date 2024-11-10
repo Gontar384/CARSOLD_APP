@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import api from "./AxiosConfig.tsx";
+import {api} from "./AxiosConfig.tsx";
 
 interface AuthContextType {
     isAuthenticated: boolean;
