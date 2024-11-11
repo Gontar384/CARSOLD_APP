@@ -83,6 +83,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);                   //extract expiration date
     }
 
+    //extracting token from cookie
     public String extractTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {

@@ -6,6 +6,8 @@ import NavBar from "../NavBar/NavBar.tsx";
 
 function LoginRegister(): ReactElement {
 
+    //state being changed in 'Headings' and used in 'Form',
+    //defining what user choose: login or register form
     const [choose, setChoose] = useState<boolean>(true);
 
     return (

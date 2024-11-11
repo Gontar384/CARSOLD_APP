@@ -1,5 +1,8 @@
 import {ReactElement} from "react";
 
+//components which returns either:
+//login | register button when user is unauthenticated
+//user info when is authenticated
 function UserDetails(): ReactElement {
 
     const test: boolean = true;

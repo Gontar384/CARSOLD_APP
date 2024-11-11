@@ -21,9 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,9 +61,9 @@ public class UserServiceImpl implements UserService {
         return repository.existsByEmail(email);
     }
 
-    // saving user to DB
-    // generating token using jwtService
-    // sending account activating token link via email
+    // saves user to DB
+    // generates token using jwtService
+    // sends account activating token link via email
     @Override
     public void registerUser(UserDto userDto) {
         User existingEmail = repository.findByEmail(userDto.getEmail());
@@ -98,7 +96,7 @@ public class UserServiceImpl implements UserService {
         sendVerificationEmail(user.getEmail(), link);
     }
 
-    //creating email message
+    //creates email message
     @Override
     public void sendVerificationEmail(String email, String link) {
         User user = repository.findByEmail(email);
@@ -126,7 +124,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //activating account after clicking link with token
+    //activates account after clicking link with token
     @Override
     public void activateAccount(String token, HttpServletResponse response) {
         try {
@@ -147,6 +145,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //checks user's authentication using JWT
     @Override
     public boolean checkAuthentication(HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
@@ -161,12 +160,14 @@ public class UserServiceImpl implements UserService {
         return jwtService.validateToken(jwt, userDetails);
     }
 
+    //logs use out, sends cookie with expiration.time = 0
     @Override
     public void logout(HttpServletResponse response) {
         ResponseCookie deleteCookie = createCookie("", 0);
         response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
     }
 
+    //checks if user's account is active, using email or username
     @Override
     public boolean checkActive(String login) {
         User user;
@@ -181,6 +182,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    //checks if user authenticated and authorized with OAuth2, using email or username
     @Override
     public boolean checkOauth2(String login) {
         User user;
@@ -195,6 +197,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    //authenticates and authorizes user using email or username
     @Override
     public void authenticate(String login, String password, HttpServletResponse response) {
         User user;
@@ -211,6 +214,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //refreshes JWT, checks previous one validation and sends new one
     @Override
     public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
         String jwt = jwtService.extractTokenFromCookie(request);
@@ -226,7 +230,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //creates cookie
+    //method to create cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
                 .httpOnly(true)                                 //cannot be accessed via JavaScript

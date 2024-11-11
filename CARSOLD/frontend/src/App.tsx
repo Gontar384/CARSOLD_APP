@@ -11,8 +11,8 @@ import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "./Config/AxiosC
 function App(): ReactElement {
 
     return (
-        <AuthProvider>
-            <BrowserRouter>
+        <AuthProvider> {/*wraps all components with authentication mechanism*/}
+            <BrowserRouter> {/*manages routes*/}
                 <Routes>
                     <Route element={<PublicRoute/>}>
                         <Route path="/authenticate" element={<LoginRegister/>}/>
@@ -25,17 +25,17 @@ function App(): ReactElement {
 
                     <Route path="*" element={<Navigate to="/home"/>}/>
                 </Routes>
-                <TokenManagement/>
+                <TokenManagement/>  {/*manages tokens in the background*/}
             </BrowserRouter>
         </AuthProvider>
     )
 
-    // Component for side effects
+    //manages csrf fetch, jwt refreshing and monitors user activity
     function TokenManagement() {
         useFetchCsrf();
         useRefreshJwt();
         useTrackUserActivity();
-        return null; // No UI to render
+        return null;
     }
 }
 

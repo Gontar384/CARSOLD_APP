@@ -5,9 +5,9 @@ import {useAuth} from '../Config/AuthProvider.tsx'
 
 function Home(): ReactElement {
     const {checkAuth} = useAuth();
-    //logging out
-    const logout = async (): Promise<void> => {
-        await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/logout`)
+    //logging out function
+    const logout = async () => {
+        await api.get(`api/auth/logout`)
         setTimeout(async () => {
             await checkAuth();
         }, 1000);

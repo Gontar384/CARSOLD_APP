@@ -7,6 +7,7 @@ import {useAuth} from "../Config/AuthProvider.tsx";
 
 //this function-component is basically handling register and login processes and
 //gives info about to user and navigates user
+//gets 'choose' state updates from 'Headings'
 function Form({choose}: { choose: boolean }): ReactElement {
 
     //user object for register
@@ -26,22 +27,22 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [isDisabledReg, setIsDisabledReg] = useState<boolean>(false);
 
     //handles whole register process with some conditions
-    const handleRegister = async (): Promise<void> => {
+    const handleRegister = async () => {
         if (isDisabledReg) return;
         if (user.email && user.username && user.password && passwordRep) {
             try {
                 if (user.email.length > 30 || !validateEmail(user.email)) {
                     return;
                 }
-                const emailResponse = await emailExists(user.email);
-                const isActiveResponse = await isActive(user.email);
+                const emailResponse: AxiosResponse = await emailExists(user.email);
+                const isActiveResponse: AxiosResponse = await isActive(user.email);
                 if (emailResponse.data.exists && isActiveResponse.data.comp) {
                     return;
                 }
                 if (user.username.length < 3 || user.username.length > 15) {
                     return;
                 }
-                const usernameResponse = await usernameExists(user.username);
+                const usernameResponse: AxiosResponse = await usernameExists(user.username);
                 if (usernameResponse.data.exists && isActiveResponse.data.comp) {
                     return;
                 }
@@ -52,7 +53,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                     return;
                 }
                 setIsDisabledReg(true);
-                await api.post(`${import.meta.env.VITE_BACKEND_URL}api/auth/register`, user)
+                await api.post(`api/auth/register`, user)
             } catch (error) {
                 console.log("Error during register:", error)
             } finally {
@@ -70,25 +71,22 @@ function Form({choose}: { choose: boolean }): ReactElement {
     };
 
     //checks if email already exists
-    const emailExists =
-        async (email: string): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-email`, {
+    const emailExists = async (email: string) => {
+            return await api.get(`api/auth/register/check-email`, {
                 params: {email: email},
             });
         };
 
     //checks if username already exists
-    const usernameExists =
-        async (username: string): Promise<AxiosResponse<{ exists: boolean }>> => {
-            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/register/check-username`, {
+    const usernameExists = async (username: string) => {
+            return await api.get(`api/auth/register/check-username`, {
                 params: {username: username},
             });
         };
 
     //checks if user's account is active
-    const isActive =
-        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
-            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/check-active`, {
+    const isActive = async (login: string)=> {
+            return await api.get(`api/auth/check-active`, {
                 params: {login: login},
             });
         };
@@ -125,7 +123,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [emailActive, setEmailActive] = useState<boolean>(false);
 
     //useEffect activates, when this value changes, after 300millis user stops writing
-    const debouncedEmail = useDebouncedValue(user.email, 300);
+    const debouncedEmail: string = useDebouncedValue(user.email, 300);
 
     //live checking if email is valid, displays info for user
     useEffect(() => {
@@ -182,7 +180,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [usernameActive, setUsernameActive] = useState<boolean>(false);
 
     //delays check 300 millis
-    const debouncedUsername = useDebouncedValue(user.username, 300);
+    const debouncedUsername: string = useDebouncedValue(user.username, 300);
 
     //live checking if username is valid, displays info for user
     useEffect(() => {
@@ -238,7 +236,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
 
     //live checking if password is valid, displays info for user
-    useEffect((): void => {
+    useEffect(()=> {
         if (user.password !== "") {
             if (user.password.length >= 7) {
                 if (user.password.length <= 25) {
@@ -302,15 +300,15 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [isDisabledLog, setIsDisabledLog] = useState<boolean>(false);
 
     //handles login with some conditions
-    const handleLogin = async (): Promise<void> => {
+    const handleLogin = async () => {
         if (isDisabledLog) return;
         if (login && password) {
             try {
-                const emailResponse = await emailExists(login);
-                const usernameResponse = await usernameExists(login);
+                const emailResponse: AxiosResponse = await emailExists(login);
+                const usernameResponse: AxiosResponse = await usernameExists(login);
                 if (emailResponse.data.exists || usernameResponse.data.exists && password.length >= 7) {
                     setIsDisabledLog(true);
-                    const response = await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/login`, {
+                    const response = await api.get(`api/auth/login`, {
                         params: {login, password}
                     });
                     if (response) {
@@ -333,9 +331,8 @@ function Form({choose}: { choose: boolean }): ReactElement {
     }
 
     //checks if user were authenticated via Google and when, prevents him from using normal login
-    const isOauth2 =
-        async (login: string): Promise<AxiosResponse<{ comp: boolean }>> => {
-            return await api.get(`${import.meta.env.VITE_BACKEND_URL}api/auth/check-oauth2`, {
+    const isOauth2 = async (login: string) => {
+            return await api.get(`api/auth/check-oauth2`, {
                 params: {login: login},
             });
         };
@@ -346,7 +343,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [loginActive, setLoginActive] = useState<boolean>(false);
 
     //delays check 300 millis
-    const debouncedLogin = useDebouncedValue(login, 300);
+    const debouncedLogin: string = useDebouncedValue(login, 300);
 
     //live checking and validating login, displays info for user
     useEffect(() => {
@@ -355,13 +352,13 @@ function Form({choose}: { choose: boolean }): ReactElement {
         if (login.length >= 5) {
             const checkLogin = async (): Promise<void> => {
                 try {
-                    const emailResponse = await emailExists(login);
-                    const usernameResponse = await usernameExists(login);
+                    const emailResponse: AxiosResponse = await emailExists(login);
+                    const usernameResponse: AxiosResponse = await usernameExists(login);
                     if (isMounted) {
                         if (emailResponse.data.exists || usernameResponse.data.exists) {
                             setLoginIcon(faCircleCheck);
-                            const isActiveResponse = await isActive(login);
-                            const isOauth2Response = await isOauth2(login);
+                            const isActiveResponse: AxiosResponse = await isActive(login);
+                            const isOauth2Response: AxiosResponse = await isOauth2(login);
                             if (isMounted) {
                                 if (isActiveResponse.data.comp) {
                                     setLoginInfo("")
@@ -402,7 +399,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
     const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
 
     //changes password input
-    const toggleInput = (): void => {
+    const toggleInput = ()=> {
         setInputType(inputType === "password" ? "text" : "password");
         setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
     }
@@ -413,7 +410,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
              text-xl sm1:text-2xl rounded-xl shadow-2xl">
                 <div className="relative">
                     <input className="w-64 sm1:w-80 p-1 mb-2 pr-12 rounded-md" placeholder="E-mail" type="text"
-                           value={user.email} onChange={(e): void => setUser({...user, email: e.target.value.trim()})}/>
+                           value={user.email} onChange={(e) => setUser({...user, email: e.target.value.trim()})}/>
                     {emailIcon && <FontAwesomeIcon icon={emailIcon}
                                                    className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
                     <p className={emailActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{emailInfo}</p>
@@ -421,7 +418,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 <div className="relative">
                     <input className="w-64 sm1:w-80  p-1 mb-2 pr-12 rounded-md" placeholder="Username" type="text"
                            value={user.username}
-                           onChange={(e): void => setUser({...user, username: e.target.value.trim()})}/>
+                           onChange={(e) => setUser({...user, username: e.target.value.trim()})}/>
                     {usernameIcon && <FontAwesomeIcon icon={usernameIcon}
                                                       className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
                     <p className={usernameActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{usernameInfo}</p>
@@ -429,7 +426,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 <div className="relative">
                     <input className="w-64 sm1:w-80 p-1 mb-2 pr-12 rounded-md" placeholder="Password" type={inputType}
                            value={user.password}
-                           onChange={(e): void => setUser({...user, password: e.target.value.trim()})}/>
+                           onChange={(e) => setUser({...user, password: e.target.value.trim()})}/>
                     {passwordIcon && <FontAwesomeIcon icon={passwordIcon}
                                                       className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
                     <p className={passwordActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{passwordInfo}</p>
@@ -437,13 +434,13 @@ function Form({choose}: { choose: boolean }): ReactElement {
                 <div className="relative">
                     <input className="w-64 sm1:w-80 p-1 mb-4 pr-12 rounded-md" placeholder="Repeat password"
                            type={inputType}
-                           value={passwordRep} onChange={(e): void => setPasswordRep(e.target.value)}/>
+                           value={passwordRep} onChange={(e) => setPasswordRep(e.target.value)}/>
                     {passwordRepIcon && <FontAwesomeIcon icon={passwordRepIcon}
                                                          className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
                     <div className="flex flex-row items-center text-base">
                         <input id="myCheckbox" type="checkbox" className="w-3 h-3 mr-3 bg-white border border-solid border-black
                         rounded-xl appearance-none checked:bg-black checked:border-white"
-                               checked={termsCheck} onChange={(e): void => {
+                               checked={termsCheck} onChange={(e) => {
                             setTermsCheck(e.target.checked)
                         }}/>
                         <label htmlFor="myCheckbox">I accept</label>
@@ -467,13 +464,13 @@ function Form({choose}: { choose: boolean }): ReactElement {
               text-xl sm1:text-2xl rounded-xl shadow-2xl ">
                 <div className="relative">
                     <input className="w-64 sm1:w-80 p-1 mb-2 rounded-md" placeholder="E-mail or username" type="text"
-                           value={login} onChange={(e): void => setLogin(e.target.value.trim())}/>
+                           value={login} onChange={(e) => setLogin(e.target.value.trim())}/>
                     {loginIcon && <FontAwesomeIcon icon={loginIcon}
                                                    className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
                     <p className={loginActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{loginInfo}</p>
                 </div>
                 <input className="w-64 sm1:w-80 p-1 rounded-md" placeholder="Password" type={inputType}
-                       value={password} onChange={(e): void => setPassword(e.target.value.trim())}/>
+                       value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
                 <div className="flex flex-row justify-left w-64 sm1:w-80">
                     <a href="" className="text-base underline">Forgot password?</a>
                 </div>

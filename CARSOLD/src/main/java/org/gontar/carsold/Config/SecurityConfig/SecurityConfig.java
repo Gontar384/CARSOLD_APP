@@ -41,7 +41,7 @@ public class SecurityConfig {
         return http
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request  //configures authorization for incoming requests
-                        .requestMatchers(
+                        .requestMatchers(                              //path available for authenticated users
                                 "api/auth/csrf",
                                 "api/auth/check-authentication",
                                 "api/auth/register/check-email",
@@ -51,9 +51,9 @@ public class SecurityConfig {
                                 "api/auth/check-active",
                                 "api/auth/check-oauth2",
                                 "api/auth/login",
-                                "api/auth/logout",
+                                "api/auth/logout", //this one shouldn't be there, but has to, to clear JWT if user isn't authenticated or any error occurs
                                 "api/auth/keep-alive"
-                        ).permitAll()    //should also be blocked, when user is authenticated
+                        ).permitAll()
                         .anyRequest().authenticated())     //for any other endpoints authentication required
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication

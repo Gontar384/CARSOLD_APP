@@ -8,22 +8,22 @@ function Searching(): ReactElement {
     const componentRef = useRef<HTMLDivElement | null>(null);
 
     //handles input click
-    const handleClick = (): void => {
+    const handleClick = () => {
         setIsClicked(true);
     }
 
     //offs input backlight
-    const handleClickOutside = (event: MouseEvent): void => {
+    const handleClickOutside = (event: MouseEvent) => {
         if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
             setIsClicked(false);
         }
     }
 
     //live checks if user click outside input and then uses handleClickOutside function
-    useEffect((): () => void => {
+    useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
 
-        return (): void => {
+        return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         }
     }, [])

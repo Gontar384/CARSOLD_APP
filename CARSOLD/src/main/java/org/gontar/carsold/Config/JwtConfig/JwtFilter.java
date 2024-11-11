@@ -37,32 +37,32 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        // Extract JWT from cookies
+        //extracts JWT from cookies
         String token = jwtService.extractTokenFromCookie(request);
         String username = null;
 
-        // If token exists, extract username
+        //if token exists, extracts username
+        //if there are errors with token, clears token-cookie, making user unauthenticated
+        //and then frontend log him out
         if (token != null) {
             try {
-                username = jwtService.extractUsername(token);  // Extract username using jwtService
+                username = jwtService.extractUsername(token);
             } catch (ExpiredJwtException e) {
-                // Handle expired token - clear JWT cookie
                 clearJwtCookie(response);
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return;
             } catch (SignatureException e) {
-                // Handle invalid signature - clear JWT cookie
                 clearJwtCookie(response);
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return;
             } catch (Exception e) {
-                // Handle any other JWT exceptions
                 clearJwtCookie(response);
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return;
             }
         }
 
+        //makes user authenticated or not
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
             if (jwtService.validateToken(token, userDetails)) {  // Validate token with user details
@@ -72,14 +72,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);  // Make request authenticated
             }
         }
-
         filterChain.doFilter(request, response);  // Pass request and response to next filter
     }
 
-    // Helper method to clear the JWT cookie
+    //simple method to clear JWT cookie
     private void clearJwtCookie(HttpServletResponse response) {
-        // Set Max-Age to 0 to delete the cookie
         response.addHeader(HttpHeaders.SET_COOKIE,
-                "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false"); // Secure should be true in production
+                "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");
     }
 }

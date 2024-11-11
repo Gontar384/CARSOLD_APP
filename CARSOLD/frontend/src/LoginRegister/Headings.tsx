@@ -1,12 +1,13 @@
-import React, {ReactElement} from "react";
+import {Dispatch, ReactElement, SetStateAction} from "react";
 
-function Headings({setChoose}:
-                      { setChoose: React.Dispatch<React.SetStateAction<boolean>>; }): ReactElement {
+//component with 'Login', 'Register' and 'Google Auth' headings, sets 'choose' state
+//which defines what is displayed on 'Form' component
+function Headings({setChoose}: { setChoose: Dispatch<SetStateAction<boolean>> }): ReactElement {
 
     //redirecting to Google auth page
-    const handleGoogleAuth = async (): Promise<void> => {
+    const handleGoogleAuth = async () => {
         try {
-            window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+            window.location.href = `${import.meta.env.VITE_BACKEND_URL}oauth2/authorization/google`;
         } catch (error) {
             console.error('Error during google authentication:', error);
         }
@@ -17,10 +18,10 @@ function Headings({setChoose}:
             <div className="flex flex-row justify-center w-80 h-10 sm1:w-96 text-xl
          sm1:text-2xl rounded divide-x divide-black shadow">
                 <button className="w-40 sm1:w-48 py-1 px-4 text-center hover:bg-white hover:rounded-l
-                hover:cursor-pointer" onClick={(): void => setChoose(true)}>Login
+                hover:cursor-pointer" onClick={() => setChoose(true)}>Login
                 </button>
                 <button className="w-40 sm1:w-48 py-1 px-4 text-center hover:bg-white hover:rounded-r
-                hover:cursor-pointer" onClick={(): void => setChoose(false)}>Register
+                hover:cursor-pointer" onClick={() => setChoose(false)}>Register
                 </button>
             </div>
             <button className="flex flex-row justify-center items-center w-80 sm1:w-96 h-9 mt-2 rounded shadow

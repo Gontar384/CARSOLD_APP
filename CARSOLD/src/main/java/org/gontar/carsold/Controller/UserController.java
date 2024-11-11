@@ -39,14 +39,14 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    //registering user, saving to DB
+    //registers user, saves to DB
     @PostMapping("auth/register")
     public ResponseEntity<String> register(@RequestBody UserDto userDto) {
         service.registerUser(userDto);
         return ResponseEntity.ok("User saved");
     }
 
-    //activating account
+    //activates account
     @GetMapping("auth/activate")
     public ResponseEntity<String> activate(@RequestParam("token") String token,
                                            HttpServletResponse response) {
@@ -54,11 +54,13 @@ public class UserController {
         return ResponseEntity.ok("Account activated");
     }
 
+    //gets csrf token when app mounts
     @GetMapping("auth/csrf")
     public CsrfToken getCsrfToken(CsrfToken token) {
         return token;
     }
 
+    //checks user authentication
     @GetMapping("auth/check-authentication")
     public ResponseEntity<Map<String, Boolean>> checkAuthentication(HttpServletRequest request) {
         Map<String, Boolean> response = new HashMap<>();
@@ -67,12 +69,14 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    //logs out, deletes JWT
     @GetMapping("auth/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         service.logout(response);
         return ResponseEntity.ok("Logged out");
     }
 
+    //checks if account is active
     @GetMapping("auth/check-active")
     public ResponseEntity<Map<String, Boolean>> checkActive(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
@@ -81,6 +85,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    //checks if user was authenticated with OAuth2
     @GetMapping("auth/check-oauth2")
     public ResponseEntity<Map<String, Boolean>> checkOauth2(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
@@ -89,6 +94,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    //login, authenticate and authorize user
     @GetMapping("auth/login")
     public ResponseEntity<String>login(@RequestParam("login") String login, @RequestParam("password")
                                        String password, HttpServletResponse response) {
@@ -96,12 +102,14 @@ public class UserController {
         return ResponseEntity.ok("User logged in");
     }
 
+    //refreshes JWT, sends new one with new expiration date
     @GetMapping("auth/refresh")
     public ResponseEntity<String>refreshToken(HttpServletRequest request, HttpServletResponse response){
         service.refreshJwt(request, response);
         return ResponseEntity.ok("JWT refreshed");
     }
 
+    //simple request to keep session alive
     @GetMapping("auth/keep-alive")
     public ResponseEntity<Void>keepAlive(){
         return ResponseEntity.ok().build();

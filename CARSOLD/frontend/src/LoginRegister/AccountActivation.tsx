@@ -1,16 +1,14 @@
 import {ReactElement, useEffect, useState} from "react";
-import {NavigateFunction, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {api} from "../Config/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthProvider.tsx"; // Import your AuthProvider context
+import {useAuth} from "../Config/AuthProvider.tsx";
 
 //page only used when activating account through email
 function AccountActivation(): ReactElement {
 
-    const navigate: NavigateFunction = useNavigate();
+    const navigate = useNavigate();
     const [count, setCount] = useState<number>(5);
-    const { checkAuth } = useAuth(); // Get the checkAuth function from context
-
-    const url = `${import.meta.env.VITE_BACKEND_URL}api/auth/activate`;
+    const {checkAuth} = useAuth();
 
     //after navigation occurs, fetch token from url and sends it to backend, activating account
     //also gets cookie with token, resulting in user authentication, then navigates to /home
@@ -20,7 +18,7 @@ function AccountActivation(): ReactElement {
 
         const activateAccount = async (token: string): Promise<void> => {
             try {
-                await api.get(`${url}`, {
+                await api.get(`api/auth/activate`, {
                     params: {token},
                 });
             } catch (error) {
@@ -31,7 +29,6 @@ function AccountActivation(): ReactElement {
                     await activateAccount(token);
                     await checkAuth();
                 }, 5500)
-
         }
     }, [navigate]);
 
@@ -46,7 +43,6 @@ function AccountActivation(): ReactElement {
         }, 1000)
         return (): void => clearInterval(interval)
     }, []);
-
 
     return (
         <div className="flex flex-col gap-3 text-xl sm:text-5xl justify-center items-center h-screen bg-lowLime">
