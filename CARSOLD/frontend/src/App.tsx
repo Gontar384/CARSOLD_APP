@@ -6,7 +6,7 @@ import LoginRegister from "./LoginRegister/LoginRegister.tsx";
 import AccountActivation from "./LoginRegister/AccountActivation.tsx";
 import Home from "./Home/Home.tsx";
 import {AuthProvider} from "./Config/AuthProvider.tsx";
-import {useFetchCsrf, useRefreshJwt} from "./Config/AxiosConfig.tsx";
+import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "./Config/AxiosConfig.tsx";
 
 function App(): ReactElement {
 
@@ -34,6 +34,7 @@ function App(): ReactElement {
     function TokenManagement() {
         useFetchCsrf();
         useRefreshJwt();
+        useTrackUserActivity();
         return null; // No UI to render
     }
 }

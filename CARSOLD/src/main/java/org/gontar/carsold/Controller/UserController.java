@@ -101,4 +101,9 @@ public class UserController {
         service.refreshJwt(request, response);
         return ResponseEntity.ok("JWT refreshed");
     }
+
+    @GetMapping("auth/keep-alive")
+    public ResponseEntity<Void>keepAlive(){
+        return ResponseEntity.ok().build();
+    }
 }

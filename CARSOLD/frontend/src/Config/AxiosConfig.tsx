@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useAuth} from "./AuthProvider.tsx";
 
 export const api = axios.create({
@@ -57,4 +57,28 @@ export const useRefreshJwt = () => {
     }, [isAuthenticated]);
 };
 
+// Custom hook to track user activity and send keep-alive requests
+export const useTrackUserActivity = () => {
+    const [isDisabled, setIsDisabled] = useState(false);
+    useEffect(() => {
+        const events = ['click', 'mousemove', 'keydown', 'scroll'];
+        const activityHandler = () => {
+            if (isDisabled) return;
+            setIsDisabled(true);
+            try {
+                api.get(`api/auth/keep-alive`);
+                console.log("Session refreshed");
+            } catch (error) {
+                console.error('Error refreshing session:', error);
+            }
+            setTimeout(() => {
+                setIsDisabled(false);
+            }, 60000);
+        };
+        events.forEach(event => window.addEventListener(event, activityHandler));
+        return () => {
+            events.forEach(event => window.removeEventListener(event, activityHandler));
+        };
+    }, [isDisabled]);
+};
 
