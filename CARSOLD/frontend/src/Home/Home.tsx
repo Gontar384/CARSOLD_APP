@@ -1,7 +1,7 @@
 import NavBar from "../NavBar/NavBar.tsx";
 import {ReactElement} from "react";
-import {api} from "../Config/AxiosConfig.tsx";
-import {useAuth} from '../Config/AuthProvider.tsx'
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from '../Config/AuthConfig/AuthProvider.tsx'
 
 function Home(): ReactElement {
     const {checkAuth} = useAuth();

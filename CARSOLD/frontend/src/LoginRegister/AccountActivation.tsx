@@ -1,7 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {api} from "../Config/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthProvider.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 
 //page only used when activating account through email
 function AccountActivation(): ReactElement {

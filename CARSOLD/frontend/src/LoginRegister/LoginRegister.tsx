@@ -14,7 +14,7 @@ function LoginRegister(): ReactElement {
         <>
             <NavBar/>
             <div className="flex flex-col md:flex-row justify-center items-center md:items-start
-             pt-8 sm2:pt-10 sm:pt-28 md:pt-28 sm:gap-4 md:gap-12 lg:gap-28">
+             pt-8 sm2:pt-10 sm:pt-32 sm:gap-4 md:gap-12 lg:gap-28">
                 <div className="flex flex-col justify-center items-center bg-lime pt-8 pb-12
                  sm3:px-2 sm2:px-6 sm1:px-8 rounded-xl">
                     <Headings setChoose={setChoose}/>

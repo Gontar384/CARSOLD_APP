@@ -1,25 +1,24 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {api} from "./AxiosConfig.tsx";
+import {api} from "../AxiosConfig/AxiosConfig.tsx";
+import {useLoading} from "../LoadingConfig/LoadingProvider.tsx";
 
 //defines structure of authentication context
 interface AuthContextType {
     isAuthenticated: boolean;
     checkAuth: () => Promise<void>;
-    isLoading: boolean;             //adds loading state
 }
 
 //creates authentication context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-//creates authentication function-component which is then used in 'App' and wraps other components
+//creates provider-component which is then used in 'App' and wraps other components
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);   //monitors if user is authenticated
-    const [isLoading, setIsLoading] = useState<boolean>(true);      //indicates ongoing authentication check
-                                                                    //lets use loading appearance
+    const { setAppLoading } = useLoading();  //uses global loading state and add loading screen
 
     //function to check authentication, used in multiple components
     const checkAuth = async () => {
-        setIsLoading(true);     //starts loading before auth
+        setAppLoading(true);     //starts loading before auth
         try {
             const response = await api.get(`api/auth/check-authentication`);
             const authState = response.data['isAuth'];
@@ -28,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (error) {
             console.error("Error checking authentication: ", error);
         }finally {
-            setIsLoading(false);    //ends loading after auth
+            setAppLoading(false);    //ends loading after auth
         }
     };
 
@@ -55,16 +54,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkAuth();
     }, []);
 
-    //makes values accessible for all AuthContext children
+    //makes values accessible for all AuthProvider children
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-//custom hook to access AuthContext
-export const useAuth= () => {
+//custom hook to access auth state
+export const useAuth= (): AuthContextType => {
     const context: AuthContextType | undefined = useContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");

@@ -2,8 +2,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash, faCircleExclamation, faCircleCheck, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {ReactElement, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
-import {api} from "../Config/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthProvider.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 
 //this function-component is basically handling register and login processes and
 //gives info about to user and navigates user

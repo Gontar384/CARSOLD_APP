@@ -1,55 +1,31 @@
-import axios, {AxiosError, AxiosInstance, AxiosResponse} from 'axios';
 import {useEffect, useState} from "react";
-import {useAuth} from "./AuthProvider.tsx";
-
-//creates custom axios instance for requests
-export const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,      //default URL
-    withCredentials: true                           //cookies available
-});
-
-//to handle errors and redirect unauthenticated user
-//to /authenticate and log them out
-api.interceptors.response.use(
-    (response: AxiosResponse) => response,
-    async (error: AxiosError) => {
-        if (error.response) {
-            if (error.response.status === 401 || error.response.status === 403) {        //for authentication errors
-                setTimeout(async () => {
-                    await api.get(`api/auth/logout`)
-                    window.location.href = '/authenticate';
-                }, 1000);
-            }
-        } else if (error.message.includes('Network Error') || error.message.includes('CORS')) {  //for CORS errors
-            setTimeout(async () => {
-                await api.get(`api/auth/logout`)
-                window.location.href = '/authenticate';
-            }, 1000);
-        }
-        return Promise.reject(error);
-    }
-);
+import {useAuth} from "../AuthConfig/AuthProvider.tsx";
+import {api} from "../AxiosConfig/AxiosConfig.tsx";
+import {useCookieBanner} from "../../CookieBanner/CookieBannerProvider.tsx";
 
 //custom hook to fetch Csrf Token when app mounts
 export const useFetchCsrf = () => {
+    const {setShowBanner} = useCookieBanner();
+
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
                 const response = await api.get(`api/auth/csrf`);
                 api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;    //sets default axios header with csrf token
+                setShowBanner(true);         //shows cookie banner
             } catch (error) {
                 console.log("Error fetching csrf: ", error)
             }
         };
         fetchCsrf();
-    }, [])
+    }, [setShowBanner])
 }
 
 //custom hook to refresh and change JWT token every 2 minutes
-export const useRefreshJwt= () => {
+export const useRefreshJwt = () => {
     const {isAuthenticated} = useAuth();  //checks if user is authenticated
     useEffect(() => {
-        const refreshInterval: number = setInterval(async ()=> {
+        const refreshInterval: number = setInterval(async () => {
             if (!isAuthenticated) return;
             try {
                 await api.get(`api/auth/refresh`);
@@ -57,7 +33,7 @@ export const useRefreshJwt= () => {
                 console.error("Error refreshing JWT token:", error);
             }
         }, 2 * 60 * 1000);
-        return ()=> clearInterval(refreshInterval);
+        return () => clearInterval(refreshInterval);
     }, [isAuthenticated]);
 };
 
@@ -85,4 +61,3 @@ export const useTrackUserActivity = () => {
         };
     }, [isDisabled]);
 };
-
