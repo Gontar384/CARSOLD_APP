@@ -2,6 +2,7 @@ import { useLoading } from './LoadingProvider';
 import LoadingScreen from './LoadingScreen';
 import React from "react";  // Your loading screen component
 
+//manages 'loading spinner' display, used in 'App' component
 const LoadingManager: React.FC = () => {
     const { isAppLoading } = useLoading();
 

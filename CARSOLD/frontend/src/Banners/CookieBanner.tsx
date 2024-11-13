@@ -1,16 +1,17 @@
-import {useCookieBanner} from "./CookieBannerProvider.tsx";
+import {useState} from "react";
 
 //cookie info banner
 const CookieBanner = () => {
-    const { showBanner, setShowBanner } = useCookieBanner();
+    const [visible, setVisible] = useState<boolean>(true);
 
     //hides banner
     const handleDismiss = () => {
-        setShowBanner(false);
-        localStorage.setItem('cookie-banner-dismissed', 'true');
+        setVisible(false);
+        localStorage.setItem('cookie-banner', 'accepted');
     };
 
-    if (showBanner && !localStorage.getItem('cookie-banner-dismissed')) {
+    //displays when localstorage is empty, so basically on user's first visit on page
+    if (visible && !localStorage.getItem('cookie-banner')) {
         return (
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-lowBlack
               text-sm sm1:text-base text-white text-center z-50">

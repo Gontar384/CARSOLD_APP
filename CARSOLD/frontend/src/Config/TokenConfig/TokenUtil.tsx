@@ -1,24 +1,20 @@
 import {useEffect, useState} from "react";
 import {useAuth} from "../AuthConfig/AuthProvider.tsx";
 import {api} from "../AxiosConfig/AxiosConfig.tsx";
-import {useCookieBanner} from "../../CookieBanner/CookieBannerProvider.tsx";
 
 //custom hook to fetch Csrf Token when app mounts
 export const useFetchCsrf = () => {
-    const {setShowBanner} = useCookieBanner();
-
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
                 const response = await api.get(`api/auth/csrf`);
                 api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;    //sets default axios header with csrf token
-                setShowBanner(true);         //shows cookie banner
             } catch (error) {
                 console.log("Error fetching csrf: ", error)
             }
         };
         fetchCsrf();
-    }, [setShowBanner])
+    }, [])
 }
 
 //custom hook to refresh and change JWT token every 2 minutes

@@ -6,48 +6,40 @@ import LoginRegister from "./LoginRegister/LoginRegister.tsx";
 import AccountActivation from "./LoginRegister/AccountActivation.tsx";
 import Home from "./Home/Home.tsx";
 import {AuthProvider} from "./Config/AuthConfig/AuthProvider.tsx";
-import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "./Config/TokenConfig/TokenManagement.tsx";
 import LoadingManager from "./Config/LoadingConfig/LoadingManager.tsx";
 import {LoadingProvider} from "./Config/LoadingConfig/LoadingProvider.tsx";
-import CookieBanner from "./CookieBanner/CookieBanner.tsx";
-import {CookieBannerProvider} from "./CookieBanner/CookieBannerProvider.tsx";
+import CookieBanner from "./Banners/CookieBanner.tsx";
+import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
+import TokenManager from "./Config/TokenConfig/TokenManager.tsx";
 
 function App(): ReactElement {
 
     return (
-        <LoadingProvider> {/*wraps all components, providing loading screen*/}
-            <CookieBannerProvider>
-                <AuthProvider> {/*wraps all components with authentication mechanisms*/}
-                    <BrowserRouter> {/*manages routes*/}
-                        <Routes>
-                            <Route element={<PublicRoutes/>}>
-                                <Route path="/authenticate" element={<LoginRegister/>}/>
-                                <Route path="/activate" element={<AccountActivation/>}/>
-                            </Route>
-                            <Route element={<PrivateRoutes/>}>
+        <LoadingProvider> {/*wraps all components, monitors loading state*/}
+            <AuthProvider> {/*wraps all components, monitors auth state*/}
+                <BrowserRouter> {/*manages routes*/}
+                    <Routes>
+                        <Route element={<PublicRoutes/>}>
+                            <Route path="/authenticate" element={<LoginRegister/>}/>
+                            <Route path="/activate" element={<AccountActivation/>}/>
+                        </Route>
+                        <Route element={<PrivateRoutes/>}>
 
-                            </Route>
+                        </Route>
 
-                            <Route path="/home" element={<Home/>}/>
+                        <Route path="/home" element={<Home/>}/>
 
-                            <Route path="*" element={<Navigate to="/home"/>}/>
-                        </Routes>
-                        <TokenManager/> {/*manages tokens in the background*/}
-                        <LoadingManager/> {/*displays loading screen globally*/}
-                        <CookieBanner/> {/*displays cookie banner if csrf is fetched*/}
-                    </BrowserRouter>
-                </AuthProvider>
-            </CookieBannerProvider>
+                        <Route path="*" element={<Navigate to="/home"/>}/>
+                    </Routes>
+                    <TokenManager/> {/*manages tokens in the background*/}
+                    <LoadingManager/> {/*displays loading screen globally*/}
+                    <CookieBanner/> {/*displays cookie banner globally*/}
+                    <AuthErrorManager/> {/*monitors for any token or verification error, displays 'session expired' banner*/}
+                </BrowserRouter>
+            </AuthProvider>
         </LoadingProvider>
     )
 
-    //manages csrf fetch, jwt refreshing and monitors user activity
-    function TokenManager() {
-        useFetchCsrf();
-        useRefreshJwt();
-        useTrackUserActivity();
-        return null;
-    }
 }
 
 export default App
