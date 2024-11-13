@@ -1,6 +1,8 @@
+import {ReactElement} from "react";
+
 //session expired banner, which pops, when there is error with authentication and user
 //is redirected and unauthenticated
-const SessionExpiredBanner = () => {
+function SessionExpiredBanner(): ReactElement  {
     return (
         <div className="fixed flex items-center justify-center inset-0 bg-black bg-opacity-50 z-50">
             <div className="p-6 bg-white text-center rounded shadow-lg">
@@ -9,6 +11,6 @@ const SessionExpiredBanner = () => {
             </div>
         </div>
     );
-};
+}
 
 export default SessionExpiredBanner;

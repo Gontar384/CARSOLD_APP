@@ -7,7 +7,7 @@ import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 function AccountActivation(): ReactElement {
 
     const navigate = useNavigate();
-    const [count, setCount] = useState<number>(5);
+    const [count, setCount] = useState<number>(4);
     const {checkAuth} = useAuth();
 
     //after navigation occurs, fetch token from url and sends it to backend, activating account
@@ -28,7 +28,7 @@ function AccountActivation(): ReactElement {
                 setTimeout(async(): Promise<void> => {
                     await activateAccount(token);
                     await checkAuth();
-                }, 5500)
+                }, 4500)
         }
     }, [navigate]);
 

@@ -1,7 +1,7 @@
-import {useState} from "react";
+import React, {useState} from "react";
 
 //cookie info banner
-const CookieBanner = () => {
+const CookieBanner: React.FC = () => {
     const [visible, setVisible] = useState<boolean>(true);
 
     //hides banner

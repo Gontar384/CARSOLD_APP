@@ -1,10 +1,10 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import {AxiosError, AxiosResponse} from "axios";
 import SessionExpiredBanner from "../../Banners/SessionExpiredBanner.tsx";
 import {api} from "../AxiosConfig/AxiosConfig.tsx";
 
 //to manage unauthenticated errors with axios, logout user and redirect him to /authenticate
-const AuthErrorManager = () => {
+const AuthErrorManager: React.FC = () => {
     const [showSessionExpired, setShowSessionExpired] = useState<boolean>(false);
 
     api.interceptors.response.use(

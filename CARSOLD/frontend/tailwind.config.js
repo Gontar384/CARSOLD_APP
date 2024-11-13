@@ -8,6 +8,7 @@ export default {
                 "darkLime": "#5be410",
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
+                "coolRed": "#f20707",
             },
             screens: {
                 "sm1": "480px",
@@ -20,9 +21,19 @@ export default {
                     '50%': {transform: "rotate(180deg) scale(1.5)"},
                     '100%': {transform: "rotate(360deg) scale(1)"},
                 },
+                slideIn: {
+                    '0%': {transform: "translateX(-100%)"},
+                    '100%': {transform: "translateX(0)"},
+                },
+                slideOut: {
+                    '0%': {transform: "translateX(0)"},
+                    '100%': {transform: "translateX(100%)"},
+                }
             },
             animation: {
-                spinBounce: 'spinBounce 1s linear infinite'
+                spinBounce: 'spinBounce 1s linear infinite',
+                slideIn: 'slideIn 0.3s ease-out forwards',
+                slideOut: 'slideOut 0.3s ease-out forwards'
             },
         },
     },

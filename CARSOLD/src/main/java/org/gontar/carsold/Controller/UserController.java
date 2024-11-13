@@ -80,8 +80,8 @@ public class UserController {
     @GetMapping("auth/check-active")
     public ResponseEntity<Map<String, Boolean>> checkActive(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
-        boolean comp = service.checkActive(login);
-        response.put("comp", comp);
+        boolean checks = service.checkActive(login);
+        response.put("checks", checks);
         return ResponseEntity.ok(response);
     }
 
@@ -89,8 +89,17 @@ public class UserController {
     @GetMapping("auth/check-oauth2")
     public ResponseEntity<Map<String, Boolean>> checkOauth2(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
-        boolean comp = service.checkOauth2(login);
-        response.put("comp", comp);
+        boolean checks = service.checkOauth2(login);
+        response.put("checks", checks);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/validate-user")
+    public ResponseEntity<Map<String, Boolean>>validateUser(@RequestParam("login") String login,
+                                                            @RequestParam("password") String password){
+        Map<String, Boolean> response = new HashMap<>();
+        boolean isValid = service.validateUser(login, password);
+        response.put("isValid", isValid);
         return ResponseEntity.ok(response);
     }
 

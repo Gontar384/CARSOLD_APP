@@ -230,6 +230,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //checks if username and password is valid before letting user authenticate (needed because
+    //authentication and cors error handling doesn't work well without it)
+    @Override
+    public boolean validateUser(String login, String password) {
+        User user;
+        if (login.contains("@")) {
+            user = repository.findByEmail(login);
+        } else {
+            user = repository.findByUsername(login);
+        }
+        return encoder.matches(password, user.getPassword());
+    }
+
     //method to create cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
