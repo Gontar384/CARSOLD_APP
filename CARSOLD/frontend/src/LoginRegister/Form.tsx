@@ -434,96 +434,114 @@ function Form({choose}: { choose: boolean }): ReactElement {
         setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
     }
 
-    if (!choose) {
-        return (
-            <>
-                <div className="flex flex-col items-center w-72 sm2:w-80 sm1:w-96 pt-6 mt-6 gap-6
-             text-xl sm1:text-2xl rounded-xl shadow-2xl">
-                    <div className="relative">
-                        <input className="w-64 sm1:w-80 p-1 mb-2 pr-12 rounded-md" placeholder="E-mail" type="text"
-                               value={user.email} onChange={(e) => setUser({...user, email: e.target.value.trim()})}/>
-                        {emailIcon && <FontAwesomeIcon icon={emailIcon}
-                                                       className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                        <p className={emailActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{emailInfo}</p>
-                    </div>
-                    <div className="relative">
-                        <input className="w-64 sm1:w-80  p-1 mb-2 pr-12 rounded-md" placeholder="Username" type="text"
-                               value={user.username}
-                               onChange={(e) => setUser({...user, username: e.target.value.trim()})}/>
-                        {usernameIcon && <FontAwesomeIcon icon={usernameIcon}
-                                                          className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                        <p className={usernameActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{usernameInfo}</p>
-                    </div>
-                    <div className="relative">
-                        <input className="w-64 sm1:w-80 p-1 mb-2 pr-12 rounded-md" placeholder="Password"
-                               type={inputType}
-                               value={user.password}
-                               onChange={(e) => setUser({...user, password: e.target.value.trim()})}/>
-                        {passwordIcon && <FontAwesomeIcon icon={passwordIcon}
-                                                          className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                        <p className={passwordActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{passwordInfo}</p>
-                    </div>
-                    <div className="relative">
-                        <input className="w-64 sm1:w-80 p-1 mb-4 pr-12 rounded-md" placeholder="Repeat password"
-                               type={inputType}
-                               value={passwordRep} onChange={(e) => setPasswordRep(e.target.value)}/>
-                        {passwordRepIcon && <FontAwesomeIcon icon={passwordRepIcon}
-                                                             className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                        <div className="flex flex-row items-center text-base">
-                            <input id="myCheckbox" type="checkbox" className="w-3 h-3 mr-3 bg-white border border-solid border-black
-                        rounded-xl appearance-none checked:bg-black checked:border-white"
-                                   checked={termsCheck} onChange={(e) => {
-                                setTermsCheck(e.target.checked)
-                            }}/>
-                            <label htmlFor="myCheckbox">I accept</label>
-                            <a href="" className="underline ml-1">terms of use.</a>
+    return (
+        <>
+            {choose ? (
+                <>{/*register form*/}
+                    <div className="flex flex-col items-center w-11/12 pb-8 pt-6 2xl:pb-10 2xl:pt-8 3xl:pb-11 3xl:pt-9 mt-3 gap-6 xs:gap-7 2xl:gap-8
+                     3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-xl shadow-2xl">
+                        {/*email input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="E-mail" type="text"
+                                   value={user.email}
+                                   onChange={(e) => setUser({...user, email: e.target.value.trim()})}/>
+                            {emailIcon && <FontAwesomeIcon icon={emailIcon}
+                                                           className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
+                            <p className={emailActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[41px] 2xl:top-[43px] 3xl:top-[50px]" : "hidden"}>{emailInfo}</p>
                         </div>
-                    </div>
-                    <div className="relative">
+                        {/*username input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="Username"
+                                   type="text"
+                                   value={user.username}
+                                   onChange={(e) => setUser({...user, username: e.target.value.trim()})}/>
+                            {usernameIcon && <FontAwesomeIcon icon={usernameIcon}
+                                                              className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
+                            <p className={usernameActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[41px] 2xl:top-[42px] 3xl:top-[50px]" : "hidden"}>{usernameInfo}</p>
+                        </div>
+                        {/*password input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="Password"
+                                   type={inputType}
+                                   value={user.password}
+                                   onChange={(e) => setUser({...user, password: e.target.value.trim()})}/>
+                            {passwordIcon && <FontAwesomeIcon icon={passwordIcon}
+                                                              className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
+                            <p className={passwordActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[41px] 2xl:top-[43px] 3xl:top-[50px]" : "hidden"}>{passwordInfo}</p>
+                        </div>
+                        {/*repeated password input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 mb-4 pr-12 rounded-md 3xl:h-12" placeholder="Repeat password"
+                                   type={inputType}
+                                   value={passwordRep} onChange={(e) => setPasswordRep(e.target.value)}/>
+                            {passwordRepIcon && <FontAwesomeIcon icon={passwordRepIcon}
+                                                                 className="text-2xl xs:text-[27px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
+                            {/*checkbox and button container*/}
+                            <div className="flex flex-row items-center text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] mt-1 2xl:mt-2 relative">
+                                {/*checkbox and link*/}
+                                <input id="myCheckbox" type="checkbox" className="w-[8px] h-[8px] xs:w-[10px] xs:h-[10px]
+                                 2xl:w-[13px] 2xl:h-[13px] 3xl:w-[15px] 3xl:h-[15px] mr-3 bg-white border border-solid border-black
+                                 rounded-xl appearance-none checked:bg-black checked:border-white"
+                                       checked={termsCheck} onChange={(e) => {
+                                    setTermsCheck(e.target.checked)
+                                }}/>
+                                <label htmlFor="myCheckbox">Accept</label>
+                                <a href="" className="underline ml-1">terms of use.</a>
+                                {/*password button*/}
+                                <button className="absolute right-0 cursor-pointer"
+                                        onClick={toggleInput}>
+                                    <FontAwesomeIcon icon={eyeIcon} className="text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl"/>
+                                </button>
+                            </div>
+                        </div>
+                        {/*register button*/}
                         <button
-                            className="w-20 sm1:w-24 h-9 mt-2 mb-8 rounded-md shadow-xl hover:bg-white cursor-pointer"
+                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-md shadow-xl hover:bg-white cursor-pointer"
                             onClick={handleRegister} disabled={isDisabledReg}>Register
                         </button>
-                        <button className="absolute left-36 sm1:left-44 bottom-24 cursor-pointer" onClick={toggleInput}>
-                            <FontAwesomeIcon icon={eyeIcon}/>
+                    </div>
+                    {/*banner*/}
+                    {isRegistered ? <RegisterBanner onAnimationEnd={() => setIsRegistered(false)}/> : null}
+                </>
+            ) : (
+                <> {/*login form*/}
+                    <div className="flex flex-col items-center w-11/12 pb-8 pt-6 2xl:pb-10 2xl:pt-8 3xl:pb-11 3xl:pt-9 mt-3 gap-6
+                     xs:gap-7 2xl:gap-8 3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-xl shadow-2xl ">
+                        {/*login input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 3xl:h-12 rounded-md" placeholder="E-mail or username"
+                                   type="text"
+                                   value={login} onChange={(e) => setLogin(e.target.value.trim())}/>
+                            {loginIcon && <FontAwesomeIcon icon={loginIcon}
+                                                           className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
+                            <p className={loginActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[41px] 2xl:top-[43px] 3xl:top-[50px]" : "hidden"}>{loginInfo}</p>
+                        </div>
+                        {/*password input container*/}
+                        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
+                            <input className="w-full p-1 mb-2 2xl:mb-3 3xl:h-12 rounded-md" placeholder="Password" type={inputType}
+                                   value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
+                            {/*link*/}
+                            <a href="" className="text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] underline">Forgot
+                                password?</a>
+                            {/*password button*/}
+                            <button className="absolute right-0 cursor-pointer"
+                                    onClick={toggleInput}>
+                                <FontAwesomeIcon icon={eyeIcon}/>
+                            </button>
+                        </div>
+                        {/*sign in button*/}
+                        <button
+                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-md shadow-xl hover:bg-white cursor-pointer"
+                            onClick={handleLogin} disabled={isDisabledLog}>Sign in
                         </button>
                     </div>
-                </div>
-                {isRegistered ? <RegisterBanner onAnimationEnd={()=> setIsRegistered(false)}/> : null}
-            </>
-        )
-    } else {
-        return (
-            <>
-                <div className="flex flex-col items-center w-72 sm2:w-80 sm1:w-96 h-72 pt-6 mt-6 gap-6
-                 text-xl sm1:text-2xl rounded-xl shadow-2xl ">
-                    <div className="relative">
-                        <input className="w-64 sm1:w-80 p-1 mb-2 rounded-md" placeholder="E-mail or username"
-                               type="text"
-                               value={login} onChange={(e) => setLogin(e.target.value.trim())}/>
-                        {loginIcon && <FontAwesomeIcon icon={loginIcon}
-                                                       className="text-2xl sm1:text-3xl absolute right-3 top-1 opacity-90"/>}
-                        <p className={loginActive ? "text-xs sm1:text-sm absolute top-10" : "hidden"}>{loginInfo}</p>
-                    </div>
-                    <input className="w-64 sm1:w-80 p-1 rounded-md" placeholder="Password" type={inputType}
-                           value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
-                    <div className="flex flex-row justify-left w-64 sm1:w-80">
-                        <a href="" className="text-base underline">Forgot password?</a>
-                    </div>
-                    <div className="relative">
-                        <button className="w-20 sm1:w-24 h-9 mt-2 rounded-md shadow-xl hover:bg-white cursor-pointer"
-                                onClick={handleLogin} disabled={isDisabledLog}>Sign in
-                        </button>
-                        <button className="absolute left-36 sm1:left-44 bottom-16 cursor-pointer" onClick={toggleInput}>
-                            <FontAwesomeIcon icon={eyeIcon}/>
-                        </button>
-                    </div>
-                </div>
-                {isLoggedIn ? <LoginBanner/> : null}
-                {wrongPassword ? <WrongPasswordBanner onAnimationEnd={() => setWrongPassword(false)}/> : null}
-            </>
-        )
-    }
+                    {/*banners*/}
+                    {isLoggedIn ? <LoginBanner/> : null}
+                    {wrongPassword ? <WrongPasswordBanner onAnimationEnd={() => setWrongPassword(false)}/> : null}
+                </>
+            )}
+        </>
+    )
 }
 
 export default Form

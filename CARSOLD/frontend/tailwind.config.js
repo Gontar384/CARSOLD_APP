@@ -11,9 +11,8 @@ export default {
                 "coolRed": "#f20707",
             },
             screens: {
-                "sm1": "480px",
-                "sm2": "380px",
-                "sm3": "340px"
+                "xs": "480px",
+                "3xl": "1800px"
             },
             keyframes: {
                 spinBounce: {

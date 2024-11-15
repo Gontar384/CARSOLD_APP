@@ -4,10 +4,10 @@ import {ReactElement} from "react";
 
 function Aside(): ReactElement {
     return (
-        <div className="flex flex-col justify-center w-11/12 sm:w-2/3
-        lg:w-5/12 text-md sm1:text-xl p-3 mb-8 mt-8 sm:mt-4 md:mt-0 rounded-xl
-        bg-lowLime bg-[url('src/assets/carBackground.jpg')] bg-center bg-cover">
-            <p className="text-center text-2xl pb-3 font-bold">Why to use?</p>
+        <div className="flex flex-col w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:max-w-[700px] 2xl:max-w-[850px] 3xl:max-w-[950px] 3xl:h-[650px]
+         text-md xs:text-xl 2xl:text-2xl 3xl:text-3xl p-3 rounded-xl
+         bg-lowLime bg-[url('src/assets/carBackground.jpg')] bg-center bg-cover">
+            <p className="text-center text-xl xs:text-2xl 2xl:text-3xl 3xl:text-4xl pb-3 font-bold">Why to use?</p>
             <p><FontAwesomeIcon icon={faCheck}/>CAR$OLD is a site created with passion,
                 dedication and a dream.</p>
             <p><FontAwesomeIcon icon={faCheck}/>Our services are free to use.</p>

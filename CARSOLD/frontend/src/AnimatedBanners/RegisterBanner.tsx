@@ -25,8 +25,8 @@ const RegisterBanner: React.FC<RegisterBannerProps> = ({onAnimationEnd}: { onAni
 
     return (
         <div
-            className={`flex justify-center items-center fixed bottom-0 left-0 right-0 h-24 sm1:h-20 bg-darkLime ${animation}`}>
-            <p className="p-4 text-xl sm1:text-2xl text-center">
+            className={`flex justify-center items-center fixed bottom-10 sm:bottom-0 left-0 right-0 h-24 xs:h-20 bg-darkLime ${animation}`}>
+            <p className="p-4 text-base sm:text-xl lg:text-2xl 2xl:text-3xl 3xl:text-4xl text-center">
                 Registered successfully! We've sent you e-mail with confirmation link. Check it out!
             </p>
         </div>

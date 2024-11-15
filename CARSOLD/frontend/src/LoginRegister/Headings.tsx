@@ -15,19 +15,20 @@ function Headings({setChoose}: { setChoose: Dispatch<SetStateAction<boolean>> })
 
     return (
         <>
-            <div className="flex flex-row justify-center w-80 h-10 sm1:w-96 text-xl
-         sm1:text-2xl rounded divide-x divide-black shadow">
-                <button className="w-40 sm1:w-48 py-1 px-4 text-center hover:bg-white hover:rounded-l
-                hover:cursor-pointer" onClick={() => setChoose(true)}>Login
+            <div className="flex flex-row justify-center w-11/12 text-base h-8 xs:h-9 2xl:h-11
+             3xl:h-[52px] xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded divide-x divide-black shadow">
+                <button className="w-1/2 hover:bg-white hover:rounded-l
+                hover:cursor-pointer" onClick={() => setChoose(false)}>Login
                 </button>
-                <button className="w-40 sm1:w-48 py-1 px-4 text-center hover:bg-white hover:rounded-r
-                hover:cursor-pointer" onClick={() => setChoose(false)}>Register
+                <button className="w-1/2 hover:bg-white hover:rounded-r
+                hover:cursor-pointer" onClick={() => setChoose(true)}>Register
                 </button>
             </div>
-            <button className="flex flex-row justify-center items-center w-80 sm1:w-96 h-9 mt-2 rounded shadow
+            <button className="flex flex-row justify-center items-center w-11/12 h-8 xs:h-9 2xl:h-11 3xl:h-[52px] mt-2 rounded shadow
              hover:bg-white hover:rounded" onClick={handleGoogleAuth}>
-                <img src={'src/assets/google.png'} alt='google' className="h-6 w-6 sm1:w-7 sm1:h-7"/>
-                <span className="text-base sm1:text-xl">Authenticate using Google</span>
+                <img src={'src/assets/google.png'} alt='google' className="w-5 h-5 xs:w-6 xs:h-6
+                 2xl:w-8 2xl:h-8 3xl:w-9 3xl:h-9 mr-1"/>
+                <span className="text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl">Authenticate using Google</span>
             </button>
         </>
     )

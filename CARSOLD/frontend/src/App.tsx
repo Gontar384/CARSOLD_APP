@@ -2,7 +2,7 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoutes from "./Config/AuthConfig/PrivateRoutes.tsx";
 import PublicRoutes from "./Config/AuthConfig/PublicRoutes.tsx";
 import {ReactElement} from "react";
-import LoginRegister from "./LoginRegister/LoginRegister.tsx";
+import Authentication from "./LoginRegister/Authentication.tsx";
 import AccountActivation from "./LoginRegister/AccountActivation.tsx";
 import Home from "./Home/Home.tsx";
 import {AuthProvider} from "./Config/AuthConfig/AuthProvider.tsx";
@@ -20,13 +20,12 @@ function App(): ReactElement {
                 <BrowserRouter> {/*manages routes*/}
                     <Routes>
                         <Route element={<PublicRoutes/>}>
-                            <Route path="/authenticate" element={<LoginRegister/>}/>
+                            <Route path="/authenticate" element={<Authentication/>}/>
                             <Route path="/activate" element={<AccountActivation/>}/>
                         </Route>
                         <Route element={<PrivateRoutes/>}>
 
                         </Route>
-
                         <Route path="/home" element={<Home/>}/>
 
                         <Route path="*" element={<Navigate to="/home"/>}/>
