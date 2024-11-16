@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    //listens to localstorage and then update auth state
+    //'listens' to localstorage and then update auth state
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent)=> {
             if (event.key === 'Authenticated') {

@@ -10,8 +10,8 @@ import RegisterBanner from "../AnimatedBanners/RegisterBanner.tsx";
 
 //this function-component is basically handling register and login processes and
 //gives info about to user and navigates user
-//gets 'choose' state updates from 'Headings'
-function Form({choose}: { choose: boolean }): ReactElement {
+//gets 'choose' state updates from 'Headings' and 'lowerBar' state from 'NavBar'
+function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): ReactElement {
 
     //user object for register
     interface User {
@@ -20,10 +20,12 @@ function Form({choose}: { choose: boolean }): ReactElement {
         password: string
     }
 
-    //user and repeated password states
+    //user object state
     const [user, setUser] = useState<User>({
         email: "", username: "", password: ""
     })
+
+    //repeated password state
     const [passwordRep, setPasswordRep] = useState<string>("");
 
     //state which will prevent user from spamming button
@@ -342,7 +344,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                     });
                     if (response) {
                         setIsLoggedIn(true);
-                        setTimeout(async (): Promise<void> => {
+                        setTimeout(async () => {
                             await checkAuth();
                         }, 2500)
                     }
@@ -353,7 +355,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
             } catch (error) {
                 console.log("Error during login: ", error);
             } finally {
-                setTimeout((): void => {
+                setTimeout(() => {
                     setIsDisabledLog(false);
                 }, 500)
             }
@@ -477,7 +479,8 @@ function Form({choose}: { choose: boolean }): ReactElement {
                             {passwordRepIcon && <FontAwesomeIcon icon={passwordRepIcon}
                                                                  className="text-2xl xs:text-[27px] 3xl:text-[36px] absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
                             {/*checkbox and button container*/}
-                            <div className="flex flex-row items-center text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] mt-1 2xl:mt-2 relative">
+                            <div
+                                className="flex flex-row items-center text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] mt-1 2xl:mt-2 relative">
                                 {/*checkbox and link*/}
                                 <input id="myCheckbox" type="checkbox" className="w-[8px] h-[8px] xs:w-[10px] xs:h-[10px]
                                  2xl:w-[13px] 2xl:h-[13px] 3xl:w-[15px] 3xl:h-[15px] mr-3 bg-white border border-solid border-black
@@ -490,7 +493,8 @@ function Form({choose}: { choose: boolean }): ReactElement {
                                 {/*password button*/}
                                 <button className="absolute right-0 cursor-pointer"
                                         onClick={toggleInput}>
-                                    <FontAwesomeIcon icon={eyeIcon} className="text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl"/>
+                                    <FontAwesomeIcon icon={eyeIcon}
+                                                     className="text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl"/>
                                 </button>
                             </div>
                         </div>
@@ -501,7 +505,7 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         </button>
                     </div>
                     {/*banner*/}
-                    {isRegistered ? <RegisterBanner onAnimationEnd={() => setIsRegistered(false)}/> : null}
+                    {isRegistered ? <RegisterBanner lowerBar={lowerBar} onAnimationEnd={() => setIsRegistered(false)}/> : null}
                 </>
             ) : (
                 <> {/*login form*/}
@@ -518,7 +522,8 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         </div>
                         {/*password input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 mb-2 2xl:mb-3 3xl:h-12 rounded-md" placeholder="Password" type={inputType}
+                            <input className="w-full p-1 mb-2 2xl:mb-3 3xl:h-12 rounded-md" placeholder="Password"
+                                   type={inputType}
                                    value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
                             {/*link*/}
                             <a href="" className="text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] underline">Forgot
@@ -536,12 +541,12 @@ function Form({choose}: { choose: boolean }): ReactElement {
                         </button>
                     </div>
                     {/*banners*/}
-                    {isLoggedIn ? <LoginBanner/> : null}
-                    {wrongPassword ? <WrongPasswordBanner onAnimationEnd={() => setWrongPassword(false)}/> : null}
+                    {isLoggedIn ? <LoginBanner lowerBar={lowerBar}/> : null}
+                    {wrongPassword ? <WrongPasswordBanner lowerBar={lowerBar} onAnimationEnd={() => setWrongPassword(false)}/> : null}
                 </>
             )}
         </>
     )
 }
 
-export default Form
+export default Form;

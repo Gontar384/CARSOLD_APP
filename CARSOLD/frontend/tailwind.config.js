@@ -3,18 +3,18 @@ export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
-            colors: {
+            colors: { //custom colors
                 "lime": "#5efc03",
                 "darkLime": "#5be410",
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
             },
-            screens: {
+            screens: {  //custom screens
                 "xs": "480px",
                 "3xl": "1800px"
             },
-            keyframes: {
+            keyframes: {  //animations specific details
                 spinBounce: {
                     '0%': {transform: "rotate(0deg) scale(1)"},
                     '50%': {transform: "rotate(180deg) scale(1.5)"},
@@ -27,12 +27,32 @@ export default {
                 slideOut: {
                     '0%': {transform: "translateX(0)"},
                     '100%': {transform: "translateX(100%)"},
-                }
+                },
+                slideUp: {
+                    '0%': { transform: "translateY(100%)" },
+                    '100%': { transform: "translateY(0)" },
+                },
+                slideDown: {
+                    '0%': { transform: "translateY(0)" },
+                    '100%': { transform: "translateY(100%)" },
+                },
+                flip: {
+                    '0%': {transform: "rotate(0deg)"},
+                    '100%': {transform: "rotate(180deg)"}
+                },
+                flipRev: {
+                    '0%': {transform: "rotate(180deg)"},
+                    '100%': {transform: "rotate(0deg)"}
+                },
             },
-            animation: {
+            animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
                 slideIn: 'slideIn 0.3s ease-out forwards',
-                slideOut: 'slideOut 0.3s ease-out forwards'
+                slideOut: 'slideOut 0.3s ease-out forwards',
+                slideUp: 'slideUp 0.3s ease-out forwards',
+                slideDown: 'slideDown 0.3s ease-out forwards',
+                flip: 'flip 0.3s ease-out forwards',
+                flipRev: 'flipRev 0.3s ease-out forwards',
             },
         },
     },

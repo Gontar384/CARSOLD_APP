@@ -11,32 +11,35 @@ import {LoadingProvider} from "./Config/LoadingConfig/LoadingProvider.tsx";
 import CookieBanner from "./Banners/CookieBanner.tsx";
 import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import TokenManager from "./Config/TokenConfig/TokenManager.tsx";
+import {DarkModeProvider} from "./Config/DarkMode/DarkModeProvider.tsx";
 
 function App(): ReactElement {
 
     return (
-        <LoadingProvider> {/*wraps all components, monitors loading state*/}
-            <AuthProvider> {/*wraps all components, monitors auth state*/}
-                <BrowserRouter> {/*manages routes*/}
-                    <Routes>
-                        <Route element={<PublicRoutes/>}>
-                            <Route path="/authenticate" element={<Authentication/>}/>
-                            <Route path="/activate" element={<AccountActivation/>}/>
-                        </Route>
-                        <Route element={<PrivateRoutes/>}>
+        <DarkModeProvider> {/*wraps all components, monitors and change mode state*/}
+            <LoadingProvider> {/*wraps all components, monitors loading state*/}
+                <AuthProvider> {/*wraps all components, monitors auth state*/}
+                    <BrowserRouter> {/*manages routes*/}
+                        <Routes>
+                            <Route element={<PublicRoutes/>}>
+                                <Route path="/authenticate" element={<Authentication/>}/>
+                                <Route path="/activate" element={<AccountActivation/>}/>
+                            </Route>
+                            <Route element={<PrivateRoutes/>}>
 
-                        </Route>
-                        <Route path="/home" element={<Home/>}/>
+                            </Route>
+                            <Route path="/home" element={<Home/>}/>
 
-                        <Route path="*" element={<Navigate to="/home"/>}/>
-                    </Routes>
-                    <TokenManager/> {/*manages tokens in the background*/}
-                    <LoadingManager/> {/*displays loading screen globally*/}
-                    <CookieBanner/> {/*displays cookie banner globally*/}
-                    <AuthErrorManager/> {/*monitors for any token or verification error, displays 'session expired' banner*/}
-                </BrowserRouter>
-            </AuthProvider>
-        </LoadingProvider>
+                            <Route path="*" element={<Navigate to="/home"/>}/>
+                        </Routes>
+                        <TokenManager/> {/*manages tokens in the background*/}
+                        <LoadingManager/> {/*displays loading screen globally*/}
+                        <CookieBanner/> {/*displays cookie banner globally*/}
+                        <AuthErrorManager/> {/*monitors for any token or verification error, displays 'session expired' banner*/}
+                    </BrowserRouter>
+                </AuthProvider>
+            </LoadingProvider>
+        </DarkModeProvider>
     )
 
 }
