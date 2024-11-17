@@ -9,6 +9,8 @@ export default {
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
+                "coolLowRed": "#f5142e",
+                "coolGreen": "#31d422"
             },
             screens: {  //custom screens
                 "xs": "480px",

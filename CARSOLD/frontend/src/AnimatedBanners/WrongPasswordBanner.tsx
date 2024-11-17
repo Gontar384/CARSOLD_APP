@@ -26,7 +26,8 @@ const WrongPasswordBanner: React.FC<WrongPasswordBannerProps> = ({onAnimationEnd
 
     return (
         <div
-            className={`flex justify-center items-center fixed ${lowerBar ? "bottom-10" : "bottom-0"} sm:bottom-0 left-0 right-0 h-12 xs:h-14 lg:h-16 2xl:h-[70px] bg-coolRed ${animation}`}>
+            className={`flex justify-center items-center fixed ${lowerBar ? "bottom-10" : "bottom-0"} sm:bottom-0 left-0 
+            right-0 h-12 xs:h-14 lg:h-16 2xl:h-[70px] bg-gradient-to-r from-coolRed to-coolRed via-coolLowRed ${animation}`}>
             <p className="p-4 text-base sm:text-xl lg:text-2xl 2xl:text-3xl 3xl:text-4xl text-center">Wrong password</p>
         </div>
     )
