@@ -17,9 +17,10 @@ function Authentication(): ReactElement {
     return (
         <>
             <NavBar setLowerBar={setLowerBar}/>
-            <div className="flex flex-col sm:flex-row justify-center items-center sm:items-start
-              gap-4 sm:gap-2 md:gap-4 xl:gap-8 pt-9 xs:pt-10 sm:pt-12 md:pt-14 lg:pt-16 xl:pt-20 2xl:pt-24 3xl:pt-28">
-                <div className="flex flex-col items-center bg-lime py-6 xs:py-8 2xl:py-10 w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:min-w-[420px]
+            <div className="flex flex-col sm:flex-row justify-center items-center sm:items-start gap-4 sm:gap-2
+             md:gap-4 xl:gap-8 mt-9 xs:mt-10 sm:mt-12 md:mt-14 lg:mt-16 xl:mt-20 2xl:mt-24 3xl:mt-28">
+                <div className="flex flex-col items-center bg-lime py-6 xs:py-8 2xl:py-10 w-11/12 xs:w-10/12
+                max-w-[360px] xs:max-w-[420px] sm:min-w-[420px]
                    2xl:max-w-[500px] 3xl:max-w-[600px] rounded-xl">
                     <Headings setChoose={setChoose}/>
                     <Form choose={choose} lowerBar={lowerBar}/>

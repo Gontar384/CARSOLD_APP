@@ -4,9 +4,10 @@ import {ReactElement, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
-import LoginBanner from "../AnimatedBanners/LoginBanner.tsx";
+import ShortNoDisBanner from "../AnimatedBanners/ShortNoDisBanner.tsx";
 import WrongPasswordBanner from "../AnimatedBanners/WrongPasswordBanner.tsx";
-import RegisterBanner from "../AnimatedBanners/RegisterBanner.tsx";
+import LongDisBanner from "../AnimatedBanners/LongDisBanner.tsx";
+import {useNavigate} from "react-router-dom";
 
 //this function-component is basically handling register and login processes and
 //gives info about to user and navigates user
@@ -102,7 +103,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
         });
     };
 
-    //validates password
+    //checks if password is strong enough
     const checksPassword = (password: string): boolean => {
 
         if (password.trim().length < 7 || password.trim().length > 25) {
@@ -246,7 +247,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
 
-    //live checking if password is valid, displays info for user
+    //live checking if password is strong enough, displays info for user
     useEffect(() => {
         if (user.password !== "") {
             if (user.password.length >= 7) {
@@ -281,7 +282,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconDefinition | null>(null);
 
     //live checking if repeated password equals password
-    useEffect((): void => {
+    useEffect(() => {
         if (user.password !== "" && passwordRep !== "") {
             if (checksPassword(user.password)) {
                 if (passwordRep === user.password) {
@@ -310,7 +311,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     const validateUser = async (login: string, password: string) => {
         return await api.get('api/auth/validate-user', {
             params: {login: login, password: password},
-        })
+        });
     }
 
     //check if user is authenticated and automatically navigates (used after successful login)
@@ -436,6 +437,9 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
         setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
     }
 
+    //hook to navigate user
+    const navigate = useNavigate();
+
     return (
         <>
             {choose ? (
@@ -505,7 +509,10 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </button>
                     </div>
                     {/*banner*/}
-                    {isRegistered ? <RegisterBanner lowerBar={lowerBar} onAnimationEnd={() => setIsRegistered(false)}/> : null}
+                    {isRegistered ?
+                        <LongDisBanner
+                            text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
+                            lowerBar={lowerBar} onAnimationEnd={() => setIsRegistered(false)}/> : null}
                 </>
             ) : (
                 <> {/*login form*/}
@@ -526,8 +533,10 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                                    type={inputType}
                                    value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
                             {/*link*/}
-                            <a href="" className="text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] underline">Forgot
-                                password?</a>
+                            <button onClick={() => navigate('/password-recovery')}
+                                    className="text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] underline">Forgot
+                                password?
+                            </button>
                             {/*password button*/}
                             <button className="absolute right-0 cursor-pointer"
                                     onClick={toggleInput}>
@@ -541,8 +550,9 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </button>
                     </div>
                     {/*banners*/}
-                    {isLoggedIn ? <LoginBanner lowerBar={lowerBar}/> : null}
-                    {wrongPassword ? <WrongPasswordBanner lowerBar={lowerBar} onAnimationEnd={() => setWrongPassword(false)}/> : null}
+                    {isLoggedIn ? <ShortNoDisBanner text={"Logged in successfully!"} lowerBar={lowerBar}/> : null}
+                    {wrongPassword ? <WrongPasswordBanner lowerBar={lowerBar}
+                                                          onAnimationEnd={() => setWrongPassword(false)}/> : null}
                 </>
             )}
         </>

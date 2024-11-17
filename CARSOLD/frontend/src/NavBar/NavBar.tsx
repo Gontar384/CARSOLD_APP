@@ -18,7 +18,7 @@ import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 
 //navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
-function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> }): ReactElement {
+function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>> }): ReactElement {
 
     //state defining window size
     const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
@@ -103,7 +103,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         }, 300)
         setModeIconAnimation(null);
         if (!isAuthenticated) {   //if user isn't authenticated it sets info about lower bar 'presence' info for animated bars
-            setLowerBar((prev) => !prev);
+            setLowerBar?.((prev) => !prev);
         }
     }
 
@@ -132,7 +132,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         <>
             {isWide ? (
                 <>{/*big screen*/}
-                    <div className="flex flex-row items-center justify-evenly fixed
+                    <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
                      w-full h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 border-b-2 border-black bg-lime z-50">
                         {/*logo*/}
                         <button className="flex flex-row justify-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl

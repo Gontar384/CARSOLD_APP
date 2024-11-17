@@ -17,4 +17,6 @@ public interface UserService {
     void authenticate(String login, String password, HttpServletResponse response);
     void refreshJwt(HttpServletRequest request, HttpServletResponse response);
     boolean validateUser(String login, String password);
+    void sendPasswordRecoveryEmail(String email);
+    void recoveryChangePassword(String token, String password, HttpServletResponse response);
 }

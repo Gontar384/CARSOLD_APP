@@ -40,14 +40,14 @@ public class UserController {
     }
 
     //registers user, saves to DB
-    @PostMapping("auth/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<String> register(@RequestBody UserDto userDto) {
         service.registerUser(userDto);
         return ResponseEntity.ok("User saved");
     }
 
     //activates account
-    @GetMapping("auth/activate")
+    @GetMapping("/auth/activate")
     public ResponseEntity<String> activate(@RequestParam("token") String token,
                                            HttpServletResponse response) {
         service.activateAccount(token, response);
@@ -55,13 +55,13 @@ public class UserController {
     }
 
     //gets csrf token when app mounts
-    @GetMapping("auth/csrf")
+    @GetMapping("/auth/csrf")
     public CsrfToken getCsrfToken(CsrfToken token) {
         return token;
     }
 
     //checks user authentication
-    @GetMapping("auth/check-authentication")
+    @GetMapping("/auth/check-authentication")
     public ResponseEntity<Map<String, Boolean>> checkAuthentication(HttpServletRequest request) {
         Map<String, Boolean> response = new HashMap<>();
         boolean isAuth = service.checkAuthentication(request);
@@ -70,14 +70,14 @@ public class UserController {
     }
 
     //logs out, deletes JWT
-    @GetMapping("auth/logout")
+    @GetMapping("/auth/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         service.logout(response);
         return ResponseEntity.ok("Logged out");
     }
 
     //checks if account is active
-    @GetMapping("auth/check-active")
+    @GetMapping("/auth/check-active")
     public ResponseEntity<Map<String, Boolean>> checkActive(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
         boolean checks = service.checkActive(login);
@@ -86,7 +86,7 @@ public class UserController {
     }
 
     //checks if user was authenticated with OAuth2
-    @GetMapping("auth/check-oauth2")
+    @GetMapping("/auth/check-oauth2")
     public ResponseEntity<Map<String, Boolean>> checkOauth2(@RequestParam("login") String login) {
         Map<String, Boolean> response = new HashMap<>();
         boolean checks = service.checkOauth2(login);
@@ -94,7 +94,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("auth/validate-user")
+    @GetMapping("/auth/validate-user")
     public ResponseEntity<Map<String, Boolean>>validateUser(@RequestParam("login") String login,
                                                             @RequestParam("password") String password){
         Map<String, Boolean> response = new HashMap<>();
@@ -104,7 +104,7 @@ public class UserController {
     }
 
     //login, authenticate and authorize user
-    @GetMapping("auth/login")
+    @GetMapping("/auth/login")
     public ResponseEntity<String>login(@RequestParam("login") String login, @RequestParam("password")
                                        String password, HttpServletResponse response) {
         service.authenticate(login, password, response);
@@ -112,15 +112,30 @@ public class UserController {
     }
 
     //refreshes JWT, sends new one with new expiration date
-    @GetMapping("auth/refresh")
+    @GetMapping("/auth/refresh")
     public ResponseEntity<String>refreshToken(HttpServletRequest request, HttpServletResponse response){
         service.refreshJwt(request, response);
         return ResponseEntity.ok("JWT refreshed");
     }
 
     //simple request to keep session alive
-    @GetMapping("auth/keep-alive")
+    @GetMapping("/auth/keep-alive")
     public ResponseEntity<Void>keepAlive(){
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/auth/password-recovery")
+    public ResponseEntity<String>passwordRecovery(@RequestParam("email") String email){
+        service.sendPasswordRecoveryEmail(email);
+        return ResponseEntity.ok("Email sent");
+    }
+
+    @PostMapping("/auth/password-recovery-change")
+    public ResponseEntity<String>passwordRecoveryChange(
+            @RequestBody Map<String, String> payload, HttpServletResponse response){
+        String token = payload.get("token");
+        String password = payload.get("password");
+        service.recoveryChangePassword(token, password, response);
+        return ResponseEntity.ok("Password changed");
     }
 }

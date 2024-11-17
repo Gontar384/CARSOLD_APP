@@ -2,12 +2,14 @@ import React, {useEffect, useState} from "react";
 
 //specifies component's props
 interface RegisterBannerProps {
+    text: string;
     onAnimationEnd: () => void;
     lowerBar: boolean;   //info about lower banner 'presence'
 }
 
-//animated banner which pops when user is registered successfully
-const RegisterBanner: React.FC<RegisterBannerProps> = ({onAnimationEnd, lowerBar}: { onAnimationEnd: () => void, lowerBar: boolean }) => {
+//animated banner which pops (used in when user register and when user send email to change password)
+//long-time banner, with disappearing mechanism
+const LongDisBanner: React.FC<RegisterBannerProps> = ({text, onAnimationEnd, lowerBar}: { text: string, onAnimationEnd: () => void, lowerBar: boolean }) => {
     const [animation, setAnimation] = useState<string>('animate-slideIn');   //changes animation
 
     useEffect(() => {
@@ -28,10 +30,10 @@ const RegisterBanner: React.FC<RegisterBannerProps> = ({onAnimationEnd, lowerBar
         <div
             className={`flex justify-center items-center fixed ${lowerBar ? "bottom-10" : "bottom-0" } sm:bottom-0 left-0 right-0 h-24 xs:h-20 bg-darkLime ${animation}`}>
             <p className="p-4 text-base sm:text-xl lg:text-2xl 2xl:text-3xl 3xl:text-4xl text-center">
-                Registered successfully! We've sent you e-mail with confirmation link. Check it out!
+                {text}
             </p>
         </div>
     )
 }
 
-export default RegisterBanner;
+export default LongDisBanner;

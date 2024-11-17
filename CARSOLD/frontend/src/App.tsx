@@ -12,6 +12,8 @@ import CookieBanner from "./Banners/CookieBanner.tsx";
 import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import TokenManager from "./Config/TokenConfig/TokenManager.tsx";
 import {DarkModeProvider} from "./Config/DarkMode/DarkModeProvider.tsx";
+import PasswordRecovery from "./LoginRegister/PasswordRecovery.tsx";
+import PasswordRecoveryChange from "./LoginRegister/PasswordRecoveryChange.tsx";
 
 function App(): ReactElement {
 
@@ -24,6 +26,8 @@ function App(): ReactElement {
                             <Route element={<PublicRoutes/>}>
                                 <Route path="/authenticate" element={<Authentication/>}/>
                                 <Route path="/activate" element={<AccountActivation/>}/>
+                                <Route path="/password-recovery" element={<PasswordRecovery/>}/>
+                                <Route path="/very3secret8password4change" element={<PasswordRecoveryChange/>}/>
                             </Route>
                             <Route element={<PrivateRoutes/>}>
 

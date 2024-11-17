@@ -243,6 +243,53 @@ public class UserServiceImpl implements UserService {
         return encoder.matches(password, user.getPassword());
     }
 
+    @Override
+    public void sendPasswordRecoveryEmail(String email) {
+        User user = repository.findByEmail(email);
+        String token = jwtService.generateToken(user.getUsername());
+        String link = frontendUrl + "very3secret8password4change?token=" + token;
+
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(email);
+            helper.setSubject("CAR$OLD Password Recovery");
+
+            String emailContent = "<p style='font-size: 25px;'>Hello " + user.getUsername() + "! To change your password, please click the following link:</p>" +
+                    "<div style='background-color: #191a18; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
+                    "<a style='text-decoration: none; color: white; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                    "Change password" +
+                    "</a>" +
+                    "</div><hr>" +
+                    "<p>This message was sent automatically. Do not reply.</p>";
+
+            helper.setText(emailContent, true);
+
+            emailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void recoveryChangePassword(String token, String password, HttpServletResponse response) {
+        try {
+            Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
+            String username = claims.getSubject();                 //gets username from claims
+            User user = repository.findByUsername(username);
+
+            user.setPassword(encoder.encode(password));
+            repository.save(user);
+
+            String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
+            ResponseCookie authCookie = createCookie(newToken, 10);
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+        } catch (Exception e) {
+            System.err.println("Failed to change authenticated user and change password: " + e.getMessage());
+        }
+    }
+
     //method to create cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"

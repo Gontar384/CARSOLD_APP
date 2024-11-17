@@ -6,8 +6,13 @@ import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 //page only used when activating account through email
 function AccountActivation(): ReactElement {
 
+    //hook to navigate user
     const navigate = useNavigate();
+
+    //counts down
     const [count, setCount] = useState<number>(4);
+
+    //custom hook to check auth
     const {checkAuth} = useAuth();
 
     //after navigation occurs, fetch token from url and sends it to backend, activating account

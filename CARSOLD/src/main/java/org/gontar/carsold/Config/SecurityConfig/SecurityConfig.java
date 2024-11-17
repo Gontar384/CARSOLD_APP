@@ -53,8 +53,10 @@ public class SecurityConfig {
                                 "api/auth/login",
                                 "api/auth/logout", //this one shouldn't be there, but has to, to clear JWT if user isn't authenticated or any error occurs
                                 "api/auth/keep-alive",
-                                "api/auth/validate-user"
-                        ).permitAll()
+                                "api/auth/validate-user",
+                                "api/auth/password-recovery",
+                                "api/auth/password-recovery-change"
+                                ).permitAll()
                         .anyRequest().authenticated())     //for any other endpoints authentication required
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication
