@@ -12,6 +12,7 @@ import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
+import java.util.HashMap;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -243,12 +245,13 @@ public class UserServiceImpl implements UserService {
         return encoder.matches(password, user.getPassword());
     }
 
+    //sends email with link with JWT and redirects to page where user can change password
+    //and then validate it with token in url
     @Override
     public void sendPasswordRecoveryEmail(String email) {
         User user = repository.findByEmail(email);
         String token = jwtService.generateToken(user.getUsername());
         String link = frontendUrl + "very3secret8password4change?token=" + token;
-
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -257,8 +260,8 @@ public class UserServiceImpl implements UserService {
             helper.setSubject("CAR$OLD Password Recovery");
 
             String emailContent = "<p style='font-size: 25px;'>Hello " + user.getUsername() + "! To change your password, please click the following link:</p>" +
-                    "<div style='background-color: #191a18; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                    "<a style='text-decoration: none; color: white; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                    "<div style='background-color: yellow; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
+                    "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
                     "Change password" +
                     "</a>" +
                     "</div><hr>" +
@@ -272,6 +275,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //gets token and password, if token is correct, it changes user password and authenticate him
     @Override
     public void recoveryChangePassword(String token, String password, HttpServletResponse response) {
         try {
@@ -289,6 +293,17 @@ public class UserServiceImpl implements UserService {
             System.err.println("Failed to change authenticated user and change password: " + e.getMessage());
         }
     }
+
+    //gets token via cookie in request and gets username from token, then returns it
+    @Override
+    public String getUsername(HttpServletRequest request) {
+        String token = jwtService.extractTokenFromCookie(request);
+        if (token != null) {
+            return jwtService.extractUsername(token);
+        }
+        return null;
+    }
+
 
     //method to create cookie
     private ResponseCookie createCookie(String token, long time) {

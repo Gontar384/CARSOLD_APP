@@ -8,7 +8,7 @@ interface LoginBannerProps {
 
 //animated banner which pops (used in when user logs in and when user changes password)
 //short-time banner, no disappearing mechanism
-const ShortNoDisBanner: React.FC<LoginBannerProps> = ({text, lowerBar}: {text: string, lowerBar: boolean}) => {
+const ShortNoDisappearBanner: React.FC<LoginBannerProps> = ({text, lowerBar}: {text: string, lowerBar: boolean}) => {
     return (
         <div className={`flex justify-center items-center fixed ${lowerBar ? "bottom-10" : "bottom-0"} sm:bottom-0 left-0 
          right-0 h-12 xs:h-14 lg:h-16 2xl:h-[70px] bg-gradient-to-r from-lowLime to-lowLime via-coolGreen z-50 animate-slideIn`}>
@@ -17,4 +17,4 @@ const ShortNoDisBanner: React.FC<LoginBannerProps> = ({text, lowerBar}: {text: s
     )
 }
 
-export default ShortNoDisBanner;
+export default ShortNoDisappearBanner;

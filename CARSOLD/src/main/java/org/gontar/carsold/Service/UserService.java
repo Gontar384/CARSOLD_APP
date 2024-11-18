@@ -3,6 +3,9 @@ package org.gontar.carsold.Service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
+import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
 
 public interface UserService {
     boolean findUsername(String username);
@@ -19,4 +22,5 @@ public interface UserService {
     boolean validateUser(String login, String password);
     void sendPasswordRecoveryEmail(String email);
     void recoveryChangePassword(String token, String password, HttpServletResponse response);
+    String getUsername(HttpServletRequest request);
 }

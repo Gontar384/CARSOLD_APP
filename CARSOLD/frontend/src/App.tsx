@@ -2,8 +2,8 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoutes from "./Config/AuthConfig/PrivateRoutes.tsx";
 import PublicRoutes from "./Config/AuthConfig/PublicRoutes.tsx";
 import {ReactElement} from "react";
-import Authentication from "./LoginRegister/Authentication.tsx";
-import AccountActivation from "./LoginRegister/AccountActivation.tsx";
+import Authentication from "./UserManagement/AuthenticationPage/Authentication.tsx";
+import AccountActivation from "./UserManagement/AccountActivation.tsx";
 import Home from "./Home/Home.tsx";
 import {AuthProvider} from "./Config/AuthConfig/AuthProvider.tsx";
 import LoadingManager from "./Config/LoadingConfig/LoadingManager.tsx";
@@ -12,8 +12,8 @@ import CookieBanner from "./Banners/CookieBanner.tsx";
 import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import TokenManager from "./Config/TokenConfig/TokenManager.tsx";
 import {DarkModeProvider} from "./Config/DarkMode/DarkModeProvider.tsx";
-import PasswordRecovery from "./LoginRegister/PasswordRecovery.tsx";
-import PasswordRecoveryChange from "./LoginRegister/PasswordRecoveryChange.tsx";
+import PasswordRecovery from "./UserManagement/PasswordRecovery.tsx";
+import PasswordRecoveryChange from "./UserManagement/PasswordRecoveryChange.tsx";
 
 function App(): ReactElement {
 

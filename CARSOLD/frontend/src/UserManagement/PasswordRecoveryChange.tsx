@@ -1,10 +1,11 @@
 import NavBar from "../NavBar/NavBar.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useEffect, useState} from "react";
-import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
+import {faCircleCheck, faCircleExclamation, faEye, faEyeSlash, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
-import ShortNoDisBanner from "../AnimatedBanners/ShortNoDisBanner.tsx";
+import ShortNoDisappearBanner from "../AnimatedBanners/ShortNoDisappearBanner.tsx";
+import {checksPassword} from "./AuthenticationPage/Form.tsx";
 
 function PasswordRecoveryChange() {
 
@@ -17,14 +18,6 @@ function PasswordRecoveryChange() {
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [repPasswordIcon, setRepPasswordIcon] = useState<IconDefinition | null>(null);
-
-    //checks if password is strong enough
-    const checksPassword = (password: string): boolean => {
-        if (password.trim().length < 7 || password.trim().length > 25) {
-            return false;
-        }
-        return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
-    }
 
     //live checking if password is strong enough, displays info for user
     useEffect(() => {
@@ -100,7 +93,7 @@ function PasswordRecoveryChange() {
                      });
                     if (response.data) {
                         setIsChanged(true);
-                        setTimeout(async (): Promise<void>=>{
+                        setTimeout(async ()=>{
                             await checkAuth();
                         }, 2500)
                     }
@@ -118,6 +111,16 @@ function PasswordRecoveryChange() {
     //state defining lower bar 'presence' for animated bar
     const [lowerBar, setLowerBar] = useState<boolean>(false);
 
+    //states for icon, which changes password input
+    const [inputType, setInputType] = useState<string>("password")
+    const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
+
+    //changes password input
+    const toggleInput = () => {
+        setInputType(inputType === "password" ? "text" : "password");
+        setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
+    }
+
     return (
         <>
             <NavBar setLowerBar={setLowerBar}/>
@@ -132,7 +135,7 @@ function PasswordRecoveryChange() {
                     <div className="relative w-7/12">
                         <input
                             className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
-                            placeholder="New password" value={password}
+                            placeholder="New password" type={inputType} value={password}
                             onChange={(e) => setPassword(e.target.value.trim())}/>
                         {passwordIcon && <FontAwesomeIcon icon={passwordIcon}
                                                           className="text-xl xs:text-[26px] 2xl:text-[30px] 3xl:text-[34px]
@@ -144,11 +147,16 @@ function PasswordRecoveryChange() {
                     <div className="relative w-7/12">
                         <input
                             className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
-                            placeholder="Repeat password" value={repPassword}
+                            placeholder="Repeat password" type={inputType} value={repPassword}
                             onChange={(e) => setRepPassword(e.target.value.trim())}/>
                         {repPasswordIcon && <FontAwesomeIcon icon={repPasswordIcon}
                                                              className="text-xl xs:text-[26px] 2xl:text-[30px] 3xl:text-[34px]
                                                               absolute right-1 xs:right-[6px] 2xl:right-[7px] 3xl:right-2 top-[5px] opacity-90"/>}
+                        <button className="absolute right-0 cursor-pointer"
+                                onClick={toggleInput}>
+                            <FontAwesomeIcon icon={eyeIcon}
+                                             className="absolute right-1 top-9 xs:top-12 2xl:top-14 3xl:top-16 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl"/>
+                        </button>
                     </div>
                     <button className="w-24 xs:w-32 2xl:w-44 3xl:w-48 h-7 xs:h-8 2xl:h-11 3xl:h-12 mt-2
                      3xl:mt-3 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md shadow-xl hover:bg-white cursor-pointer"
@@ -157,7 +165,7 @@ function PasswordRecoveryChange() {
                     </button>
                 </div>
             </div>
-            {isChanged ? <ShortNoDisBanner text={"Password successfully changed!" } lowerBar={lowerBar}/> : null}
+            {isChanged ? <ShortNoDisappearBanner text={"Password successfully changed!" } lowerBar={lowerBar}/> : null}
         </>
     )
 }

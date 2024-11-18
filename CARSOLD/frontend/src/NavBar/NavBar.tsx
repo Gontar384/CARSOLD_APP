@@ -16,6 +16,7 @@ import {useNavigate} from "react-router-dom";
 import {useDarkMode} from "../Config/DarkMode/DarkModeProvider.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {useLoading} from "../Config/LoadingConfig/LoadingProvider.tsx";
 
 //navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
 function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>> }): ReactElement {
@@ -128,6 +129,31 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         }, 1000);
     }
 
+    //state for user details (basically username fetched)
+    const [userDetails, setUserDetails] = useState<string>("");
+
+    //global state used for loading, when fetching data
+    const {setAppLoading} = useLoading();
+
+    //fetches username to user details
+    useEffect(() => {
+        const handleUsernameFetch = async () => {
+            if (!isAuthenticated) return;
+            setAppLoading(true);     //starts loading before auth
+            try {
+                const response = await api.get('api/get-username');
+                if (response.data.username) {
+                    setUserDetails(response.data.username);
+                }
+            } catch (error) {
+                console.log("Error fetching username: ", error);
+            } finally {
+                setAppLoading(false);
+            }
+        }
+        handleUsernameFetch();
+    }, [isAuthenticated]);
+
     return (
         <>
             {isWide ? (
@@ -165,11 +191,22 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             <p className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">Add
                                 Offer</p>
                         </div>
-                        {/*login button / user details*/}
-                        <div
-                            className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
-                            <p>Log in | Register</p>
-                        </div>
+                        {/*user details / login button*/}
+                        {isAuthenticated ? (
+                            <button className="flex flex-row items-center gap-[6px]">
+                                <FontAwesomeIcon icon={faUser} className="sm:mb-[2px] lg:mt-[3px] xl:mt-[2px] 2xl:mt-[5px] 3xl:mt-[2px] text-xs
+                                 lg:text-sm xl:text-base 2xl:text-xl 3xl:text-2xl"/>
+                                <div
+                                    className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
+                                    {userDetails}
+                                </div>
+                            </button>
+                        ) : (
+                            <button onClick={() => navigate('/authenticate')}
+                                    className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
+                                <p>Log in | Register</p>
+                            </button>
+                        )}
                     </div>
                 </>
             ) : (

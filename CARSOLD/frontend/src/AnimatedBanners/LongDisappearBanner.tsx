@@ -9,7 +9,7 @@ interface RegisterBannerProps {
 
 //animated banner which pops (used in when user register and when user send email to change password)
 //long-time banner, with disappearing mechanism
-const LongDisBanner: React.FC<RegisterBannerProps> = ({text, onAnimationEnd, lowerBar}: { text: string, onAnimationEnd: () => void, lowerBar: boolean }) => {
+const LongDisappearBanner: React.FC<RegisterBannerProps> = ({text, onAnimationEnd, lowerBar}: { text: string, onAnimationEnd: () => void, lowerBar: boolean }) => {
     const [animation, setAnimation] = useState<string>('animate-slideIn');   //changes animation
 
     useEffect(() => {
@@ -37,4 +37,4 @@ const LongDisBanner: React.FC<RegisterBannerProps> = ({text, onAnimationEnd, low
     )
 }
 
-export default LongDisBanner;
+export default LongDisappearBanner;

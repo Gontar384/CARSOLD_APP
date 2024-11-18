@@ -2,16 +2,16 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash, faCircleExclamation, faCircleCheck, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {ReactElement, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
-import ShortNoDisBanner from "../AnimatedBanners/ShortNoDisBanner.tsx";
-import WrongPasswordBanner from "../AnimatedBanners/WrongPasswordBanner.tsx";
-import LongDisBanner from "../AnimatedBanners/LongDisBanner.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from "../../Config/AuthConfig/AuthProvider.tsx";
+import ShortNoDisappearBanner from "../../AnimatedBanners/ShortNoDisappearBanner.tsx";
+import WrongPasswordBanner from "../../AnimatedBanners/WrongPasswordBanner.tsx";
+import LongDisappearBanner from "../../AnimatedBanners/LongDisappearBanner.tsx";
 import {useNavigate} from "react-router-dom";
 
-//this function-component is basically handling register and login processes and
-//gives info about to user and navigates user
+//this function-component is basically handling register and login processes
 //gets 'choose' state updates from 'Headings' and 'lowerBar' state from 'NavBar'
+//some functions used in 'Form' are below main component, because they're exported and used in other components
 function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): ReactElement {
 
     //user object for register
@@ -82,52 +82,12 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
         return emailRegex.test(email);
     };
 
-    //checks if email already exists
-    const emailExists = async (email: string) => {
-        return await api.get(`api/auth/register/check-email`, {
-            params: {email: email},
-        });
-    };
-
     //checks if username already exists
     const usernameExists = async (username: string) => {
         return await api.get(`api/auth/register/check-username`, {
             params: {username: username},
         });
     };
-
-    //checks if user's account is active
-    const isActive = async (login: string) => {
-        return await api.get(`api/auth/check-active`, {
-            params: {login: login},
-        });
-    };
-
-    //checks if password is strong enough
-    const checksPassword = (password: string): boolean => {
-
-        if (password.trim().length < 7 || password.trim().length > 25) {
-            return false;
-        }
-        return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
-    }
-
-    //function which can set debounced value for useEffects to avoid too much requests sent
-    const useDebouncedValue = <T, >(value: T, delay: number): T => {
-        const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedValue(value);
-            }, delay);
-
-            return () => {
-                clearTimeout(handler);
-            };
-        }, [value, delay]);
-
-        return debouncedValue;
-    }
 
     //email info states
     const [emailIcon, setEmailIcon] = useState<IconDefinition | null>(null);
@@ -363,13 +323,6 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
         }
     }
 
-    //checks if user were authenticated via Google and when, prevents him from using normal login
-    const isOauth2 = async (login: string) => {
-        return await api.get(`api/auth/check-oauth2`, {
-            params: {login: login},
-        });
-    };
-
     //login info states
     const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);
     const [loginInfo, setLoginInfo] = useState<string>("");
@@ -493,7 +446,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                                     setTermsCheck(e.target.checked)
                                 }}/>
                                 <label htmlFor="myCheckbox">Accept</label>
-                                <a href="" className="underline ml-1">terms of use.</a>
+                                <button className="underline ml-1">terms of use.</button>
                                 {/*password button*/}
                                 <button className="absolute right-0 cursor-pointer"
                                         onClick={toggleInput}>
@@ -510,7 +463,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                     </div>
                     {/*banner*/}
                     {isRegistered ?
-                        <LongDisBanner
+                        <LongDisappearBanner
                             text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
                             lowerBar={lowerBar} onAnimationEnd={() => setIsRegistered(false)}/> : null}
                 </>
@@ -550,7 +503,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </button>
                     </div>
                     {/*banners*/}
-                    {isLoggedIn ? <ShortNoDisBanner text={"Logged in successfully!"} lowerBar={lowerBar}/> : null}
+                    {isLoggedIn ? <ShortNoDisappearBanner text={"Logged in successfully!"} lowerBar={lowerBar}/> : null}
                     {wrongPassword ? <WrongPasswordBanner lowerBar={lowerBar}
                                                           onAnimationEnd={() => setWrongPassword(false)}/> : null}
                 </>
@@ -558,5 +511,50 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
         </>
     )
 }
+//function which can set debounced value for useEffects to avoid too much requests sent
+export const useDebouncedValue = <T, >(value: T, delay: number): T => {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
+
+//checks if email already exists
+export const emailExists = async (email: string) => {
+    return await api.get(`api/auth/register/check-email`, {
+        params: {email: email},
+    });
+};
+
+//checks if user's account is active
+export const isActive = async (login: string) => {
+    return await api.get(`api/auth/check-active`, {
+        params: {login: login},
+    });
+};
+
+//checks if password is strong enough
+export const checksPassword = (password: string): boolean => {
+    if (password.trim().length < 7 || password.trim().length > 25) {
+        return false;
+    }
+    return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
+}
+
+//checks if user were authenticated via Google and when, prevents him from using normal login
+export const isOauth2 = async (login: string) => {
+    return await api.get(`api/auth/check-oauth2`, {
+        params: {login: login},
+    });
+};
 
 export default Form;

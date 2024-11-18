@@ -138,4 +138,12 @@ public class UserController {
         service.recoveryChangePassword(token, password, response);
         return ResponseEntity.ok("Password changed");
     }
+
+    @GetMapping("/get-username")
+    public ResponseEntity<Map<String,String>>getUsername(HttpServletRequest request){
+        HashMap<String, String> usernameResponse = new HashMap<>();
+        String username = service.getUsername(request);
+        usernameResponse.put("username", username);
+        return ResponseEntity.ok(usernameResponse);
+    }
 }

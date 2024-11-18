@@ -30,7 +30,7 @@ function AccountActivation(): ReactElement {
                 console.error("Error activating account: ", error);
             }};
         if (token) {
-                setTimeout(async(): Promise<void> => {
+                setTimeout(async () => {
                     await activateAccount(token);
                     await checkAuth();
                 }, 4500)

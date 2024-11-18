@@ -3,46 +3,16 @@ import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import LongDisBanner from "../AnimatedBanners/LongDisBanner.tsx";
+import LongDisappearBanner from "../AnimatedBanners/LongDisappearBanner.tsx";
+import {emailExists, isActive, isOauth2, useDebouncedValue} from "./AuthenticationPage/Form.tsx";
 
 function PasswordRecovery() {
 
     //email state
     const [email, setEmail] = useState<string>("");
 
-    //function which can set debounced value for useEffects to avoid too much requests sent
-    const useDebouncedValue = <T, >(value: T, delay: number): T => {
-        const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedValue(value);
-            }, delay);
-
-            return () => {
-                clearTimeout(handler);
-            };
-        }, [value, delay]);
-
-        return debouncedValue;
-    }
-
     //delays check 300 millis
     const debouncedEmail: string = useDebouncedValue(email, 300);
-
-    //checks if email already exists
-    const emailExists = async (email: string) => {
-        return await api.get(`api/auth/register/check-email`, {
-            params: {email: email},
-        });
-    };
-
-    //checks if user's account is active
-    const isActive = async (login: string) => {
-        return await api.get(`api/auth/check-active`, {
-            params: {login: login},
-        });
-    };
 
     //email info states
     const [emailIcon, setEmailIcon] = useState<IconDefinition | null>(null);
@@ -55,10 +25,11 @@ function PasswordRecovery() {
             if (email.length <= 30) {
                 const checkEmail = async () => {
                     try {
-                        const response = await emailExists(email);
+                        const emailResponse = await emailExists(email);
                         const isActiveResponse = await isActive(email);
+                        const isOauth2Response = await isOauth2(email);
                         if (isMounted) {
-                            if (response.data.exists && isActiveResponse.data.checks) {
+                            if (emailResponse.data.exists && isActiveResponse.data.checks && !isOauth2Response.data.checks) {
                                 setEmailIcon(faCircleCheck);
                             } else {
                                 setEmailIcon(faCircleExclamation);
@@ -93,7 +64,8 @@ function PasswordRecovery() {
         if (email.length >= 5 && email.length <= 30) {
             const emailResponse = await emailExists(email);
             const activeResponse = await isActive(email);
-            if (emailResponse.data.exists && activeResponse.data.checks) {
+            const isOauth2Response = await isOauth2(email);
+            if (emailResponse.data.exists && activeResponse.data.checks && !isOauth2Response.data.checks) {
                 setIsDisabledLog(true);
                 try {
                     const response = await api.get('api/auth/password-recovery', {
@@ -129,8 +101,8 @@ function PasswordRecovery() {
                     </p>
                     <div className="relative w-7/12">
                         <input
-                            className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
-                            placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value.trim())}/>
+                            className="w-full 3xl:h-11 p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
+                            placeholder="E-mail" type="text" value={email} onChange={(e) => setEmail(e.target.value.trim())}/>
                         {emailIcon && <FontAwesomeIcon icon={emailIcon}
                                                        className="text-xl xs:text-[26px] 2xl:text-[30px] 3xl:text-[34px] absolute
                                                        right-1 xs:right-[6px] 2xl:right-[7px] 3xl:right-2 top-[5px] opacity-90"/>}
@@ -143,8 +115,8 @@ function PasswordRecovery() {
                 </div>
             </div>
             {/*banner*/}
-            {isEmailSent ? <LongDisBanner text={"Email with link has been sent!"} lowerBar={lowerBar}
-                                          onAnimationEnd={() => setIsEmailSent(true)}/> : null}
+            {isEmailSent ? <LongDisappearBanner text={"Email with link has been sent!"} lowerBar={lowerBar}
+                                                onAnimationEnd={() => setIsEmailSent(true)}/> : null}
         </>
     )
 }
