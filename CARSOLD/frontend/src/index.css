@@ -9,3 +9,15 @@
         box-sizing: border-box;
     }
 }
+
+body {
+    @apply font-global;
+}
+
+.shadow-top {
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2); /*top of element shadow */
+}
+
+.shadow-bottom {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /*bottom of element shadow */
+}

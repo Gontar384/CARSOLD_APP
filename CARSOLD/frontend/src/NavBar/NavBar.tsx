@@ -1,4 +1,4 @@
-import {Dispatch, ReactElement, SetStateAction, useEffect, useRef, useState} from "react";
+import React, {Dispatch, ReactElement, SetStateAction, useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faAddressCard,
@@ -17,6 +17,7 @@ import {useDarkMode} from "../Config/DarkMode/DarkModeProvider.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {useLoading} from "../Config/LoadingConfig/LoadingProvider.tsx";
+import {useDebouncedValue} from "../UserManagement/AuthenticationPage/Form.tsx";
 
 //navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
 function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>> }): ReactElement {
@@ -42,26 +43,38 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     //ref which checks if user clicked outside the search bar
     const componentRef = useRef<HTMLDivElement | null>(null);
 
+    //magnifier icon animation
+    const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
+
     //handles input click
     const handleClick = () => {
-        setIsClicked(true);
+        setMagnifierAnimation("animate-disappear");
+        setTimeout(() => {
+            setMagnifierAnimation(null)
+            setIsClicked(true);
+        }, 100)
     }
 
     //offs input backlight
     const handleClickOutside = (event: MouseEvent) => {
         if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+            setMagnifierAnimation("animate-disappearRev");
             setIsClicked(false);
+            setTimeout(() => {
+                setMagnifierAnimation(null)
+            }, 100)
         }
     }
 
     //live checks if user click outside input and then uses handleClickOutside function
     useEffect(() => {
+        if (!isClicked) return;
         document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         }
-    }, [])
+    }, [isClicked])
 
     //navigate to change paths when clicking buttons
     const navigate = useNavigate();
@@ -88,7 +101,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     const handleLowerBar = () => {
         if (isDisabled) return;
         setIconAnimation((prev) =>
-            prev === null ? "animate-flip" : prev === "animate-flip" ? "animate-flipRev" : "animate-flip");
+            prev === "animate-flip" ? "animate-flipRev" : "animate-flip");
         setBarAnimation((prev) =>
             prev === "animate-slideDown" ? "animate-slideUp" : "animate-slideDown");
         if (isVisible === "hidden") {
@@ -108,6 +121,13 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         }
     }
 
+    //resets iconAnimation state
+    useEffect(() => {
+        if (isWide) {
+            setIconAnimation(null)
+        }
+    }, [isWide]);
+
     //globally shared state and function to toggle dark mode
     const {darkMode, toggleDarkMode} = useDarkMode();
 
@@ -116,6 +136,11 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         toggleDarkMode();
         setModeIconAnimation(!darkMode ? "animate-flip" : "animate-flipRev");
     }
+
+    //resets modeIconAnimation state
+    useEffect(() => {
+        setModeIconAnimation(null);
+    }, [isWide]);
 
     //globally shared state to check authentication
     const {checkAuth} = useAuth();
@@ -154,12 +179,69 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         handleUsernameFetch();
     }, [isAuthenticated]);
 
+    //state for user icon animation
+    const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
+
+    //state to activate bar
+    const [barActive, setBarActive] = useState<boolean>(false);
+
+    //state to monitor bar hover
+    const [barHovered, setBarHovered] = useState<boolean>(false);
+
+    //debounce value to delay deactivation
+    const debouncedHover: boolean = useDebouncedValue(barHovered, 300)
+
+    //state which prevents icon animating too much
+    const [animationActive, setAnimationActive] = useState<boolean>(false);
+
+    //shows big screen bar, triggers animation
+    const handleActivateBar = () => {
+        if (!animationActive) {
+            setUserIconAnimation("animate-pop");
+            setAnimationActive(true);
+        }
+        setBarActive(true);
+        setBarHovered(true);
+    }
+
+    //deactivates big screen bar
+    const handleDisactivateBar = () => {
+        setUserIconAnimation(null);
+        setBarHovered(false);
+    }
+
+    //sets bar deactivated, delayed by 'debouncedHover'
+    useEffect(() => {
+        if (!debouncedHover && !barHovered) {
+            setBarActive(false);
+            setAnimationActive(false);
+        }
+    }, [debouncedHover, barHovered]);
+
+    //toggles bar activation for mobile devices
+    const handleToggleBar = () => {
+        setBarActive((prev) => !prev);
+        if (!barActive && !animationActive) {
+            setUserIconAnimation("animate-pop");
+            setAnimationActive(true);
+        } else {
+            setUserIconAnimation(null);
+            setAnimationActive(false);
+        }
+    };
+
+    //prevents closing when interacting with the dropdown buttons
+    const handleDropdownInteraction = (
+        event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+        event.stopPropagation(); //prevents closing the dropdown buttons when clicking on them
+    };
+
     return (
         <>
             {isWide ? (
                 <>{/*big screen*/}
                     <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
-                     w-full h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 border-b-2 border-black bg-lime z-50">
+                     w-full h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
                         {/*logo*/}
                         <button className="flex flex-row justify-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl
                          2xl:text-[44px] 3xl:text-[50px]" onClick={() => navigate('/home')}>
@@ -172,9 +254,9 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             <div className="relative" ref={componentRef}>
                                 {!isClicked && search === "" ?
                                     <FontAwesomeIcon icon={faMagnifyingGlass}
-                                                     className="absolute top-[6px] sm:top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px]
-                                                     left-[7px] sm:left-[8px] lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[13px]
-                                                     sm:text-[16px] lg:text-[20px] xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px]"/>
+                                                     className={'absolute top-[6px] xs:top-[1px] sm:top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px]left-[7px]' +
+                                                         ' sm:left-[8px] lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[13px] sm:text-[16px] lg:text-[20px] ' +
+                                                         `xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] ${magnifierAnimation}`}/>
                                     : null}
                                 <input onClick={handleClick} className={`xs:w-52 sm:w-56 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-5 sm:h-6 lg:h-7 xl:h-8
                                  2xl:h-10 3xl:h-11 p-2 text-base sm:text-[18px] lg:text-[19px] xl:text-2xl 2xl:text-[25px] 3xl:text-[32px] border border-solid 
@@ -193,14 +275,24 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                         </div>
                         {/*user details / login button*/}
                         {isAuthenticated ? (
-                            <button className="flex flex-row items-center gap-[6px]">
-                                <FontAwesomeIcon icon={faUser} className="sm:mb-[2px] lg:mt-[3px] xl:mt-[2px] 2xl:mt-[5px] 3xl:mt-[2px] text-xs
-                                 lg:text-sm xl:text-base 2xl:text-xl 3xl:text-2xl"/>
-                                <div
-                                    className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
-                                    {userDetails}
+                            <div className="h-full relative"
+                                 onMouseLeave={handleDisactivateBar}>
+                                <button onMouseEnter={handleActivateBar} onTouchStart={handleToggleBar}
+                                        className="flex flex-row items-center h-full gap-[6px]">
+                                    <FontAwesomeIcon icon={faUser}
+                                                     className={'sm:mb-[2px] lg:mt-[3px] xl:mt-[2px] 2xl:mt-[3px] 3xl:mt-[1px] text-xs' +
+                                                         `lg:text-sm xl:text-base 2xl:text-xl 3xl:text-2xl ${userIconAnimation}`}/>
+                                    <div
+                                        className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
+                                        {userDetails}
+                                    </div>
+                                </button>
+                                <div onMouseEnter={handleActivateBar} onMouseLeave={handleDisactivateBar}
+                                     onClick={handleDropdownInteraction} onTouchStart={handleDropdownInteraction}
+                                     className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center absolute right-0 border-2 border-black`}>
+                                    <button onClick={() => console.log("works!")}>My account</button>
                                 </div>
-                            </button>
+                            </div>
                         ) : (
                             <button onClick={() => navigate('/authenticate')}
                                     className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
@@ -213,7 +305,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                 <> {/*mobile only*/}
                     {/*upper bar*/}
                     <div
-                        className="flex flex-row items-center h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime z-50">
+                        className="flex flex-row items-center h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime shadow-bottom z-50">
                         <button onClick={handleLowerBar} className="w-1/6 text-base xs:text-xl ">
                             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
                         </button>
@@ -229,7 +321,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             <div className="relative w-9/12" ref={componentRef}>
                                 {!isClicked && search === "" ?
                                     <FontAwesomeIcon icon={faMagnifyingGlass}
-                                                     className="absolute top-[6px] xs:top-[5px] left-2 text-[13px] xs:text-[16px]"/>
+                                                     className={`absolute top-[6px] xs:top-1 left-2 text-[13px] xs:text-[16px] ${magnifierAnimation}`}/>
                                     : null}
                                 <input onClick={handleClick} className={`w-full h-5 xs:h-6 p-1 text-base xs:text-xl border border-solid
                                  border-black transition-all duration-200 ease-in-out 
@@ -240,7 +332,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                     </div>
                     {/*lower bar*/}
                     <div
-                        className={`${isVisible} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime z-50 ${barAnimation}`}>
+                        className={`${isVisible} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
                         <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
                             <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Add Offer</p>
