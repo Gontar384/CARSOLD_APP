@@ -16,7 +16,7 @@ const CookieBanner: React.FC = () => {
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-black
               text-sm sm:text-base 2xl:text-xl text-white text-center z-50">
                 <p>We use cookies for security purposes. By using our site, you consent to our use of cookies.</p>
-                <button onClick={handleDismiss} className="mt-2 px-4 py-2 bg-lime text-white rounded">
+                <button onClick={handleDismiss} className="mt-2 px-4 py-2 bg-lime text-white rounded-sm">
                     Got it!
                 </button>
             </div>

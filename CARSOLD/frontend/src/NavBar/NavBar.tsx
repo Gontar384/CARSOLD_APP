@@ -1,16 +1,16 @@
 import React, {Dispatch, ReactElement, SetStateAction, useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {
     faAddressCard,
     faBars,
-    faCircleHalfStroke,
     faHeart,
     faMagnifyingGlass,
     faMessage,
     faPlus,
     faRightFromBracket,
     faSquarePlus,
-    faUser
+    faUser, faCircleUser, faCircle, faMoon, faSun
 } from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import {useDarkMode} from "../Config/DarkMode/DarkModeProvider.tsx";
@@ -91,8 +91,10 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     //state which prevents user from spamming 'bar' button
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-    //state which animates dark mode icon
-    const [modeIconAnimation, setModeIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);
+    //states which animates dark mode icons
+    const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);
+    const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
+
 
     //state which says if user is authenticated or not
     const {isAuthenticated} = useAuth();
@@ -116,6 +118,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
             setIsDisabled(false);
         }, 300)
         setModeIconAnimation(null);
+        setModeIcon1Animation(null);
         if (!isAuthenticated) {   //if user isn't authenticated it sets info about lower bar 'presence' info for animated bars
             setLowerBar?.((prev) => !prev);
         }
@@ -134,12 +137,14 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     //handles dark mode change
     const handleDarkMode = () => {
         toggleDarkMode();
-        setModeIconAnimation(!darkMode ? "animate-flip" : "animate-flipRev");
+        setModeIconAnimation(!darkMode ? "animate-fill" : "animate-empty");
+        setModeIcon1Animation(!darkMode ? "animate-empty" : "animate-fill");
     }
 
     //resets modeIconAnimation state
     useEffect(() => {
         setModeIconAnimation(null);
+        setModeIcon1Animation(null);
     }, [isWide]);
 
     //globally shared state to check authentication
@@ -215,6 +220,8 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         if (!debouncedHover && !barHovered) {
             setBarActive(false);
             setAnimationActive(false);
+            setModeIconAnimation(null);
+            setModeIcon1Animation(null);
         }
     }, [debouncedHover, barHovered]);
 
@@ -235,6 +242,11 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation(); //prevents closing the dropdown buttons when clicking on them
     };
+
+    //states to monitor and display messages and followed count
+    const [followedCount, setFollowedCount] = useState<number>(0);
+    const [messageCount, setMessageCount] = useState<number>(0);
+
 
     return (
         <>
@@ -270,27 +282,72 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                          cursor-pointer hover:bg-white hover:rounded-sm">
                             <FontAwesomeIcon icon={faPlus}
                                              className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl"/>
-                            <p className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">Add
-                                Offer</p>
+                            <p className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">
+                                Add Offer</p>
                         </div>
                         {/*user details / login button*/}
                         {isAuthenticated ? (
                             <div className="h-full relative"
+                                 onMouseEnter={handleActivateBar}
                                  onMouseLeave={handleDisactivateBar}>
-                                <button onMouseEnter={handleActivateBar} onTouchStart={handleToggleBar}
+                                <button onTouchStart={handleToggleBar}
                                         className="flex flex-row items-center h-full gap-[6px]">
-                                    <FontAwesomeIcon icon={faUser}
-                                                     className={'sm:mb-[2px] lg:mt-[3px] xl:mt-[2px] 2xl:mt-[3px] 3xl:mt-[1px] text-xs' +
-                                                         `lg:text-sm xl:text-base 2xl:text-xl 3xl:text-2xl ${userIconAnimation}`}/>
+                                    <FontAwesomeIcon icon={faCircleUser}
+                                                     className={`sm:mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
+                                                     xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
                                     <div
                                         className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
                                         {userDetails}
                                     </div>
                                 </button>
-                                <div onMouseEnter={handleActivateBar} onMouseLeave={handleDisactivateBar}
-                                     onClick={handleDropdownInteraction} onTouchStart={handleDropdownInteraction}
-                                     className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center absolute right-0 border-2 border-black`}>
-                                    <button onClick={() => console.log("works!")}>My account</button>
+                                <div
+                                    onTouchStart={handleDropdownInteraction}
+                                    className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
+                                    2xl:w-[148px] 3xl:w-[170px] absolute -left-[15px] lg:-left-[19px] 2xl:-left-[23px] 3xl:-left-[24px] bg-lime shadow-bottom`}>
+                                    <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] text-[13px] lg:text-[17px] xl:text-[20px]
+                                     2xl:text-[25px] 3xl:text-[30px] hover:bg-white">My account
+                                    </button>
+                                    <button className="flex items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
+                                     2xl:text-[23px] 3xl:text-[28px] hover:bg-white">My ads
+                                    </button>
+                                    <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                     text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Followed
+                                        <div className={`relative mt-[1px] ${followedCount === 0 ? "hidden" : ""}`}>
+                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                             className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                            <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                            2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followedCount}</p>
+                                        </div>
+                                    </button>
+                                    <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                     text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Messages
+                                        <div className={`relative mt-[1px] ${messageCount === 0 ? "hidden" : ""}`}>
+                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                             className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                            <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                            2xl:text-[16px] 3xl:text-[20px] text-white absolute">{messageCount}</p>
+                                        </div>
+                                    </button>
+                                    <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
+                                     2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Settings
+                                    </button>
+                                    <button
+                                        className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
+                                        text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] gap-1 lg:gap-[6px] xl:gap-2 2xl:gap-[10px] 3xl:gap-3 hover:bg-white`}
+                                        onClick={handleDarkMode}>Mode
+                                        <div className="relative">
+                                            <FontAwesomeIcon icon={faMoon}
+                                                             className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
+                                                             lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
+                                            <FontAwesomeIcon icon={faSun}
+                                                             className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
+                                                             lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
+                                        </div>
+                                    </button>
+                                    <button className="flex items-center justify-center w-full h-[21px] lg:h-[27px] xl:h-[28px] 2xl:h-[38px] 3xl:h-[46px] hover:bg-white text-[12px] lg:text-[16px]
+                                     xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px]"
+                                            onClick={logout}>Logout
+                                    </button>
                                 </div>
                             </div>
                         ) : (
@@ -337,22 +394,28 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Add Offer</p>
                         </button>
-                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
+                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative">
                             <FontAwesomeIcon icon={faHeart} className="text-xl xs:text-[22px]"/>
+                            <p className={`text-[9px] xs:text-[10px] top-[7px] xs:top-[8px] ${followedCount === 0 ? "hidden" : ""} text-white  absolute`}>{followedCount}</p>
                             <p className="text-[9px] xs:text-[10px]">Followed</p>
                         </button>
-                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
+                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative">
                             <FontAwesomeIcon icon={faMessage} className="text-xl xs:text-[22px]"/>
+                            <p className={`text-[9px] xs:text-[10px] top-[6px] ${messageCount === 0 ? "hidden" : ""} text-white  absolute`}>{messageCount}</p>
                             <p className="text-[9px] xs:text-[10px]">Messages</p>
                         </button>
                         <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
                             <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Account</p>
                         </button>
-                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
+                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
                                 onClick={handleDarkMode}>
-                            <FontAwesomeIcon icon={faCircleHalfStroke}
-                                             className={`text-xl xs:text-[22px] ${darkMode ? "rotate-180" : ""} ${modeIconAnimation}`}/>
+                            <FontAwesomeIcon icon={faMoon}
+                                             className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
+                            <FontAwesomeIcon icon={faSun}
+                                             className={`text-[12px] xs:text-[14px] top-[8px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
+                            <FontAwesomeIcon icon={faRegularCircle}
+                                             className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Mode</p>
                         </button>
                         {/*base on 'isAuthenticated' shows user logout button or login button*/}

@@ -23,9 +23,11 @@ export const DarkModeProvider: React.FC<{children : React.ReactNode}> = ({ child
             const newMode = !prev;
             //changes background color based on the new mode
             if (newMode) {
+                document.body.style.transition = 'background-color 0.7s ease-in-out'; //enables transition
                 document.body.style.backgroundColor = '#191a18'; //dark
                 localStorage.setItem('theme', 'dark');
             } else {
+                document.body.style.transition = 'background-color 0.7s ease-in-out'; //enables transition
                 document.body.style.backgroundColor = 'white'; //light
                 localStorage.setItem('theme', 'light');
             }

@@ -68,6 +68,14 @@ export default {
                     '50%': {transform: "scale(1.5)"},
                     '100%': {transform: "scale(1)"}
                 },
+                fill: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                empty: {
+                    '0%': { opacity: '1' },
+                    '100%': { opacity: '0' },
+                },
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -80,6 +88,8 @@ export default {
                 disappear: 'disappear 0.1s ease-in forwards',
                 disappearRev: 'disappearRev 0.1s ease-in-out forwards',
                 pop: 'pop 0.3s ease-in-out forwards',
+                fill: 'fill 0.5s linear forwards',
+                empty: 'empty 0.5s linear forwards'
             },
         },
     },

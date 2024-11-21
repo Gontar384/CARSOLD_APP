@@ -128,13 +128,13 @@ function PasswordRecoveryChange() {
                 <div className="flex flex-col items-center w-10/12 min-w-[330px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px] xl:max-w-[570px]
                 2xl:max-w-[640px] 3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px]
                 3xl:mt-[160px] pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14
-                xl:pb-16 2xl:pb-[70px] 3xl-pb-[80px] gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 bg-lime rounded-xl">
+                xl:pb-16 2xl:pb-[70px] 3xl-pb-[80px] gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 bg-lime rounded-sm">
                     <p className="w-10/12 text-sm xs:text-xl 2xl:text-2xl 3xl:text-3xl text-center">
                         Now, you can change your password:
                     </p>
                     <div className="relative w-7/12">
                         <input
-                            className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
+                            className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-sm"
                             placeholder="New password" type={inputType} value={password}
                             onChange={(e) => setPassword(e.target.value.trim())}/>
                         {passwordIcon && <FontAwesomeIcon icon={passwordIcon}
@@ -146,7 +146,7 @@ function PasswordRecoveryChange() {
                     </div>
                     <div className="relative w-7/12">
                         <input
-                            className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md"
+                            className="w-full p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-sm"
                             placeholder="Repeat password" type={inputType} value={repPassword}
                             onChange={(e) => setRepPassword(e.target.value.trim())}/>
                         {repPasswordIcon && <FontAwesomeIcon icon={repPasswordIcon}
@@ -159,7 +159,7 @@ function PasswordRecoveryChange() {
                         </button>
                     </div>
                     <button className="w-24 xs:w-32 2xl:w-44 3xl:w-48 h-7 xs:h-8 2xl:h-11 3xl:h-12 mt-2
-                     3xl:mt-3 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-md shadow-xl hover:bg-white cursor-pointer"
+                     3xl:mt-3 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-sm shadow-xl hover:bg-white cursor-pointer"
                             onClick={handlePasswordChange}>
                         Change
                     </button>

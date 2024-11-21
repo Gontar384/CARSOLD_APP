@@ -398,10 +398,10 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
             {choose ? (
                 <>{/*register form*/}
                     <div className="flex flex-col items-center w-11/12 pb-8 pt-6 2xl:pb-10 2xl:pt-8 3xl:pb-11 3xl:pt-9 mt-3 gap-6 xs:gap-7 2xl:gap-8
-                     3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-xl shadow-2xl">
+                     3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-sm shadow-2xl">
                         {/*email input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="E-mail" type="text"
+                            <input className="w-full p-1 pr-12 rounded-sm 3xl:h-12" placeholder="E-mail" type="text"
                                    value={user.email}
                                    onChange={(e) => setUser({...user, email: e.target.value.trim()})}/>
                             {emailIcon && <FontAwesomeIcon icon={emailIcon}
@@ -410,7 +410,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*username input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="Username"
+                            <input className="w-full p-1 pr-12 rounded-sm 3xl:h-12" placeholder="Username"
                                    type="text"
                                    value={user.username}
                                    onChange={(e) => setUser({...user, username: e.target.value.trim()})}/>
@@ -420,7 +420,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*password input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 pr-12 rounded-md 3xl:h-12" placeholder="Password"
+                            <input className="w-full p-1 pr-12 rounded-sm 3xl:h-12" placeholder="Password"
                                    type={inputType}
                                    value={user.password}
                                    onChange={(e) => setUser({...user, password: e.target.value.trim()})}/>
@@ -430,7 +430,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*repeated password input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 mb-4 pr-12 rounded-md 3xl:h-12" placeholder="Repeat password"
+                            <input className="w-full p-1 mb-4 pr-12 rounded-sm 3xl:h-12" placeholder="Repeat password"
                                    type={inputType}
                                    value={passwordRep} onChange={(e) => setPasswordRep(e.target.value)}/>
                             {passwordRepIcon && <FontAwesomeIcon icon={passwordRepIcon}
@@ -441,7 +441,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                                 {/*checkbox and link*/}
                                 <input id="myCheckbox" type="checkbox" className="w-[8px] h-[8px] xs:w-[10px] xs:h-[10px]
                                  2xl:w-[13px] 2xl:h-[13px] 3xl:w-[15px] 3xl:h-[15px] mr-3 bg-white border border-solid border-black
-                                 rounded-xl appearance-none checked:bg-black checked:border-white"
+                                 rounded-full appearance-none checked:bg-black checked:border-white"
                                        checked={termsCheck} onChange={(e) => {
                                     setTermsCheck(e.target.checked)
                                 }}/>
@@ -457,7 +457,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*register button*/}
                         <button
-                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-md shadow-xl hover:bg-white cursor-pointer"
+                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
                             onClick={handleRegister} disabled={isDisabledReg}>Register
                         </button>
                     </div>
@@ -470,10 +470,10 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
             ) : (
                 <> {/*login form*/}
                     <div className="flex flex-col items-center w-11/12 pb-8 pt-6 2xl:pb-10 2xl:pt-8 3xl:pb-11 3xl:pt-9 mt-3 gap-6
-                     xs:gap-7 2xl:gap-8 3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-xl shadow-2xl ">
+                     xs:gap-7 2xl:gap-8 3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-sm shadow-2xl ">
                         {/*login input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 3xl:h-12 rounded-md" placeholder="E-mail or username"
+                            <input className="w-full p-1 3xl:h-12 rounded-sm" placeholder="E-mail or username"
                                    type="text"
                                    value={login} onChange={(e) => setLogin(e.target.value.trim())}/>
                             {loginIcon && <FontAwesomeIcon icon={loginIcon}
@@ -482,7 +482,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*password input container*/}
                         <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-                            <input className="w-full p-1 mb-2 2xl:mb-3 3xl:h-12 rounded-md" placeholder="Password"
+                            <input className="w-full p-1 mb-2 2xl:mb-3 3xl:h-12 rounded-sm" placeholder="Password"
                                    type={inputType}
                                    value={password} onChange={(e) => setPassword(e.target.value.trim())}/>
                             {/*link*/}
@@ -498,7 +498,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </div>
                         {/*sign in button*/}
                         <button
-                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-md shadow-xl hover:bg-white cursor-pointer"
+                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
                             onClick={handleLogin} disabled={isDisabledLog}>Sign in
                         </button>
                     </div>

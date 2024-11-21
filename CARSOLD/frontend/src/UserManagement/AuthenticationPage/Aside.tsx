@@ -5,7 +5,7 @@ import {ReactElement} from "react";
 function Aside(): ReactElement {
     return (
         <div className="flex flex-col w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:max-w-[700px] 2xl:max-w-[850px] 3xl:max-w-[950px] 3xl:h-[650px]
-         text-md xs:text-xl 2xl:text-2xl 3xl:text-3xl p-3 rounded-xl
+         text-md xs:text-xl 2xl:text-2xl 3xl:text-3xl p-3 rounded-sm
          bg-lowLime bg-[url('src/assets/carBackground.jpg')] bg-center bg-cover">
             <p className="text-center text-xl xs:text-2xl 2xl:text-3xl 3xl:text-4xl pb-3 font-bold">Why to use?</p>
             <p><FontAwesomeIcon icon={faCheck}/>CAR$OLD is a site created with passion,
