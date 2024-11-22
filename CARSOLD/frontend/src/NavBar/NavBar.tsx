@@ -20,7 +20,7 @@ import {useLoading} from "../Config/LoadingConfig/LoadingProvider.tsx";
 import {useDebouncedValue} from "../UserManagement/AuthenticationPage/Form.tsx";
 
 //navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
-function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>> }): ReactElement {
+function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> }): ReactElement {
 
     //state defining window size
     const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
@@ -95,7 +95,6 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);
     const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
 
-
     //state which says if user is authenticated or not
     const {isAuthenticated} = useAuth();
 
@@ -120,7 +119,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
         setModeIconAnimation(null);
         setModeIcon1Animation(null);
         if (!isAuthenticated) {   //if user isn't authenticated it sets info about lower bar 'presence' info for animated bars
-            setLowerBar?.((prev) => !prev);
+            setLowerBar((prev) => !prev);
         }
     }
 
@@ -247,7 +246,6 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
     const [followedCount, setFollowedCount] = useState<number>(0);
     const [messageCount, setMessageCount] = useState<number>(0);
 
-
     return (
         <>
             {isWide ? (
@@ -303,7 +301,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                                 <div
                                     onTouchStart={handleDropdownInteraction}
                                     className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
-                                    2xl:w-[148px] 3xl:w-[170px] absolute -left-[15px] lg:-left-[19px] 2xl:-left-[23px] 3xl:-left-[24px] bg-lime shadow-bottom`}>
+                                    2xl:w-[148px] 3xl:w-[170px] absolute -left-[14px] bg-lime shadow-bottom`}>
                                     <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] text-[13px] lg:text-[17px] xl:text-[20px]
                                      2xl:text-[25px] 3xl:text-[30px] hover:bg-white">My account
                                     </button>
@@ -352,8 +350,8 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             </div>
                         ) : (
                             <button onClick={() => navigate('/authenticate')}
-                                    className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
-                                <p>Log in | Register</p>
+                                    className="text-[15px] lg:text-[18px] xl:text-[22px] 2xl:text-[27px] 3xl:text-[31px] truncate cursor-pointer">
+                                <p>Login | Register</p>
                             </button>
                         )}
                     </div>
@@ -408,7 +406,7 @@ function NavBar({setLowerBar}: { setLowerBar?: Dispatch<SetStateAction<boolean>>
                             <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Account</p>
                         </button>
-                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
+                        <button className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative`}
                                 onClick={handleDarkMode}>
                             <FontAwesomeIcon icon={faMoon}
                                              className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>

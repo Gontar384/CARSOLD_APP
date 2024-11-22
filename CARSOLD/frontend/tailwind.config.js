@@ -76,6 +76,11 @@ export default {
                     '0%': { opacity: '1' },
                     '100%': { opacity: '0' },
                 },
+                dash: {
+                    '0%': { strokeDasharray: '1, 150', strokeDashoffset: '0' },
+                    '50%': { strokeDasharray: '90, 150', strokeDashoffset: '-35' },
+                    '100%': { strokeDasharray: '90, 150', strokeDashoffset: '-125' },
+                },
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -89,7 +94,8 @@ export default {
                 disappearRev: 'disappearRev 0.1s ease-in-out forwards',
                 pop: 'pop 0.3s ease-in-out forwards',
                 fill: 'fill 0.5s linear forwards',
-                empty: 'empty 0.5s linear forwards'
+                empty: 'empty 0.5s linear forwards',
+                dash: 'dash 1.2s ease-in-out infinite',
             },
         },
     },

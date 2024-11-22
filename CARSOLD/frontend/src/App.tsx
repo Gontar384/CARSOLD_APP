@@ -14,6 +14,7 @@ import TokenManager from "./Config/TokenConfig/TokenManager.tsx";
 import {DarkModeProvider} from "./Config/DarkMode/DarkModeProvider.tsx";
 import PasswordRecovery from "./UserManagement/PasswordRecovery.tsx";
 import PasswordRecoveryChange from "./UserManagement/PasswordRecoveryChange.tsx";
+import TermsOfUse from "./UserManagement/TermsOfUse.tsx";
 
 function App(): ReactElement {
 
@@ -32,6 +33,8 @@ function App(): ReactElement {
                             <Route element={<PrivateRoutes/>}>
 
                             </Route>
+
+                            <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>

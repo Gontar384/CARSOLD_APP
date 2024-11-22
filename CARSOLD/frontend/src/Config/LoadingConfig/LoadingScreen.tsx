@@ -4,13 +4,15 @@ function LoadingScreen(): ReactElement {
     return (
         <>
             {/*background blur*/}
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50"></div>
+            <div className="fixed inset-0 bg-black bg-opacity-20 z-50"></div>
 
             {/*loading spinner*/}
-            <div className="flex items-center justify-center fixed inset-0 z-50">
-                <div className="w-14 h-14 sm:w-20 sm:h-20 2xl:w-28 2xl:h-28 border-4 sm:border-[6px] 2xl:border-8
-                 border-t-lime border-l-white border-b-lime border-r-white rounded-full animate-spinBounce">
-                </div>
+            <div className="flex items-center justify-center h-screen">
+                <svg className="w-1/6 h-1/6" viewBox="0 0 50 50">
+                    <circle className="animate-dash"
+                            cx="25" cy="25" r="20" fill="none" stroke="lime" strokeWidth="4">
+                    </circle>
+                </svg>
             </div>
         </>
     );

@@ -446,7 +446,8 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                                     setTermsCheck(e.target.checked)
                                 }}/>
                                 <label htmlFor="myCheckbox">Accept</label>
-                                <button className="underline ml-1">terms of use.</button>
+                                <button onClick={() => navigate('/termsOfUse')}
+                                        className="underline ml-1">terms of use.</button>
                                 {/*password button*/}
                                 <button className="absolute right-0 cursor-pointer"
                                         onClick={toggleInput}>

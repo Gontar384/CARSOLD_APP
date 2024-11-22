@@ -1,12 +1,13 @@
 import NavBar from "../NavBar/NavBar.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {useEffect, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import LongDisappearBanner from "../AnimatedBanners/LongDisappearBanner.tsx";
 import {emailExists, isActive, isOauth2, useDebouncedValue} from "./AuthenticationPage/Form.tsx";
+import Footer from "../NavBar/Footer.tsx";
 
-function PasswordRecovery() {
+function PasswordRecovery(): ReactElement {
 
     //email state
     const [email, setEmail] = useState<string>("");
@@ -89,13 +90,13 @@ function PasswordRecovery() {
     const [lowerBar, setLowerBar] = useState<boolean>(false);
 
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <NavBar setLowerBar={setLowerBar}/>
-            <div className="flex flex-col items-center w-full">
-                <div className="flex flex-col items-center w-10/12 min-w-[330px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px] xl:max-w-[570px] 2xl:max-w-[640px]
-                3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px] 3xl:mt-[160px] pt-5 xs:pt-7 sm:pt-8
-                lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16 2xl:pb-[70px] 3xl-pb-[80px] gap-5 xs:gap-7
-                lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 bg-lime rounded-sm">
+            <div className="flex-grow flex flex-col items-center w-full">
+                <div className="flex flex-col items-center w-10/12 min-w-[320px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px]
+                xl:max-w-[570px] 2xl:max-w-[640px] 3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px]
+                3xl:mt-[160px] pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16
+                2xl:pb-[70px] 3xl-pb-[80px] gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 bg-lime rounded-sm">
                     <p className="text-xs xs:text-base 2xl:text-xl 3xl:text-2xl w-10/12">
                         Enter your email. We will automatically send you link to change your password.
                     </p>
@@ -117,7 +118,8 @@ function PasswordRecovery() {
             {/*banner*/}
             {isEmailSent ? <LongDisappearBanner text={"Email with link has been sent!"} lowerBar={lowerBar}
                                                 onAnimationEnd={() => setIsEmailSent(true)}/> : null}
-        </>
+            <Footer lowerBar={lowerBar}/>
+        </div>
     )
 }
 
