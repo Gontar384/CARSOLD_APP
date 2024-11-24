@@ -13,7 +13,7 @@ export default {
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
                 "coolLowRed": "#f5142e",
-                "coolGreen": "#31d422"
+                "coolGreen": "#37ed26"
             },
             screens: {  //custom screens
                 "xs": "480px",
@@ -95,7 +95,7 @@ export default {
                 pop: 'pop 0.3s ease-in-out forwards',
                 fill: 'fill 0.5s linear forwards',
                 empty: 'empty 0.5s linear forwards',
-                dash: 'dash 1.2s ease-in-out infinite',
+                dash: 'dash 1.6s ease-in-out infinite',
             },
         },
     },

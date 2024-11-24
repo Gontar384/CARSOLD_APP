@@ -22,7 +22,7 @@ import {useDebouncedValue} from "../UserManagement/AuthenticationPage/Form.tsx";
 //navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
 function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> }): ReactElement {
 
-    //state defining window size
+    //states defining window size
     const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
 
     //checks window size, which defines, how navbar will look like
@@ -46,6 +46,30 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
     //magnifier icon animation
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
 
+    //button animation
+    const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
+
+    //ref to make 'search' state accessible all over all time for component
+    const searchRef = useRef<string>(""); // Ref to hold the latest value of `search`
+
+    //updates ref whenever `search` changes and sets 'isClicked' when search changes
+    //its solution for activating input by Tab
+    useEffect(() => {
+        searchRef.current = search;
+        if (search) {
+            setIsClicked(true);
+        }
+    }, [search]);
+
+    //live checks if search button is supposed to appear and disappear
+    useEffect(() => {
+        if (search) {
+            setButtonAnimation("animate-slideDown");
+        } else {
+            setButtonAnimation("animate-slideUp")
+        }
+    }, [search]);
+
     //handles input click
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -53,16 +77,25 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
             setMagnifierAnimation(null)
             setIsClicked(true);
         }, 100)
+        if (search) {
+            setButtonAnimation("animate-slideDown");
+        }
     }
 
     //offs input backlight
     const handleClickOutside = (event: MouseEvent) => {
         if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
-            setMagnifierAnimation("animate-disappearRev");
-            setIsClicked(false);
-            setTimeout(() => {
-                setMagnifierAnimation(null)
-            }, 100)
+            if (isClicked) {
+                setMagnifierAnimation("animate-disappearRev");
+                setTimeout(() => {
+                    setMagnifierAnimation(null)
+                }, 100)
+                // Use the ref to access the latest `search` value
+                if (searchRef.current) {
+                    setButtonAnimation("animate-slideUp");
+                }
+                setIsClicked(false);
+            }
         }
     }
 
@@ -123,10 +156,13 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         }
     }
 
-    //resets iconAnimation state
+    //resets iconAnimation and buttonAnimation states
     useEffect(() => {
         if (isWide) {
-            setIconAnimation(null)
+            setIconAnimation(null);
+            setButtonAnimation(null);
+        } else {
+            setButtonAnimation(null);
         }
     }, [isWide]);
 
@@ -208,6 +244,11 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         setBarHovered(true);
     }
 
+    //shows big screen user bar (basically for keyboard usage to activate bar)
+    const handleActivateBarKeyboard = () => {
+        setBarActive(prev => !prev);
+    }
+
     //deactivates big screen bar
     const handleDisactivateBar = () => {
         setUserIconAnimation(null);
@@ -251,47 +292,54 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
             {isWide ? (
                 <>{/*big screen*/}
                     <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
-                     w-full h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
+                     w-full h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
                         {/*logo*/}
-                        <button className="flex flex-row justify-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl
+                        <button className="flex flex-row justify-center text-2xl lg:text-3xl xl:text-4xl
                          2xl:text-[44px] 3xl:text-[50px]" onClick={() => navigate('/home')}>
                             <p className="text-white">CAR</p>
                             <p className="text-black">$</p>
                             <p className="text-white">OLD</p>
                         </button>
                         {/*search bar*/}
-                        <div className="flex justify-center">
-                            <div className="relative" ref={componentRef}>
-                                {!isClicked && search === "" ?
-                                    <FontAwesomeIcon icon={faMagnifyingGlass}
-                                                     className={'absolute top-[6px] xs:top-[1px] sm:top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px]left-[7px]' +
-                                                         ' sm:left-[8px] lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[13px] sm:text-[16px] lg:text-[20px] ' +
-                                                         `xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] ${magnifierAnimation}`}/>
-                                    : null}
-                                <input onClick={handleClick} className={`xs:w-52 sm:w-56 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-5 sm:h-6 lg:h-7 xl:h-8
-                                 2xl:h-10 3xl:h-11 p-2 text-base sm:text-[18px] lg:text-[19px] xl:text-2xl 2xl:text-[25px] 3xl:text-[32px] border border-solid 
-                                 border-black transition-all duration-200 ease-in-out 
-                                 ${isClicked ? 'bg-white rounded' : 'bg-lime rounded-full'}`}
-                                       onChange={e => setSearch(e.target.value)}/>
-                            </div>
+                        <div className="flex justify-center relative" ref={componentRef}>
+                            {!isClicked && search === "" ?
+                                <FontAwesomeIcon icon={faMagnifyingGlass}
+                                                 className={'absolute top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px]' +
+                                                     ' left-[8px] lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[16px] lg:text-[20px] ' +
+                                                     ` xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] z-30 ${magnifierAnimation}`}/>
+                                : null}
+                            <input onClick={handleClick} value={search} className={`w-64 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-6 lg:h-7 xl:h-8
+                                 2xl:h-10 3xl:h-11 p-1 lg:p-2 text-base lg:text-[19px] xl:text-2xl 2xl:text-[25px] 3xl:text-[32px] border border-solid 
+                                 border-black relative z-20 ${isClicked ? 'bg-white rounded-sm' : 'bg-lime rounded-full'}`}
+                                   onChange={e => setSearch(e.target.value)}/>
+                            <button
+                                className={`absolute top-0 right-0 px-[6px] lg:px-2 xl:px-[9px] 2xl:px-3 3xl:px-4 bg-lime border border-black h-6 lg:h-7 xl:h-8 
+                                2xl:h-10 3xl:h-11 text-base lg:text-[19px] xl:text-2xl z-10 2xl:text-[25px] 3xl:text-[32px] 
+                                ${buttonAnimation} ${isClicked ? 'rounded-sm' : 'rounded-r-full z-30'}
+                                ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}>
+                                Search
+                            </button>
                         </div>
                         {/*add button*/}
                         <div className="flex flex-row items-center p-[1px] gap-1 border-2 border-solid border-black
                          cursor-pointer hover:bg-white hover:rounded-sm">
                             <FontAwesomeIcon icon={faPlus}
-                                             className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl"/>
-                            <p className="text-xs sm:text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">
+                                             className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl"/>
+                            <p className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">
                                 Add Offer</p>
                         </div>
                         {/*user details / login button*/}
                         {isAuthenticated ? (
                             <div className="h-full relative"
                                  onMouseEnter={handleActivateBar}
-                                 onMouseLeave={handleDisactivateBar}>
+                                 onMouseLeave={handleDisactivateBar}
+                                 onKeyDown={(event) => {
+                                     if (event.key === "Enter") handleActivateBarKeyboard()
+                                 }}>
                                 <button onTouchStart={handleToggleBar}
                                         className="flex flex-row items-center h-full gap-[6px]">
                                     <FontAwesomeIcon icon={faCircleUser}
-                                                     className={`sm:mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
+                                                     className={`mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
                                                      xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
                                     <div
                                         className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
@@ -361,28 +409,32 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                     {/*upper bar*/}
                     <div
                         className="flex flex-row items-center h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime shadow-bottom z-50">
-                        <button onClick={handleLowerBar} className="w-1/6 text-base xs:text-xl ">
+                        <button onClick={handleLowerBar} className="w-1/12 text-base xs:text-xl -mr-4 xs:-mr-6">
                             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
                         </button>
                         {/*logo*/}
-                        <button className="flex flex-row justify-center w-2/6 text-xl xs:text-2xl"
+                        <button className="flex flex-row justify-center w-5/12 text-xl xs:text-2xl"
                                 onClick={() => navigate('/home')}>
                             <p className="text-white">CAR</p>
                             <p className="text-black">$</p>
                             <p className="text-white">OLD</p>
                         </button>
                         {/*search bar*/}
-                        <div className="flex justify-center w-3/6">
-                            <div className="relative w-9/12" ref={componentRef}>
-                                {!isClicked && search === "" ?
-                                    <FontAwesomeIcon icon={faMagnifyingGlass}
-                                                     className={`absolute top-[6px] xs:top-1 left-2 text-[13px] xs:text-[16px] ${magnifierAnimation}`}/>
-                                    : null}
-                                <input onClick={handleClick} className={`w-full h-5 xs:h-6 p-1 text-base xs:text-xl border border-solid
-                                 border-black transition-all duration-200 ease-in-out 
-                                 ${isClicked ? 'bg-white rounded-1xl' : 'bg-lime rounded-full'}`}
-                                       onChange={e => setSearch(e.target.value)}/>
-                            </div>
+                        <div className="relative flex justify-center w-6/12 max-w-[210px] xs:max-w-[250px]"
+                             ref={componentRef}>
+                            {!isClicked && search === "" ?
+                                <FontAwesomeIcon icon={faMagnifyingGlass}
+                                                 className={`absolute top-1 xs:top-[5px] left-2 text-[13px] xs:text-[16px] z-30 ${magnifierAnimation}`}/>
+                                : null}
+                            <input onClick={handleClick} value={search} className={`w-full h-5 xs:h-6 p-[2px] text-xs xs:text-base border border-solid
+                                 border-black z-20 ${isClicked ? 'bg-white rounded-1xl' : 'bg-lime rounded-full'}`}
+                                   onChange={e => setSearch(e.target.value)}/>
+                            <button
+                                className={`absolute top-0 right-0 px-1 xs:px-[6px] bg-lime border border-black h-5 xs:h-6 text-xs xs:text-base z-10 
+                                ${buttonAnimation} ${isClicked ? 'rounded-sm' : 'rounded-r-full z-30'}
+                                ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}>
+                                Search
+                            </button>
                         </div>
                     </div>
                     {/*lower bar*/}
@@ -406,8 +458,9 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                             <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Account</p>
                         </button>
-                        <button className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative`}
-                                onClick={handleDarkMode}>
+                        <button
+                            className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative`}
+                            onClick={handleDarkMode}>
                             <FontAwesomeIcon icon={faMoon}
                                              className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
                             <FontAwesomeIcon icon={faSun}

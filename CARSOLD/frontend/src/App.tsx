@@ -33,7 +33,7 @@ function App(): ReactElement {
                             <Route element={<PrivateRoutes/>}>
 
                             </Route>
-
+                            
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
 
