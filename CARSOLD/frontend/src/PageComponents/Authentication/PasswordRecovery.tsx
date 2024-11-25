@@ -1,11 +1,11 @@
-import NavBar from "../NavBar/NavBar.tsx";
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {ReactElement, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import LongDisappearBanner from "../AnimatedBanners/LongDisappearBanner.tsx";
-import {emailExists, isActive, isOauth2, useDebouncedValue} from "./AuthenticationPage/Form.tsx";
-import Footer from "../NavBar/Footer.tsx";
+import NavBar from "../../NavBar/NavBar.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {emailExists, isActive, isOauth2, useDebouncedValue} from "./Form.tsx";
+import LongDisappearBanner from "../../Banners/AnimatedBanners/LongDisappearBanner.tsx";
+import Footer from "../../NavBar/Footer.tsx";
 
 // '/password-recovery' page
 function PasswordRecovery(): ReactElement {
@@ -87,12 +87,9 @@ function PasswordRecovery(): ReactElement {
         }
     }
 
-    //state defining lower bar 'presence' for animated bar
-    const [lowerBar, setLowerBar] = useState<boolean>(false);
-
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBar setLowerBar={setLowerBar}/>
+            <NavBar/>
             <div className="flex-grow flex flex-col items-center w-full">
                 <div className="flex flex-col items-center w-10/12 min-w-[320px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px]
                 xl:max-w-[570px] 2xl:max-w-[640px] 3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px]
@@ -117,9 +114,9 @@ function PasswordRecovery(): ReactElement {
                 </div>
             </div>
             {/*banner*/}
-            {isEmailSent ? <LongDisappearBanner text={"Email with link has been sent!"} lowerBar={lowerBar}
-                                                onAnimationEnd={() => setIsEmailSent(true)}/> : null}
-            <Footer lowerBar={lowerBar}/>
+            {isEmailSent ? <LongDisappearBanner text={"Email with link has been sent!"}
+                                                onAnimationEnd={() => setIsEmailSent(false)}/> : null}
+            <Footer/>
         </div>
     )
 }

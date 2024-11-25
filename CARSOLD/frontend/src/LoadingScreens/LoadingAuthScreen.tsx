@@ -1,21 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars, faMagnifyingGlass, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {useUtil} from "../GlobalProviders/UtilProvider.tsx";
 
 //manages loading 'line' display when authentication process goes on
 const LoadingAuthScreen: React.FC = () => {
 
-    //states defining window size
-    const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
-
-    //checks window size, which defines, how navbar will look like: mobile or big screen
-    useEffect(() => {
-        const handleResize = () => setIsWide(window.innerWidth >= 640);
-
-        window.addEventListener('resize', handleResize);
-
-        return () => window.removeEventListener('resize', handleResize);
-    }, [])
+    //global state to define proper loading screen
+    const {isWide} = useUtil();
 
     return (
         <> {/*clean navbar*/}

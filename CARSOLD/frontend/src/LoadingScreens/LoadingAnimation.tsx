@@ -14,6 +14,7 @@ function LoadingAnimation(): ReactElement {
 
         return () => clearInterval(interval);
     }, []);
+
     return (
         <>
             {/*background blur*/}

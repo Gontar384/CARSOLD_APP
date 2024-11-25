@@ -1,6 +1,8 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {api} from "../AxiosConfig/AxiosConfig.tsx";
-import LoadingAuthScreen from "../LoadingConfig/LoadingAuthScreen.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import LoadingAuthScreen from "../LoadingScreens/LoadingAuthScreen.tsx";
+
+//provides authentication state globally
 
 //defines structure
 interface AuthContextType {
@@ -61,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     );
 };
 
-//custom hook to access auth state
+//custom hook to use context
 export const useAuth = (): AuthContextType => {
     const context: AuthContextType | undefined = useContext(AuthContext);
     if (!context) {

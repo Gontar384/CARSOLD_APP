@@ -1,7 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
+import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
 
 //'/activate' page, used only when activating account through email
 function AccountActivation(): ReactElement {
@@ -10,7 +10,7 @@ function AccountActivation(): ReactElement {
     const navigate = useNavigate();
 
     //counts down
-    const [count, setCount] = useState<number>(4);
+    const [count, setCount] = useState<number>(3);
 
     //custom hook to check auth
     const {checkAuth} = useAuth();
@@ -33,7 +33,7 @@ function AccountActivation(): ReactElement {
                 setTimeout(async () => {
                     await activateAccount(token);
                     await checkAuth();
-                }, 4500)
+                }, 3500)
         }
     }, [navigate]);
 

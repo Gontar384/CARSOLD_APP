@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {useAuth} from "../AuthConfig/AuthProvider.tsx";
 import {api} from "../AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
 
 //custom hook to fetch Csrf Token when app mounts
 export const useFetchCsrf = () => {

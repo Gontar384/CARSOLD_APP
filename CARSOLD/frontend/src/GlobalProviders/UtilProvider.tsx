@@ -1,21 +1,38 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 
+//provides util globally, e.g. dark mode and lowerBar, isWide states, which adapt display
+
 //defines structure
-interface DarkModeContextType {
+interface UtilContextType {
     darkMode: boolean;
     toggleDarkMode: () => void;
+    lowerBar: boolean,
+    setLowerBar: React.Dispatch<React.SetStateAction<boolean>>,
+    isWide: boolean,
 }
 
 //creates DarkMode context
-const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
+const UtilContext = createContext<UtilContextType | undefined>(undefined);
 
 //creates provider-component which is then used in 'App' and wraps other components
-export const DarkModeProvider: React.FC<{children : React.ReactNode}> = ({ children }) => {
+export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children }) => {
     //initializes dark mode state based on localStorage value
     const [darkMode, setDarkMode] = useState<boolean>(() => {
         const savedTheme = localStorage.getItem('theme');
         return savedTheme === 'dark';
     });
+    const [lowerBar, setLowerBar] = useState<boolean>(false);
+    const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
+
+    //checks window size, which defines if there will be margin bottom under the footer
+    useEffect(() => {
+        const handleResize = () => setIsWide(window.innerWidth >= 640);
+
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize)
+
+    }, [])
 
     //toggles dark mode and stores it on localStorage
     const toggleDarkMode = () => {
@@ -66,19 +83,19 @@ export const DarkModeProvider: React.FC<{children : React.ReactNode}> = ({ child
         };
     }, []);
 
-    //makes values accessible for all DarkModeProvider children
+    //makes values accessible for all UtilProvider children
     return (
-        <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
+        <UtilContext.Provider value={{ darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide }}>
             {children}
-        </DarkModeContext.Provider>
+        </UtilContext.Provider>
     );
 };
 
-//custom hook to access the dark mode context
-export const useDarkMode = (): DarkModeContextType => {
-    const context = useContext(DarkModeContext);
+//custom hook to use context
+export const useUtil = (): UtilContextType => {
+    const context = useContext(UtilContext);
     if (!context) {
-        throw new Error('useDarkMode must be used within a DarkModeProvider');
+        throw new Error('useDarkMode must be used within a UtilProvider');
     }
     return context;
 };

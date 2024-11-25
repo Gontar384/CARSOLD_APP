@@ -1,12 +1,12 @@
-import NavBar from "../NavBar/NavBar.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactElement, useEffect, useState} from "react";
 import {faCircleCheck, faCircleExclamation, faEye, faEyeSlash, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
-import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
-import ShortNoDisappearBanner from "../AnimatedBanners/ShortNoDisappearBanner.tsx";
-import {checksPassword} from "./AuthenticationPage/Form.tsx";
-import Footer from "../NavBar/Footer.tsx";
+import NavBar from "../../NavBar/NavBar.tsx";
+import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
+import ShortNoDisappearBanner from "../../Banners/AnimatedBanners/ShortNoDisappearBanner.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {checksPassword} from "./Form.tsx";
+import Footer from "../../NavBar/Footer.tsx";
 
 //'/very3secret8password4change' page (very weird path to prevent users from entering page)
 function PasswordRecoveryChange(): ReactElement {
@@ -110,9 +110,6 @@ function PasswordRecoveryChange(): ReactElement {
         }
     }
 
-    //state defining lower bar 'presence' for animated bar
-    const [lowerBar, setLowerBar] = useState<boolean>(false);
-
     //states for icon, which changes password input
     const [inputType, setInputType] = useState<string>("password")
     const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
@@ -125,7 +122,7 @@ function PasswordRecoveryChange(): ReactElement {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBar setLowerBar={setLowerBar}/>
+            <NavBar/>
             <div className="flex-grow flex flex-col items-center w-full">
                 <div className="flex flex-col items-center w-10/12 min-w-[320px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px] xl:max-w-[570px]
                 2xl:max-w-[640px] 3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px]
@@ -167,8 +164,8 @@ function PasswordRecoveryChange(): ReactElement {
                     </button>
                 </div>
             </div>
-            {isChanged ? <ShortNoDisappearBanner text={"Password successfully changed!"} lowerBar={lowerBar}/> : null}
-            <Footer lowerBar={lowerBar}/>
+            {isChanged ? <ShortNoDisappearBanner text={"Password successfully changed!"}/> : null}
+            <Footer/>
         </div>
     )
 }

@@ -3,16 +3,16 @@ import {faEye, faEyeSlash, faCircleExclamation, faCircleCheck, IconDefinition} f
 import {ReactElement, useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
-import {useAuth} from "../../Config/AuthConfig/AuthProvider.tsx";
-import ShortNoDisappearBanner from "../../AnimatedBanners/ShortNoDisappearBanner.tsx";
-import WrongPasswordBanner from "../../AnimatedBanners/WrongPasswordBanner.tsx";
-import LongDisappearBanner from "../../AnimatedBanners/LongDisappearBanner.tsx";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
+import LongDisappearBanner from "../../Banners/AnimatedBanners/LongDisappearBanner.tsx";
+import ShortNoDisappearBanner from "../../Banners/AnimatedBanners/ShortNoDisappearBanner.tsx";
+import WrongPasswordBanner from "../../Banners/AnimatedBanners/WrongPasswordBanner.tsx";
 
 //this function-component is basically handling register and login processes
-//gets 'choose' state updates from 'Headings' and 'lowerBar' state from 'NavBar'
+//gets 'choose' state updates from 'Headings'
 //some functions used in 'Form' are below main component, because they're exported and used in other components
-function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): ReactElement {
+function Form({choose}: { choose: boolean }): ReactElement {
 
     //user object for register
     interface User {
@@ -466,7 +466,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                     {isRegistered ?
                         <LongDisappearBanner
                             text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
-                            lowerBar={lowerBar} onAnimationEnd={() => setIsRegistered(false)}/> : null}
+                            onAnimationEnd={() => setIsRegistered(false)}/> : null}
                 </>
             ) : (
                 <> {/*login form*/}
@@ -504,9 +504,8 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         </button>
                     </div>
                     {/*banners*/}
-                    {isLoggedIn ? <ShortNoDisappearBanner text={"Logged in successfully!"} lowerBar={lowerBar}/> : null}
-                    {wrongPassword ? <WrongPasswordBanner lowerBar={lowerBar}
-                                                          onAnimationEnd={() => setWrongPassword(false)}/> : null}
+                    {isLoggedIn ? <ShortNoDisappearBanner text={"Logged in successfully!"}/> : null}
+                    {wrongPassword ? <WrongPasswordBanner onAnimationEnd={() => setWrongPassword(false)}/> : null}
                 </>
             )}
         </>

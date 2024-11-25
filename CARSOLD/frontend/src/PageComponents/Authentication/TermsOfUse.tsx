@@ -1,15 +1,13 @@
-import NavBar from "../NavBar/NavBar.tsx";
-import {ReactElement, useState} from "react";
-import Footer from "../NavBar/Footer.tsx";
+import {ReactElement} from "react";
+import NavBar from "../../NavBar/NavBar.tsx";
+import Footer from "../../NavBar/Footer.tsx";
 
 //'/termsOfUse' page
 function TermsOfUse(): ReactElement {
 
-    const [lowerBar, setLowerBar] = useState<boolean>(false);
-
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBar setLowerBar={setLowerBar}/>
+            <NavBar/>
             <div className="flex-grow flex flex-col items-center">
                 <div className="flex flex-col w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 2xl:w-8/12 3xl:max-w-[1250px] bg-lowLime mt-14 xs:mt-16 sm:mt-[68px] xl:mt-20 2xl:mt-24 3xl:mt-28
                  p-4 xs:pt-5 xl:p-6 2xl:p-7 3xl:p-8 rounded-sm">
@@ -96,7 +94,7 @@ function TermsOfUse(): ReactElement {
                     </div>
                 </div>
             </div>
-            <Footer lowerBar={lowerBar}/>
+            <Footer/>
         </div>
     )
 }
