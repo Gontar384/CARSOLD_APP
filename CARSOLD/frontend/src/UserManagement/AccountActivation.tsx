@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 
-//page only used when activating account through email
+//'/activate' page, used only when activating account through email
 function AccountActivation(): ReactElement {
 
     //hook to navigate user
@@ -16,7 +16,7 @@ function AccountActivation(): ReactElement {
     const {checkAuth} = useAuth();
 
     //after navigation occurs, fetch token from url and sends it to backend, activating account
-    //also gets cookie with token, resulting in user authentication, then navigates to /home
+    //also gets cookie with token, resulting in user authentication, then navigates to '/home'
     useEffect((): void => {
         const urlParams = new URLSearchParams(window.location.search);
         const token: string | null = urlParams.get('token');

@@ -12,7 +12,7 @@ export default {
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
-                "coolLowRed": "#f5142e",
+                "coolLowRed": "#e00909",
                 "coolGreen": "#37ed26"
             },
             screens: {  //custom screens
@@ -81,6 +81,10 @@ export default {
                     '50%': { strokeDasharray: '90, 150', strokeDashoffset: '-35' },
                     '100%': { strokeDasharray: '90, 150', strokeDashoffset: '-125' },
                 },
+                grow: {
+                    "0%": { width: "0%" },
+                    "100%": { width: "100%" },
+                },
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -96,6 +100,7 @@ export default {
                 fill: 'fill 0.5s linear forwards',
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
+                grow: "grow 2s ease-out forwards",
             },
         },
     },

@@ -7,6 +7,7 @@ import LongDisappearBanner from "../AnimatedBanners/LongDisappearBanner.tsx";
 import {emailExists, isActive, isOauth2, useDebouncedValue} from "./AuthenticationPage/Form.tsx";
 import Footer from "../NavBar/Footer.tsx";
 
+// '/password-recovery' page
 function PasswordRecovery(): ReactElement {
 
     //email state

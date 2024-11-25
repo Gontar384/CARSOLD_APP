@@ -2,6 +2,7 @@ import NavBar from "../NavBar/NavBar.tsx";
 import {ReactElement, useState} from "react";
 import Footer from "../NavBar/Footer.tsx";
 
+//'/termsOfUse' page
 function TermsOfUse(): ReactElement {
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);

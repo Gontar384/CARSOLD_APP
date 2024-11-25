@@ -8,6 +8,7 @@ import ShortNoDisappearBanner from "../AnimatedBanners/ShortNoDisappearBanner.ts
 import {checksPassword} from "./AuthenticationPage/Form.tsx";
 import Footer from "../NavBar/Footer.tsx";
 
+//'/very3secret8password4change' page (very weird path to prevent users from entering page)
 function PasswordRecoveryChange(): ReactElement {
 
     //states for password and repeated password
@@ -20,7 +21,7 @@ function PasswordRecoveryChange(): ReactElement {
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [repPasswordIcon, setRepPasswordIcon] = useState<IconDefinition | null>(null);
 
-    //live checking if password is strong enough, displays info for user
+    //checks if password is strong enough, displays info for user
     useEffect(() => {
         if (password !== "") {
             if (password.length >= 7) {
@@ -51,7 +52,7 @@ function PasswordRecoveryChange(): ReactElement {
         }
     }, [password])
 
-    //live checking if repeated password equals password
+    //checks if repeated password equals password
     useEffect(() => {
         if (password !== "" && repPassword !== "") {
             if (checksPassword(password)) {

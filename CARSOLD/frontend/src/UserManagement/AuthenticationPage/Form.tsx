@@ -97,7 +97,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     //useEffect activates, when this value changes, after 300millis user stops writing
     const debouncedEmail: string = useDebouncedValue(user.email, 300);
 
-    //live checking if email is valid, displays info for user
+    //checks if email is valid, displays info for user
     useEffect(() => {
         let isMounted: boolean = true;
 
@@ -154,7 +154,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     //delays check 300 millis
     const debouncedUsername: string = useDebouncedValue(user.username, 300);
 
-    //live checking if username is valid, displays info for user
+    //checks if username is valid, displays info for user
     useEffect(() => {
         let isMounted: boolean = true;
 
@@ -207,7 +207,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
 
-    //live checking if password is strong enough, displays info for user
+    //checks if password is strong enough, displays info for user
     useEffect(() => {
         if (user.password !== "") {
             if (user.password.length >= 7) {
@@ -241,7 +241,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     //repeated password info state
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconDefinition | null>(null);
 
-    //live checking if repeated password equals password
+    //checks if repeated password equals password
     useEffect(() => {
         if (user.password !== "" && passwordRep !== "") {
             if (checksPassword(user.password)) {
@@ -267,7 +267,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
 
     //function used before user authentication, to let user log in only if username and password are valid
     //it is used to prevent app from responding with unauthenticated error or cors error, which is already
-    //being handled with api.interceptors and in default it leads to session expiration
+    //being handled with api.interceptors and in default it leads to session expiration mechanism
     const validateUser = async (login: string, password: string) => {
         return await api.get('api/auth/validate-user', {
             params: {login: login, password: password},
@@ -307,7 +307,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
                         setIsLoggedIn(true);
                         setTimeout(async () => {
                             await checkAuth();
-                        }, 2500)
+                        }, 2000)
                     }
                     if (!response.data) {
                         console.log("Authentication failed");
@@ -331,7 +331,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     //delays check 300 millis
     const debouncedLogin: string = useDebouncedValue(login, 300);
 
-    //live checking and validating login, displays info for user
+    //checks and validates login, displays info for user
     useEffect(() => {
         let isMounted = true;
 
@@ -513,7 +513,7 @@ function Form({choose, lowerBar}: { choose: boolean; lowerBar: boolean }): React
     )
 }
 
-//function which can set debounced value for useEffects to avoid too much requests sent
+//function which can set debounced value for useEffects to avoid too much requests be sent
 export const useDebouncedValue = <T, >(value: T, delay: number): T => {
     const [debouncedValue, setDebouncedValue] = useState<T>(value);
 

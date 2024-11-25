@@ -304,7 +304,6 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-
     //method to create cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"

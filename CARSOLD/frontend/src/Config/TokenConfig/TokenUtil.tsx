@@ -34,7 +34,7 @@ export const useRefreshJwt = () => {
 };
 
 //custom hook to track user activity and send keep-alive requests to server,
-//one request available every minute
+//one request available every one minute
 export const useTrackUserActivity = () => {
     const [isDisabled, setIsDisabled] = useState(false);
     useEffect(() => {

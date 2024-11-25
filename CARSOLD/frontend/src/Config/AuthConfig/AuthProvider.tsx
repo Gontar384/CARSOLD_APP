@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import {api} from "../AxiosConfig/AxiosConfig.tsx";
-import {useLoading} from "../LoadingConfig/LoadingProvider.tsx";
+import LoadingAuthScreen from "../LoadingConfig/LoadingAuthScreen.tsx";
 
-//defines structure of authentication context
+//defines structure
 interface AuthContextType {
     isAuthenticated: boolean;
     checkAuth: () => Promise<void>;
@@ -12,13 +12,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 //creates provider-component which is then used in 'App' and wraps other components
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);   //monitors if user is authenticated
-    const { setAppLoading } = useLoading();  //uses global loading state and add loading screen
+    const [loadingAuth, setLoadingAuth] = useState<boolean>(true); //tracks authentication check status
 
     //function to check authentication, used in multiple components
     const checkAuth = async () => {
-        setAppLoading(true);     //starts loading before auth
+        setLoadingAuth(true);
         try {
             const response = await api.get(`api/auth/check-authentication`);
             const authState = response.data['isAuth'];
@@ -26,23 +26,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsAuthenticated(authState);               //sets auth state
         } catch (error) {
             console.error("Error checking authentication: ", error);
-        }finally {
-            setAppLoading(false);    //ends loading after auth
+            setIsAuthenticated(false);
+        } finally {
+            setLoadingAuth(false);   //marks check as complete
         }
     };
 
     //'listens' to localstorage and then update auth state
     useEffect(() => {
-        const handleStorageChange = (event: StorageEvent)=> {
+        const handleStorageChange = (event: StorageEvent) => {
             if (event.key === 'Authenticated') {
                 const newAuthState: boolean = event.newValue === 'true';
                 setIsAuthenticated(newAuthState);
             }
         };
-
         //monitors localstorage change
         window.addEventListener('storage', handleStorageChange);
-
         //cleanup
         return () => {
             window.removeEventListener('storage', handleStorageChange);
@@ -56,14 +55,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     //makes values accessible for all AuthProvider children
     return (
-        <AuthContext.Provider value={{ isAuthenticated, checkAuth }}>
-            {children}
+        <AuthContext.Provider value={{isAuthenticated, checkAuth}}>
+            {loadingAuth ? <LoadingAuthScreen/> : children} {/*renders children only after authentication check */}
         </AuthContext.Provider>
     );
 };
 
 //custom hook to access auth state
-export const useAuth= (): AuthContextType => {
+export const useAuth = (): AuthContextType => {
     const context: AuthContextType | undefined = useContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");

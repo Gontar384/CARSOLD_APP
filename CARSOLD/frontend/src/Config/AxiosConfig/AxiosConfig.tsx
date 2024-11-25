@@ -3,5 +3,5 @@ import axios, {AxiosInstance} from 'axios';
 //creates custom axios instance for requests
 export const api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,      //default URL
-    withCredentials: true                           //cookies available
+    withCredentials: true                           //makes cookies included
 });

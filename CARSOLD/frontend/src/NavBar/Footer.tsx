@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-//sets footer, based on lowerBar (mobile) presence from NavBar
+//footer component, changes its position if there is lowerBar (mobile)
 function Footer({lowerBar}: { lowerBar: boolean }) {
 
     //state defining window size

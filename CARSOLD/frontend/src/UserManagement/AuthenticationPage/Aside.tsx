@@ -2,6 +2,7 @@ import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactElement} from "react";
 
+//displays graphic with some text on '/authentication' page
 function Aside(): ReactElement {
     return (
         <div className="flex flex-col w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:max-w-[700px] 2xl:max-w-[850px] 3xl:max-w-[950px] 3xl:h-[650px]

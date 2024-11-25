@@ -4,7 +4,7 @@ import {Dispatch, ReactElement, SetStateAction} from "react";
 //which defines what is displayed on 'Form' component
 function Headings({setChoose}: { setChoose: Dispatch<SetStateAction<boolean>> }): ReactElement {
 
-    //redirecting to Google auth page
+    //redirects to Google auth page
     const handleGoogleAuth = async () => {
         try {
             window.location.href = `${import.meta.env.VITE_BACKEND_URL}oauth2/authorization/google`;

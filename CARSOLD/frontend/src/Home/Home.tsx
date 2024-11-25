@@ -2,6 +2,7 @@ import NavBar from "../NavBar/NavBar.tsx";
 import {ReactElement, useState} from "react";
 import Footer from "../NavBar/Footer.tsx";
 
+//'/home' page
 function Home(): ReactElement {
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);

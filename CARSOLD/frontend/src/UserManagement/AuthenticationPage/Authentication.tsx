@@ -5,13 +5,14 @@ import {ReactElement, useState} from "react";
 import NavBar from "../../NavBar/NavBar.tsx";
 import Footer from "../../NavBar/Footer.tsx";
 
+// '/authenticate' page
 function Authentication(): ReactElement {
 
     //state being changed in 'Headings' and used in 'Form',
     //defining what user choose: login or register form
     const [choose, setChoose] = useState<boolean>(false);
 
-    //state being changed in 'Navbar' and user in 'Form', then passed to bars
+    //state being changed in 'Navbar' and used in 'Form' to be passed to animated bars
     //defining lower bar 'presence' for animated bars
     const [lowerBar, setLowerBar] = useState<boolean>(false);
 

@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 
-//defines structure of DarkModeContext
+//defines structure
 interface DarkModeContextType {
     darkMode: boolean;
     toggleDarkMode: () => void;

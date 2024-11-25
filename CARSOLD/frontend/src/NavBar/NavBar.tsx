@@ -2,30 +2,27 @@ import React, {Dispatch, ReactElement, SetStateAction, useEffect, useRef, useSta
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {
-    faAddressCard,
-    faBars,
-    faHeart,
-    faMagnifyingGlass,
-    faMessage,
-    faPlus,
-    faRightFromBracket,
-    faSquarePlus,
-    faUser, faCircleUser, faCircle, faMoon, faSun
+    faAddressCard, faBars, faHeart, faMagnifyingGlass, faMessage, faPlus, faRightFromBracket,
+    faSquarePlus, faUser, faCircleUser, faCircle, faMoon, faSun
 } from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import {useDarkMode} from "../Config/DarkMode/DarkModeProvider.tsx";
 import {useAuth} from "../Config/AuthConfig/AuthProvider.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
-import {useLoading} from "../Config/LoadingConfig/LoadingProvider.tsx";
 import {useDebouncedValue} from "../UserManagement/AuthenticationPage/Form.tsx";
 
-//navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'authentication'
-function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> }): ReactElement {
+//specifies props
+interface NavBarProps {
+    setLowerBar?: Dispatch<SetStateAction<boolean>>; // Optional prop
+}
 
-    //states defining window size
+//navigation bar for big screens and mobile screens, passes info about lower bar 'presence' to 'Authentication' component
+function NavBar({setLowerBar}: NavBarProps ): ReactElement {
+
+    //state defining window size
     const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
 
-    //checks window size, which defines, how navbar will look like
+    //checks window size, which defines, how navbar will look like: mobile or big screen
     useEffect(() => {
         const handleResize = () => setIsWide(window.innerWidth >= 640);
 
@@ -50,7 +47,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
     const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
 
     //ref to make 'search' state accessible all over all time for component
-    const searchRef = useRef<string>(""); // Ref to hold the latest value of `search`
+    const searchRef = useRef<string>("");
 
     //updates ref whenever `search` changes and sets 'isClicked' when search changes
     //its solution for activating input by Tab
@@ -61,7 +58,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         }
     }, [search]);
 
-    //live checks if search button is supposed to appear and disappear
+    //checks if search button is supposed to appear and disappear
     useEffect(() => {
         if (search) {
             setButtonAnimation("animate-slideDown");
@@ -99,7 +96,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         }
     }
 
-    //live checks if user click outside input and then uses handleClickOutside function
+    //checks if user click outside input and then uses handleClickOutside function
     useEffect(() => {
         if (!isClicked) return;
         document.addEventListener("mousedown", handleClickOutside);
@@ -152,7 +149,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         setModeIconAnimation(null);
         setModeIcon1Animation(null);
         if (!isAuthenticated) {   //if user isn't authenticated it sets info about lower bar 'presence' info for animated bars
-            setLowerBar((prev) => !prev);
+            setLowerBar?.((prev) => !prev);
         }
     }
 
@@ -194,17 +191,17 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         }, 1000);
     }
 
-    //state for user details (basically username fetched)
+    //state for user details (username fetching)
     const [userDetails, setUserDetails] = useState<string>("");
 
-    //global state used for loading, when fetching data
-    const {setAppLoading} = useLoading();
+    //state which monitors if username is fetched
+    const [usernameFetched, setUsernameFetched] = useState<boolean>(false);
 
     //fetches username to user details
     useEffect(() => {
         const handleUsernameFetch = async () => {
             if (!isAuthenticated) return;
-            setAppLoading(true);     //starts loading before auth
+            setUsernameFetched(false);
             try {
                 const response = await api.get('api/get-username');
                 if (response.data.username) {
@@ -213,7 +210,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
             } catch (error) {
                 console.log("Error fetching username: ", error);
             } finally {
-                setAppLoading(false);
+                setUsernameFetched(true);
             }
         }
         handleUsernameFetch();
@@ -231,7 +228,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
     //debounce value to delay deactivation
     const debouncedHover: boolean = useDebouncedValue(barHovered, 300)
 
-    //state which prevents icon animating too much
+    //state which prevents icon animating too many times
     const [animationActive, setAnimationActive] = useState<boolean>(false);
 
     //shows big screen bar, triggers animation
@@ -244,7 +241,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
         setBarHovered(true);
     }
 
-    //shows big screen user bar (basically for keyboard usage to activate bar)
+    //shows big screen user bar (basically for keyboard usage to activate bar by clicking enter)
     const handleActivateBarKeyboard = () => {
         setBarActive(prev => !prev);
     }
@@ -287,12 +284,18 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
     const [followedCount, setFollowedCount] = useState<number>(0);
     const [messageCount, setMessageCount] = useState<number>(0);
 
+    //spontaneous only
+    useEffect(() => {
+        setFollowedCount(0);
+        setMessageCount(0);
+    }, []);
+
     return (
         <>
             {isWide ? (
                 <>{/*big screen*/}
                     <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
-                     w-full h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
+                     w-full h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-40">
                         {/*logo*/}
                         <button className="flex flex-row justify-center text-2xl lg:text-3xl xl:text-4xl
                          2xl:text-[44px] 3xl:text-[50px]" onClick={() => navigate('/home')}>
@@ -330,72 +333,81 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                         </div>
                         {/*user details / login button*/}
                         {isAuthenticated ? (
-                            <div className="h-full relative"
-                                 onMouseEnter={handleActivateBar}
-                                 onMouseLeave={handleDisactivateBar}
-                                 onKeyDown={(event) => {
-                                     if (event.key === "Enter") handleActivateBarKeyboard()
-                                 }}>
-                                <button onTouchStart={handleToggleBar}
-                                        className="flex flex-row items-center h-full gap-[6px]">
-                                    <FontAwesomeIcon icon={faCircleUser}
-                                                     className={`mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
+                            usernameFetched ? (
+                                <div className="relative h-full"
+                                     onMouseEnter={handleActivateBar}
+                                     onMouseLeave={handleDisactivateBar}
+                                     onTouchStart={handleToggleBar}
+                                     onKeyDown={(event) => {
+                                         if (event.key === "Enter") handleActivateBarKeyboard()
+                                     }}>
+                                    <button className="flex flex-row items-center h-full gap-[6px]">
+                                        <FontAwesomeIcon icon={faCircleUser}
+                                                         className={`mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
                                                      xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
+                                        <div
+                                            className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
+                                            {userDetails}
+                                        </div>
+                                    </button>
                                     <div
-                                        className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 truncate cursor-pointer">
-                                        {userDetails}
-                                    </div>
-                                </button>
-                                <div
-                                    onTouchStart={handleDropdownInteraction}
-                                    className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
-                                    2xl:w-[148px] 3xl:w-[170px] absolute -left-[14px] bg-lime shadow-bottom`}>
-                                    <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] text-[13px] lg:text-[17px] xl:text-[20px]
-                                     2xl:text-[25px] 3xl:text-[30px] hover:bg-white">My account
-                                    </button>
-                                    <button className="flex items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
-                                     2xl:text-[23px] 3xl:text-[28px] hover:bg-white">My ads
-                                    </button>
-                                    <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
-                                     text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Followed
-                                        <div className={`relative mt-[1px] ${followedCount === 0 ? "hidden" : ""}`}>
-                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
-                                                             className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
-                                            <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
-                                            2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followedCount}</p>
-                                        </div>
-                                    </button>
-                                    <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
-                                     text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Messages
-                                        <div className={`relative mt-[1px] ${messageCount === 0 ? "hidden" : ""}`}>
-                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
-                                                             className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
-                                            <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
-                                            2xl:text-[16px] 3xl:text-[20px] text-white absolute">{messageCount}</p>
-                                        </div>
-                                    </button>
-                                    <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
-                                     2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Settings
-                                    </button>
-                                    <button
-                                        className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
-                                        text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] gap-1 lg:gap-[6px] xl:gap-2 2xl:gap-[10px] 3xl:gap-3 hover:bg-white`}
-                                        onClick={handleDarkMode}>Mode
-                                        <div className="relative">
-                                            <FontAwesomeIcon icon={faMoon}
-                                                             className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
+                                        onTouchStart={handleDropdownInteraction}
+                                        className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
+                                        2xl:w-[148px] 3xl:w-[170px] absolute -left-[14px] bg-lime shadow-bottom`}>
+                                        <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] text-[13px] lg:text-[17px] xl:text-[20px]
+                                         2xl:text-[25px] 3xl:text-[30px] hover:bg-white"
+                                                onClick={() => navigate('/myAccount')}>
+                                            My account
+                                        </button>
+                                        <button className="flex items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
+                                         2xl:text-[23px] 3xl:text-[28px] hover:bg-white">My ads
+                                        </button>
+                                        <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Followed
+                                            <div
+                                                className={`relative mt-[1px] ${followedCount === 0 ? "hidden" : ""}`}>
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                                 className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                                <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                                 2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followedCount}</p>
+                                            </div>
+                                        </button>
+                                        <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Messages
+                                            <div
+                                                className={`relative mt-[1px] ${messageCount === 0 ? "hidden" : ""}`}>
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                                 className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                                <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                                 2xl:text-[16px] 3xl:text-[20px] text-white absolute">{messageCount}</p>
+                                            </div>
+                                        </button>
+                                        <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
+                                         2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Settings
+                                        </button>
+                                        <button
+                                            className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
+                                            text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] gap-1 lg:gap-[6px] xl:gap-2 2xl:gap-[10px] 3xl:gap-3 hover:bg-white`}
+                                            onClick={handleDarkMode}>Mode
+                                            <div className="relative">
+                                                <FontAwesomeIcon icon={faMoon}
+                                                                 className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
                                                              lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
-                                            <FontAwesomeIcon icon={faSun}
-                                                             className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
+                                                <FontAwesomeIcon icon={faSun}
+                                                                 className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
                                                              lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-                                        </div>
-                                    </button>
-                                    <button className="flex items-center justify-center w-full h-[21px] lg:h-[27px] xl:h-[28px] 2xl:h-[38px] 3xl:h-[46px] hover:bg-white text-[12px] lg:text-[16px]
-                                     xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px]"
-                                            onClick={logout}>Logout
-                                    </button>
+                                            </div>
+                                        </button>
+                                        <button className="flex items-center justify-center w-full h-[21px] lg:h-[27px] xl:h-[28px] 2xl:h-[38px] 3xl:h-[46px] hover:bg-white text-[12px] lg:text-[16px]
+                                         xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px]"
+                                                onClick={logout}>Logout
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="w-[65px] lg:w-[81px] xl:w-[96px] 2xl:w-[119px] 3xl:w-[142px] h-6 lg:h-7 xl:h-8 2xl:h-9 3xl:h-10
+                                     bg-darkLime animate-pulse rounded-sm"></div>
+                            )
                         ) : (
                             <button onClick={() => navigate('/authenticate')}
                                     className="text-[15px] lg:text-[18px] xl:text-[22px] 2xl:text-[27px] 3xl:text-[31px] truncate cursor-pointer">
@@ -405,11 +417,11 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                     </div>
                 </>
             ) : (
-                <> {/*mobile only*/}
+                <> {/*mobile*/}
                     {/*upper bar*/}
                     <div
-                        className="flex flex-row items-center h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime shadow-bottom z-50">
-                        <button onClick={handleLowerBar} className="w-1/12 text-base xs:text-xl -mr-4 xs:-mr-6">
+                        className="flex flex-row items-center h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime shadow-bottom z-40">
+                        <button onClick={handleLowerBar} className="w-1/12 text-base xs:text-xl">
                             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
                         </button>
                         {/*logo*/}
@@ -420,7 +432,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                             <p className="text-white">OLD</p>
                         </button>
                         {/*search bar*/}
-                        <div className="relative flex justify-center w-6/12 max-w-[210px] xs:max-w-[250px]"
+                        <div className="relative flex justify-center w-6/12 max-w-[210px] xs:max-w-[250px] pr-1"
                              ref={componentRef}>
                             {!isClicked && search === "" ?
                                 <FontAwesomeIcon icon={faMagnifyingGlass}
@@ -439,7 +451,7 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                     </div>
                     {/*lower bar*/}
                     <div
-                        className={`${isVisible} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
+                        className={`${isVisible} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime shadow-top z-40 ${barAnimation}`}>
                         <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
                             <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Add Offer</p>
@@ -454,7 +466,8 @@ function NavBar({setLowerBar}: { setLowerBar: Dispatch<SetStateAction<boolean>> 
                             <p className={`text-[9px] xs:text-[10px] top-[6px] ${messageCount === 0 ? "hidden" : ""} text-white  absolute`}>{messageCount}</p>
                             <p className="text-[9px] xs:text-[10px]">Messages</p>
                         </button>
-                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
+                        <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
+                                onClick={() => navigate('/myAccount')}>
                             <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                             <p className="text-[9px] xs:text-[10px]">Account</p>
                         </button>
