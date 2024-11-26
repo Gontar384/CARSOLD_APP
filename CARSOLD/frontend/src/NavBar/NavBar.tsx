@@ -340,16 +340,15 @@ function NavBar(): ReactElement {
                                         onTouchStart={handleDropdownInteraction}
                                         className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
                                         2xl:w-[148px] 3xl:w-[170px] absolute -left-[14px] bg-lime shadow-bottom`}>
-                                        <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] text-[13px] lg:text-[17px] xl:text-[20px]
-                                         2xl:text-[25px] 3xl:text-[30px] hover:bg-white"
-                                                onClick={() => navigate('/myAccount')}>
-                                            My account
-                                        </button>
-                                        <button className="flex items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
-                                         2xl:text-[23px] 3xl:text-[28px] hover:bg-white">My offers
+                                        <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px]
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
+                                                onClick={() => navigate('/myAccount/myOffers')}>
+                                            My offers
                                         </button>
                                         <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
-                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Followed
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
+                                                onClick={() => navigate('/myAccount/followed')}>
+                                            Followed
                                             <div
                                                 className={`relative mt-[1px] ${followed === 0 ? "hidden" : ""}`}>
                                                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
@@ -359,7 +358,9 @@ function NavBar(): ReactElement {
                                             </div>
                                         </button>
                                         <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
-                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Messages
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
+                                                onClick={() => navigate('/myAccount/messages')}>
+                                            Messages
                                             <div
                                                 className={`relative mt-[1px] ${messages === 0 ? "hidden" : ""}`}>
                                                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
@@ -369,7 +370,9 @@ function NavBar(): ReactElement {
                                             </div>
                                         </button>
                                         <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
-                                         2xl:text-[23px] 3xl:text-[28px] hover:bg-white">Settings
+                                         2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
+                                                onClick={() => navigate('/myAccount/settings')}>
+                                            Settings
                                         </button>
                                         <button
                                             className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
@@ -443,18 +446,20 @@ function NavBar(): ReactElement {
                                 <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Add Offer</p>
                             </button>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative">
+                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
+                                    onClick={() => navigate('/myAccount/followed')}>
                                 <FontAwesomeIcon icon={faHeart} className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[7px] xs:top-[8px] ${followed === 0 ? "hidden" : ""} text-white  absolute`}>{followed}</p>
                                 <p className="text-[9px] xs:text-[10px]">Followed</p>
                             </button>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative">
+                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
+                                    onClick={() => navigate('/myAccount/messages')}>
                                 <FontAwesomeIcon icon={faMessage} className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[6px] ${messages === 0 ? "hidden" : ""} text-white  absolute`}>{messages}</p>
                                 <p className="text-[9px] xs:text-[10px]">Messages</p>
                             </button>
                             <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
-                                    onClick={() => navigate('/myAccount')}>
+                                    onClick={() => navigate('/myAccount/myOffers')}>
                                 <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Account</p>
                             </button>

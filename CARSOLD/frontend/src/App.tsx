@@ -25,14 +25,14 @@ function App(): ReactElement {
                     <BrowserRouter> {/*manages routes*/}
                         <Routes>
                             <Route element={<PublicRoutes/>}>
-                                <Route path="/authenticate" element={<Authentication/>}/>
+                                <Route path="/authenticate/:section?" element={<Authentication/>}/>
                                 <Route path="/activate" element={<AccountActivation/>}/>
                                 <Route path="/password-recovery" element={<PasswordRecovery/>}/>
                                 <Route path="/very3secret8password4change" element={<PasswordRecoveryChange/>}/>
                             </Route>
 
                             <Route element={<PrivateRoutes/>}>
-                                <Route path="/myAccount" element={<AccountDetails/>}/>
+                                <Route path="/myAccount/:section?" element={<AccountDetails/>}/>
                             </Route>
 
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>

@@ -90,10 +90,10 @@ function PasswordRecovery(): ReactElement {
     return (
         <div className="flex flex-col min-h-screen">
             <NavBar/>
-            <div className="flex-grow flex flex-col items-center w-full">
+            <div className="flex-grow flex flex-col items-center w-full mb-56">
                 <div className="flex flex-col items-center w-10/12 min-w-[320px] xs:min-w-[450px] xs:max-w-[500px] lg:max-w-[530px]
-                xl:max-w-[570px] 2xl:max-w-[640px] 3xl:max-w-[720px] mt-24 xs:mt-[106px] sm:mt-28 lg:mt-32 xl:mt-[140px] 2xl:mt-[150px]
-                3xl:mt-[160px] pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16
+                xl:max-w-[570px] 2xl:max-w-[640px] 3xl:max-w-[720px] mt-40 sm:mt-32 lg:mt-36 xl:mt-40 2xl:mt-48
+                3xl:mt-56 pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16
                 2xl:pb-[70px] 3xl-pb-[80px] gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 bg-lime rounded-sm">
                     <p className="text-xs xs:text-base 2xl:text-xl 3xl:text-2xl w-10/12">
                         Enter your email. We will automatically send you link to change your password.

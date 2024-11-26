@@ -1,16 +1,34 @@
 import Aside from "./Aside.tsx";
 import Form from "./Form.tsx";
 import Headings from "./Headings.tsx";
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import NavBar from "../../NavBar/NavBar.tsx";
 import Footer from "../../NavBar/Footer.tsx";
+import {useNavigate, useParams} from "react-router-dom";
 
 // '/authenticate' page
 function Authentication(): ReactElement {
 
-    //state being changed in 'Headings' and used in 'Form',
-    //defining what user choose: login or register form
-    const [choose, setChoose] = useState<boolean>(false);
+    //state that retrieves params from URL
+    const {section} = useParams();
+
+    //navigates user
+    const navigate = useNavigate();
+
+    //state being changed in 'Headings' and used in 'Form', defines what is displayed
+    //if section is likely extracted from url - it sets choice to that value, if not - defaults 'login'
+    const [choice, setChoice] = useState<"login" | "register">("login");
+
+    //checks for section change and navigates user
+    useEffect(() => {
+        const validSections: Array<"login" | "register"> = [
+            "login", "register"];
+        if (section && validSections.includes(section as never)) {
+            setChoice(section as "login" | "register");
+        } else {
+            navigate("/authenticate/login", {replace: true});
+        }
+    }, [section, navigate])
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -20,8 +38,8 @@ function Authentication(): ReactElement {
                 <div className="flex flex-col items-center bg-lime py-6 xs:py-8 2xl:py-10 w-11/12 xs:w-10/12
                  max-w-[360px] xs:max-w-[420px] sm:min-w-[420px]
                    2xl:max-w-[500px] 3xl:max-w-[600px] rounded-sm">
-                    <Headings setChoose={setChoose}/>
-                    <Form choose={choose}/>
+                    <Headings setChoice={setChoice}/>
+                    <Form choice={choice}/>
                 </div>
                 <Aside/>
             </div>
