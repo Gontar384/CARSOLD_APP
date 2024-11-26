@@ -351,7 +351,7 @@ function NavBar(): ReactElement {
                                             Followed
                                             <div
                                                 className={`relative mt-[1px] ${followed === 0 ? "hidden" : ""}`}>
-                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#370eeb",}}
                                                                  className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
                                                 <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
                                                  2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followed}</p>
@@ -398,7 +398,7 @@ function NavBar(): ReactElement {
                                      bg-darkLime animate-pulse rounded-sm"></div>
                             )
                         ) : (
-                            <button onClick={() => navigate('/authenticate')}
+                            <button onClick={() => navigate('/authenticate/login')}
                                     className="text-[15px] lg:text-[18px] xl:text-[22px] 2xl:text-[27px] 3xl:text-[31px] whitespace-nowrap cursor-pointer">
                                 <p>Login | Register</p>
                             </button>
@@ -431,7 +431,7 @@ function NavBar(): ReactElement {
                                  border-black z-20 ${isClicked ? 'bg-white rounded-1xl' : 'bg-lime rounded-full'}`}
                                    onChange={e => setSearch(e.target.value)}/>
                             <button
-                                className={`absolute top-0 right-0 px-1 xs:px-[6px] bg-lime border border-black h-5 xs:h-6 text-xs xs:text-base z-10 
+                                className={`absolute top-0 right-1 px-1 xs:px-[6px] bg-lime border border-black h-5 xs:h-6 text-xs xs:text-base z-10 
                                 ${buttonAnimation} ${isClicked ? 'rounded-sm' : 'rounded-r-full z-30'}
                                 ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}>
                                 Search
@@ -442,29 +442,29 @@ function NavBar(): ReactElement {
                     {lowerBarActive ? (
                         <div
                             className={`flex flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime">
+                            <button className="flex flex-col items-center w-1/6 h-full p-1">
                                 <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Add Offer</p>
                             </button>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
+                            <button className="flex flex-col items-center w-1/6 h-full p-1"
                                     onClick={() => navigate('/myAccount/followed')}>
                                 <FontAwesomeIcon icon={faHeart} className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[7px] xs:top-[8px] ${followed === 0 ? "hidden" : ""} text-white  absolute`}>{followed}</p>
                                 <p className="text-[9px] xs:text-[10px]">Followed</p>
                             </button>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative"
+                            <button className="flex flex-col items-center w-1/6 h-full p-1"
                                     onClick={() => navigate('/myAccount/messages')}>
                                 <FontAwesomeIcon icon={faMessage} className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[6px] ${messages === 0 ? "hidden" : ""} text-white  absolute`}>{messages}</p>
                                 <p className="text-[9px] xs:text-[10px]">Messages</p>
                             </button>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
+                            <button className="flex flex-col items-center w-1/6 h-full p-1"
                                     onClick={() => navigate('/myAccount/myOffers')}>
                                 <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Account</p>
                             </button>
                             <button
-                                className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime relative`}
+                                className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 relative`}
                                 onClick={handleDarkMode}>
                                 <FontAwesomeIcon icon={faMoon}
                                                  className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
@@ -476,13 +476,13 @@ function NavBar(): ReactElement {
                             </button>
                             {/*base on 'isAuthenticated' shows user logout button or login button*/}
                             {isAuthenticated ? (
-                                <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
+                                <button className="flex flex-col items-center w-1/6 h-full p-1"
                                         onClick={logout}>
                                     <FontAwesomeIcon icon={faRightFromBracket} className="text-xl xs:text-[22px]"/>
                                     <p className="text-[9px] xs:text-[10px]">Logout</p>
                                 </button>) : (
-                                <button className="flex flex-col items-center w-1/6 h-full p-1 hover:bg-darkLime"
-                                        onClick={() => navigate('/authenticate')}>
+                                <button className="flex flex-col items-center w-1/6 h-full p-1"
+                                        onClick={() => navigate('/authenticate/login')}>
                                     <FontAwesomeIcon icon={faAddressCard} className="text-xl xs:text-[22px]"/>
                                     <p className="text-[9px] xs:text-[10px]">Login</p>
                                 </button>
