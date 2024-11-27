@@ -276,6 +276,39 @@ function NavBar(): ReactElement {
     //states for notifications
     const {followed, messages} = useItems();
 
+    //array state to change lower bar buttons color
+    const [buttonsColor, setButtonsColor] = useState<("black" | "white")[]>([
+        "black", "black", "black", "black", "black", "black", "black"
+    ]);
+
+    //state to monitor touch activation
+    const [touchActive, setTouchActive] = useState<boolean>(false);
+
+    //changes lower bar buttons color on touchStart, touchEnd, mouseEnter and mouseLeave
+    const handleTouchStart = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "white" : color)));
+        setTouchActive(true);
+    };
+
+    const handleTouchEnd = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "black" : color)));
+    };
+
+    const handleMouseEnter = (index: number) => {
+        if (!touchActive) {
+            setButtonsColor((prev) =>
+                prev.map((color, i) => (i === index ? "white" : color)));
+        }
+    };
+
+    const handleMouseLeave = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "black" : color)));
+        setTouchActive(false);
+    };
+
     return (
         <>
             {isWide ? (
@@ -327,7 +360,7 @@ function NavBar(): ReactElement {
                                      onKeyDown={(event) => {
                                          if (event.key === "Enter") handleActivateBarKeyboard()
                                      }}>
-                                    <button className="flex flex-row items-center h-full gap-[6px]">
+                                    <button className="flex flex-row items-center h-full gap-[6px] relative">
                                         <FontAwesomeIcon icon={faCircleUser}
                                                          className={`mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
                                                      xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
@@ -335,6 +368,10 @@ function NavBar(): ReactElement {
                                             className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
                                             {userDetails}
                                         </div>
+                                        {messages ?
+                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}} className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px]
+                                            2xl:-right-[18px] 3xl:-right-[22px] top-[14px] lg:top-[16px] xl:top-[20px] 2xl:top-[21px] text-[6px] lg:text-[7px] xl:text-[9px]
+                                            2xl:text-[11px] 3xl:text-[13px]"/> : null}
                                     </button>
                                     <div
                                         onTouchStart={handleDropdownInteraction}
@@ -351,7 +388,7 @@ function NavBar(): ReactElement {
                                             Followed
                                             <div
                                                 className={`relative mt-[1px] ${followed === 0 ? "hidden" : ""}`}>
-                                                <FontAwesomeIcon icon={faCircle} style={{color: "#370eeb",}}
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#370eeb"}}
                                                                  className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
                                                 <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
                                                  2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followed}</p>
@@ -363,7 +400,7 @@ function NavBar(): ReactElement {
                                             Messages
                                             <div
                                                 className={`relative mt-[1px] ${messages === 0 ? "hidden" : ""}`}>
-                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000",}}
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
                                                                  className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
                                                 <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
                                                  2xl:text-[16px] 3xl:text-[20px] text-white absolute">{messages}</p>
@@ -442,48 +479,82 @@ function NavBar(): ReactElement {
                     {lowerBarActive ? (
                         <div
                             className={`flex flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
-                            <button className="flex flex-col items-center w-1/6 h-full p-1">
-                                <FontAwesomeIcon icon={faSquarePlus} className="text-xl xs:text-[22px]"/>
+                            <button className="flex flex-col items-center w-1/6 h-full p-1"
+                                    onTouchStart={() => handleTouchStart(0)}
+                                    onTouchEnd={() => handleTouchEnd(0)}
+                                    onMouseEnter={() => handleMouseEnter(0)}
+                                    onMouseLeave={() => handleMouseLeave(0)}>
+                                <FontAwesomeIcon icon={faSquarePlus} style={{color: buttonsColor[0]}}
+                                                 className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Add Offer</p>
                             </button>
                             <button className="flex flex-col items-center w-1/6 h-full p-1"
-                                    onClick={() => navigate('/myAccount/followed')}>
-                                <FontAwesomeIcon icon={faHeart} className="text-xl xs:text-[22px]"/>
+                                    onClick={() => navigate('/myAccount/followed')}
+                                    onTouchStart={() => handleTouchStart(1)}
+                                    onTouchEnd={() => handleTouchEnd(1)}
+                                    onMouseEnter={() => handleMouseEnter(1)}
+                                    onMouseLeave={() => handleMouseLeave(1)}>
+                                <FontAwesomeIcon icon={faHeart} style={{color: buttonsColor[1]}}
+                                                 className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[7px] xs:top-[8px] ${followed === 0 ? "hidden" : ""} text-white  absolute`}>{followed}</p>
                                 <p className="text-[9px] xs:text-[10px]">Followed</p>
                             </button>
                             <button className="flex flex-col items-center w-1/6 h-full p-1"
-                                    onClick={() => navigate('/myAccount/messages')}>
-                                <FontAwesomeIcon icon={faMessage} className="text-xl xs:text-[22px]"/>
+                                    onClick={() => navigate('/myAccount/messages')}
+                                    onTouchStart={() => handleTouchStart(2)}
+                                    onTouchEnd={() => handleTouchEnd(2)}
+                                    onMouseEnter={() => handleMouseEnter(2)}
+                                    onMouseLeave={() => handleMouseLeave(2)}>
+                                <FontAwesomeIcon icon={faMessage} style={{color: buttonsColor[2]}}
+                                                 className="text-xl xs:text-[22px]"/>
                                 <p className={`text-[9px] xs:text-[10px] top-[6px] ${messages === 0 ? "hidden" : ""} text-white  absolute`}>{messages}</p>
                                 <p className="text-[9px] xs:text-[10px]">Messages</p>
                             </button>
                             <button className="flex flex-col items-center w-1/6 h-full p-1"
-                                    onClick={() => navigate('/myAccount/myOffers')}>
-                                <FontAwesomeIcon icon={faUser} className="text-xl xs:text-[22px]"/>
+                                    onClick={() => navigate('/myAccount/myOffers')}
+                                    onTouchStart={() => handleTouchStart(3)}
+                                    onTouchEnd={() => handleTouchEnd(3)}
+                                    onMouseEnter={() => handleMouseEnter(3)}
+                                    onMouseLeave={() => handleMouseLeave(3)}>
+                                <FontAwesomeIcon icon={faUser} style={{color: buttonsColor[3]}}
+                                                 className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Account</p>
                             </button>
                             <button
                                 className={`${isAuthenticated ? "flex" : "hidden"} flex-col items-center w-1/6 h-full p-1 relative`}
-                                onClick={handleDarkMode}>
-                                <FontAwesomeIcon icon={faMoon}
+                                onClick={handleDarkMode}
+                                onTouchStart={() => handleTouchStart(4)}
+                                onTouchEnd={() => handleTouchEnd(4)}
+                                onMouseEnter={() => handleMouseEnter(4)}
+                                onMouseLeave={() => handleMouseLeave(4)}>
+                                <FontAwesomeIcon icon={faMoon} style={{color: buttonsColor[4]}}
                                                  className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
-                                <FontAwesomeIcon icon={faSun}
+                                <FontAwesomeIcon icon={faSun} style={{color: buttonsColor[4]}}
                                                  className={`text-[12px] xs:text-[14px] top-[8px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-                                <FontAwesomeIcon icon={faRegularCircle}
+                                <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonsColor[4]}}
                                                  className="text-xl xs:text-[22px]"/>
                                 <p className="text-[9px] xs:text-[10px]">Mode</p>
                             </button>
                             {/*base on 'isAuthenticated' shows user logout button or login button*/}
                             {isAuthenticated ? (
                                 <button className="flex flex-col items-center w-1/6 h-full p-1"
-                                        onClick={logout}>
-                                    <FontAwesomeIcon icon={faRightFromBracket} className="text-xl xs:text-[22px]"/>
+                                        onClick={logout}
+                                        onTouchStart={() => handleTouchStart(5)}
+                                        onTouchEnd={() => handleTouchEnd(5)}
+                                        onMouseEnter={() => handleMouseEnter(5)}
+                                        onMouseLeave={() => handleMouseLeave(5)}>
+                                    <FontAwesomeIcon icon={faRightFromBracket} style={{color: buttonsColor[5]}}
+                                                     className="text-xl xs:text-[22px]"/>
                                     <p className="text-[9px] xs:text-[10px]">Logout</p>
                                 </button>) : (
                                 <button className="flex flex-col items-center w-1/6 h-full p-1"
-                                        onClick={() => navigate('/authenticate/login')}>
-                                    <FontAwesomeIcon icon={faAddressCard} className="text-xl xs:text-[22px]"/>
+                                        onClick={() => navigate('/authenticate/login')}
+                                        onTouchStart={() => handleTouchStart(6)}
+                                        onTouchEnd={() => handleTouchEnd(6)}
+                                        onMouseEnter={() => handleMouseEnter(6)}
+                                        onMouseLeave={() => handleMouseLeave(6)}>
+                                    <FontAwesomeIcon icon={faAddressCard} style={{color: buttonsColor[6]}}
+                                                     className="text-xl xs:text-[22px]"/>
                                     <p className="text-[9px] xs:text-[10px]">Login</p>
                                 </button>
                             )}
