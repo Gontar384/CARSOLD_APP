@@ -48,7 +48,7 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
                 if (emailResponse.data.exists && isActiveResponse.data.checks) {
                     return;
                 }
-                if (user.username.length < 3 || user.username.length > 15) {
+                if (user.username.length < 3 || user.username.length > 15 || (!/^[a-zA-Z0-9]+$/.test(user.username))) {
                     return;
                 }
                 const usernameResponse: AxiosResponse = await usernameExists(user.username);
@@ -159,40 +159,46 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
         let isMounted: boolean = true;
 
         if (user.username !== "") {
-            if (user.username.length <= 15) {
-                if (user.username.length >= 3) {
-                    const checkUsername = async () => {
-                        try {
-                            const response = await usernameExists(user.username);
-                            const isActiveResponse = await isActive(user.username);
-                            if (isMounted) {
-                                if (response.data.exists && isActiveResponse.data.checks) {
-                                    setUsernameIcon(faCircleExclamation);
-                                    setUsernameInfo("Username already exists.")
-                                    setUsernameActive(true);
-                                } else {
-                                    setUsernameIcon(faCircleCheck);
-                                    setUsernameInfo("")
-                                    setUsernameActive(false);
+            if (/^[a-zA-Z0-9]+$/.test(user.username)) {
+                if (user.username.length <= 15) {
+                    if (user.username.length >= 3) {
+                        const checkUsername = async () => {
+                            try {
+                                const response = await usernameExists(user.username);
+                                const isActiveResponse = await isActive(user.username);
+                                if (isMounted) {
+                                    if (response.data.exists && isActiveResponse.data.checks) {
+                                        setUsernameIcon(faCircleExclamation);
+                                        setUsernameInfo("Username already exists.")
+                                        setUsernameActive(true);
+                                    } else {
+                                        setUsernameIcon(faCircleCheck);
+                                        setUsernameInfo("")
+                                        setUsernameActive(false);
+                                    }
                                 }
+                            } catch (error) {
+                                console.log("Error checking username: ", error);
                             }
-                        } catch (error) {
-                            console.log("Error checking username: ", error);
                         }
-                    }
-                    checkUsername().then();
+                        checkUsername().then();
 
-                    return () => {
-                        isMounted = false;
+                        return () => {
+                            isMounted = false;
+                        }
+                    } else {
+                        setUsernameIcon(faCircleExclamation);
+                        setUsernameInfo("Username is too short.")
+                        setUsernameActive(true);
                     }
                 } else {
                     setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Username is too short.")
+                    setUsernameInfo("Username is too long.")
                     setUsernameActive(true);
                 }
             } else {
                 setUsernameIcon(faCircleExclamation);
-                setUsernameInfo("Username is too long.")
+                setUsernameInfo("Username has not allowed characters.")
                 setUsernameActive(true);
             }
         } else {
@@ -447,7 +453,8 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
                                 }}/>
                                 <label htmlFor="myCheckbox">Accept</label>
                                 <button onClick={() => navigate('/termsOfUse')}
-                                        className="underline ml-1">terms of use.</button>
+                                        className="underline ml-1">terms of use.
+                                </button>
                                 {/*password button*/}
                                 <button className="absolute right-0 cursor-pointer"
                                         onClick={toggleInput}>
@@ -457,8 +464,7 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
                             </div>
                         </div>
                         {/*register button*/}
-                        <button
-                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
+                        <button className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
                             onClick={handleRegister} disabled={isDisabledReg}>Register
                         </button>
                     </div>
