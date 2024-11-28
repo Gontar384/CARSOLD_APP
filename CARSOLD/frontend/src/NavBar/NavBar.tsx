@@ -351,95 +351,97 @@ function NavBar(): ReactElement {
                                 Add Offer</p>
                         </div>
                         {/*user details / login button*/}
-                        {isAuthenticated ? (
-                            usernameFetched ? (
-                                <div className="relative h-full"
-                                     onMouseEnter={handleActivateBar}
-                                     onMouseLeave={handleDisactivateBar}
-                                     onTouchStart={handleToggleBar}
-                                     onKeyDown={(event) => {
-                                         if (event.key === "Enter") handleActivateBarKeyboard()
-                                     }}>
-                                    <button className="flex flex-row items-center h-full gap-[6px] relative">
-                                        <FontAwesomeIcon icon={faCircleUser}
-                                                         className={`mb-[2px] lg:mt-[2px] xl:mt-[2px] 2xl:mt-1 3xl:mt-[1px] text-sm lg:text-[18px] 
+                        <div className="flex justify-center items-center h-full min-w-[142px] lg:min-w-[178px] xl:min-w-[213px] 2xl:min-w-[268px] 3xl:min-w-[322px]">
+                            {isAuthenticated ? (
+                                usernameFetched ? (
+                                    <div className="relative h-full flex justify-center items-center"
+                                         onMouseEnter={handleActivateBar}
+                                         onMouseLeave={handleDisactivateBar}
+                                         onTouchStart={handleToggleBar}
+                                         onKeyDown={(event) => {
+                                             if (event.key === "Enter") handleActivateBarKeyboard()
+                                         }}>
+                                        <button className="flex flex-row items-center h-full gap-[2px] lg:gap-[3px] xl:gap-1 2xl:gap-[6px] 3xl:gap-2 relative">
+                                            <FontAwesomeIcon icon={faCircleUser}
+                                                             className={`mb-[3px] lg:-mt-[2px] xl:mt-[0px] 3xl:-mt-1 text-sm lg:text-[18px] 
                                                      xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
-                                        <div
-                                            className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
-                                            {userDetails}
-                                        </div>
-                                        {messages ?
-                                            <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}} className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px]
+                                            <div
+                                                className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
+                                                {userDetails}
+                                            </div>
+                                            {messages ?
+                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}} className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px]
                                             2xl:-right-[18px] 3xl:-right-[22px] top-[14px] lg:top-[16px] xl:top-[20px] 2xl:top-[21px] text-[6px] lg:text-[7px] xl:text-[9px]
                                             2xl:text-[11px] 3xl:text-[13px]"/> : null}
-                                    </button>
-                                    <div
-                                        onTouchStart={handleDropdownInteraction}
-                                        className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
-                                        2xl:w-[148px] 3xl:w-[170px] absolute -left-[14px] bg-lime shadow-bottom`}>
-                                        <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px]
-                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
-                                                onClick={() => navigate('/myAccount/myOffers')}>
-                                            My offers
                                         </button>
-                                        <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                        <div
+                                            onTouchStart={handleDropdownInteraction}
+                                            className={`${barActive ? "flex" : "hidden"} flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 
+                                        2xl:w-[148px] 3xl:w-[170px] absolute top-[34px] lg:top-[38px] xl:top-[46px] 2xl:top-[50px] 3xl:top-[54px] bg-lime shadow-bottom`}>
+                                            <button className="flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px]
                                          text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
-                                                onClick={() => navigate('/myAccount/followed')}>
-                                            Followed
-                                            <div
-                                                className={`relative mt-[1px] ${followed === 0 ? "hidden" : ""}`}>
-                                                <FontAwesomeIcon icon={faCircle} style={{color: "#370eeb"}}
-                                                                 className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
-                                                <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                                    onClick={() => navigate('/myAccount/myOffers')}>
+                                                My offers
+                                            </button>
+                                            <button className="flex flex-row items-center justify-center gap-1 w-full h-[22px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                         text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
+                                                    onClick={() => navigate('/myAccount/followed')}>
+                                                Followed
+                                                <div
+                                                    className={`relative mt-[1px] ${followed === 0 ? "hidden" : ""}`}>
+                                                    <FontAwesomeIcon icon={faCircle} style={{color: "#370eeb"}}
+                                                                     className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                                    <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
                                                  2xl:text-[16px] 3xl:text-[20px] text-white absolute">{followed}</p>
-                                            </div>
-                                        </button>
-                                        <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
+                                                </div>
+                                            </button>
+                                            <button className="flex flex-row items-center justify-center gap-1 w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px]
                                          text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
-                                                onClick={() => navigate('/myAccount/messages')}>
-                                            Messages
-                                            <div
-                                                className={`relative mt-[1px] ${messages === 0 ? "hidden" : ""}`}>
-                                                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
-                                                                 className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
-                                                <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
+                                                    onClick={() => navigate('/myAccount/messages')}>
+                                                Messages
+                                                <div
+                                                    className={`relative mt-[1px] ${messages === 0 ? "hidden" : ""}`}>
+                                                    <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
+                                                                     className="text-[13px] lg:text-[18px] xl:text-[21px] 2xl:text-[25px] 3xl:text-[30px]"/>
+                                                    <p className="inset-0 m-auto lg:top-[2px] xl:top-[1px] 2xl:top-[3px] 3xl:top-[5px] text-[8px] lg:text-[11px] xl:text-[13px]
                                                  2xl:text-[16px] 3xl:text-[20px] text-white absolute">{messages}</p>
-                                            </div>
-                                        </button>
-                                        <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
+                                                </div>
+                                            </button>
+                                            <button className="flex items-center justify-center w-full h-[20px] lg:h-[26x] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] text-[11px] lg:text-[15px] xl:text-[18px]
                                          2xl:text-[23px] 3xl:text-[28px] hover:bg-white"
-                                                onClick={() => navigate('/myAccount/settings')}>
-                                            Settings
-                                        </button>
-                                        <button
-                                            className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
+                                                    onClick={() => navigate('/myAccount/settings')}>
+                                                Settings
+                                            </button>
+                                            <button
+                                                className={`flex flex-row items-center justify-center w-full h-[20px] lg:h-[26px] xl:h-[30px] 2xl:h-[37px] 3xl:h-[45px] 
                                             text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] gap-1 lg:gap-[6px] xl:gap-2 2xl:gap-[10px] 3xl:gap-3 hover:bg-white`}
-                                            onClick={handleDarkMode}>Mode
-                                            <div className="relative">
-                                                <FontAwesomeIcon icon={faMoon}
-                                                                 className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
+                                                onClick={handleDarkMode}>Mode
+                                                <div className="relative">
+                                                    <FontAwesomeIcon icon={faMoon}
+                                                                     className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
                                                              lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
-                                                <FontAwesomeIcon icon={faSun}
-                                                                 className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
+                                                    <FontAwesomeIcon icon={faSun}
+                                                                     className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
                                                              lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-                                            </div>
-                                        </button>
-                                        <button className="flex items-center justify-center w-full h-[21px] lg:h-[27px] xl:h-[28px] 2xl:h-[38px] 3xl:h-[46px] hover:bg-white text-[12px] lg:text-[16px]
+                                                </div>
+                                            </button>
+                                            <button className="flex items-center justify-center w-full h-[21px] lg:h-[27px] xl:h-[28px] 2xl:h-[38px] 3xl:h-[46px] hover:bg-white text-[12px] lg:text-[16px]
                                          xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px]"
-                                                onClick={logout}>Logout
-                                        </button>
+                                                    onClick={logout}>Logout
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="w-[65px] lg:w-[81px] xl:w-[96px] 2xl:w-[119px] 3xl:w-[142px] h-6 lg:h-7 xl:h-8 2xl:h-9 3xl:h-10
+                                ) : (
+                                    <div className="min-w-[145px] lg:min-w-[180px] xl:min-w-[215px] 2xl:min-w-[265px] 3xl:min-w-[320px] h-6 lg:h-7 xl:h-8 2xl:h-9 3xl:h-10
                                      bg-darkLime animate-pulse rounded-sm"></div>
-                            )
-                        ) : (
-                            <button onClick={() => navigate('/authenticate/login')}
-                                    className="text-[15px] lg:text-[18px] xl:text-[22px] 2xl:text-[27px] 3xl:text-[31px] whitespace-nowrap cursor-pointer">
-                                <p>Login | Register</p>
-                            </button>
-                        )}
+                                )
+                            ) : (
+                                <button onClick={() => navigate('/authenticate/login')}
+                                        className="text-[15px] lg:text-[18px] xl:text-[22px] 2xl:text-[27px] 3xl:text-[31px] whitespace-nowrap cursor-pointer">
+                                    <p>Login | Register</p>
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </>
             ) : (

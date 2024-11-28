@@ -15,6 +15,7 @@ import PasswordRecoveryChange from "./PageComponents/Authentication/PasswordReco
 import TermsOfUse from "./PageComponents/Authentication/TermsOfUse.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
+import LoadingAuthScreen from "./LoadingScreens/LoadingAuthScreen.tsx";
 
 function App(): ReactElement {
 
@@ -35,6 +36,7 @@ function App(): ReactElement {
                                 <Route path="/myAccount/:section?" element={<AccountDetails/>}/>
                             </Route>
 
+                            <Route path="/test" element={<LoadingAuthScreen/>}/>
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
 

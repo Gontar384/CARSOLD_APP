@@ -12,6 +12,7 @@
 
 body {
     @apply font-global; /*applies font globally*/
+    overflow-y: scroll;
 }
 
 .shadow-top {

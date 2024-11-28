@@ -22,20 +22,19 @@ const LoadingAuthScreen: React.FC = () => {
                     </div>
                     <div className="flex justify-center relative">
                         <FontAwesomeIcon icon={faMagnifyingGlass}
-                                         className={'absolute top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px]' +
-                                             ' left-[8px] lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[16px] lg:text-[20px] ' +
-                                             ` xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] z-30`}/>
-                        <div className={`w-64 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-6 lg:h-7 xl:h-8
-                                 2xl:h-10 3xl:h-11 p-1 lg:p-2 text-base lg:text-[19px] xl:text-2xl 2xl:text-[25px] 3xl:text-[32px] border border-solid 
-                                 border-black relative z-20 bg-lime rounded-full`}/>
+                                         className="absolute top-[5px] lg:top-[5px] xl:top-[5px] 2xl:top-[6px] 3xl:top-[7px] left-[8px]
+                                         lg:left-[9px] xl:left-xs 2xl:left-sm 3xl:left-lg text-[16px] lg:text-[20px] xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] z-30"/>
+                        <div className="w-64 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-6 lg:h-7 xl:h-8
+                                 2xl:h-10 3xl:h-11 p-1 lg:p-[6px] text-base lg:text-[19px] xl:text-2xl 2xl:text-[25px] 3xl:text-[32px] border border-solid 
+                                 border-black relative z-20 bg-lime rounded-full"/>
                     </div>
                     <div className="flex flex-row items-center p-[1px] gap-1 border-2 border-solid border-black
-                         cursor-pointer hover:bg-white hover:rounded-sm">
+                         cursor-pointer">
                         <FontAwesomeIcon icon={faPlus}
                                          className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl"/>
-                        <p className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl truncate">Add Offer</p>
+                        <p className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl whitespace-nowrap">Add Offer</p>
                     </div>
-                    <div className="w-[65px] lg:w-[81px] xl:w-[96px] 2xl:w-[119px] 3xl:w-[142px] h-6 lg:h-7 xl:h-8 2xl:h-9 3xl:h-10
+                    <div className="min-w-[142px] lg:min-w-[178px] xl:min-w-[213px] 2xl:min-w-[268px] 3xl:min-w-[322px] h-6 lg:h-7 xl:h-8 2xl:h-9 3xl:h-10
                                      bg-darkLime animate-pulse rounded-sm"></div>
                 </div>
             ) : (
