@@ -15,8 +15,8 @@ const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
 
 //creates provider-component which is then used in 'App' and wraps other components
 export const ItemsProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const [messages, setMessages] = useState<number>(0);
-    const [followed, setFollowed] = useState<number>(0);
+    const [messages, setMessages] = useState<number>(1);
+    const [followed, setFollowed] = useState<number>(1);
 
     //makes values accessible for all ItemsProvider children
     return <ItemsContext.Provider value={{messages, setMessages, followed, setFollowed}}>

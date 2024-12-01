@@ -16,13 +16,15 @@ import TermsOfUse from "./PageComponents/Authentication/TermsOfUse.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
 import LoadingAuthScreen from "./LoadingScreens/LoadingAuthScreen.tsx";
+import NavBar from "./NEW/LayOut/NavBar/NavBar.tsx";
+import LayOut from "./NEW/LayOut/LayOut.tsx";
 
 function App(): ReactElement {
 
     return (
-        <UtilProvider> {/*wraps components, provides util*/}
-            <AuthProvider> {/*wraps components and monitors Auth state*/}
-                <ItemsProvider> {/*wraps components, provides items globally*/}
+        <UtilProvider> {/*provides util*/}
+            <AuthProvider> {/*manages Auth state*/}
+                <ItemsProvider> {/*provides items globally*/}
                     <BrowserRouter> {/*manages routes*/}
                         <Routes>
                             <Route element={<PublicRoutes/>}>
@@ -36,9 +38,10 @@ function App(): ReactElement {
                                 <Route path="/myAccount/:section?" element={<AccountDetails/>}/>
                             </Route>
 
-                            <Route path="/test" element={<LoadingAuthScreen/>}/>
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
+
+                            <Route path="/test" element={<LayOut/>}/>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>
