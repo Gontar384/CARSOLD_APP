@@ -15,8 +15,6 @@ import PasswordRecoveryChange from "./PageComponents/Authentication/PasswordReco
 import TermsOfUse from "./PageComponents/Authentication/TermsOfUse.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
-import LoadingAuthScreen from "./LoadingScreens/LoadingAuthScreen.tsx";
-import NavBar from "./NEW/LayOut/NavBar/NavBar.tsx";
 import LayOut from "./NEW/LayOut/LayOut.tsx";
 
 function App(): ReactElement {

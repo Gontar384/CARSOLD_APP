@@ -1,10 +1,10 @@
 import React from "react";
+import {useNavigate} from "react-router-dom";
 
-interface LogoProps {
-    navigate: (path: string) => void;
-}
+const Logo: React.FC = () => {
 
-const Logo: React.FC<LogoProps> = ({navigate}) => {
+    const navigate = useNavigate();
+
     return (
         <button className="flex flex-row justify-center text-xl xs:text-2xl lg:text-3xl xl:text-4xl
         2xl:text-[44px] 3xl:text-[50px]"

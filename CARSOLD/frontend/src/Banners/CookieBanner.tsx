@@ -1,16 +1,13 @@
 import React, {useState} from "react";
 
-//cookie info banner
 const CookieBanner: React.FC = () => {
     const [visible, setVisible] = useState<boolean>(true);
 
-    //hides banner
     const handleDismiss = () => {
         setVisible(false);
         localStorage.setItem('cookie-banner', 'accepted');
     };
 
-    //displays when localstorage is empty, so basically on user's first visit on page
     if (visible && !localStorage.getItem('cookie-banner')) {
         return (
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-black
@@ -21,8 +18,7 @@ const CookieBanner: React.FC = () => {
                 </button>
             </div>
         );
-    }
-    return null;
+    } return null;
 };
 
 export default CookieBanner;

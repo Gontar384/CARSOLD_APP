@@ -3,8 +3,9 @@ import {AxiosError, AxiosResponse} from "axios";
 import SessionExpiredBanner from "../../Banners/SessionExpiredBanner.tsx";
 import {api} from "../AxiosConfig/AxiosConfig.tsx";
 
-//manages unauthenticated errors with axios, logout user and redirect him to '/authenticate'
+//manages unauthenticated errors with axios and logs out user
 const AuthErrorManager: React.FC = () => {
+
     const [showSessionExpired, setShowSessionExpired] = useState<boolean>(false);
 
     api.interceptors.response.use(
@@ -19,9 +20,9 @@ const AuthErrorManager: React.FC = () => {
                     }, 3000);
                 }
             } else if (error.message.includes('Network Error') || error.message.includes('CORS')) {  //for CORS errors
-                setShowSessionExpired(true);           //displays banner
+                setShowSessionExpired(true);
                 setTimeout(async () => {
-                    await api.get(`api/auth/logout`)     //logout (deletes JWT)
+                    await api.get(`api/auth/logout`)
                     window.location.href = '/authenticate';
                 }, 3000);
             }

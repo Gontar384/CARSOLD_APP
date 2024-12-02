@@ -1,35 +1,65 @@
-import React from "react";
+import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
+//highlights buttons
+export const useButton = () => {
+
+    const [buttonColor, setButtonsColor] = useState<("black" | "white")[]>([
+        "black", "black", "black", "black", "black", "black", "black"
+    ]);  //changes lower bar buttons colors
+
+    const [touchActive, setTouchActive] = useState<boolean>(false);   //helps not to mix mouse/touch events
+
+    const handleTouchStart = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "white" : color)));
+        setTouchActive(true);
+    };    //changes color
+
+    const handleTouchEnd = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "black" : color)));
+    };
+
+    const handleMouseEnter = (index: number) => {
+        if (!touchActive) {
+            setButtonsColor((prev) =>
+                prev.map((color, i) => (i === index ? "white" : color)));
+        }
+    };
+
+    const handleMouseLeave = (index: number) => {
+        setButtonsColor((prev) =>
+            prev.map((color, i) => (i === index ? "black" : color)));
+        setTouchActive(false);
+    };
+
+    return { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave }
+}
 
 interface ButtonProps {
     onClick: () => void;
+    serial: number;
     icon: any;
     label: string;
     count?: number;
-    handleTouchStart: () => void;
-    handleTouchEnd: () => void;
-    handleMouseEnter: () => void;
-    handleMouseLeave: () => void;
-    buttonColor: string;
 }
 
-const Button: React.FC<ButtonProps> = ({onClick, icon, label, count, handleTouchStart, handleTouchEnd,
-                                           handleMouseLeave, handleMouseEnter, buttonColor}) => {
+const Button: React.FC<ButtonProps> = ({serial, onClick, icon, label, count}) => {
+
+    const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
 
     return (
-        <button className="flex flex-col items-center w-1/6 h-full p-1"
-                onClick={onClick}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}>
-            <FontAwesomeIcon icon={icon} style={{ color: buttonColor }} className="text-xl xs:text-[22px]"/>
-            {count !== undefined && count > 0 && (
-                <p className="text-[9px] xs:text-[10px] top-[7px] xs:top-[8px] text-white absolute">
+        <button className="flex flex-col items-center w-1/6 h-full p-1 relative"
+                onClick={onClick} onTouchStart={() => handleTouchStart(serial)} onTouchEnd={() => handleTouchEnd(serial)}
+                onMouseEnter={() => handleMouseEnter(serial)} onMouseLeave={() => handleMouseLeave(serial)}>
+            <FontAwesomeIcon icon={icon} style={{ color: buttonColor[serial] }} className="text-xl xs:text-[22px]"/>
+            {count && count > 0 ? (
+                <p className="text-[9px] xs:text-[10px] top-[7px] text-white absolute">
                     {count}
                 </p>
-            )}
-            <p className="text-[9px] xs:text-[10px]">{label}</p>
+            ) : null}
+            <p className={`text-[9px] xs:text-[10px] ${label.length > 12 ? "ml-[6px]" : ""}`}>{label}</p>
         </button>
     )
 }

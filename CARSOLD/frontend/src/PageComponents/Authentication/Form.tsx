@@ -5,9 +5,7 @@ import {AxiosResponse} from "axios";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
-import LongDisappearBanner from "../../Banners/AnimatedBanners/LongDisappearBanner.tsx";
-import ShortNoDisappearBanner from "../../Banners/AnimatedBanners/ShortNoDisappearBanner.tsx";
-import WrongPasswordBanner from "../../Banners/AnimatedBanners/WrongPasswordBanner.tsx";
+import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
 
 //this function-component is basically handling register and login processes
 //gets 'choice' state updates from 'Headings'
@@ -464,15 +462,14 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
                             </div>
                         </div>
                         {/*register button*/}
-                        <button className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
+                        <button
+                            className="w-28 xs:w-40 2xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:w-52 3xl:h-12 rounded-sm shadow-xl hover:bg-white cursor-pointer"
                             onClick={handleRegister} disabled={isDisabledReg}>Register
                         </button>
                     </div>
                     {/*banner*/}
-                    {isRegistered ?
-                        <LongDisappearBanner
-                            text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
-                            onAnimationEnd={() => setIsRegistered(false)}/> : null}
+                    {isRegistered ? <AnimatedBanner text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
+                                                    onAnimationEnd={() => setIsRegistered(false)} delay={7000} color={"bg-lowLime"} z={"z-50"}/> : null}
                 </>
             ) : (
                 <> {/*login form*/}
@@ -510,8 +507,9 @@ function Form({choice}: { choice: "login" | "register" }): ReactElement {
                         </button>
                     </div>
                     {/*banners*/}
-                    {isLoggedIn ? <ShortNoDisappearBanner text={"Logged in successfully!"}/> : null}
-                    {wrongPassword ? <WrongPasswordBanner onAnimationEnd={() => setWrongPassword(false)}/> : null}
+                    {isLoggedIn ? <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
+                    {wrongPassword ? <AnimatedBanner text={"Wrong password"} onAnimationEnd={() => setWrongPassword(false)}
+                                                     delay={2000} color={"bg-coolRed"} z={"z-40"}/> : null}
                 </>
             )}
         </>

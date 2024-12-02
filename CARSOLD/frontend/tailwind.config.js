@@ -12,7 +12,6 @@ export default {
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
-                "coolLowRed": "#e00909",
                 "coolGreen": "#37ed26"
             },
             screens: {  //custom screens

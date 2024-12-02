@@ -1,48 +1,40 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircle, faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
 import DropdownButton from "./DropdownButton.tsx";
+import {useNavigate} from "react-router-dom";
+import {useItems} from "../../../../../../GlobalProviders/ItemsProvider.tsx";
+import {useUserDetails} from "../UserDetails.tsx";
+import {useLowerBar} from "../../LowerBar/LowerBar.tsx";
 
 interface DropdownProps {
     barActive: boolean;
-    darkMode: boolean;
-    modeIconAnimation: "animate-fill" | "animate-empty" | null;
-    modeIcon1Animation: "animate-fill" | "animate-empty" | null;
-    navigate: (path: string) => void;
-    handleDropdownInteraction: (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void
-    handleDarkMode: () => void;
-    logout: () => void;
-    followed: number;
-    messages: number;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ barActive, darkMode, modeIconAnimation, modeIcon1Animation, navigate,
-                                               handleDropdownInteraction, handleDarkMode, logout, followed, messages }) => {
+const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
+
+    const { logout } = useUserDetails();
+
+    const navigate = useNavigate();
+
+    const { followed, messages } = useItems();
+
+    const { handleDarkMode } = useLowerBar();
+
+    const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+        event.stopPropagation(); //prevents closing the dropdown buttons when clicking on them
+    };  //prevent closing
 
     return (
         <>
             {barActive &&
                 <div
-                    onTouchStart={() => handleDropdownInteraction}
-                    className="flex flex-col items-center justify-center w-[93px] lg:w-[109px] xl:w-[124px] 2xl:w-[148px] 3xl:w-[170px]
-                    absolute top-[34px] lg:top-[38px] xl:top-[46px] 2xl:top-[50px] 3xl:top-[54px] bg-lime shadow-bottom">
+                    onTouchStart={handleDropdownInteraction}
+                    className="flex flex-col items-center justify-center w-[75px] lg:w-[100px] xl:w-[120px] 2xl:w-[148px] 3xl:w-[180px]
+                    absolute top-9 lg:top-10 xl:top-12 2xl:top-[52px] 3xl:top-14 bg-lime shadow-bottom">
                     <DropdownButton label="MyOffers" onClick={() => navigate("/myAccount/myOffers")}/>
-                    <DropdownButton label="Followed" onClick={() => navigate('/myAccount/followed')} count={followed}
-                                    icon={faCircle} color="#370eeb"/>
-                    <DropdownButton label="Messages" onClick={() => navigate('/myAccount/messages')} count={messages}
-                                    icon={faCircle} color="#ff0000"/>
+                    <DropdownButton label="Followed" onClick={() => navigate('/myAccount/followed')} count={followed}/>
+                    <DropdownButton label="Messages" onClick={() => navigate('/myAccount/messages')} count={messages}/>
                     <DropdownButton label="Settings" onClick={() => navigate('/myAccount/settings')}/>
-                    <DropdownButton label="Mode" onClick={handleDarkMode}
-                                    icon={darkMode ? (
-                                        <FontAwesomeIcon icon={faMoon}
-                                                         className={`text-[12px] lg:text-[16px] xl:text-[19px] 2xl:text-[24px] 3xl:text-[29px] -top-[7px]
-                                                     lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${modeIconAnimation} absolute`}/>
-                                    ) : (
-                                        <FontAwesomeIcon icon={faSun}
-                                                         className={`text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] -top-[7px]
-                                                         lg:-top-[9px] xl:-top-[10px] 2xl:-top-[13px] 3xl:-top-[15px] ${modeIcon1Animation} absolute`}/>
-                                    )}
-                    />
+                    <DropdownButton label="Change mode" onClick={handleDarkMode}/>
                     <DropdownButton label="Logout" onClick={logout}/>
                 </div>}
         </>

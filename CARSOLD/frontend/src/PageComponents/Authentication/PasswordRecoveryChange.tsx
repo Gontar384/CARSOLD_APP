@@ -3,10 +3,10 @@ import {ReactElement, useEffect, useState} from "react";
 import {faCircleCheck, faCircleExclamation, faEye, faEyeSlash, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import NavBar from "../../NavBar/NavBar.tsx";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
-import ShortNoDisappearBanner from "../../Banners/AnimatedBanners/ShortNoDisappearBanner.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
 import {checksPassword} from "./Form.tsx";
 import Footer from "../../NavBar/Footer.tsx";
+import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
 
 //'/very3secret8password4change' page (very weird path to prevent users from entering page)
 function PasswordRecoveryChange(): ReactElement {
@@ -164,7 +164,7 @@ function PasswordRecoveryChange(): ReactElement {
                     </button>
                 </div>
             </div>
-            {isChanged ? <ShortNoDisappearBanner text={"Password successfully changed!"}/> : null}
+            {isChanged ? <AnimatedBanner text={"Password successfully changed!"} color={"bg-lowLime"} z={"z-50"}/> : null}
             <Footer/>
         </div>
     )

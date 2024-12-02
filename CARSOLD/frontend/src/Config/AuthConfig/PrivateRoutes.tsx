@@ -2,9 +2,13 @@ import {Navigate, Outlet} from "react-router-dom";
 import React from "react";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
 
-//checks if user is authenticated and redirects if needed
+//redirects
 const PrivateRoutes: React.FC = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, loadingAuth } = useAuth();
+
+    if (loadingAuth) {
+        return null;
+    }
 
     return isAuthenticated ? <Outlet /> : <Navigate to="/authenticate"/>;
 };

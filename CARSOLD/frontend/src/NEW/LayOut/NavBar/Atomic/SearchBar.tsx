@@ -1,18 +1,73 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
+import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
 
-interface SearchBarProps {
-    search: string;
-    setSearch: React.Dispatch<React.SetStateAction<string>>;
-    isClicked: boolean;
-    handleClick: () => void;
-    magnifierAnimation: "animate-disappear" | "animate-disappearRev" | null;
-    buttonAnimation: "animate-slideUp" | "animate-slideDown" | null;
-    componentRef: React.RefObject<HTMLDivElement>;
-}
+const SearchBar: React.FC = () => {
 
-const SearchBar: React.FC<SearchBarProps> = ({ search, setSearch, isClicked, handleClick, magnifierAnimation, buttonAnimation, componentRef }) => {
+    const [search, setSearch] = useState<string>("");   //checks input
+
+    const [isClicked, setIsClicked] = useState<boolean>(false);  //checks if it's clicked
+
+    const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
+
+    const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
+
+    const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
+
+    const searchRef = useRef<string>(""); //makes search state accessible
+
+    useEffect(() => {
+        searchRef.current = search;
+        if (search) {
+            setIsClicked(true);
+            setButtonAnimation("animate-slideDown");
+        } else {
+            setButtonAnimation("animate-slideUp")
+        }
+    }, [search]);   //sets isClicked and animation
+
+    useEffect(() => {
+        if (!isClicked) return;
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    }, [isClicked])   //adds event listener
+
+    const handleClick = () => {
+        setMagnifierAnimation("animate-disappear");
+        setTimeout(() => {
+            setMagnifierAnimation(null)
+            setIsClicked(true);
+        }, 100)
+        if (search) {
+            setButtonAnimation("animate-slideDown");
+        }
+    }   //handles input click
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+            if (isClicked) {
+                setMagnifierAnimation("animate-disappearRev");
+                setTimeout(() => {
+                    setMagnifierAnimation(null)
+                }, 100)
+                if (searchRef.current) {    //uses ref to access the latest `search` value
+                    setButtonAnimation("animate-slideUp");
+                }
+                setIsClicked(false);
+            }
+        }
+    }   //offs input backlight
+
+    const { isWide } = useUtil();
+
+    useEffect(() => {
+        setButtonAnimation(null);
+    }, [isWide]);   //resets animation when resizing
+
     return (
         <div
             className="flex justify-center relative w-1/2 sm:w-fit max-w-[210px] xs:max-w-[250px] sm:max-w-full pr-1 sm:pr-0"

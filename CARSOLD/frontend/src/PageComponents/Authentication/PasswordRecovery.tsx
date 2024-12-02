@@ -4,8 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NavBar from "../../NavBar/NavBar.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
 import {emailExists, isActive, isOauth2, useDebouncedValue} from "./Form.tsx";
-import LongDisappearBanner from "../../Banners/AnimatedBanners/LongDisappearBanner.tsx";
 import Footer from "../../NavBar/Footer.tsx";
+import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
 
 // '/password-recovery' page
 function PasswordRecovery(): ReactElement {
@@ -101,7 +101,8 @@ function PasswordRecovery(): ReactElement {
                     <div className="relative w-7/12">
                         <input
                             className="w-full 3xl:h-11 p-1 pr-6 text-sm xs:text-lg 2xl:text-2xl 3xl:text-3xl rounded-sm"
-                            placeholder="E-mail" type="text" value={email} onChange={(e) => setEmail(e.target.value.trim())}/>
+                            placeholder="E-mail" type="text" value={email}
+                            onChange={(e) => setEmail(e.target.value.trim())}/>
                         {emailIcon && <FontAwesomeIcon icon={emailIcon}
                                                        className="text-xl xs:text-[26px] 2xl:text-[30px] 3xl:text-[34px] absolute
                                                        right-1 xs:right-[6px] 2xl:right-[7px] 3xl:right-2 top-[5px] opacity-90"/>}
@@ -114,8 +115,9 @@ function PasswordRecovery(): ReactElement {
                 </div>
             </div>
             {/*banner*/}
-            {isEmailSent ? <LongDisappearBanner text={"Email with link has been sent!"}
-                                                onAnimationEnd={() => setIsEmailSent(false)}/> : null}
+            {isEmailSent ?
+                <AnimatedBanner text={"Email with link has been sent!"} onAnimationEnd={() => setIsEmailSent(false)}
+                                delay={7000} color={"bg-lowLime"} z={"z-50"}/> : null}
             <Footer/>
         </div>
     )
