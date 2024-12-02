@@ -1,9 +1,9 @@
 import React from "react";
 
-const Aside: React.FC = () => {
+const LoginForm: React.FC = () => {
     return (
         <></>
     )
 }
 
-export default Aside
+export default LoginForm

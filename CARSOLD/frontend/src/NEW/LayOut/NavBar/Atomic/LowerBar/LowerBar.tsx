@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Button from "./Atomic/Button.tsx";
+import MobileButton from "./Atomic/MobileButton.tsx";
 import {
     faAddressCard,
     faHeart,
@@ -90,17 +90,17 @@ const LowerBar: React.FC = () => {
         <div
             className={` ${lowerBarActive ? "flex" : "hidden"} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 
             right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
-            <Button onClick={() => navigate("/myAccount/myOffers")} icon={faSquarePlus} label="Add Offer" serial={1}/>
-            <Button onClick={() => navigate("/myAccount/followed")} icon={faHeart} label="Followed" count={followed} serial={2}/>
-            <Button onClick={() => navigate("/myAccount/messages")} icon={faMessage} label="Messages" count={messages} serial={3}/>
-            <Button onClick={() => navigate("/myAccount/myOffers")} icon={faUser} label={isAuthenticated ? userDetails : "Account"} serial={4}/>
+            <MobileButton onClick={() => navigate("/myAccount/myOffers")} icon={faSquarePlus} label="Add Offer" serial={1}/>
+            <MobileButton onClick={() => navigate("/myAccount/followed")} icon={faHeart} label="Followed" count={followed} serial={2}/>
+            <MobileButton onClick={() => navigate("/myAccount/messages")} icon={faMessage} label="Messages" count={messages} serial={3}/>
+            <MobileButton onClick={() => navigate("/myAccount/myOffers")} icon={faUser} label={isAuthenticated ? userDetails : "Account"} serial={4}/>
             {isAuthenticated ? (
                 <>
                     <DarkModeButton serial={5}/>
-                    <Button onClick={logout} icon={faRightFromBracket} label="Logout" serial={5}/>
+                    <MobileButton onClick={logout} icon={faRightFromBracket} label="Logout" serial={5}/>
                 </>
             ) : (
-                <Button onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login" serial={6}/>
+                <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login" serial={6}/>
             )}
         </div>
     )

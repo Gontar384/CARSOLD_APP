@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 //highlights buttons
 export const useButton = () => {
 
     const [buttonColor, setButtonsColor] = useState<("black" | "white")[]>([
-        "black", "black", "black", "black", "black", "black", "black"
+        "black", "black", "black", "black", "black", "black", "black", "black", "black", "black"
     ]);  //changes lower bar buttons colors
 
     const [touchActive, setTouchActive] = useState<boolean>(false);   //helps not to mix mouse/touch events
@@ -40,12 +41,12 @@ export const useButton = () => {
 interface ButtonProps {
     onClick: () => void;
     serial: number;
-    icon: any;
+    icon: IconProp;
     label: string;
     count?: number;
 }
 
-const Button: React.FC<ButtonProps> = ({serial, onClick, icon, label, count}) => {
+const MobileButton: React.FC<ButtonProps> = ({serial, onClick, icon, label, count}) => {
 
     const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
 
@@ -64,4 +65,4 @@ const Button: React.FC<ButtonProps> = ({serial, onClick, icon, label, count}) =>
     )
 }
 
-export default Button
+export default MobileButton

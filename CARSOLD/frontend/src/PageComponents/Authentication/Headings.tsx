@@ -2,7 +2,7 @@ import {Dispatch, ReactElement, SetStateAction} from "react";
 import {useNavigate} from "react-router-dom";
 
 //component with 'Login', 'Register' and 'Google Auth' headings, sets 'choice' state
-//which defines what is displayed on 'Form' component
+//which defines what is displayed on 'AuthWindow' component
 function Headings({setChoice}: { setChoice: Dispatch<SetStateAction<"login" | "register">> }): ReactElement {
 
     //navigates user

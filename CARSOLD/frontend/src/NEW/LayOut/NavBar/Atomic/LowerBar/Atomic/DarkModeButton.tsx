@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
 import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {useUtil} from "../../../../../../GlobalProviders/UtilProvider.tsx";
-import {useButton} from "./Button.tsx";
+import {useButton} from "./MobileButton.tsx";
 import {useLowerBar} from "../LowerBar.tsx";
 
 interface DarkModeButtonProps {

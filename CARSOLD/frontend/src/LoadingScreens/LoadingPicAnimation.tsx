@@ -1,7 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
 
 //will be needed further when dealing with pics loading
-function LoadingAnimation(): ReactElement {
+function LoadingPicAnimation(): ReactElement {
 
     //state to add accumulating degrees every cycle
     const [rotationDegrees, setRotationDegrees] = useState<number>(0);  // Store the accumulated rotation
@@ -35,4 +35,4 @@ function LoadingAnimation(): ReactElement {
     );
 }
 
-export default LoadingAnimation;
+export default LoadingPicAnimation;

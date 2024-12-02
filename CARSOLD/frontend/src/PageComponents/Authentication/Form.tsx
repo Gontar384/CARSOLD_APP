@@ -9,7 +9,7 @@ import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
 
 //this function-component is basically handling register and login processes
 //gets 'choice' state updates from 'Headings'
-//some functions used in 'Form' are below main component, because they're exported and used in other components
+//some functions used in 'AuthWindow' are below main component, because they're exported and used in other components
 function Form({choice}: { choice: "login" | "register" }): ReactElement {
 
     //user object for register

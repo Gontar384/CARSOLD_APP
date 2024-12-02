@@ -15,7 +15,7 @@ function Authentication(): ReactElement {
     //navigates user
     const navigate = useNavigate();
 
-    //state being changed in 'Headings' and used in 'Form', defines what is displayed
+    //state being changed in 'Headings' and used in 'AuthWindow', defines what is displayed
     //if section is likely extracted from url - it sets choice to that value, if not - defaults 'login'
     const [choice, setChoice] = useState<"login" | "register">("login");
 
