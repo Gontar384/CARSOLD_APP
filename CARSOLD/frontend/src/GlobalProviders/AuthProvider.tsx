@@ -11,6 +11,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 //manages authentication and adds loading screen
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
@@ -51,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }, []);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, checkAuth, loadingAuth}}>
+        <AuthContext.Provider value={{ isAuthenticated, checkAuth, loadingAuth }}>
             {children}
         </AuthContext.Provider>
     );

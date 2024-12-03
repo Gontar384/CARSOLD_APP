@@ -1,6 +1,6 @@
 import React, {SetStateAction} from "react";
 import {useNavigate} from "react-router-dom";
-import Button from "./Atomic/Button.tsx";
+import HeaderButton from "./Atomic/HeaderButton.tsx";
 
 interface HeadersProps {
     setChoice: React.Dispatch<SetStateAction<"login" | "register">>;
@@ -27,10 +27,10 @@ const Headers: React.FC<HeadersProps> = ({setChoice}) => {
     return (
         <div className="flex flex-col w-11/12 gap-2">
             <div className="flex flex-row divide-x divide-black">
-                <Button label={"Login"} serial={7} onClick={() => handleNavigation("login")}/>
-                <Button label={"Register"} serial={8} onClick={() => handleNavigation("register")}/>
+                <HeaderButton label={"Login"} serial={1} onClick={() => handleNavigation("login")}/>
+                <HeaderButton label={"Register"} serial={2} onClick={() => handleNavigation("register")}/>
             </div>
-            <Button label={"Authenticated using Google"} serial={9} onClick={handleGoogleAuth} isGoogle={true}/>
+            <HeaderButton label={"Authenticated using Google"} serial={3} onClick={handleGoogleAuth} isGoogle={true}/>
         </div>
     )
 }

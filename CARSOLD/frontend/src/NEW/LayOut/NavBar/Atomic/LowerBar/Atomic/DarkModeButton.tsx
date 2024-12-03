@@ -1,10 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
 import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {useUtil} from "../../../../../../GlobalProviders/UtilProvider.tsx";
-import {useButton} from "./MobileButton.tsx";
-import {useLowerBar} from "../LowerBar.tsx";
+import {useButton} from "../../../../CustomHooks/UseButton.ts";
 
 interface DarkModeButtonProps {
     serial: number;
@@ -12,11 +11,23 @@ interface DarkModeButtonProps {
 
 const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
 
-    const { handleDarkMode, modeIconAnimation, modeIcon1Animation } = useLowerBar();
-
-    const { darkMode } = useUtil();
+    const { darkMode, toggleDarkMode, lowerBar } = useUtil();
 
     const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
+
+    const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);   //dark mode icons animations
+    const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
+
+    const handleDarkMode = () => {
+        toggleDarkMode();
+        setModeIconAnimation(!darkMode ? "animate-fill" : "animate-empty");
+        setModeIcon1Animation(!darkMode ? "animate-empty" : "animate-fill");
+    }   //handles dark mode and animates button
+
+    useEffect(() => {
+        setModeIconAnimation(null);
+        setModeIcon1Animation(null);
+    }, [lowerBar]);   //resets animations
 
     return (
         <button

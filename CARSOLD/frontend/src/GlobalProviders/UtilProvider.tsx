@@ -13,27 +13,11 @@ const UtilContext = createContext<UtilContextType | undefined>(undefined);
 
 //manages dark mode, lower bar presence and window size
 export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children }) => {
+
     const [darkMode, setDarkMode] = useState<boolean>(() => {
         const savedTheme = localStorage.getItem('theme');
         return savedTheme === 'dark';
     });
-
-    //function which can set debounced value for useEffects to avoid too much requests be sent
-    const createDebouncedValue = <T, >(value: T, delay: number): T => {
-        const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedValue(value);
-            }, delay);
-
-            return () => {
-                clearTimeout(handler);
-            };
-        }, [value, delay]);
-
-        return debouncedValue;
-    }
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
@@ -79,6 +63,7 @@ export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children 
     }, []);  //manages dark mode on initial load
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);
+
     const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
 
     useEffect(() => {
@@ -89,6 +74,23 @@ export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children 
         return () => window.removeEventListener('resize', handleResize)
 
     }, [])  //manages isWide state
+
+    //function which can set debounced value for useEffects to avoid too much requests be sent
+    const createDebouncedValue = <T, >(value: T, delay: number): T => {
+        const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [value, delay]);
+
+        return debouncedValue;
+    }
 
     return (
         <UtilContext.Provider value={{ darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, createDebouncedValue }}>

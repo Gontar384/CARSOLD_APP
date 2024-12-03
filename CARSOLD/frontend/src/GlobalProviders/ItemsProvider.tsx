@@ -5,6 +5,8 @@ interface ItemsContextType {
     setMessages: React.Dispatch<React.SetStateAction<number>>,
     followed: number,
     setFollowed: React.Dispatch<React.SetStateAction<number>>
+    search: string;
+    setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
@@ -13,8 +15,9 @@ const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
 export const ItemsProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [messages, setMessages] = useState<number>(1);
     const [followed, setFollowed] = useState<number>(1);
+    const [search, setSearch] = useState<string>("");   //checks input
 
-    return <ItemsContext.Provider value={{messages, setMessages, followed, setFollowed}}>
+    return <ItemsContext.Provider value={{ messages, setMessages, followed, setFollowed, search, setSearch }}>
         {children}
     </ItemsContext.Provider>
 }

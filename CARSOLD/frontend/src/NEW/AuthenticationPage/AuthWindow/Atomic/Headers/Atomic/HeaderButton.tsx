@@ -1,14 +1,14 @@
 import React from "react";
-import {useButton} from "../../../../../LayOut/NavBar/Atomic/LowerBar/Atomic/MobileButton.tsx";
+import {useButton} from "../../../../../LayOut/CustomHooks/UseButton.ts";
 
-interface ButtonProps {
+interface HeaderButtonProps {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     label: string;
     serial: number;
     isGoogle?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({onClick, serial, isGoogle, label}) => {
+const HeaderButton: React.FC<HeaderButtonProps> = ({onClick, serial, isGoogle, label}) => {
 
     const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
 
@@ -25,4 +25,4 @@ const Button: React.FC<ButtonProps> = ({onClick, serial, isGoogle, label}) => {
     )
 }
 
-export default Button
+export default HeaderButton
