@@ -84,6 +84,11 @@ export default {
                     "0%": { width: "0%" },
                     "100%": { width: "100%" },
                 },
+                wave: {
+                    '0%': { transform: "scale(0)", opacity: "0.1" },
+                    '50%': { transform: "scale(1)", opacity: "0.2" },
+                    '100%': { transform: "scale(1)", opacity: "0" }
+                }
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -100,6 +105,7 @@ export default {
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
                 grow: "grow 2s ease-out forwards",
+                wave: "wave 0.6s ease-out"
             },
         },
     },

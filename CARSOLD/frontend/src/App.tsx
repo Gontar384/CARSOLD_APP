@@ -15,7 +15,6 @@ import PasswordRecoveryChange from "./PageComponents/Authentication/PasswordReco
 import TermsOfUse from "./PageComponents/Authentication/TermsOfUse.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
-import LayOut from "./NEW/LayOut/LayOut.tsx";
 import AuthenticationPage from "./NEW/AuthenticationPage/AuthenticationPage.tsx";
 
 function App(): ReactElement {
@@ -41,10 +40,7 @@ function App(): ReactElement {
                             <Route path="/home" element={<Home/>}/>
 
 
-                            <Route path="/testAuth" element={<AuthenticationPage/>}/>
-
-                            <Route path="/test" element={<LayOut/>}/>
-
+                            <Route path="/testAuth/:section?" element={<AuthenticationPage/>}/>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>
