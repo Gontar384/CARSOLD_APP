@@ -1,7 +1,7 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import Additional from "./Additional.tsx";
+import Additional from "./Atomic/Additional.tsx";
 
 interface InputProps<T> {
     placeholder: string;
@@ -10,14 +10,18 @@ interface InputProps<T> {
     value: T extends object ? T[keyof T] : T;
     field?: keyof T;
     setValue?: React.Dispatch<React.SetStateAction<T>>;
-    icon?: IconProp;
+    icon?: IconProp | null;
     isActive?: boolean;
     info?: string;
     hasEye?: boolean;
+    whichForm?: "login" | "register";
+    termsCheck?: boolean;
+    setTermsCheck?: React.Dispatch<React.SetStateAction<boolean>>;
+    mark?: boolean;
 }
 
-const Input = <T extends string | number | object>({placeholder, inputType, setInputType, value, setValue,
-                                                       field, icon, isActive, info, hasEye}: InputProps<T>) => {
+const Input = <T extends string | number | object>({placeholder, inputType, setInputType, value, setValue, field, icon,
+                                                       isActive, info, hasEye, whichForm, termsCheck, setTermsCheck, mark}: InputProps<T>) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value.trim();
@@ -35,18 +39,18 @@ const Input = <T extends string | number | object>({placeholder, inputType, setI
     };   //let update individual values and specific fields of objects
 
     return (
-        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12 relative">
-            <div className="w-full">
+        <div className="w-10/12 max-w-[255px] xs:max-w-[420px] xs:w-9/12">
+            <div className="w-full relative">
                 <input className="w-full p-1 pr-12 rounded-sm 3xl:h-12 shadow-lg transition duration-500 ease-in-out
                 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:shadow-blue-500/50"
                        placeholder={placeholder} type={inputType} value={value} onChange={handleChange}/>
                 {icon && <FontAwesomeIcon icon={icon}
                                           className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px]
                                            absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
-                <p className={isActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[41px] " +
-                    "2xl:top-[43px] 3xl:top-[50px]" : "hidden"}>{info}</p>
+                <p className={isActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[42px] " +
+                    "2xl:top-[44px] 3xl:top-[54px]" : "hidden"}>{info}</p>
             </div>
-            {hasEye ? <Additional setInputType={setInputType}/> : null}
+            {hasEye ? <Additional setInputType={setInputType} whichForm={whichForm} termsCheck={termsCheck} setTermsCheck={setTermsCheck} mark={mark}/> : null}
         </div>
     )
 }

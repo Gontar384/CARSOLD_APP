@@ -12,7 +12,6 @@ import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
-import java.util.HashMap;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -128,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
     //activates account after clicking link with token
     @Override
-    public void activateAccount(String token, HttpServletResponse response) {
+    public String activateAccount(String token, HttpServletResponse response) {
         try {
             Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
             String username = claims.getSubject();                 //gets username from claims
@@ -142,8 +140,10 @@ public class UserServiceImpl implements UserService {
             String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
             ResponseCookie authCookie = createCookie(newToken, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+            return "Activation success";
         } catch (Exception e) {
             System.err.println("Failed to activate account: " + e.getMessage());
+            return "Activation failed";
         }
     }
 

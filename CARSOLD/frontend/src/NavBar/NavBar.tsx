@@ -9,7 +9,6 @@ import {useNavigate} from "react-router-dom";
 import {useUtil} from "../GlobalProviders/UtilProvider.tsx";
 import {useAuth} from "../GlobalProviders/AuthProvider.tsx";
 import {useItems} from "../GlobalProviders/ItemsProvider.tsx";
-import {useDebouncedValue} from "../PageComponents/Authentication/Form.tsx";
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 
 //navigation bar for big screens and mobile screens
@@ -26,6 +25,8 @@ function NavBar(): ReactElement {
 
     //ref which checks if user clicked outside the search bar
     const componentRef = useRef<HTMLDivElement | null>(null);
+
+    const { createDebouncedValue } = useUtil();
 
     //magnifier icon animation
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
@@ -219,7 +220,7 @@ function NavBar(): ReactElement {
     const [barHovered, setBarHovered] = useState<boolean>(false);
 
     //debounce value to delay deactivation
-    const debouncedHover: boolean = useDebouncedValue(barHovered, 300)
+    const debouncedHover: boolean = createDebouncedValue(barHovered, 300)
 
     //state which prevents icon animating too many times
     const [animationActive, setAnimationActive] = useState<boolean>(false);

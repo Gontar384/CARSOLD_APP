@@ -4,10 +4,9 @@ import PublicRoutes from "./Config/AuthConfig/PublicRoutes.tsx";
 import CookieBanner from "./Banners/CookieBanner.tsx";
 import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import TokenManager from "./Config/TokensConfig/TokenManager.tsx";
-import {ReactElement} from "react";
+import React from "react";
 import {AuthProvider} from "./GlobalProviders/AuthProvider.tsx";
-import Authentication from "./PageComponents/Authentication/Authentication.tsx";
-import AccountActivation from "./PageComponents/Authentication/AccountActivation.tsx";
+import AccountActivation from "./NEW/AccountActivation/AccountActivation.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import {UtilProvider} from "./GlobalProviders/UtilProvider.tsx";
 import PasswordRecovery from "./PageComponents/Authentication/PasswordRecovery.tsx";
@@ -17,7 +16,7 @@ import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
 import AuthenticationPage from "./NEW/AuthenticationPage/AuthenticationPage.tsx";
 
-function App(): ReactElement {
+const App: React.FC = () => {
 
     return (
         <UtilProvider> {/*provides util*/}
@@ -26,7 +25,7 @@ function App(): ReactElement {
                     <BrowserRouter> {/*manages routes*/}
                         <Routes>
                             <Route element={<PublicRoutes/>}>
-                                <Route path="/authenticate/:section?" element={<Authentication/>}/>
+                                <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
                                 <Route path="/activate" element={<AccountActivation/>}/>
                                 <Route path="/password-recovery" element={<PasswordRecovery/>}/>
                                 <Route path="/very3secret8password4change" element={<PasswordRecoveryChange/>}/>
@@ -40,8 +39,6 @@ function App(): ReactElement {
                             <Route path="/home" element={<Home/>}/>
 
 
-                            <Route path="/testAuth/:section?" element={<AuthenticationPage/>}/>
-
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>
                         <TokenManager/> {/*manages tokens in the background*/}
@@ -52,7 +49,6 @@ function App(): ReactElement {
             </AuthProvider>
         </UtilProvider>
     )
-
 }
 
 export default App

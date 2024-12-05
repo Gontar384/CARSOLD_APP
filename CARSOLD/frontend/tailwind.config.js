@@ -12,7 +12,8 @@ export default {
                 "lowLime": "#6bfd17",
                 "lowBlack": "#191a18",
                 "coolRed": "#f20707",
-                "coolGreen": "#37ed26"
+                "coolGreen": "#37ed26",
+                "coolYellow": "#bff719"
             },
             screens: {  //custom screens
                 "xs": "480px",
@@ -105,7 +106,7 @@ export default {
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
                 grow: "grow 2s ease-out forwards",
-                wave: "wave 0.6s ease-out"
+                wave: "wave 0.4s ease-out"
             },
         },
     },

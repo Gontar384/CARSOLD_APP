@@ -3,9 +3,10 @@ import {ReactElement, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NavBar from "../../NavBar/NavBar.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
-import {emailExists, isActive, isOauth2, useDebouncedValue} from "./Form.tsx";
 import Footer from "../../NavBar/Footer.tsx";
 import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
+import {useUserCheck} from "../../NEW/AuthenticationPage/CustomHooks/UseUserCheck.ts";
+import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
 
 // '/password-recovery' page
 function PasswordRecovery(): ReactElement {
@@ -13,8 +14,12 @@ function PasswordRecovery(): ReactElement {
     //email state
     const [email, setEmail] = useState<string>("");
 
+    const {emailExists, isActive, isOauth2} = useUserCheck();
+
+    const { createDebouncedValue } = useUtil();
+
     //delays check 300 millis
-    const debouncedEmail: string = useDebouncedValue(email, 300);
+    const debouncedEmail: string = createDebouncedValue(email, 300);
 
     //email info states
     const [emailIcon, setEmailIcon] = useState<IconDefinition | null>(null);

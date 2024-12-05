@@ -7,7 +7,7 @@ const Headers: React.FC = () => {
     const navigate = useNavigate();
 
     const handleNavigation = (destination: "login" | "register") => {
-        navigate(`/testAuth/${destination}`);
+        navigate(`/authenticate/${destination}`);
     }
 
     const handleGoogleAuth = async () => {

@@ -4,9 +4,9 @@ import {faCircleCheck, faCircleExclamation, faEye, faEyeSlash, IconDefinition} f
 import NavBar from "../../NavBar/NavBar.tsx";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
-import {checksPassword} from "./Form.tsx";
 import Footer from "../../NavBar/Footer.tsx";
 import AnimatedBanner from "../../Banners/AnimatedBanner.tsx";
+import {useUserCheck} from "../../NEW/AuthenticationPage/CustomHooks/UseUserCheck.ts";
 
 //'/very3secret8password4change' page (very weird path to prevent users from entering page)
 function PasswordRecoveryChange(): ReactElement {
@@ -20,6 +20,8 @@ function PasswordRecoveryChange(): ReactElement {
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [repPasswordIcon, setRepPasswordIcon] = useState<IconDefinition | null>(null);
+
+    const { checksPassword } = useUserCheck();
 
     //checks if password is strong enough, displays info for user
     useEffect(() => {

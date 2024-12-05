@@ -50,8 +50,8 @@ public class UserController {
     @GetMapping("/auth/activate")
     public ResponseEntity<String> activate(@RequestParam("token") String token,
                                            HttpServletResponse response) {
-        service.activateAccount(token, response);
-        return ResponseEntity.ok("Account activated");
+        String message = service.activateAccount(token, response);
+        return ResponseEntity.ok(message);
     }
 
     //gets csrf token when app mounts
