@@ -35,14 +35,15 @@ public class JwtService {
     }
 
     //creates token for username
-    public String generateToken(String username){
+    public String generateToken(String username, long minutesToExpire){
         Map<String, Object> claims = new HashMap<>();
+        long expirationTime = System.currentTimeMillis() + (1000 * 60 * minutesToExpire);
         return Jwts.builder()
                 .claims()               //statements about entity and additional metadata
                 .add(claims)
                 .subject(username)  //includes username in token
                 .issuedAt(new Date(System.currentTimeMillis()))   //creation time
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))   //expiration time 10h
+                .expiration(new Date(expirationTime))   //expiration time 10h
                 .and()
                 .signWith(getKey())   //signed with secret key
                 .compact();           //returned as string

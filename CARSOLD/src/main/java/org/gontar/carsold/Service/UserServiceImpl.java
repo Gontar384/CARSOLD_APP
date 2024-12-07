@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 
 @Service
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
         }
         repository.save(user);
 
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user.getUsername(), 30);
         String link = frontendUrl + "activate?token=" + token;
         sendVerificationEmail(user.getEmail(), link);
     }
@@ -137,7 +138,7 @@ public class UserServiceImpl implements UserService {
                 repository.save(user);
             }
 
-            String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
+            String newToken = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
             ResponseCookie authCookie = createCookie(newToken, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
             return "Activation success";
@@ -210,7 +211,7 @@ public class UserServiceImpl implements UserService {
         }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
         if (authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
+            String token = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
             ResponseCookie authCookie = createCookie(token, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
         }
@@ -225,7 +226,7 @@ public class UserServiceImpl implements UserService {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             boolean isValid = jwtService.validateToken(jwt, userDetails);
             if (isValid) {
-                String newToken = jwtService.generateToken(username);
+                String newToken = jwtService.generateToken(username, 600);
                 ResponseCookie jwtCookie = createCookie(newToken, 10);
                 response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
             }
@@ -250,7 +251,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendPasswordRecoveryEmail(String email) {
         User user = repository.findByEmail(email);
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user.getUsername(), 10);
         String link = frontendUrl + "very3secret8password4change?token=" + token;
         try {
             MimeMessage message = emailSender.createMimeMessage();
@@ -277,20 +278,26 @@ public class UserServiceImpl implements UserService {
 
     //gets token and password, if token is correct, it changes user password and authenticate him
     @Override
-    public void recoveryChangePassword(String token, String password, HttpServletResponse response) {
+    public String recoveryChangePassword(String token, String password, HttpServletResponse response) {
         try {
             Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
             String username = claims.getSubject();                 //gets username from claims
-            User user = repository.findByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            boolean isValid = jwtService.validateToken(token, userDetails);
+            if (isValid) {
+                User user = repository.findByUsername(username);
+                user.setPassword(encoder.encode(password));
+                repository.save(user);
 
-            user.setPassword(encoder.encode(password));
-            repository.save(user);
-
-            String newToken = jwtService.generateToken(user.getUsername());    //generates new token for authenticated session
-            ResponseCookie authCookie = createCookie(newToken, 10);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+                String newToken = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
+                ResponseCookie authCookie = createCookie(newToken, 10);
+                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+                return "success";
+            }
+            return "fail";
         } catch (Exception e) {
             System.err.println("Failed to change authenticated user and change password: " + e.getMessage());
+            return "fail";
         }
     }
 

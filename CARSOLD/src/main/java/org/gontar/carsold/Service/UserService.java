@@ -18,6 +18,6 @@ public interface UserService {
     void refreshJwt(HttpServletRequest request, HttpServletResponse response);
     boolean validateUser(String login, String password);
     void sendPasswordRecoveryEmail(String email);
-    void recoveryChangePassword(String token, String password, HttpServletResponse response);
+    String recoveryChangePassword(String token, String password, HttpServletResponse response);
     String getUsername(HttpServletRequest request);
 }

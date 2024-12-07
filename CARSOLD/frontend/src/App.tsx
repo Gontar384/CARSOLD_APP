@@ -1,20 +1,21 @@
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoutes from "./Config/AuthConfig/PrivateRoutes.tsx";
 import PublicRoutes from "./Config/AuthConfig/PublicRoutes.tsx";
-import CookieBanner from "./Banners/CookieBanner.tsx";
 import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import TokenManager from "./Config/TokensConfig/TokenManager.tsx";
 import React from "react";
 import {AuthProvider} from "./GlobalProviders/AuthProvider.tsx";
-import AccountActivation from "./NEW/AccountActivation/AccountActivation.tsx";
-import Home from "./PageComponents/Home/Home.tsx";
 import {UtilProvider} from "./GlobalProviders/UtilProvider.tsx";
-import PasswordRecovery from "./PageComponents/Authentication/PasswordRecovery.tsx";
-import PasswordRecoveryChange from "./PageComponents/Authentication/PasswordRecoveryChange.tsx";
-import TermsOfUse from "./PageComponents/Authentication/TermsOfUse.tsx";
-import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
+import AccountDetails from "./Test/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
-import AuthenticationPage from "./NEW/AuthenticationPage/AuthenticationPage.tsx";
+import AuthenticationPage from "./PageComponents/Authentication/Authentication.tsx";
+import AccountActivation from "./PageComponents/AccountActivation/AccountActivation.tsx";
+import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
+import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery.tsx";
+import PasswordChange from "./PageComponents/PasswordChange/PasswordChange.tsx";
+import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
+import Home from "./PageComponents/Home/Home.tsx";
+
 
 const App: React.FC = () => {
 
@@ -28,7 +29,7 @@ const App: React.FC = () => {
                                 <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
                                 <Route path="/activate" element={<AccountActivation/>}/>
                                 <Route path="/password-recovery" element={<PasswordRecovery/>}/>
-                                <Route path="/very3secret8password4change" element={<PasswordRecoveryChange/>}/>
+                                <Route path="/very3secret8password4change" element={<PasswordChange/>}/>
                             </Route>
 
                             <Route element={<PrivateRoutes/>}>

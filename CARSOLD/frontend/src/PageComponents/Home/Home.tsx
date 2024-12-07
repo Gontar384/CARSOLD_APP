@@ -1,19 +1,14 @@
-import {ReactElement} from "react";
-import NavBar from "../../NavBar/NavBar.tsx";
-import Footer from "../../NavBar/Footer.tsx";
+import React from "react";
+import LayOut from "../../LayOut/LayOut.tsx";
 
-//'/home' page
-function Home(): ReactElement {
-
+const Home: React.FC = () => {
     return (
-        <div className="flex flex-col min-h-screen">
-            <NavBar/>
-            <div className="flex-grow flex flex-col">
+        <LayOut>
+            <div className="flex flex-col">
 
             </div>
-            <Footer/>
-        </div>
+        </LayOut>
     )
 }
 
-export default Home;
+export default Home

@@ -54,7 +54,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             user.setOauth2User(true);
             repository.save(user);
 
-            String token = jwtService.generateToken(user.getUsername());//generates token based on "username"
+            String token = jwtService.generateToken(user.getUsername(), 600);//generates token based on "username"
 
             ResponseCookie authCookie = createCookie(token);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response

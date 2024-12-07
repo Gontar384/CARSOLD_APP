@@ -135,8 +135,8 @@ public class UserController {
             @RequestBody Map<String, String> payload, HttpServletResponse response){
         String token = payload.get("token");
         String password = payload.get("password");
-        service.recoveryChangePassword(token, password, response);
-        return ResponseEntity.ok("Password changed");
+        String message = service.recoveryChangePassword(token, password, response);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/get-username")
