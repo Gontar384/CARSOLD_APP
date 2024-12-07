@@ -3,6 +3,9 @@ import LayOut from "../../LayOut/LayOut.tsx";
 import Section from "./Section.tsx";
 
 const TermsOfUse: React.FC = () => {
+
+    document.title = "CARSOLD | Terms Of Use";
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">

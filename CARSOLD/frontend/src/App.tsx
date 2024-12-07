@@ -6,7 +6,6 @@ import TokenManager from "./Config/TokensConfig/TokenManager.tsx";
 import React from "react";
 import {AuthProvider} from "./GlobalProviders/AuthProvider.tsx";
 import {UtilProvider} from "./GlobalProviders/UtilProvider.tsx";
-import AccountDetails from "./Test/AccountDetails/AccountDetails.tsx";
 import {ItemsProvider} from "./GlobalProviders/ItemsProvider.tsx";
 import AuthenticationPage from "./PageComponents/Authentication/Authentication.tsx";
 import AccountActivation from "./PageComponents/AccountActivation/AccountActivation.tsx";
@@ -15,7 +14,7 @@ import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery
 import PasswordChange from "./PageComponents/PasswordChange/PasswordChange.tsx";
 import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
-
+import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 
 const App: React.FC = () => {
 
@@ -32,13 +31,12 @@ const App: React.FC = () => {
                                 <Route path="/very3secret8password4change" element={<PasswordChange/>}/>
                             </Route>
 
-                            <Route element={<PrivateRoutes/>}>
-                                <Route path="/myAccount/:section?" element={<AccountDetails/>}/>
-                            </Route>
-
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
 
+                            <Route element={<PrivateRoutes/>}>
+                                <Route path="/myAccount/:section?" element={<AccountDetails/>}/>
+                            </Route>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>

@@ -10,7 +10,8 @@ const AccountActivation: React.FC = () => {
 
     const [count, setCount] = useState<number>(4);
     const [activationMessage, setActivationMessage] = useState<string>("Account activation success - redirecting...");
-    const [color, setColor] = useState<"bg-lowLime" | "bg-coolYellow">("bg-lowLime");
+    const [color, setColor] = useState<"bg-lime" | "bg-coolYellow">("bg-lime");
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -21,11 +22,12 @@ const AccountActivation: React.FC = () => {
                 const response = await api.get(`api/auth/activate`, {params: {token}});
                 if (response.data === "Activation failed") {
                     setColor("bg-coolYellow");
-                    setActivationMessage("Account activation failed - redirecting...");
+                    setActivationMessage("Link has expired, register again please...");
                     setTimeout(() => {
                         navigate("/authenticate/register")
                     }, 4500)
                 }
+                setLoaded(true);
             } catch (error) {
                 console.error("Error activating account: ", error);
             }
@@ -49,6 +51,12 @@ const AccountActivation: React.FC = () => {
         }, 1000)
         return () => clearInterval(interval)
     }, []);     //timer
+
+    document.title = "CARSOLD | Account Activation";
+
+    if (!loaded) {
+        return null;
+    }
 
     return (
         <div className={`flex flex-col gap-3 text-xl sm:text-5xl justify-center items-center h-screen`}>

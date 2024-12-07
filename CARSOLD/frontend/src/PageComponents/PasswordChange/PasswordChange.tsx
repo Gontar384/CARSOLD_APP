@@ -111,6 +111,8 @@ const PasswordChange: React.FC = () => {
 
     const [inputType, setInputType] = useState<"password" | "text">("password")
 
+    document.title = "CARSOLD | Password Recovery";
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">
@@ -127,7 +129,7 @@ const PasswordChange: React.FC = () => {
                            value={passwordRep} setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true} whichForm={"none"}/>
                     <SubmitButton label={"Change"} disabled={isDisabled} onClick={handlePasswordChange}/>
                     {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
-                    {wentWrong? <AnimatedBanner text={"Password change failed"} color={"bg-coolRed"} z={"z-50"}/>: null}
+                    {wentWrong? <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/>: null}
                 </div>
             </div>
         </LayOut>

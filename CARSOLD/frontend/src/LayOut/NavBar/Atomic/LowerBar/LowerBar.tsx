@@ -47,7 +47,11 @@ const LowerBar: React.FC = () => {
 
     const { followed, messages } = useItems();
 
-    const { userDetails, logout } = useUserDetails();
+    const { userDetails, logout, handleUsernameFetch } = useUserDetails();
+
+    useEffect(() => {
+        handleUsernameFetch().then();
+    }, [isAuthenticated]);  //fetches username
 
     return (
         <div

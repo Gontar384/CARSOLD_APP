@@ -85,6 +85,8 @@ const PasswordRecovery: React.FC = () => {
         }
     }
 
+    document.title = "CARSOLD | Password Recovery";
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">

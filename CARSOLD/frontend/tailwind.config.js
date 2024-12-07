@@ -7,13 +7,13 @@ export default {
                 global: ['sans-serif', 'Arial'],  //font set globally
             },
             colors: { //custom colors
-                "lime": "#5efc03",
-                "darkLime": "#5be410",
-                "lowLime": "#6bfd17",
+                "lime": "#caf04f",
+                "darkLime": "#82ad00",
+                "lowLime": "#bedb65",
                 "lowBlack": "#191a18",
-                "coolRed": "#f20707",
-                "coolGreen": "#37ed26",
-                "coolYellow": "#bff719"
+                "coolRed": "#fa7a7a",
+                "coolGreen": "#7cff70",
+                "coolYellow": "#d3d61c"
             },
             screens: {  //custom screens
                 "xs": "480px",
