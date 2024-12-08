@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import UserDetailsLoader from "../../../../Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "./Atomic/LoginButton.tsx";
 import Dropdown from "./Atomic/Dropdown.tsx";
@@ -17,7 +17,7 @@ const UserDetails: React.FC = () => {
 
     useEffect(() => {
         handleUsernameFetch().then();
-    }, [isAuthenticated]);  //fetches username
+    }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
 
@@ -31,19 +31,23 @@ const UserDetails: React.FC = () => {
 
     const debouncedHover: boolean = createDebouncedValue(barHovered, 300)
 
+    const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
+
+    const {isMobile} = useUtil();
+
     const handleActivateBar = () => {
+        setBarActive(true);
+        setBarHovered(true);
         if (!animationActive) {
             setUserIconAnimation("animate-pop");
             setAnimationActive(true);
         }
-        setBarActive(true);
-        setBarHovered(true);
-    }    //activates bar
+    }    //activates bar on mouse
 
     const handleDeactivateBar = () => {
-        setUserIconAnimation(null);
         setBarHovered(false);
-    }   //deactivates
+        setUserIconAnimation(null);
+    }   //deactivates on mouse
 
     useEffect(() => {
         if (!debouncedHover && !barHovered) {
@@ -54,11 +58,28 @@ const UserDetails: React.FC = () => {
 
     const handleToggleBar = () => {
         setBarActive(prev => !prev);
-        setUserIconAnimation("animate-pop");
+        setUserIconAnimation(prev => prev === "animate-pop" ? null : "animate-pop");
     };   //for mobile and keyboard
 
-    const {messages} = useItems();
+    useEffect(() => {
+        const handleClickOutside = (event: TouchEvent | MouseEvent) => {
+            if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+                setBarActive(false);
+                setUserIconAnimation(null);
+                setAnimationActive(false);
+            }
+        };
 
+        if (barActive) {
+            document.addEventListener("touchstart", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [barActive]); //adds event listener for faster button deactivation
+
+    const {messages} = useItems();
 
     if (loadingAuth) {
         return <UserDetailsLoader/>
@@ -66,24 +87,29 @@ const UserDetails: React.FC = () => {
 
     return (
         <div
-            className="flex justify-center items-center h-full min-w-[142px] lg:min-w-[178px] xl:min-w-[213px] 2xl:min-w-[268px] 3xl:min-w-[322px]">
+            className="flex justify-center items-center h-full min-w-[142px] lg:min-w-[178px] xl:min-w-[213px] 2xl:min-w-[268px] 3xl:min-w-[322px]"
+            ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (
                     <button className="relative h-full flex justify-center items-center"
-                            onMouseEnter={handleActivateBar} onMouseLeave={handleDeactivateBar}
-                            onTouchStart={handleToggleBar} onKeyDown={(event) => { if (event.key === "Enter") handleToggleBar() }}>
+                            onMouseEnter={!isMobile ? handleActivateBar : undefined}
+                            onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
+                            onTouchStart={isMobile ? handleToggleBar : undefined}
+                            onKeyDown={(event) => {
+                        if (event.key === "Enter") handleToggleBar()
+                    }}>
                         <div
                             className="flex flex-row items-center h-full gap-[2px] lg:gap-[3px] xl:gap-1 2xl:gap-[6px] 3xl:gap-2 relative">
                             <FontAwesomeIcon icon={faCircleUser}
-                                             className={`mb-[3px] xl:mb-[1px] 2xl:mb-[2px] text-sm lg:text-[18px] xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
+                                             className={`mb-[3px] xl:mb-[2px] 3xl:mb-[8px] text-sm lg:text-[18px] xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
                             <div
                                 className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
                                 {userDetails}
                             </div>
                             {messages > 0 && (
                                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
-                                                 className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px] 2xl:-right-[18px] 3xl:-right-[22px] top-[14px] lg:top-[16px]
-                                                 xl:top-[20px] 2xl:top-[21px] text-[6px] lg:text-[7px] xl:text-[9px] 2xl:text-[11px] 3xl:text-[13px]"/>)}
+                                                 className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px] 2xl:-right-[18px] 3xl:-right-[22px] top-[13px] lg:top-[14px]
+                                                 xl:top-[17px] 2xl:top-[18px] 3xl:top-[16px] text-[6px] lg:text-[7px] xl:text-[9px] 2xl:text-[11px] 3xl:text-[13px]"/>)}
                         </div>
                         <Dropdown barActive={barActive}/>
                     </button>

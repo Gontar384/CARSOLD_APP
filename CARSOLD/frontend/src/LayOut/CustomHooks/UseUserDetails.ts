@@ -16,7 +16,6 @@ export const useUserDetails = () => {
 
     const handleUsernameFetch = async () => {
         if (!isAuthenticated) return;
-        setUsernameFetched(false);
         try {
             const response = await api.get('api/get-username');
             if (response.data.username) {

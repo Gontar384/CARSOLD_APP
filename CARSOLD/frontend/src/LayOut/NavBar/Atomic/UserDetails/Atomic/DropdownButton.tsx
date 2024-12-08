@@ -2,6 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../../../CustomHooks/UseButton.ts";
+import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 
 interface DropdownButtonProps {
     label: string;
@@ -12,14 +13,17 @@ interface DropdownButtonProps {
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count, serial }) => {
 
-    const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
+    const { buttonColor, handleStart, handleEnd } = useButton();
+    const {isMobile} = useUtil();
 
     return (
         <button className={'flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] ' +
             `text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] ${buttonColor[serial] === "black" ? "bg-lime" : "bg-white"} `}
                 onClick={onClick} onKeyDown={(event) => { if (event.key === "Enter") onClick() }}
-                onTouchStart={() => handleTouchStart(serial)} onTouchEnd={() => handleTouchEnd(serial)}
-                onMouseEnter={() => handleMouseEnter(serial)} onMouseLeave={() => handleMouseLeave(serial)}>
+                onTouchStart={isMobile ? () => handleStart(serial) : undefined}
+                onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
+                onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
+                onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
             <span>{label}</span>
             {count && count > 0 ? <div className="relative mt-[1px] ml-[2px] xl:ml-1 3xl:ml-[6px]">
                 <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}

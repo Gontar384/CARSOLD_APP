@@ -11,9 +11,9 @@ interface DarkModeButtonProps {
 
 const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
 
-    const { darkMode, toggleDarkMode, lowerBar } = useUtil();
+    const { darkMode, toggleDarkMode, lowerBar, isMobile } = useUtil();
 
-    const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
+    const { buttonColor, handleStart, handleEnd } = useButton();
 
     const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);   //dark mode icons animations
     const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
@@ -32,8 +32,11 @@ const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
     return (
         <button
             className="flex flex-col items-center w-1/6 h-full p-1 relative"
-            onClick={handleDarkMode} onTouchStart={() => handleTouchStart(serial)} onTouchEnd={() => handleTouchEnd(serial)}
-            onMouseEnter={() => handleMouseEnter(serial)} onMouseLeave={() => handleMouseLeave(serial)}>
+            onClick={handleDarkMode}
+            onTouchStart={isMobile ? () => handleStart(serial) : undefined}
+            onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
+            onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
+            onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
             <FontAwesomeIcon icon={faMoon} style={{color: buttonColor[serial]}}
                              className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
             <FontAwesomeIcon icon={faSun} style={{color: buttonColor[serial]}}

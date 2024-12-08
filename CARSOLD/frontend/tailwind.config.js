@@ -69,26 +69,31 @@ export default {
                     '100%': {transform: "scale(1)"}
                 },
                 fill: {
-                    '0%': { opacity: '0' },
-                    '100%': { opacity: '1' },
+                    '0%': {opacity: '0'},
+                    '100%': {opacity: '1'},
                 },
                 empty: {
-                    '0%': { opacity: '1' },
-                    '100%': { opacity: '0' },
+                    '0%': {opacity: '1'},
+                    '100%': {opacity: '0'},
                 },
                 dash: {
-                    '0%': { strokeDasharray: '1, 150', strokeDashoffset: '0' },
-                    '50%': { strokeDasharray: '90, 150', strokeDashoffset: '-35' },
-                    '100%': { strokeDasharray: '90, 150', strokeDashoffset: '-125' },
+                    '0%': {strokeDasharray: '1, 150', strokeDashoffset: '0'},
+                    '50%': {strokeDasharray: '90, 150', strokeDashoffset: '-35'},
+                    '100%': {strokeDasharray: '90, 150', strokeDashoffset: '-125'},
                 },
                 grow: {
-                    "0%": { width: "0%" },
-                    "100%": { width: "100%" },
+                    "0%": {width: "0%"},
+                    "100%": {width: "100%"},
                 },
                 wave: {
-                    '0%': { transform: "scale(0)", opacity: "0.1" },
-                    '50%': { transform: "scale(1)", opacity: "0.2" },
-                    '100%': { transform: "scale(1)", opacity: "0" }
+                    '0%': {transform: "scale(0)", opacity: "0.1"},
+                    '50%': {transform: "scale(1)", opacity: "0.2"},
+                    '100%': {transform: "scale(1)", opacity: "0"}
+                },
+                shock: {
+                    '0%': {transform: "scale(1) rotate(90deg)"},
+                    '50%': {transform: "scale(1.3)"},
+                    '100%': {transform: "scale(1) rotate(180deg)"},
                 }
             },
             animation: {  //animations details
@@ -106,7 +111,8 @@ export default {
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
                 grow: "grow 2s ease-out forwards",
-                wave: "wave 0.4s ease-out"
+                wave: "wave 0.4s ease-out",
+                shock: "shock 0.3s ease-in-out forwards",
             },
         },
     },

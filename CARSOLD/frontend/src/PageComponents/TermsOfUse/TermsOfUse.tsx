@@ -1,6 +1,6 @@
 import React from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
-import Section from "./Section.tsx";
+import Section from "./Atomic/Section.tsx";
 
 const TermsOfUse: React.FC = () => {
 

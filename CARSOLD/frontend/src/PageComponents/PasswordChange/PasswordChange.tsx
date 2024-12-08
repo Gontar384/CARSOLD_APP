@@ -68,7 +68,7 @@ const PasswordChange: React.FC = () => {
         } else {
             setPasswordRepIcon(null);
         }
-    }, [passwordRep, password])   //checks if repeated password equals password
+    }, [passwordRep, password, checksPassword])   //checks if repeated password equals password
 
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isChanged, setIsChanged] = useState<boolean>(false);   //banners

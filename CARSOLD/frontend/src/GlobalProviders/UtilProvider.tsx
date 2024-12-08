@@ -7,12 +7,13 @@ interface UtilContextType {
     setLowerBar: React.Dispatch<React.SetStateAction<boolean>>;
     isWide: boolean;
     createDebouncedValue: <T>(value: T, delay: number) => T;
+    isMobile: boolean;
 }
 
 const UtilContext = createContext<UtilContextType | undefined>(undefined);
 
 //manages dark mode, lower bar presence and window size
-export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children }) => {
+export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
     const [darkMode, setDarkMode] = useState<boolean>(() => {
         const savedTheme = localStorage.getItem('theme');
@@ -36,8 +37,8 @@ export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children 
     };  //manages dark mode on click
 
     useEffect(() => {
-        const handleStorageChange = (event: StorageEvent)=> {
-            if (event.key === 'theme'){
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'theme') {
                 const newMode: string | null = event.newValue;
                 if (newMode === 'dark') {
                     setDarkMode(true);
@@ -92,8 +93,33 @@ export const UtilProvider: React.FC<{children : React.ReactNode}> = ({ children 
         return debouncedValue;
     }
 
+    const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+    useEffect(() => {
+        const detectDeviceType = () => {
+            setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0);
+        };
+
+        const handlePointerChange = (event: PointerEvent) => {
+            setIsMobile(event.pointerType === "touch");
+        };
+
+        const handleResize = () => detectDeviceType();
+
+        window.addEventListener("pointerdown", handlePointerChange);
+        window.addEventListener("resize", handleResize);
+
+        detectDeviceType();
+
+        return () => {
+            window.removeEventListener("pointerdown", handlePointerChange);
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []); //checks if user is on mobile / PC
+
     return (
-        <UtilContext.Provider value={{ darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, createDebouncedValue }}>
+        <UtilContext.Provider
+            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, createDebouncedValue, isMobile}}>
             {children}
         </UtilContext.Provider>
     );

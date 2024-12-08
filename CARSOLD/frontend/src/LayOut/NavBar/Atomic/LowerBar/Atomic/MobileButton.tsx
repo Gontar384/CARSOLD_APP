@@ -2,6 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useButton} from "../../../../CustomHooks/UseButton.ts";
+import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 
 interface MobileButtonProps {
     onClick: () => void;
@@ -13,12 +14,17 @@ interface MobileButtonProps {
 
 const MobileButton: React.FC<MobileButtonProps> = ({serial, onClick, icon, label, count}) => {
 
-    const { buttonColor, handleTouchStart, handleTouchEnd, handleMouseEnter, handleMouseLeave } = useButton();
+    const {isMobile} = useUtil();
+
+    const { buttonColor, handleStart, handleEnd } = useButton();
 
     return (
         <button className="flex flex-col items-center w-1/6 h-full p-1 relative"
-                onClick={onClick} onTouchStart={() => handleTouchStart(serial)} onTouchEnd={() => handleTouchEnd(serial)}
-                onMouseEnter={() => handleMouseEnter(serial)} onMouseLeave={() => handleMouseLeave(serial)}>
+                onClick={onClick}
+                onTouchStart={isMobile ? () => handleStart(serial) : undefined}
+                onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
+                onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
+                onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
             <FontAwesomeIcon icon={icon} style={{ color: buttonColor[serial] }} className="text-xl xs:text-[22px]"/>
             {count && count > 0 ? (
                 <p className="text-[9px] xs:text-[10px] top-[7px] text-white absolute">

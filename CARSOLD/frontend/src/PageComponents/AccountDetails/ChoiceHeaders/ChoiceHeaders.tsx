@@ -13,15 +13,15 @@ const ChoiceHeaders: React.FC = () => {
     }
 
     return (
-        <div className={`flex flex-col ${isWide ? "justify-start gap-9 lg:gap-[48px] xl:gap-[58px] 2xl:gap-[64px] 3xl:gap-[68px]"
+        <div className={`flex flex-col ${isWide ? "justify-start gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "gap-2"}`}>
-            <div className={`flex ${isWide ? "flex-col gap-9 lg:gap-[48px] xl:gap-[58px] 2xl:gap-[64px] 3xl:gap-[68px]"
+            <div className={`flex ${isWide ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "flex-row justify-evenly"}`}>
                 <ChoiceButton label={"My Offers"} serial={0} onClick={() => handleNavigation("myOffers")}/>
                 <ChoiceButton label={"Followed"} serial={1} onClick={() => handleNavigation("followed")}/>
                 <ChoiceButton label={"Messages"} serial={2} onClick={() => handleNavigation("messages")}/>
             </div>
-            <div className={`flex ${isWide ? "flex-col gap-9 lg:gap-[48px] xl:gap-[58px] 2xl:gap-[64px] 3xl:gap-[68px]"
+            <div className={`flex ${isWide ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "flex-row justify-evenly mx-[50px] xs:mx-[72px]"}`}>
                 <ChoiceButton label={"Settings"} serial={3} onClick={() => handleNavigation("settings")}/>
                 <ChoiceButton label={"Info"} serial={4} onClick={() => handleNavigation("info")}/>

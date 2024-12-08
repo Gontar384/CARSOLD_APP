@@ -66,7 +66,7 @@ const SearchBar: React.FC = () => {
             setButtonAnimation("animate-slideUp")
         }
         setIsInitial(true);
-    }, [search]);   //manages button animation
+    }, [isInitial, search]);   //manages button animation
 
     useEffect(() => {
         setButtonAnimation(null);
