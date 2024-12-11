@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.checkerframework.checker.units.qual.A;
 import org.gontar.carsold.Config.JwtConfig.JwtService;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
@@ -17,12 +19,19 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,10 +46,11 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender emailSender;
     private final UserDetailsService userDetailsService;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
     public UserServiceImpl(UserRepository repository, Mapper<User, UserDto> mapper,
                            BCryptPasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager,
-                           JavaMailSender emailSender, UserDetailsService userDetailsService) {
+                           JavaMailSender emailSender, UserDetailsService userDetailsService, OAuth2AuthorizedClientService authorizedClientService) {
         this.repository = repository;
         this.mapper = mapper;
         this.encoder = encoder;
@@ -48,6 +58,7 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
         this.emailSender = emailSender;
         this.userDetailsService = userDetailsService;
+        this.authorizedClientService = authorizedClientService;
     }
 
     //checks if username exists
@@ -165,9 +176,39 @@ public class UserServiceImpl implements UserService {
 
     //logs use out, sends cookie with expiration.time = 0
     @Override
-    public void logout(HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+            OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
+                    oauth2Token.getAuthorizedClientRegistrationId(),
+                    oauth2Token.getName()
+            );
+            if (client != null) {
+                String tokenValue = client.getAccessToken().getTokenValue();
+                revokeGoogleToken(tokenValue);
+                authorizedClientService.removeAuthorizedClient(
+                        oauth2Token.getAuthorizedClientRegistrationId(),
+                        oauth2Token.getName()
+                );
+            }
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+        }
+        SecurityContextHolder.clearContext();
+
         ResponseCookie deleteCookie = createCookie("", 0);
         response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+    }
+
+    private void revokeGoogleToken(String token) {
+        RestTemplate restTemplate = new RestTemplate();
+        String revokeUrl = "https://oauth2.googleapis.com/revoke";
+        try {
+            restTemplate.postForEntity(revokeUrl, Map.of("token", token), String.class);
+        } catch (Exception e) {
+            System.err.println("Error revoking Google token: " + e.getMessage());
+        }
     }
 
     //checks if user's account is active, using email or username

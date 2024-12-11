@@ -91,7 +91,7 @@ const UserDetails: React.FC = () => {
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (
-                    <button className="relative h-full flex justify-center items-center"
+                    <div className="relative h-full flex justify-center items-center hover: cursor-pointer"
                             onMouseEnter={!isMobile ? handleActivateBar : undefined}
                             onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                             onTouchStart={isMobile ? handleToggleBar : undefined}
@@ -112,7 +112,7 @@ const UserDetails: React.FC = () => {
                                                  xl:top-[17px] 2xl:top-[18px] 3xl:top-[16px] text-[6px] lg:text-[7px] xl:text-[9px] 2xl:text-[11px] 3xl:text-[13px]"/>)}
                         </div>
                         <Dropdown barActive={barActive}/>
-                    </button>
+                    </div>
                 ) : (
                     <UserDetailsLoader/>
                 )

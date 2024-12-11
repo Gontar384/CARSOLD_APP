@@ -23,7 +23,7 @@ const Content: React.FC = () => {
             setChoice(section as "myOffers" | "followed" | "messages" | "settings" | "info");
             setIsLoading(false);
         } else {
-            navigate("/myAccount/myOffers", {replace: true});
+            navigate("/details/myOffers", {replace: true});
         }
     }, [section, navigate])   //navigates when section changes
 

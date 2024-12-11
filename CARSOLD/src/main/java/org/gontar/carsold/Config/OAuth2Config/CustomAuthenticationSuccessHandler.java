@@ -6,10 +6,14 @@ import org.gontar.carsold.Config.JwtConfig.JwtService;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -59,9 +63,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             ResponseCookie authCookie = createCookie(token);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
 
-            response.sendRedirect(frontendUrl + "/home");    //sends link with authorization token
+            response.sendRedirect(frontendUrl + "details/myOffers");    //sends link with authorization token
         }
     }
+
+    @Bean
+    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+    }
+
     //creates cookie
     private ResponseCookie createCookie(String token) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"

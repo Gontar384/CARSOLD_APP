@@ -1,12 +1,12 @@
-import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {useNavigate} from "react-router-dom";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {
 
-    const { checkAuth, isAuthenticated } = useAuth();
+    const {checkAuth, isAuthenticated} = useAuth();
 
     const navigate = useNavigate();
 
@@ -29,13 +29,17 @@ export const useUserDetails = () => {
     } //fetches username
 
     const logout = async () => {
-        await api.get(`api/auth/logout`)
-        setTimeout(async () => {
-            await checkAuth();
-            navigate('/authenticate');
-        }, 1000);
+        try {
+            setTimeout( async () => {
+                await api.get(`api/auth/logout`);
+                navigate("/authenticate/login");
+                await checkAuth();
+            }, 1000)
+        } catch (error) {
+            console.log("Error during logout: ", error);
+        }
     }  //logout
 
 
-    return { userDetails, usernameFetched, handleUsernameFetch, logout }
+    return {userDetails, usernameFetched, handleUsernameFetch, logout}
 }

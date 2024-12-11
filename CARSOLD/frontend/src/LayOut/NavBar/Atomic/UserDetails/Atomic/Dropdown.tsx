@@ -32,10 +32,10 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
                     onTouchStart={isMobile ? handleDropdownInteraction : undefined}
                     className="flex flex-col items-center justify-center w-[75px] lg:w-[100px] xl:w-[120px] 2xl:w-[148px] 3xl:w-[180px]
                     absolute top-9 lg:top-10 xl:top-12 2xl:top-[52px] 3xl:top-14 bg-lime shadow-bottom">
-                    <DropdownButton label="MyOffers" onClick={() => navigate("/myAccount/myOffers")} serial={0}/>
-                    <DropdownButton label="Followed" onClick={() => navigate('/myAccount/followed')} count={followed} serial={1}/>
-                    <DropdownButton label="Messages" onClick={() => navigate('/myAccount/messages')} count={messages} serial={2}/>
-                    <DropdownButton label="Settings" onClick={() => navigate('/myAccount/settings')} serial={3}/>
+                    <DropdownButton label="MyOffers" onClick={() => navigate("/details/myOffers")} serial={0}/>
+                    <DropdownButton label="Followed" onClick={() => navigate('/details/followed')} count={followed} serial={1}/>
+                    <DropdownButton label="Messages" onClick={() => navigate('/details/messages')} count={messages} serial={2}/>
+                    <DropdownButton label="Settings" onClick={() => navigate('/details/settings')} serial={3}/>
                     <DropdownButton label="Change mode" onClick={toggleDarkMode} serial={4}/>
                     <DropdownButton label="Logout" onClick={logout} serial={5}/>
                 </div>}

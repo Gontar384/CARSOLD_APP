@@ -3,6 +3,9 @@ package org.gontar.carsold.Service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
+import org.springframework.security.core.Authentication;
+
+import java.io.IOException;
 
 public interface UserService {
     boolean findUsername(String username);
@@ -11,7 +14,7 @@ public interface UserService {
     void sendVerificationEmail(String email, String link);
     String activateAccount(String token, HttpServletResponse response);
     boolean checkAuthentication(HttpServletRequest request);
-    void logout(HttpServletResponse response);
+    void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
     boolean checkActive(String login);
     boolean checkOauth2(String login);
     void authenticate(String login, String password, HttpServletResponse response);

@@ -10,7 +10,7 @@ const PublicRoutes: React.FC = () => {
         return null;
     }
 
-    return isAuthenticated ? <Navigate to="/myAccount"/> : <Outlet />;
+    return isAuthenticated ? <Navigate to="/details/myOffers"/> : <Outlet />;
 };
 
 export default PublicRoutes;

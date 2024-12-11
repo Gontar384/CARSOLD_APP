@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {AxiosResponse} from "axios";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -19,7 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const checkAuth = async () => {
         setLoadingAuth(true);
         try {
-            const response = await api.get(`api/auth/check-authentication`);
+            const response: AxiosResponse = await api.get(`api/auth/check-authentication`);
             const authState = response.data['isAuth'];
             localStorage.setItem('Authenticated', authState ? 'true' : 'false');
             setIsAuthenticated(authState);

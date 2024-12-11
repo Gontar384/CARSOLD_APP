@@ -9,7 +9,7 @@ const ChoiceHeaders: React.FC = () => {
     const navigate = useNavigate();
 
     const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info") => {
-        navigate(`/myAccount/${destination}`);
+        navigate(`/details/${destination}`);
     }
 
     return (

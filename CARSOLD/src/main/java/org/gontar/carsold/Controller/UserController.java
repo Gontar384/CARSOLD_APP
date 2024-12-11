@@ -4,10 +4,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Service.UserServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,8 +76,8 @@ public class UserController {
 
     //logs out, deletes JWT
     @GetMapping("/auth/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
-        service.logout(response);
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        service.logout(request, response, authentication);
         return ResponseEntity.ok("Logged out");
     }
 

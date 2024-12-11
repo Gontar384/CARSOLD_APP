@@ -1,3 +1,4 @@
+
 # Database Connection Configuration
 spring:
   datasource:
@@ -30,6 +31,11 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
+  #Google Cloud Storage and Vision Configuration
+  cloud:
+    gcp:
+      project-id: ${GOOGLE_CLOUD_PROJECT}
+
   # Session Configuration (CSRF)
 server:
   servlet:
@@ -37,3 +43,4 @@ server:
       cookie:
         name: CSRF
       timeout: 600m
+
