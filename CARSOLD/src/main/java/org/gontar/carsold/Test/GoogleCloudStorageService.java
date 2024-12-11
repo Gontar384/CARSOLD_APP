@@ -6,17 +6,18 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Objects;
 
 @Service
 public class GoogleCloudStorageService {
 
-    private final String bucketName = System.getenv("GOOGLE_CLOUD_BUCKET_NAME");
+    @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
+    private String bucketName;
 
     // This method uploads the image to Cloud Storage after checking it with SafeSearch detection
     public String uploadFileWithSafeSearch(MultipartFile file) throws Exception {
