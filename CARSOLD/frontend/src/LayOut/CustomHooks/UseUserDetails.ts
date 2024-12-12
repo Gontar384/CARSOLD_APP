@@ -28,6 +28,23 @@ export const useUserDetails = () => {
         }
     } //fetches username
 
+    const [profilePic, setProfilePic] = useState<string>("");
+    const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
+
+    const handleProfilePicFetch = async () => {
+        if (!isAuthenticated) return;
+        try {
+            const response = await api.get('api/get-profilePic');
+            if (response.data.profilePic) {
+                setProfilePic(response.data.profilePic);
+            }
+        } catch (error) {
+            console.log("Error fetching profilePic: ", error);
+        } finally {
+            setProfilePicFetched(true);
+        }
+    } //fetches profile pic
+
     const logout = async () => {
         try {
             setTimeout( async () => {
@@ -41,5 +58,5 @@ export const useUserDetails = () => {
     }  //logout
 
 
-    return {userDetails, usernameFetched, handleUsernameFetch, logout}
+    return {userDetails, usernameFetched, handleUsernameFetch, logout, profilePic, profilePicFetched, handleProfilePicFetch}
 }

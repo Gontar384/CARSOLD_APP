@@ -6,40 +6,66 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.Config.JwtConfig.JwtService;
+import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 public class GoogleCloudStorageService {
 
+
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
 
-    // This method uploads the image to Cloud Storage after checking it with SafeSearch detection
-    public String uploadFileWithSafeSearch(MultipartFile file) throws Exception {
-        // Perform SafeSearch detection
+    private static final long MAX_FILE_SIZE = 3 * 1024 * 1024;
+
+    public GoogleCloudStorageService(JwtService jwtService, UserRepository userRepository) {
+        this.jwtService = jwtService;
+        this.userRepository = userRepository;
+    }
+
+    public String uploadFileWithSafeSearch(MultipartFile file, HttpServletRequest request) throws Exception {
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            return "Could not upload, image is too large.";
+        }
         if (isImageSensitive(file)) {
-            throw new Exception("Image contains sensitive content.");
+            return "Could not upload, image contains sensitive content.";
         }
 
-        // Upload the image to Google Cloud Storage
-        return uploadFile(file);
+        String token = jwtService.extractTokenFromCookie(request);
+        String username = jwtService.extractUsername(token);
+        User user = userRepository.findByUsername(username);
+        user.setProfilePic(uploadFile(file, username));
+        userRepository.save(user);
+
+        return null;
     }
 
     // Upload the image to Google Cloud Storage
-    private String uploadFile(MultipartFile file) throws IOException {
+    private String uploadFile(MultipartFile file, String username) throws IOException {
+
+        // Example dynamic folder name
+        String fileName = username + "/ProfilePic/" + file.getOriginalFilename();
+
         Storage storage = StorageOptions.getDefaultInstance().getService();
-        BlobId blobId = BlobId.of(bucketName, Objects.requireNonNull(file.getOriginalFilename()));
+        BlobId blobId = BlobId.of(bucketName, fileName); // Using folder name as part of the file path
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, file.getBytes());
-        return String.format("https://storage.googleapis.com/%s/%s", bucketName, file.getOriginalFilename());
+
+        // Return the URL to the uploaded file
+        return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
     }
 
-    // Check if the image contains sensitive content using Google Cloud Vision SafeSearch detection
     private boolean isImageSensitive(MultipartFile file) throws IOException {
         ByteString imgBytes = ByteString.copyFrom(file.getBytes());
 

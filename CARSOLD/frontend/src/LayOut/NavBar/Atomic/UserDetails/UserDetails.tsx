@@ -101,7 +101,7 @@ const UserDetails: React.FC = () => {
                         <div
                             className="flex flex-row items-center h-full gap-[2px] lg:gap-[3px] xl:gap-1 2xl:gap-[6px] 3xl:gap-2 relative">
                             <FontAwesomeIcon icon={faCircleUser}
-                                             className={`mb-[3px] xl:mb-[2px] 3xl:mb-[8px] text-sm lg:text-[18px] xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
+                                             className={`mb-[3px] xl:mb-[2px] 3xl:mb-[5px] text-sm lg:text-[18px] xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
                             <div
                                 className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
                                 {userDetails}

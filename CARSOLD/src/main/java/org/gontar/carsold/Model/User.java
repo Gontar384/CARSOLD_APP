@@ -29,4 +29,7 @@ public class User {
 
     @Column(nullable = false)
     private Boolean oauth2User;
+
+    @Column
+    private String profilePic;
 }

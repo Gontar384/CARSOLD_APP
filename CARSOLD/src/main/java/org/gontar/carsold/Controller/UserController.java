@@ -151,4 +151,12 @@ public class UserController {
         usernameResponse.put("username", username);
         return ResponseEntity.ok(usernameResponse);
     }
+
+    @GetMapping("/get-profilePic")
+    public ResponseEntity<Map<String,String>>getProfilePic(HttpServletRequest request){
+        HashMap<String, String> profilePicResponse = new HashMap<>();
+        String profilePic = service.getProfilePic(request);
+        profilePicResponse.put("profilePic", profilePic);
+        return ResponseEntity.ok(profilePicResponse);
+    }
 }

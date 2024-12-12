@@ -352,6 +352,18 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public String getProfilePic(HttpServletRequest request) {
+        String token = jwtService.extractTokenFromCookie(request);
+        if (token != null) {
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            return user.getProfilePic();
+        }
+        return null;
+    }
+
+
     //method to create cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"

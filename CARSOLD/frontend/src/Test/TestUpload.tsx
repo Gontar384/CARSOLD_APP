@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { api } from "../Config/AxiosConfig/AxiosConfig.tsx";
+import React, {useState} from 'react';
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+
+const MAX_FILE_SIZE = 3 * 1024 * 1024; // 10MB in bytes
 
 const ImageUpload: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -7,45 +9,46 @@ const ImageUpload: React.FC = () => {
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>('');
 
-    // Handle file selection
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const handleSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            setSelectedImage(file);
+            if (file.size > MAX_FILE_SIZE) {
+                setMessage("Couldn't upload, image is too large.");
+                setSelectedImage(null);
+            } else {
+                setMessage('');
+                setSelectedImage(file);
+            }
         }
     };
 
     // Handle form submission (image upload)
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        event.preventDefault();
-        if (!selectedImage) {
-            setMessage('No file selected');
-            return;
-        }
+    const handleSubmit = async () => {
+        if (selectedImage) {
+            const formData = new FormData();
+            formData.append('file', selectedImage);
 
-        const formData = new FormData();
-        formData.append('file', selectedImage);
+            setIsUploading(true);
+            setMessage('');
+            setImageUrl('');
 
-        setIsUploading(true);
-        setMessage('');
-        setImageUrl('');
+            try {
+                const response = await api.post('storage/upload', formData);
 
-        try {
-            const response = await api.post(
-                'storage/upload', // Assuming this is your backend endpoint for file upload
-                formData,
-            );
-
-            if (response.data && response.data !== 'Error') {
-                setImageUrl(response.data);  // Assuming the backend returns the file URL
-                setMessage('Upload successful!');
-            } else {
-                setMessage('Image is sensitive, upload failed.');
+                if (response.data) {
+                    const {info} = response.data;
+                    if (info.startsWith("https://storage.googleapis.com")) {
+                        setImageUrl(info);  // Assuming the backend returns the file URL
+                        setMessage("Uploaded successfully")
+                    } else {
+                        setMessage(info);
+                    }
+                }
+            } catch (error) {
+                setMessage('Error: Unable to upload the file');
+            } finally {
+                setIsUploading(false);
             }
-        } catch (error) {
-            setMessage('Error: Unable to upload the file');
-        } finally {
-            setIsUploading(false);
         }
     };
 
@@ -53,11 +56,7 @@ const ImageUpload: React.FC = () => {
         <div>
             <h2>Upload Image</h2>
             <form onSubmit={handleSubmit}>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                />
+                <input type="file" accept="image/*" onChange={handleSelectImage}/>
                 <button type="submit" disabled={isUploading}>Upload Image</button>
             </form>
 
@@ -66,14 +65,11 @@ const ImageUpload: React.FC = () => {
             {message && <p>{message}</p>}
 
             {imageUrl && <div>
-                <h3>Uploaded Image:</h3>
-                <img src={imageUrl} alt="Uploaded" width="200" />
+                {message === "Uploaded successfully" ?
+                <img src={imageUrl} alt="Uploaded" width="200"/> : null}
             </div>}
         </div>
     );
 };
 
 export default ImageUpload;
-
-
-//testCommit

@@ -23,4 +23,5 @@ public interface UserService {
     void sendPasswordRecoveryEmail(String email);
     String recoveryChangePassword(String token, String password, HttpServletResponse response);
     String getUsername(HttpServletRequest request);
+    String getProfilePic(HttpServletRequest request);
 }

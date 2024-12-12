@@ -35,6 +35,10 @@ spring:
   cloud:
     gcp:
       project-id: ${GOOGLE_CLOUD_PROJECT}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   # Session Configuration (CSRF)
 server:
