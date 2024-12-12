@@ -1,5 +1,5 @@
 import React from "react";
-import {useButton} from "../../../../LayOut/CustomHooks/UseButton.ts";
+import {useButton} from "../../../../CustomHooks/UseButton.ts";
 import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
 
 interface ChoiceButtonProps {

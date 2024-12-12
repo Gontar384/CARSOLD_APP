@@ -1,11 +1,16 @@
 package org.gontar.carsold.Service;
 
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.vision.v1.*;
+import com.google.protobuf.ByteString;
 import io.jsonwebtoken.Claims;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.checkerframework.checker.units.qual.A;
 import org.gontar.carsold.Config.JwtConfig.JwtService;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
@@ -28,6 +33,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -38,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
+    private String bucketName;
 
     private final UserRepository repository;
     private final Mapper<User, UserDto> mapper;
@@ -73,8 +82,6 @@ public class UserServiceImpl implements UserService {
         return repository.existsByEmail(email);
     }
 
-    // saves user to DB
-    // generates token using jwtService
     // sends account activating token link via email
     @Override
     public void registerUser(UserDto userDto) {
@@ -136,22 +143,22 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //activates account after clicking link with token
+    //activates account
     @Override
     public String activateAccount(String token, HttpServletResponse response) {
         try {
-            Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
-            String username = claims.getSubject();                 //gets username from claims
+            Claims claims = jwtService.extractAllClaims(token);
+            String username = claims.getSubject();
             User user = repository.findByUsername(username);
 
-            if (!user.getActive()) {                               //activates account
+            if (!user.getActive()) {
                 user.setActive(true);
                 repository.save(user);
             }
 
-            String newToken = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
+            String newToken = jwtService.generateToken(user.getUsername(), 600);
             ResponseCookie authCookie = createCookie(newToken, 10);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
             return "Activation success";
         } catch (Exception e) {
             System.err.println("Failed to activate account: " + e.getMessage());
@@ -159,7 +166,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //checks user's authentication using JWT
+    //checks user's auth
     @Override
     public boolean checkAuthentication(HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
@@ -174,7 +181,7 @@ public class UserServiceImpl implements UserService {
         return jwtService.validateToken(jwt, userDetails);
     }
 
-    //logs use out, sends cookie with expiration.time = 0
+    //logs user out (deletes jwt and delete OAuth2 session if needed)
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
@@ -190,7 +197,7 @@ public class UserServiceImpl implements UserService {
                         oauth2Token.getName()
                 );
             }
-            HttpSession session = request.getSession(false);
+            HttpSession session = request.getSession(false);    //deletes session
             if (session != null) {
                 session.invalidate();
             }
@@ -201,6 +208,7 @@ public class UserServiceImpl implements UserService {
         response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
     }
 
+    //deletes OAuth2 token
     private void revokeGoogleToken(String token) {
         RestTemplate restTemplate = new RestTemplate();
         String revokeUrl = "https://oauth2.googleapis.com/revoke";
@@ -211,7 +219,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //checks if user's account is active, using email or username
+    //checks if user's account is active
     @Override
     public boolean checkActive(String login) {
         User user;
@@ -226,7 +234,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    //checks if user authenticated and authorized with OAuth2, using email or username
+    //checks if user auth with OAuth2
     @Override
     public boolean checkOauth2(String login) {
         User user;
@@ -241,7 +249,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    //authenticates and authorizes user using email or username
+    //auth user using email or username
     @Override
     public void authenticate(String login, String password, HttpServletResponse response) {
         User user;
@@ -252,7 +260,7 @@ public class UserServiceImpl implements UserService {
         }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
         if (authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
+            String token = jwtService.generateToken(user.getUsername(), 600);
             ResponseCookie authCookie = createCookie(token, 10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
         }
@@ -274,8 +282,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //checks if username and password is valid before letting user authenticate (needed because
-    //authentication and cors error handling doesn't work well without it)
+    //checks if username and password is valid before letting user authenticate
     @Override
     public boolean validateUser(String login, String password) {
         User user;
@@ -287,8 +294,7 @@ public class UserServiceImpl implements UserService {
         return encoder.matches(password, user.getPassword());
     }
 
-    //sends email with link with JWT and redirects to page where user can change password
-    //and then validate it with token in url
+    //sends email with link with JWT to where user can change password
     @Override
     public void sendPasswordRecoveryEmail(String email) {
         User user = repository.findByEmail(email);
@@ -317,7 +323,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //gets token and password, if token is correct, it changes user password and authenticate him
+    //changes password
     @Override
     public String recoveryChangePassword(String token, String password, HttpServletResponse response) {
         try {
@@ -342,7 +348,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //gets token via cookie in request and gets username from token, then returns it
+    //sends username
     @Override
     public String getUsername(HttpServletRequest request) {
         String token = jwtService.extractTokenFromCookie(request);
@@ -352,6 +358,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    //sends profile pic
     @Override
     public String getProfilePic(HttpServletRequest request) {
         String token = jwtService.extractTokenFromCookie(request);
@@ -363,15 +370,74 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public String uploadImageWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException {
 
-    //method to create cookie
+        if (file.getSize() > 3 * 1024 * 1024) {
+            return "Could not upload, image is too large.";
+        }
+        if (isImageSensitive(file)) {
+            return "Could not upload, image contains sensitive content.";
+        }
+
+        String token = jwtService.extractTokenFromCookie(request);
+        String username = jwtService.extractUsername(token);
+        User user = repository.findByUsername(username);
+        user.setProfilePic(uploadImage(file, username));
+        repository.save(user);
+
+        return null;
+    }
+
+    //uploads image to Google Cloud
+    private String uploadImage(MultipartFile file, String username) throws IOException {
+
+        String fileName = username + "/" + username + ".profilePic";
+
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        storage.create(blobInfo, file.getBytes());
+
+        return String.format("https://storage.googleapis.com/%s/%s?timestamp=%d", bucketName, fileName, System.currentTimeMillis());
+    }
+
+    //checks if image contains sensitive content
+    private boolean isImageSensitive(MultipartFile file) throws IOException {
+        ByteString imgBytes = ByteString.copyFrom(file.getBytes());
+
+        try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
+            Image img = Image.newBuilder().setContent(imgBytes).build();
+
+            Feature feature = Feature.newBuilder().setType(Feature.Type.SAFE_SEARCH_DETECTION).build();
+            AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
+                    .addFeatures(feature)
+                    .setImage(img)
+                    .build();
+
+            BatchAnnotateImagesRequest batchRequest = BatchAnnotateImagesRequest.newBuilder()
+                    .addRequests(request)
+                    .build();
+
+            BatchAnnotateImagesResponse batchResponse = vision.batchAnnotateImages(batchRequest);
+            AnnotateImageResponse response = batchResponse.getResponsesList().get(0);
+            SafeSearchAnnotation safeSearch = response.getSafeSearchAnnotation();
+
+            //uses SafeSearch values
+            return (safeSearch.getAdultValue() >= 3 ||
+                    safeSearch.getViolenceValue() >= 3 ||
+                    safeSearch.getRacyValue() >= 3);
+        }
+    }
+
+    //creates cookie
     private ResponseCookie createCookie(String token, long time) {
-        return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
-                .httpOnly(true)                                 //cannot be accessed via JavaScript
+        return ResponseCookie.from("JWT", token)
+                .httpOnly(true)
                 .secure(false)                                  //enabled only for production
-                .path("/")                                      //can be sent to any endpoint
+                .path("/")
                 .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofHours(time))                 //lasts 5 hours
+                .maxAge(Duration.ofHours(time))
                 .build();
     }
 }

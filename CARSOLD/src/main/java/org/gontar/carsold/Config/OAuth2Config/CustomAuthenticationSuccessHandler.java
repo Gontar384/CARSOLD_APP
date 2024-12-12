@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 
+//Google authentication
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -35,13 +36,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         this.repository = repository;
     }
 
-    //used for Google authentication
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
-        if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {    //is instance of OAuth2AuthenticationToken
-                                                                                  //which indicates an OAuth2Login
-            OAuth2User oAuth2User = oauth2Token.getPrincipal();                   //retrieves authenticated user's details from OAuth2 using OAuth2User
+        if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+
+            OAuth2User oAuth2User = oauth2Token.getPrincipal();                   //retrieves authenticated user's details
 
             String email = (String) oAuth2User.getAttributes().get("email");      //retrieves email
             boolean exists = repository.existsByEmail(email);
@@ -58,15 +58,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             user.setOauth2User(true);
             repository.save(user);
 
-            String token = jwtService.generateToken(user.getUsername(), 600);//generates token based on "username"
+            String token = jwtService.generateToken(user.getUsername(), 600);
 
             ResponseCookie authCookie = createCookie(token);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
 
-            response.sendRedirect(frontendUrl + "details/myOffers");    //sends link with authorization token
+            response.sendRedirect(frontendUrl + "details/myOffers");
         }
     }
 
+    //used to delete OAuth2 session
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
         return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
@@ -74,11 +75,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     //creates cookie
     private ResponseCookie createCookie(String token) {
-        return ResponseCookie.from("JWT", token)    //creates new cookie with name "authToken"
-                .httpOnly(true)                                 //cannot be accessed via JavaScript
+        return ResponseCookie.from("JWT", token)
+                .httpOnly(true)
                 .secure(false)                                  //enabled only for production
-                .path("/")                                      //can be sent to any endpoint
-                .sameSite("Lax")                                //restricts cookies sending via cross-site requests
+                .path("/")
+                .sameSite("Lax")                                //restricts cookies sending via cross-site request
                 .maxAge(Duration.ofHours(10))
                 .build();
     }

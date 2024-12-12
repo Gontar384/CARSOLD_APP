@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Input from "../Authentication/AuthWindow/Atomic/Form/Atomic/Input.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../Authentication/CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../CustomHooks/UseUserCheck.ts";
 import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
 import SubmitButton from "../Authentication/AuthWindow/Atomic/Form/Atomic/SubmitButton.tsx";
@@ -68,7 +68,7 @@ const PasswordChange: React.FC = () => {
         } else {
             setPasswordRepIcon(null);
         }
-    }, [passwordRep, password, checksPassword])   //checks if repeated password equals password
+    }, [passwordRep, password])   //checks if repeated password equals password
 
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isChanged, setIsChanged] = useState<boolean>(false);   //banners

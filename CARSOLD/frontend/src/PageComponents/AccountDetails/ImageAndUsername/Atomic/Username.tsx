@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {useUserDetails} from "../../../../LayOut/CustomHooks/UseUserDetails.ts";
+import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
 import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
 import UsernameLoader from "../../../../Additional/Loading/UsernameLoader.tsx";
 

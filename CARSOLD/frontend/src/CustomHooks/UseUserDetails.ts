@@ -1,7 +1,8 @@
 import {useState} from "react";
-import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {useAuth} from "../GlobalProviders/AuthProvider.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 import {useNavigate} from "react-router-dom";
+import {useItems} from "../GlobalProviders/ItemsProvider.tsx";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {
@@ -30,6 +31,7 @@ export const useUserDetails = () => {
 
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
+    const {setProfilePicChange} = useItems();
 
     const handleProfilePicFetch = async () => {
         if (!isAuthenticated) return;
@@ -42,6 +44,7 @@ export const useUserDetails = () => {
             console.log("Error fetching profilePic: ", error);
         } finally {
             setProfilePicFetched(true);
+            setProfilePicChange(false);
         }
     } //fetches profile pic
 

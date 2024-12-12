@@ -12,7 +12,7 @@ interface UtilContextType {
 
 const UtilContext = createContext<UtilContextType | undefined>(undefined);
 
-//manages dark mode, lower bar presence and window size
+//manages dark mode, lower bar presence, window size, creates debounced values and recognize device: mobile/PC
 export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
     const [darkMode, setDarkMode] = useState<boolean>(() => {

@@ -11,9 +11,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -43,7 +40,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {   //configures security filter chain
         return http
                 .csrf(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request  //configures authorization for incoming requests
+                .authorizeHttpRequests(request -> request
                         .requestMatchers(                              //path available for authenticated users
                                 "api/auth/csrf",
                                 "api/auth/check-authentication",
@@ -54,17 +51,17 @@ public class SecurityConfig {
                                 "api/auth/check-active",
                                 "api/auth/check-oauth2",
                                 "api/auth/login",
-                                "api/auth/logout", //this one shouldn't be there, but has to, to clear JWT if user isn't authenticated or any error occurs
+                                "api/auth/logout", //this one has to be there to clear JWT if user isn't authenticated or any error occurs
                                 "api/auth/keep-alive",
                                 "api/auth/validate-user",
                                 "api/auth/password-recovery",
                                 "api/auth/password-recovery-change"
                                 ).permitAll()
-                        .anyRequest().authenticated())     //for any other endpoints authentication required
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing) to allow requests from specified origins
+                        .anyRequest().authenticated())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication
-                .oauth2Login(oath2 -> {                                        //oauth2 configuration
-                    oath2.successHandler(customAuthenticationSuccessHandler);  //custom handler for oauth2 logins
+                .oauth2Login(oath2 -> {
+                    oath2.successHandler(customAuthenticationSuccessHandler);  //custom handler for oauth2 auth
                 })
                 .build();
     }
@@ -73,12 +70,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of(frontendUrl));          //origins that can make requests
-        corsConfiguration.setAllowedMethods(List.of("*"));               //allowed methods
-        corsConfiguration.setAllowedHeaders(List.of("*"));               //allowed request headers
-        corsConfiguration.setAllowCredentials(true);                        //allowed cookies
+        corsConfiguration.setAllowedOrigins(List.of(frontendUrl));
+        corsConfiguration.setAllowedMethods(List.of("*"));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);   //cors configuration for all routes
+        source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
 

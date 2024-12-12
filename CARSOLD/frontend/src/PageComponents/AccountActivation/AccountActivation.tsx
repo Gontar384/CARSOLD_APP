@@ -39,7 +39,7 @@ const AccountActivation: React.FC = () => {
                 await checkAuth();
             }, 4500)
         }
-    }, [checkAuth, navigate]);   //gets token from url and activates account
+    }, [navigate]);   //gets token from url and activates account
 
     useEffect(() => {
         const interval: number = setInterval((): void => {

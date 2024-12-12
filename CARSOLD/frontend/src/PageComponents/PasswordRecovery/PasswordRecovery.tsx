@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../Authentication/CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../CustomHooks/UseUserCheck.ts";
 import {AxiosResponse} from "axios";
 import SubmitButton from "../Authentication/AuthWindow/Atomic/Form/Atomic/SubmitButton.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";

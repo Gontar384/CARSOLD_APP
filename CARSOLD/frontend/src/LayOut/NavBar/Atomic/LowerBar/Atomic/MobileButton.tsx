@@ -1,7 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import {useButton} from "../../../../CustomHooks/UseButton.ts";
+import {useButton} from "../../../../../CustomHooks/UseButton.ts";
 import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 
 interface MobileButtonProps {

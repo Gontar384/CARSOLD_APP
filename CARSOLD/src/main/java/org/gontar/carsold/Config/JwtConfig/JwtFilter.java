@@ -1,7 +1,5 @@
 package org.gontar.carsold.Config.JwtConfig;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,24 +35,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        //extracts JWT from cookies
         String token = jwtService.extractTokenFromCookie(request);
         String username = null;
 
-        //if token exists, extracts username
-        //if there are errors with token, clears token-cookie, making user unauthenticated
-        //and then frontend log him out
+        //if there are errors with token, clears token-cookie, makes user unauthenticated, then frontend logs him out
         if (token != null) {
             try {
                 username = jwtService.extractUsername(token);
-            } catch (ExpiredJwtException e) {
-                clearJwtCookie(response);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                return;
-            } catch (SignatureException e) {
-                clearJwtCookie(response);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                return;
             } catch (Exception e) {
                 clearJwtCookie(response);
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -62,20 +49,20 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        //makes user authenticated or not
+        //authenticate user
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
-            if (jwtService.validateToken(token, userDetails)) {  // Validate token with user details
+            if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);  // Make request authenticated
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        filterChain.doFilter(request, response);  // Pass request and response to next filter
+        filterChain.doFilter(request, response);
     }
 
-    //simple method to clear JWT cookie
+    //deletes jwt cookie
     private void clearJwtCookie(HttpServletResponse response) {
         response.addHeader(HttpHeaders.SET_COOKIE,
                 "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");

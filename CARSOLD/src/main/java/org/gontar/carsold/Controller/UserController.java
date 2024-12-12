@@ -4,15 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Service.UserServiceImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +23,7 @@ public class UserController {
         this.service = service;
     }
 
-    //checks if mail already exists
+    //checks if email already exists
     @GetMapping("/auth/register/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam("email") String email) {
         Map<String, Boolean> response = new HashMap<>();
@@ -99,6 +96,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    //checks if login and password matches, used before proper auth
     @GetMapping("/auth/validate-user")
     public ResponseEntity<Map<String, Boolean>>validateUser(@RequestParam("login") String login,
                                                             @RequestParam("password") String password){
@@ -129,12 +127,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    //sends password recovery email
     @GetMapping("/auth/password-recovery")
     public ResponseEntity<String>passwordRecovery(@RequestParam("email") String email){
         service.sendPasswordRecoveryEmail(email);
         return ResponseEntity.ok("Email sent");
     }
 
+    //changes password
     @PostMapping("/auth/password-recovery-change")
     public ResponseEntity<String>passwordRecoveryChange(
             @RequestBody Map<String, String> payload, HttpServletResponse response){
@@ -144,6 +144,7 @@ public class UserController {
         return ResponseEntity.ok(message);
     }
 
+    //fetches username
     @GetMapping("/get-username")
     public ResponseEntity<Map<String,String>>getUsername(HttpServletRequest request){
         HashMap<String, String> usernameResponse = new HashMap<>();
@@ -152,11 +153,25 @@ public class UserController {
         return ResponseEntity.ok(usernameResponse);
     }
 
+    //fetches profile pic
     @GetMapping("/get-profilePic")
     public ResponseEntity<Map<String,String>>getProfilePic(HttpServletRequest request){
         HashMap<String, String> profilePicResponse = new HashMap<>();
         String profilePic = service.getProfilePic(request);
         profilePicResponse.put("profilePic", profilePic);
         return ResponseEntity.ok(profilePicResponse);
+    }
+
+    //uploads images to cloud and checks for sensitive content
+    @PostMapping("/storage-upload")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        try {
+            Map<String, String> response = new HashMap<>();
+            String info = service.uploadImageWithSafeSearch(file, request);
+            response.put("info", info);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("Error uploading image: ", e.getMessage()));
+        }
     }
 }

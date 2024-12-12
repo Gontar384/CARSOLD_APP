@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DarkModeButton from "./Atomic/DarkModeButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../CustomHooks/UseUserDetails.ts";
+import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
 import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
 import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
 import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";

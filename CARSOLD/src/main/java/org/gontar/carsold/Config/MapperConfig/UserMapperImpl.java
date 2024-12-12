@@ -14,13 +14,11 @@ public class UserMapperImpl implements Mapper<User, UserDto> {
         this.mapper = mapper;
     }
 
-    //mapping to dto
     @Override
     public UserDto mapToDto(User user) {
         return mapper.map(user, UserDto.class);
     }
 
-    //mapping to entity
     @Override
     public User mapToEntity(UserDto userDto) {
         return mapper.map(userDto, User.class);

@@ -7,7 +7,7 @@ import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.tsx";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {AxiosResponse} from "axios";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
-import {useUserCheck} from "../../../CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../../../../CustomHooks/UseUserCheck.ts";
 
 const RegisterForm: React.FC = () => {
 
@@ -196,6 +196,7 @@ const RegisterForm: React.FC = () => {
 
     const [termsCheck, setTermsCheck] = useState<boolean>(false);   //manages terms of use
     const [mark, setMark] = useState<boolean>(false);
+
     useEffect(() => {
         if (termsCheck) {
             setMark(false);

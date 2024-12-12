@@ -13,6 +13,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   # SMTP Server Configuration (email sending)
   mail:
     host: smtp.gmail.com
@@ -22,6 +23,7 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
   # OAuth2 Configuration
   security:
     oauth2:
@@ -31,7 +33,7 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
-  #Google Cloud Storage and Vision Configuration
+  # Google Cloud Storage and Vision Configuration
   cloud:
     gcp:
       project-id: ${GOOGLE_CLOUD_PROJECT}

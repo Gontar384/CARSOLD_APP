@@ -7,7 +7,7 @@ import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.tsx";
 import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useAuth} from "../../../../../GlobalProviders/AuthProvider.tsx";
-import {useUserCheck} from "../../../CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../../../../CustomHooks/UseUserCheck.ts";
 
 const LoginForm: React.FC = () => {
 

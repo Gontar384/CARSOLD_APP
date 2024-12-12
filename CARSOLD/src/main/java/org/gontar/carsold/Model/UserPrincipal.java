@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 //uses user info and adapt it to UserDetails, to make it compatible with Spring Security
-//need for authentication, provides basic role authority
 public class UserPrincipal implements UserDetails {
 
     private final User user;

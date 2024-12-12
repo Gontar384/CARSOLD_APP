@@ -1,7 +1,7 @@
 import React from "react";
 import DropdownButton from "./DropdownButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
+import {useUserDetails} from "../../../../../CustomHooks/UseUserDetails.ts";
 import {useItems} from "../../../../../GlobalProviders/ItemsProvider.tsx";
 import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 

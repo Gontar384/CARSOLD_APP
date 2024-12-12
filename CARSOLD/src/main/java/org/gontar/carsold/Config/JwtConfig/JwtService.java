@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-//handles JWTs
+
 @Service
 public class JwtService {
     private final String secretKey;
@@ -43,7 +43,7 @@ public class JwtService {
                 .add(claims)
                 .subject(username)  //includes username in token
                 .issuedAt(new Date(System.currentTimeMillis()))   //creation time
-                .expiration(new Date(expirationTime))   //expiration time 10h
+                .expiration(new Date(expirationTime))   //expiration time
                 .and()
                 .signWith(getKey())   //signed with secret key
                 .compact();           //returned as string
@@ -59,7 +59,7 @@ public class JwtService {
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);                                //extracts various claims
+        final Claims claims = extractAllClaims(token);                                //extracts claims
         return claimsResolver.apply(claims);
     }
 
@@ -72,8 +72,8 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails){
-        final String username = extractUsername(token);                                     //validates token, extracting username and checks if it matches
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));      //provided UserDetails username, ensuring token didn't expire
+        final String username = extractUsername(token);                                     //validates token, extracts username and checks if it matches
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));      //provided UserDetails username, ensures token didn't expire
     }
 
     private boolean isTokenExpired(String token) {
@@ -84,15 +84,15 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);                   //extract expiration date
     }
 
-    //extracting token from cookie
+    //extracts token from cookie
     public String extractTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("JWT".equals(cookie.getName())) {
-                    return cookie.getValue(); // Return the JWT if the cookie is found
+                    return cookie.getValue();
                 }
             }
         }
-        return null; // Return null if the cookie is not found
+        return null;
     }
 }

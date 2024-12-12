@@ -15,7 +15,6 @@ import PasswordChange from "./PageComponents/PasswordChange/PasswordChange.tsx";
 import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
-import TestUpload from "./Test/TestUpload.tsx";
 
 const App: React.FC = () => {
 
@@ -38,8 +37,6 @@ const App: React.FC = () => {
                             <Route element={<PrivateRoutes/>}>
                                 <Route path="/details/:section?" element={<AccountDetails/>}/>
                             </Route>
-
-                            <Route path="/test" element={<TestUpload/>}/>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>

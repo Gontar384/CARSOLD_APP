@@ -4,7 +4,7 @@ import LoginButton from "./Atomic/LoginButton.tsx";
 import Dropdown from "./Atomic/Dropdown.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
-import {useUserDetails} from "../../../CustomHooks/UseUserDetails.ts";
+import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
 import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
 import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
 import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";
@@ -13,11 +13,7 @@ const UserDetails: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
 
-    const {userDetails, usernameFetched, handleUsernameFetch} = useUserDetails();
-
-    useEffect(() => {
-        handleUsernameFetch().then();
-    }, [handleUsernameFetch, isAuthenticated]);  //fetches username
+    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
 
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
 
@@ -27,13 +23,18 @@ const UserDetails: React.FC = () => {
 
     const [barHovered, setBarHovered] = useState<boolean>(false);
 
-    const {createDebouncedValue} = useUtil();
+    const {createDebouncedValue, isMobile} = useUtil();
 
     const debouncedHover: boolean = createDebouncedValue(barHovered, 300)
 
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
 
-    const {isMobile} = useUtil();
+    const {profilePicChange} = useItems();
+
+    useEffect(() => {
+        handleUsernameFetch().then();
+        handleProfilePicFetch().then();
+    }, [isAuthenticated, profilePicChange]);  //fetches username and profile pic
 
     const handleActivateBar = () => {
         setBarActive(true);
@@ -87,7 +88,7 @@ const UserDetails: React.FC = () => {
 
     return (
         <div
-            className="flex justify-center items-center h-full min-w-[142px] lg:min-w-[178px] xl:min-w-[213px] 2xl:min-w-[268px] 3xl:min-w-[322px]"
+            className="flex justify-center items-center h-full min-w-[150px] lg:min-w-[190px] xl:min-w-[225px] 2xl:min-w-[280px] 3xl:min-w-[335px]"
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (
@@ -98,10 +99,13 @@ const UserDetails: React.FC = () => {
                             onKeyDown={(event) => {
                         if (event.key === "Enter") handleToggleBar()
                     }}>
-                        <div
-                            className="flex flex-row items-center h-full gap-[2px] lg:gap-[3px] xl:gap-1 2xl:gap-[6px] 3xl:gap-2 relative">
-                            <FontAwesomeIcon icon={faCircleUser}
-                                             className={`mb-[3px] xl:mb-[2px] 3xl:mb-[5px] text-sm lg:text-[18px] xl:text-[22px] 2xl:text-[28px] 3xl:text-[34px] ${userIconAnimation}`}/>
+                        <div className="flex flex-row items-center h-full gap-[5px] lg:gap-[6px] xl:gap-[7px] 2xl:gap-[9px] 3xl:gap-[11px] relative">
+                            <div className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px] xl:w-[26px] xl:h-[26px] 2xl:w-[32px]
+                                                      2xl:h-[32px] 3xl:w-[38px] 3xl:h-[38px] mb-[4px] lg:mb-[3px] 3xl:mb-[5px]">
+                            {profilePic !== "" ?
+                                <img src={profilePic} alt="Profile Picture" className={`w-full h-full rounded-full ${userIconAnimation}`}/> :
+                            <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>}
+                            </div>
                             <div
                                 className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
                                 {userDetails}

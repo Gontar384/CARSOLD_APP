@@ -2,11 +2,12 @@ import React, {useEffect, useRef, useState} from "react";
 import {faCircleUser, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
-import {useUserDetails} from "../../../../LayOut/CustomHooks/UseUserDetails.ts";
+import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
 import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
 import ProfilePicLoader from "../../../../Additional/Loading/ProfilePicLoader.tsx";
 import {api} from "../../../../Config/AxiosConfig/AxiosConfig.tsx";
 import LoadingPicAnimation from "../../../../Additional/Loading/LoadingPicAnimation.tsx";
+import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";
 
 interface ImageProps {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -78,24 +79,29 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }, [inputActive]);  //adds event listener to deactivate button
 
     const [picUploaded, setPicUploaded] = useState<boolean>(true);
+    const {setProfilePicChange} = useItems();
 
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            setPicUploaded(false);
+            if (!file.type.startsWith('image/')) {
+                setMessage("This is not an image!");
+                return;
+            }
             if (file.size > 3 * 1024 * 1024) {
                 setMessage("Couldn't upload, image is too large.");
                 return;
-            } else {
-                setMessage('');
             }
+            setMessage("");
+            setPicUploaded(false);
             const formData = new FormData();
             formData.append('file', file);
 
             try {
-                const response = await api.post('storage/upload', formData);
+                const response = await api.post('api/storage-upload', formData);
                 if (response.data) {
                     setPicUploaded(true);
+                    setProfilePicChange(true);
                     if (response.data.info) {
                         setMessage(response.data.info);
                     }

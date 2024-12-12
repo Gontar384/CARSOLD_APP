@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Model.UserDto;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -24,4 +25,5 @@ public interface UserService {
     String recoveryChangePassword(String token, String password, HttpServletResponse response);
     String getUsername(HttpServletRequest request);
     String getProfilePic(HttpServletRequest request);
+    String uploadImageWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;
 }

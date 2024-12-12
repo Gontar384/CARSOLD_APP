@@ -1,4 +1,4 @@
-import {api} from "../../../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
 
 export const useUserCheck = () => {
 
