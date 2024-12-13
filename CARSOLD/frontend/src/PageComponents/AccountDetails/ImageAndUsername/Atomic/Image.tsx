@@ -26,7 +26,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [inputClickable, setInputClickable] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
 
-    const handleActivateButton = () => {
+    const handleActivateInput = () => {
         setInputActive(true);
         setInputHovered(true);
         if (!animationActive) {
@@ -36,7 +36,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         }
     }   //activates on mouse
 
-    const handleDeactivateButton = () => {
+    const handleDeactivateInput = () => {
         setInputHovered(false);
         setIconAnimation(null);
         setInputClickable(false);
@@ -49,7 +49,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         }
     }, [debouncedHover, inputHovered]);   //delays deactivation
 
-    const handleToggleButton = () => {
+    const handleToggleInput = () => {
         setInputActive(true);
         setIconAnimation("animate-shock");   //activates on touch
     }
@@ -124,9 +124,9 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 xl:h-[80px] 2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] 
                 rounded-full overflow-hidden ${inputActive ? "border-2 border-black" : ""}`}
              ref={componentRef}
-             onMouseEnter={!isMobile ? handleActivateButton : undefined}
-             onMouseLeave={!isMobile ? handleDeactivateButton : undefined}
-             onTouchStart={isMobile ? handleToggleButton : undefined}
+             onMouseEnter={!isMobile ? handleActivateInput : undefined}
+             onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
+             onTouchStart={isMobile ? handleToggleInput : undefined}
              onTouchEnd={isMobile ? handleClickable : undefined}
              style={{clipPath: 'circle(50%)'}}>
             {profilePicFetched ? (
