@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
         event.stopPropagation();
     };  //prevents closing bar
 
-    const { toggleDarkMode } = useUtil();
+    const { toggleDarkMode, darkMode } = useUtil();
 
     const { logout } = useUserDetails();
 
@@ -36,7 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
                     <DropdownButton label="Followed" onClick={() => navigate('/details/followed')} count={followed} serial={1}/>
                     <DropdownButton label="Messages" onClick={() => navigate('/details/messages')} count={messages} serial={2}/>
                     <DropdownButton label="Settings" onClick={() => navigate('/details/settings')} serial={3}/>
-                    <DropdownButton label="Change mode" onClick={toggleDarkMode} serial={4}/>
+                    <DropdownButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode} serial={4}/>
                     <DropdownButton label="Logout" onClick={logout} serial={5}/>
                 </div>}
         </>

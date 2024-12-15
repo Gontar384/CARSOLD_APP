@@ -18,7 +18,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count, 
 
     return (
         <button className={'flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] ' +
-            `text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] ${buttonColor[serial] === "black" ? "bg-lime" : "bg-white"} `}
+            `text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] ${buttonColor[serial] ? "bg-white" : "bg-lime"} `}
                 onClick={onClick} onKeyDown={(event) => { if (event.key === "Enter") onClick() }}
                 onTouchStart={isMobile ? () => handleStart(serial) : undefined}
                 onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}

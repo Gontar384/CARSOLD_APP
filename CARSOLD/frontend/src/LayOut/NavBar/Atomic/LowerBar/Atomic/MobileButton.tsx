@@ -25,7 +25,7 @@ const MobileButton: React.FC<MobileButtonProps> = ({serial, onClick, icon, label
                 onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
                 onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
                 onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
-            <FontAwesomeIcon icon={icon} style={{ color: buttonColor[serial] }} className="text-xl xs:text-[22px]"/>
+            <FontAwesomeIcon icon={icon} style={{color: buttonColor[serial] ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
             {count && count > 0 ? (
                 <p className="text-[9px] xs:text-[10px] top-[7px] text-white absolute">
                     {count}

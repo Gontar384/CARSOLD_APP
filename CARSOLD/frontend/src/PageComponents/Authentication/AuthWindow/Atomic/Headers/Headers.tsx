@@ -24,7 +24,7 @@ const Headers: React.FC = () => {
                 <HeaderButton label={"Login"} serial={1} onClick={() => handleNavigation("login")}/>
                 <HeaderButton label={"Register"} serial={2} onClick={() => handleNavigation("register")}/>
             </div>
-            <HeaderButton label={"Authenticated using Google"} serial={3} onClick={handleGoogleAuth} isGoogle={true}/>
+            <HeaderButton label={"Authenticate using Google"} serial={3} onClick={handleGoogleAuth} isGoogle={true}/>
         </div>
     )
 }

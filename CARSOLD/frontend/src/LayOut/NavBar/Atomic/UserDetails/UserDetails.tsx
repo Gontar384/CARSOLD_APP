@@ -103,7 +103,7 @@ const UserDetails: React.FC = () => {
                             <div className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px] xl:w-[26px] xl:h-[26px] 2xl:w-[32px]
                                                       2xl:h-[32px] 3xl:w-[38px] 3xl:h-[38px] mb-[4px] lg:mb-[3px] 3xl:mb-[5px]">
                             {profilePic !== "" ?
-                                <img src={profilePic} alt="Profile Picture" className={`w-full h-full rounded-full ${userIconAnimation}`}/> :
+                                <img src={profilePic} alt="Profile Picture" className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}/> :
                             <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>}
                             </div>
                             <div

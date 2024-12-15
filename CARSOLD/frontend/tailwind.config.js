@@ -94,6 +94,13 @@ export default {
                     '0%': {transform: "scale(1) rotate(90deg)"},
                     '50%': {transform: "scale(1.3)"},
                     '100%': {transform: "scale(1) rotate(180deg)"},
+                },
+                pulse1: {
+                    '0%': {opacity: "0"},
+                    '25%': {opacity: "0"},
+                    '50%': {opacity: "1", transform: "scale(1.2)"},
+                    '75%': {opacity: "0"},
+                    '100%': {opacity: "0"}
                 }
             },
             animation: {  //animations details
@@ -113,6 +120,7 @@ export default {
                 grow: "grow 2s ease-out forwards",
                 wave: "wave 0.4s ease-out",
                 shock: "shock 0.3s ease-in-out forwards",
+                pulse1: "pulse1 5s ease-in-out infinite"
             },
         },
     },

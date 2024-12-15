@@ -120,9 +120,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }, [isAuthenticated, picUploaded]);  //fetches pic
 
     return (
-        <div className={`absolute left-0 w-14 h-14 xs:w-16 xs:h-16 lg:w-[72px] lg:h-[72px] xl:w-[80px] 
-                xl:h-[80px] 2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] 
-                rounded-full overflow-hidden ${inputActive ? "border-2 border-black" : ""}`}
+        <div className="absolute left-0 w-14 h-14 xs:w-16 xs:h-16 lg:w-[72px] lg:h-[72px] xl:w-[80px] xl:h-[80px]
+        2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] scale-110 rounded-full overflow-hidden"
              ref={componentRef}
              onMouseEnter={!isMobile ? handleActivateInput : undefined}
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
@@ -133,7 +132,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 <div className="relative w-full h-full rounded-full">
                     {profilePic !== "" ? (
                         <img src={profilePic} alt="Profile Picture"
-                             className="object-cover absolute inset-0 w-full h-full z-10"/>
+                             className="object-cover w-full h-full z-10"/>
                     ) : (
                         <FontAwesomeIcon icon={faCircleUser} className="w-full h-full z-10"/>
                     )}
@@ -141,7 +140,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                         <div className="flex items-center justify-center absolute inset-0 w-full h-full
                             rounded-full bg-lowLime bg-opacity-50 z-20">
                             {inputClickable &&
-                                <input type="file" accept="image/*" title="Upload Image"
+                                <input type="file" accept="image/*" title=""
                                        className="absolute inset-0 w-full h-full opacity-0 z-30"
                                        onChange={handleUploadPic}/>}
                             {picUploaded && <FontAwesomeIcon icon={faPlus} className={`text-[28px] xs:text-[32px] lg:text-[36px] xl:text-[40px] 

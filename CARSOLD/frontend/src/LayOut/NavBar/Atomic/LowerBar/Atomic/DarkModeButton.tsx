@@ -37,11 +37,11 @@ const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
             onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
             onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
             onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
-            <FontAwesomeIcon icon={faMoon} style={{color: buttonColor[serial]}}
+            <FontAwesomeIcon icon={faMoon} style={{color: buttonColor[serial] ? "white" : "black"}}
                              className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
-            <FontAwesomeIcon icon={faSun} style={{color: buttonColor[serial]}}
+            <FontAwesomeIcon icon={faSun} style={{color: buttonColor[serial] ? "white" : "black"}}
                              className={`text-[12px] xs:text-[14px] top-[8px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor[serial]}} className="text-xl xs:text-[22px]"/>
+            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor[serial] ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
             <p className="text-[9px] xs:text-[10px]">Mode</p>
         </button>
     )

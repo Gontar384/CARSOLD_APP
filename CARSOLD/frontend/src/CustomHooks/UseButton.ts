@@ -4,18 +4,18 @@ import {useState} from "react";
 //highlights/changes color of buttons
 export const useButton = () => {
 
-    const [buttonColor, setButtonsColor] = useState<("black" | "white")[]>([
-        "black", "black", "black", "black", "black", "black"
+    const [buttonColor, setButtonsColor] = useState<boolean[]>([
+        false, false, false, false, false, false
     ]);  //changes lower bar buttons colors
 
     const handleStart = (index: number) => {
         setButtonsColor((prev) =>
-            prev.map((color, i) => (i === index ? "white" : color)));
+            prev.map((color, i) => (i === index ? true : color)));
     };    //changes color
 
     const handleEnd = (index: number) => {
         setButtonsColor((prev) =>
-            prev.map((color, i) => (i === index ? "black" : color)));
+            prev.map((color, i) => (i === index ? false : color)));
     };
 
     return { buttonColor, handleStart, handleEnd }

@@ -11,7 +11,7 @@ const AddButton: React.FC = () => {
 
     return (
         <button className={'flex flex-row items-center p-[1px] gap-1 border-2 border-solid border-black ' +
-            `cursor-pointer rounded ${buttonColor[0] === "black" ? "bg-lime" : "bg-white"}`}
+            `cursor-pointer rounded ${buttonColor[0] ? "bg-white" : "bg-lime"}`}
                 onTouchStart={isMobile ? () => handleStart(0) : undefined}
                 onTouchEnd={isMobile ? () => handleEnd(0) : undefined}
                 onMouseEnter={!isMobile ?  () => handleStart(0) : undefined}
