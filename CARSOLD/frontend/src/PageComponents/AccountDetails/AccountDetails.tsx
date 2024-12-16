@@ -1,9 +1,9 @@
 import React from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import ImageAndUsername from "./ImageAndUsername/ImageAndUsername.tsx";
-import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
 import ChoiceHeaders from "./ChoiceHeaders/ChoiceHeaders.tsx";
 import Content from "./Content/Content.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const AccountDetails: React.FC = () => {
 

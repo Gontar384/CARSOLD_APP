@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {useUtil} from "../../../GlobalProviders/UtilProvider.tsx";
 import MyOffers from "./MyOffers/MyOffers.tsx";
 import Followed from "./Followed/Followed.tsx";
 import Messages from "./Messages/Messages.tsx";
 import Settings from "./Settings/Settings.tsx";
 import Info from "./Info/Info.tsx";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const Content: React.FC = () => {
 

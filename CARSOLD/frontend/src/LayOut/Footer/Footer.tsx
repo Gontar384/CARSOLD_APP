@@ -1,5 +1,5 @@
 import React from "react";
-import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Footer: React.FC = () => {
 

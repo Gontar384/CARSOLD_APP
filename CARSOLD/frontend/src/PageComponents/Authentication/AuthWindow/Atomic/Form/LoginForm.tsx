@@ -3,11 +3,11 @@ import Input from "./Atomic/Input.tsx";
 import SubmitButton from "./Atomic/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {AxiosResponse} from "axios";
-import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.tsx";
-import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
+import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
-import {useAuth} from "../../../../../GlobalProviders/AuthProvider.tsx";
-import {useUserCheck} from "../../../../../CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
+import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 const LoginForm: React.FC = () => {
 
@@ -16,8 +16,8 @@ const LoginForm: React.FC = () => {
     const [password, setPassword] = useState<string>("");
 
     const { checkAuth } = useAuth();
-    const { createDebouncedValue } = useUtil();
-    const debouncedLogin: string = createDebouncedValue(login, 300);
+    const { CreateDebouncedValue } = useUtil();
+    const debouncedLogin: string = CreateDebouncedValue(login, 300);
 
     const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);
     const [loginInfo, setLoginInfo] = useState<string>("");

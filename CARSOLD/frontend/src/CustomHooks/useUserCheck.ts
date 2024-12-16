@@ -1,4 +1,4 @@
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 
 export const useUserCheck = () => {
 
@@ -26,12 +26,23 @@ export const useUserCheck = () => {
         });
     };        //checks if user was authenticated via Google
 
-    const checksPassword = (password: string): boolean => {
+    const checkPassword = (password: string): boolean => {
         if (password.trim().length < 7 || password.trim().length > 25) {
             return false;
         }
         return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
     }     //checks if password is strong enough
 
-    return { emailExists, usernameExists, isActive, isOauth2, checksPassword }
+    const checkOldPassword = async (password: string) => {
+        return await api.get('api/auth/validate-password', {
+            params: {password}
+        });
+    }
+
+    //checks google auth
+    const checkGoogleAuth = async () => {
+        return await api.get('api/auth/check-google-auth');
+    }
+
+    return { emailExists, usernameExists, isActive, isOauth2, checkPassword, checkOldPassword, checkGoogleAuth }
 }

@@ -1,0 +1,22 @@
+import React, {createContext, useContext} from "react";
+
+interface ItemsContextType {
+    messages: number,
+    setMessages: React.Dispatch<React.SetStateAction<number>>,
+    followed: number,
+    setFollowed: React.Dispatch<React.SetStateAction<number>>
+    search: string;
+    setSearch: React.Dispatch<React.SetStateAction<string>>;
+    profilePicChange: boolean;
+    setProfilePicChange: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
+
+export const useItems = (): ItemsContextType => {
+    const context = useContext(ItemsContext);
+    if (context === undefined) {
+        throw new Error("useNotifications must be used within an ItemsProvider");
+    }
+    return context;
+}

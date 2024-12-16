@@ -1,6 +1,6 @@
 import React from "react";
-import {useButton} from "../../../../CustomHooks/UseButton.ts";
-import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
+import {useButton} from "../../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface ChoiceButtonProps {
     serial: number;

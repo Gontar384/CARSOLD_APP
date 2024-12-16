@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {api} from "../AxiosConfig/AxiosConfig.tsx";
-import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
+import {useEffect, useState} from "react";
+import {api} from "../AxiosConfig/AxiosConfig.ts";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
@@ -42,7 +42,7 @@ export const useTrackUserActivity = () => {
             if (isDisabled) return;
             setIsDisabled(true);
             try {
-                api.get(`api/auth/keep-alive`);
+                api.get(`api/auth/keep-alive`).then();
             } catch (error) {
                 console.error('Error refreshing session:', error);
             }
@@ -56,12 +56,3 @@ export const useTrackUserActivity = () => {
         };
     }, [isDisabled]);
 };
-
-const TokenManager: React.FC = () => {
-    useFetchCsrf();
-    useRefreshJwt();
-    useTrackUserActivity();
-    return null;
-}
-
-export default TokenManager;

@@ -1,14 +1,8 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import React, {useEffect, useState} from 'react';
+import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {AxiosResponse} from "axios";
+import { AuthContext } from './useAuth.ts';
 
-interface AuthContextType {
-    isAuthenticated: boolean;
-    checkAuth: () => Promise<void>;
-    loadingAuth: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 //manages authentication and adds loading screen
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -59,10 +53,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     );
 };
 
-export const useAuth = (): AuthContextType => {
-    const context: AuthContextType | undefined = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-};

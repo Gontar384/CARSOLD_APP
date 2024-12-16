@@ -96,10 +96,18 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/auth/check-google-auth")
+    public ResponseEntity<Map<String, Boolean>> googleAuth(HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean checks = service.checkGoogleAuth(request);
+        response.put("checks", checks);
+        return ResponseEntity.ok(response);
+    }
+
     //checks if login and password matches, used before proper auth
     @GetMapping("/auth/validate-user")
-    public ResponseEntity<Map<String, Boolean>>validateUser(@RequestParam("login") String login,
-                                                            @RequestParam("password") String password){
+    public ResponseEntity<Map<String, Boolean>> validateUser(@RequestParam("login") String login,
+                                                             @RequestParam("password") String password) {
         Map<String, Boolean> response = new HashMap<>();
         boolean isValid = service.validateUser(login, password);
         response.put("isValid", isValid);
@@ -108,45 +116,62 @@ public class UserController {
 
     //login, authenticate and authorize user
     @GetMapping("/auth/login")
-    public ResponseEntity<String>login(@RequestParam("login") String login, @RequestParam("password")
-                                       String password, HttpServletResponse response) {
+    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password")
+    String password, HttpServletResponse response) {
         service.authenticate(login, password, response);
         return ResponseEntity.ok("User logged in");
     }
 
     //refreshes JWT, sends new one with new expiration date
     @GetMapping("/auth/refresh")
-    public ResponseEntity<String>refreshToken(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         service.refreshJwt(request, response);
         return ResponseEntity.ok("JWT refreshed");
     }
 
     //simple request to keep session alive
     @GetMapping("/auth/keep-alive")
-    public ResponseEntity<Void>keepAlive(){
+    public ResponseEntity<Void> keepAlive() {
         return ResponseEntity.ok().build();
     }
 
     //sends password recovery email
     @GetMapping("/auth/password-recovery")
-    public ResponseEntity<String>passwordRecovery(@RequestParam("email") String email){
+    public ResponseEntity<String> passwordRecovery(@RequestParam("email") String email) {
         service.sendPasswordRecoveryEmail(email);
         return ResponseEntity.ok("Email sent");
     }
 
     //changes password
     @PostMapping("/auth/password-recovery-change")
-    public ResponseEntity<String>passwordRecoveryChange(
-            @RequestBody Map<String, String> payload, HttpServletResponse response){
+    public ResponseEntity<String> passwordRecoveryChange(
+            @RequestBody Map<String, String> payload, HttpServletResponse response) {
         String token = payload.get("token");
         String password = payload.get("password");
         String message = service.recoveryChangePassword(token, password, response);
         return ResponseEntity.ok(message);
     }
 
+    @PostMapping("/auth/password-change")
+    public ResponseEntity<String> passwordChange(
+            @RequestBody Map<String, String> payload, HttpServletRequest request) {
+        String password = payload.get("password");
+        System.out.println(password);
+        String message = service.changePassword(password, request);
+        return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/auth/validate-password")
+    public ResponseEntity<Map<String, Boolean>> validatePassword(@RequestParam("password") String password, HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean checks = service.checkPassword(password, request);
+        response.put("checks", checks);
+        return ResponseEntity.ok(response);
+    }
+
     //fetches username
     @GetMapping("/get-username")
-    public ResponseEntity<Map<String,String>>getUsername(HttpServletRequest request){
+    public ResponseEntity<Map<String, String>> getUsername(HttpServletRequest request) {
         HashMap<String, String> usernameResponse = new HashMap<>();
         String username = service.getUsername(request);
         usernameResponse.put("username", username);
@@ -155,7 +180,7 @@ public class UserController {
 
     //fetches profile pic
     @GetMapping("/get-profilePic")
-    public ResponseEntity<Map<String,String>>getProfilePic(HttpServletRequest request){
+    public ResponseEntity<Map<String, String>> getProfilePic(HttpServletRequest request) {
         HashMap<String, String> profilePicResponse = new HashMap<>();
         String profilePic = service.getProfilePic(request);
         profilePicResponse.put("profilePic", profilePic);

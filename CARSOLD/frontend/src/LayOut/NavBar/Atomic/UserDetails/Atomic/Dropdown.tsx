@@ -1,9 +1,10 @@
 import React from "react";
 import DropdownButton from "./DropdownButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../../../CustomHooks/UseUserDetails.ts";
-import {useItems} from "../../../../../GlobalProviders/ItemsProvider.tsx";
-import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
+import {useUserDetails} from "../../../../../CustomHooks/useUserDetails.ts";
+import {useItems} from "../../../../../GlobalProviders/Items/useItems.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+
 
 interface DropdownProps {
     barActive: boolean;
@@ -15,13 +16,11 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
 
     const navigate = useNavigate();
 
-    const {isMobile} = useUtil();
+    const {isMobile, toggleDarkMode, darkMode} = useUtil();
 
     const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };  //prevents closing bar
-
-    const { toggleDarkMode, darkMode } = useUtil();
 
     const { logout } = useUserDetails();
 

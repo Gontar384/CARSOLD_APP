@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 const AccountActivation: React.FC = () => {
 
@@ -39,7 +39,7 @@ const AccountActivation: React.FC = () => {
                 await checkAuth();
             }, 4500)
         }
-    }, [navigate]);   //gets token from url and activates account
+    }, [checkAuth, navigate]);   //gets token from url and activates account
 
     useEffect(() => {
         const interval: number = setInterval((): void => {

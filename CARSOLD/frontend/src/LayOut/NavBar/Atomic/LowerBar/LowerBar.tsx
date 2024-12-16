@@ -10,10 +10,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DarkModeButton from "./Atomic/DarkModeButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
-import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
-import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
-import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";
+import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
+import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+
 
 const LowerBar: React.FC = () => {
 
@@ -51,7 +52,7 @@ const LowerBar: React.FC = () => {
 
     useEffect(() => {
         handleUsernameFetch().then();
-    }, [isAuthenticated]);  //fetches username
+    }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
     return (
         <div

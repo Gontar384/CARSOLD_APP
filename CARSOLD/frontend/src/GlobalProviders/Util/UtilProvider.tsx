@@ -1,16 +1,5 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
-
-interface UtilContextType {
-    darkMode: boolean;
-    toggleDarkMode: () => void;
-    lowerBar: boolean;
-    setLowerBar: React.Dispatch<React.SetStateAction<boolean>>;
-    isWide: boolean;
-    createDebouncedValue: <T>(value: T, delay: number) => T;
-    isMobile: boolean;
-}
-
-const UtilContext = createContext<UtilContextType | undefined>(undefined);
+import React, {useEffect, useState} from "react";
+import { UtilContext } from "./useUtil";
 
 //manages dark mode, lower bar presence, window size, creates debounced values and recognize device: mobile/PC
 export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -61,7 +50,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);  //manages dark mode on initial load
+    }, [darkMode]);  //manages dark mode on initial load
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);
 
@@ -77,7 +66,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }, [])  //manages isWide state
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
-    const createDebouncedValue = <T, >(value: T, delay: number): T => {
+    const CreateDebouncedValue = <T, >(value: T, delay: number): T => {
         const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
         useEffect(() => {
@@ -119,16 +108,8 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     return (
         <UtilContext.Provider
-            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, createDebouncedValue, isMobile}}>
+            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, CreateDebouncedValue, isMobile}}>
             {children}
         </UtilContext.Provider>
     );
-};
-
-export const useUtil = (): UtilContextType => {
-    const context = useContext(UtilContext);
-    if (!context) {
-        throw new Error('useDarkMode must be used within a UtilProvider');
-    }
-    return context;
 };

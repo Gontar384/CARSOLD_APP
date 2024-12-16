@@ -1,7 +1,7 @@
 import React from "react";
-import {useUtil} from "../../../GlobalProviders/UtilProvider.tsx";
 import ChoiceButton from "./Atomic/ChoiceButton.tsx";
 import {useNavigate} from "react-router-dom";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const ChoiceHeaders: React.FC = () => {
 

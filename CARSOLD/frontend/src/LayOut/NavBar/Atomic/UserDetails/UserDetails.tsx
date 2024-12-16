@@ -4,10 +4,11 @@ import LoginButton from "./Atomic/LoginButton.tsx";
 import Dropdown from "./Atomic/Dropdown.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
-import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
-import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
-import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
-import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";
+import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
+
 
 const UserDetails: React.FC = () => {
 
@@ -23,18 +24,19 @@ const UserDetails: React.FC = () => {
 
     const [barHovered, setBarHovered] = useState<boolean>(false);
 
-    const {createDebouncedValue, isMobile} = useUtil();
+    const {CreateDebouncedValue, isMobile} = useUtil();
 
-    const debouncedHover: boolean = createDebouncedValue(barHovered, 300)
+    const debouncedHover: boolean = CreateDebouncedValue(barHovered, 300)
 
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
 
-    const {profilePicChange} = useItems();
+    const {profilePicChange, messages} = useItems();
 
+    //fetches username and profile pic
     useEffect(() => {
         handleUsernameFetch().then();
         handleProfilePicFetch().then();
-    }, [isAuthenticated, profilePicChange]);  //fetches username and profile pic
+    }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
         setBarActive(true);
@@ -79,8 +81,6 @@ const UserDetails: React.FC = () => {
             document.removeEventListener("touchstart", handleClickOutside);
         };
     }, [barActive]); //adds event listener for faster button deactivation
-
-    const {messages} = useItems();
 
     if (loadingAuth) {
         return <UserDetailsLoader/>

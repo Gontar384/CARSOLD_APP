@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {AxiosError, AxiosResponse} from "axios";
-import {api} from "../AxiosConfig/AxiosConfig.tsx";
+import {api} from "../AxiosConfig/AxiosConfig.ts";
 import SessionExpiredBanner from "../../Additional/Banners/SessionExpiredBanner.tsx";
 
 //manages unauthenticated errors with axios and logs out user

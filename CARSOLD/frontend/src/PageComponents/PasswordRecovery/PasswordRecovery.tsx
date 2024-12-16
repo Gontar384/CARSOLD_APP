@@ -1,14 +1,14 @@
 import Input from "../Authentication/AuthWindow/Atomic/Form/Atomic/Input.tsx";
 import React, {useEffect, useState} from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../../CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
 import {AxiosResponse} from "axios";
 import SubmitButton from "../Authentication/AuthWindow/Atomic/Form/Atomic/SubmitButton.tsx";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const PasswordRecovery: React.FC = () => {
 
@@ -16,8 +16,8 @@ const PasswordRecovery: React.FC = () => {
 
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
 
-    const { createDebouncedValue } = useUtil();
-    const debouncedEmail: string = createDebouncedValue(email, 300);
+    const { CreateDebouncedValue } = useUtil();
+    const debouncedEmail: string = CreateDebouncedValue(email, 300);
 
     const { emailExists, isActive, isOauth2 } = useUserCheck();
 
@@ -53,7 +53,7 @@ const PasswordRecovery: React.FC = () => {
         } else {
             setEmailIcon(null);
         }
-    }, [debouncedEmail])
+    }, [debouncedEmail, email, emailExists, isActive, isOauth2])
 
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
@@ -95,7 +95,7 @@ const PasswordRecovery: React.FC = () => {
                 pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16 2xl:pb-[70px] 3xl-pb-[80px]
                 gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl bg-lime rounded-sm">
                     <p className="text-center text-xs xs:text-base 2xl:text-xl 3xl:text-2xl w-10/12">
-                        Enter your email. We will automatically send you link to change your password.
+                        Enter your email, we will automatically send you link to change your password.
                     </p>
                     <Input placeholder={"E-mail"} inputType={"text"} value={email} setValue={setEmail}
                            icon={emailIcon}/>

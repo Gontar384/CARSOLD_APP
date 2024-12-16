@@ -1,8 +1,8 @@
 import {useState} from "react";
-import {useAuth} from "../GlobalProviders/AuthProvider.tsx";
-import {api} from "../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 import {useNavigate} from "react-router-dom";
-import {useItems} from "../GlobalProviders/ItemsProvider.tsx";
+import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
+import {useItems} from "../GlobalProviders/Items/useItems.ts";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {

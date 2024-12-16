@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
-import {useUtil} from "../../../../../../../GlobalProviders/UtilProvider.tsx";
+import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface CreatorLinkProps {
     link: string;

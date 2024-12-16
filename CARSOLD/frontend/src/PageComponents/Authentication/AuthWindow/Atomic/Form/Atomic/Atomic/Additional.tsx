@@ -42,9 +42,8 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
                     </button>
                 </div>
             ) : null}
-            <button onClick={toggleInput}>
-                <FontAwesomeIcon icon={eyeIcon} className={`${eyeIcon === faEyeSlash ? "-mr-[1px] xs:-mr-[2px]" : ""} 
-                                                text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl`}/>
+            <button onClick={toggleInput} className="w-5 h-5 xs:w-6 xs:h-6 2xl:w-7 2xl:h-7 3xl:w-8 3xl:h-8">
+                <FontAwesomeIcon icon={eyeIcon} className={`w-full h-full ${eyeIcon === faEyeSlash ? "scale-110" : ""}`}/>
             </button>
         </div>
     )

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface ContactProps {
     email: string;

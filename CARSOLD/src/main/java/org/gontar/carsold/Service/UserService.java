@@ -18,11 +18,14 @@ public interface UserService {
     void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
     boolean checkActive(String login);
     boolean checkOauth2(String login);
+    boolean checkGoogleAuth(HttpServletRequest request);
     void authenticate(String login, String password, HttpServletResponse response);
     void refreshJwt(HttpServletRequest request, HttpServletResponse response);
     boolean validateUser(String login, String password);
     void sendPasswordRecoveryEmail(String email);
     String recoveryChangePassword(String token, String password, HttpServletResponse response);
+    String changePassword(String password, HttpServletRequest request);
+    boolean checkPassword(String password, HttpServletRequest request);
     String getUsername(HttpServletRequest request);
     String getProfilePic(HttpServletRequest request);
     String uploadImageWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;

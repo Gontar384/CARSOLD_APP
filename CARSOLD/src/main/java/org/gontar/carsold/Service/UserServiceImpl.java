@@ -249,6 +249,17 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public boolean checkGoogleAuth(HttpServletRequest request) {
+        String jwt = jwtService.extractTokenFromCookie(request);
+        if (jwt != null) {
+            String username = jwtService.extractUsername(jwt);
+            User user = repository.findByUsername(username);
+            return user.getOauth2User();
+        }
+        return false;
+    }
+
     //auth user using email or username
     @Override
     public void authenticate(String login, String password, HttpServletResponse response) {
@@ -348,6 +359,31 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public String changePassword(String password, HttpServletRequest request) {
+        String jwt = jwtService.extractTokenFromCookie(request);
+        if (jwt != null) {
+            String username = jwtService.extractUsername(jwt);
+            User user = repository.findByUsername(username);
+            user.setPassword(encoder.encode(password));
+            repository.save(user);
+            return "success";
+        }
+        return "fail";
+    }
+
+    @Override
+    public boolean checkPassword(String password, HttpServletRequest request) {
+        String jwt = jwtService.extractTokenFromCookie(request);
+        if (jwt != null) {
+            String username = jwtService.extractUsername(jwt);
+            User user = repository.findByUsername(username);
+            return encoder.matches(password, user.getPassword());
+        }
+        return false;
+    }
+
+
     //sends username
     @Override
     public String getUsername(HttpServletRequest request) {
@@ -420,7 +456,7 @@ public class UserServiceImpl implements UserService {
                     .build();
 
             BatchAnnotateImagesResponse batchResponse = vision.batchAnnotateImages(batchRequest);
-            AnnotateImageResponse response = batchResponse.getResponsesList().get(0);
+            AnnotateImageResponse response = batchResponse.getResponsesList().getFirst();
             SafeSearchAnnotation safeSearch = response.getSafeSearchAnnotation();
 
             //uses SafeSearch values

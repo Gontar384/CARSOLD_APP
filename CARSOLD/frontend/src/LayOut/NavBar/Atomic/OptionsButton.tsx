@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars} from "@fortawesome/free-solid-svg-icons";
-import {useUtil} from "../../../GlobalProviders/UtilProvider.tsx";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const OptionsButton: React.FC = () => {
 

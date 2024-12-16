@@ -1,8 +1,8 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
-import {useButton} from "../../../CustomHooks/UseButton.ts";
-import {useUtil} from "../../../GlobalProviders/UtilProvider.tsx";
+import {useButton} from "../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const AddButton: React.FC = () => {
 

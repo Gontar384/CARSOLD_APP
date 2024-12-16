@@ -1,13 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import {faCircleUser, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useUtil} from "../../../../GlobalProviders/UtilProvider.tsx";
-import {useUserDetails} from "../../../../CustomHooks/UseUserDetails.ts";
-import {useAuth} from "../../../../GlobalProviders/AuthProvider.tsx";
+import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
 import ProfilePicLoader from "../../../../Additional/Loading/ProfilePicLoader.tsx";
-import {api} from "../../../../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../../../../Config/AxiosConfig/AxiosConfig.ts";
 import LoadingPicAnimation from "../../../../Additional/Loading/LoadingPicAnimation.tsx";
-import {useItems} from "../../../../GlobalProviders/ItemsProvider.tsx";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
+import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 
 interface ImageProps {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -15,12 +15,11 @@ interface ImageProps {
 
 const Image: React.FC<ImageProps> = ({setMessage}) => {
 
-    const {isMobile} = useUtil();
+    const {isMobile, CreateDebouncedValue} = useUtil();
 
     const [inputActive, setInputActive] = useState<boolean>(false);
     const [inputHovered, setInputHovered] = useState<boolean>(false);
-    const {createDebouncedValue} = useUtil();
-    const debouncedHover: boolean = createDebouncedValue(inputHovered, 300)
+    const debouncedHover: boolean = CreateDebouncedValue(inputHovered, 300)
     const [iconAnimation, setIconAnimation] = useState<"animate-shock" | null>(null);
     const [animationActive, setAnimationActive] = useState<boolean>(false);
     const [inputClickable, setInputClickable] = useState<boolean>(false);
@@ -117,11 +116,12 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
 
     useEffect(() => {
         handleProfilePicFetch().then();
-    }, [isAuthenticated, picUploaded]);  //fetches pic
+    }, [handleProfilePicFetch, isAuthenticated, picUploaded]);  //fetches pic
 
     return (
-        <div className="absolute left-0 w-14 h-14 xs:w-16 xs:h-16 lg:w-[72px] lg:h-[72px] xl:w-[80px] xl:h-[80px]
-        2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] scale-110 rounded-full overflow-hidden"
+        <div className={'absolute left-0 w-14 h-14 xs:w-16 xs:h-16 lg:w-[72px] lg:h-[72px] xl:w-[80px] xl:h-[80px] ' +
+            '2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] scale-110 rounded-full overflow-hidden' +
+            ` ${profilePicFetched ? "" : "bg-lowLime"}`}
              ref={componentRef}
              onMouseEnter={!isMobile ? handleActivateInput : undefined}
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}

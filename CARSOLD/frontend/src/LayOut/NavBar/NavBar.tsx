@@ -1,6 +1,5 @@
 import React from "react";
-import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
-import {useAuth} from "../../GlobalProviders/AuthProvider.tsx";
+
 import Logo from "./Atomic/Logo.tsx";
 import SearchBar from "./Atomic/SearchBar.tsx";
 import AddButton from "./Atomic/AddButton.tsx";
@@ -8,6 +7,8 @@ import UserDetails from "./Atomic/UserDetails/UserDetails.tsx";
 import OptionsButton from "./Atomic/OptionsButton.tsx";
 import LowerBar from "./Atomic/LowerBar/LowerBar.tsx";
 import LoadingNavBarLine from "../../Additional/Loading/LoadingNavBarLine.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 
 const NavBar: React.FC = () => {

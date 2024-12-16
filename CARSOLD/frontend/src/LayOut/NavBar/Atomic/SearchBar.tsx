@@ -1,9 +1,8 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useRef, useState} from "react";
-import {useItems} from "../../../GlobalProviders/ItemsProvider.tsx";
-import {useUtil} from "../../../GlobalProviders/UtilProvider.tsx";
-
+import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const SearchBar: React.FC = () => {
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useUtil} from "../../GlobalProviders/UtilProvider.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 interface AnimatedBannerProps {
     text: string;
@@ -28,7 +28,7 @@ const AnimatedBanner: React.FC<AnimatedBannerProps> = ({ text, onAnimationEnd, d
                 clearTimeout(slideOutTimer);
             };
         }
-    }, [onAnimationEnd]);
+    }, [delay, onAnimationEnd]);
 
     return (
         <div className={`flex justify-center items-center fixed ${lowerBar && !isWide ? "bottom-10 xs:bottom-11 transition-all duration-300 ease-out" : "bottom-0"} 

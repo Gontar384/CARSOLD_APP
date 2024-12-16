@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import Input from "./Atomic/Input.tsx";
 import SubmitButton from "./Atomic/SubmitButton.tsx";
-import {useUtil} from "../../../../../GlobalProviders/UtilProvider.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.tsx";
+import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {AxiosResponse} from "axios";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
-import {useUserCheck} from "../../../../../CustomHooks/UseUserCheck.ts";
+import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 const RegisterForm: React.FC = () => {
 
@@ -22,9 +22,9 @@ const RegisterForm: React.FC = () => {
     })
     const [passwordRep, setPasswordRep] = useState<string>("");
 
-    const { createDebouncedValue } = useUtil();
-    const debouncedEmail: string = createDebouncedValue(user.email, 300);
-    const debouncedUsername: string = createDebouncedValue(user.username, 300);
+    const { CreateDebouncedValue } = useUtil();
+    const debouncedEmail: string = CreateDebouncedValue(user.email, 300);
+    const debouncedUsername: string = CreateDebouncedValue(user.username, 300);
 
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
     const [emailInfo, setEmailInfo] = useState<string>("");
@@ -44,7 +44,7 @@ const RegisterForm: React.FC = () => {
         return emailRegex.test(email);
     };  //checks correct email format
 
-    const { emailExists, usernameExists, isActive, checksPassword } = useUserCheck();
+    const { emailExists, usernameExists, isActive, checkPassword } = useUserCheck();
 
     //all useEffects display info for user
     useEffect(() => {
@@ -180,7 +180,7 @@ const RegisterForm: React.FC = () => {
 
     useEffect(() => {
         if (user.password !== "" && passwordRep !== "") {
-            if (checksPassword(user.password)) {
+            if (checkPassword(user.password)) {
                 if (passwordRep === user.password) {
                     setPasswordRepIcon(faCircleCheck);
                 } else {
@@ -192,7 +192,7 @@ const RegisterForm: React.FC = () => {
         } else {
             setPasswordRepIcon(null);
         }
-    }, [passwordRep, user.password])   //checks if repeated password equals password
+    }, [checkPassword, passwordRep, user.password])   //checks if repeated password equals password
 
     const [termsCheck, setTermsCheck] = useState<boolean>(false);   //manages terms of use
     const [mark, setMark] = useState<boolean>(false);
@@ -218,7 +218,7 @@ const RegisterForm: React.FC = () => {
                 if (user.username.length < 3 || user.username.length > 15 || (!/^[a-zA-Z0-9]+$/.test(user.username))) {
                     return;
                 }
-                if (!checksPassword(user.password) || user.password !== passwordRep) {
+                if (!checkPassword(user.password) || user.password !== passwordRep) {
                     return;
                 }
                 const emailResponse: AxiosResponse = await emailExists(user.email);
