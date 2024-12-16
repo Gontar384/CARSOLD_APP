@@ -28,5 +28,6 @@ public interface UserService {
     boolean checkPassword(String password, HttpServletRequest request);
     String getUsername(HttpServletRequest request);
     String getProfilePic(HttpServletRequest request);
-    String uploadImageWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;
+    String uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;
+    void deleteProfilePic(HttpServletRequest request);
 }

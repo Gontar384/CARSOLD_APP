@@ -2,7 +2,7 @@ package org.gontar.carsold.Config.OAuth2Config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.gontar.carsold.Config.JwtConfig.JwtService;
+import org.gontar.carsold.Service.JwtService;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;

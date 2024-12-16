@@ -4,6 +4,7 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
+    const {isAuthenticated} = useAuth();
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
@@ -14,7 +15,7 @@ export const useFetchCsrf = () => {
             }
         };
         fetchCsrf().then();
-    }, [])
+    }, [isAuthenticated])
 }
 
 //refreshes and changes JWT token every 2 minutes

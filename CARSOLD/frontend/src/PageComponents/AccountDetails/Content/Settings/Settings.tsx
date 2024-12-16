@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import PasswordChange from "./Atomic/PasswordChange.tsx";
 import {useUserCheck} from "../../../../CustomHooks/useUserCheck.ts";
-import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 
 const Settings: React.FC = () => {
 

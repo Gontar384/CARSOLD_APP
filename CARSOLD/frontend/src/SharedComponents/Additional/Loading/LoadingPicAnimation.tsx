@@ -16,7 +16,7 @@ function LoadingPicAnimation(): ReactElement {
     }, []);
 
     return (
-        <div className="flex items-center justify-center h-full w-full absolute z-30">
+        <div className="flex items-center justify-center h-full w-full absolute inset-0 z-30">
             <svg className="w-1/3 h-1/3" viewBox="0 0 50 50">
                 <circle className="animate-dash origin-center"
                         cx="25" cy="25" r="20" fill="none" stroke="lime" strokeWidth="4"

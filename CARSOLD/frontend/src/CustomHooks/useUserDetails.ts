@@ -39,6 +39,8 @@ export const useUserDetails = () => {
             const response = await api.get('api/get-profilePic');
             if (response.data.profilePic) {
                 setProfilePic(response.data.profilePic);
+            } else {
+                setProfilePic("");
             }
         } catch (error) {
             console.log("Error fetching profilePic: ", error);

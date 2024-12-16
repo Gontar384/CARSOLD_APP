@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 "api/auth/validate-user",
                                 "api/auth/password-recovery",
                                 "api/auth/password-recovery-change"
-                                ).permitAll()
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication

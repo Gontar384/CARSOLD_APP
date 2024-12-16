@@ -1,12 +1,12 @@
-import Input from "../Authentication/AuthWindow/Atomic/Form/Atomic/Input.tsx";
+import Input from "../../SharedComponents/FormUtil/Input.tsx";
 import React, {useEffect, useState} from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
 import {AxiosResponse} from "axios";
-import SubmitButton from "../Authentication/AuthWindow/Atomic/Form/Atomic/SubmitButton.tsx";
+import SubmitButton from "../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
-import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 

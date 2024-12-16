@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
-import Input from "../../Authentication/AuthWindow/Atomic/Form/Atomic/Input.tsx";
-import SubmitButton from "../../Authentication/AuthWindow/Atomic/Form/Atomic/SubmitButton.tsx";
+import Input from "../FormUtil/Input.tsx";
+import SubmitButton from "../FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../../../CustomHooks/useUserCheck.ts";
+import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
 import {useNavigate} from "react-router-dom";
-import {api} from "../../../Config/AxiosConfig/AxiosConfig.ts";
-import {useAuth} from "../../../GlobalProviders/Auth/useAuth.ts";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {AxiosResponse} from "axios";
 
 interface PasswordChangeFormProps {

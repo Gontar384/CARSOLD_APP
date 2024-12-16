@@ -13,7 +13,6 @@ const ImageAndUsername: React.FC = () => {
         3xl:max-w-[920px] relative bg-lowLime rounded-l-full">
             <Image setMessage={setMessage}/>
             <Username/>
-            {/* Message Overlay */}
             {message !== "" && (
                 <Message message={message} setMessage={setMessage}/>
             )}

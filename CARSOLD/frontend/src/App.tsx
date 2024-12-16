@@ -10,8 +10,8 @@ import AuthenticationPage from "./PageComponents/Authentication/Authentication.t
 import AccountActivation from "./PageComponents/AccountActivation/AccountActivation.tsx";
 import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
 import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery.tsx";
-import PasswordRecChange from "./PageComponents/PasswordRecChange/PasswordRecChange.tsx";
-import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
+import PasswordRecChange from "./PageComponents/PasswordRecoveryChange/PasswordRecChange.tsx";
+import CookieBanner from "./SharedComponents/Additional/Banners/CookieBanner.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokenManager from "./Config/TokensConfig/TokenManager.ts";

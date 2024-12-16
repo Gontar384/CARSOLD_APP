@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import UserDetailsLoader from "../../../../Additional/Loading/UserDetailsLoader.tsx";
+import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "./Atomic/LoginButton.tsx";
 import Dropdown from "./Atomic/Dropdown.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

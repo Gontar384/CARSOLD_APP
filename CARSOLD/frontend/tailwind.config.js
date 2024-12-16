@@ -101,6 +101,10 @@ export default {
                     '50%': {opacity: "1", transform: "scale(1.2)"},
                     '75%': {opacity: "0"},
                     '100%': {opacity: "0"}
+                },
+                slideInDiagonal: {
+                    '0%': {transform: "translate(-100%, -100%)"},
+                    '100%': {transform: "translate(0, 0)"},
                 }
             },
             animation: {  //animations details
@@ -120,10 +124,18 @@ export default {
                 grow: "grow 2s ease-out forwards",
                 wave: "wave 0.4s ease-out",
                 shock: "shock 0.3s ease-in-out forwards",
-                pulse1: "pulse1 5s ease-in-out infinite"
+                pulse1: "pulse1 5s ease-in-out infinite",
+                slideInDiagonal: 'slideInDiagonal 0.3s ease-out forwards',
             },
         },
     },
-    plugins: [],
+    plugins: [
+        function ({ addBase }) {
+            addBase({
+                'input[type="file"]::file-selector-button': {
+                    display: 'none', //hides "Choose File" button
+                },
+            });
+        },],
 }
 

@@ -1,4 +1,4 @@
-package org.gontar.carsold.Config.JwtConfig;
+package org.gontar.carsold.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import org.gontar.carsold.Service.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;

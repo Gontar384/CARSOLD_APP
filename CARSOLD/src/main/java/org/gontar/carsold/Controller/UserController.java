@@ -188,15 +188,21 @@ public class UserController {
     }
 
     //uploads images to cloud and checks for sensitive content
-    @PostMapping("/storage-upload")
+    @PostMapping("/storage-upload-profilePic")
     public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             Map<String, String> response = new HashMap<>();
-            String info = service.uploadImageWithSafeSearch(file, request);
+            String info = service.uploadProfilePicWithSafeSearch(file, request);
             response.put("info", info);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok(Map.of("Error uploading image: ", e.getMessage()));
         }
+    }
+
+    @DeleteMapping("/storage-delete-profilePic")
+    public ResponseEntity<String> deleteImage(HttpServletRequest request) {
+        service.deleteProfilePic(request);
+        return ResponseEntity.ok("Image deleted");
     }
 }

@@ -6,7 +6,7 @@ import AddButton from "./Atomic/AddButton.tsx";
 import UserDetails from "./Atomic/UserDetails/UserDetails.tsx";
 import OptionsButton from "./Atomic/OptionsButton.tsx";
 import LowerBar from "./Atomic/LowerBar/LowerBar.tsx";
-import LoadingNavBarLine from "../../Additional/Loading/LoadingNavBarLine.tsx";
+import LoadingNavBarLine from "../../SharedComponents/Additional/Loading/LoadingNavBarLine.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 

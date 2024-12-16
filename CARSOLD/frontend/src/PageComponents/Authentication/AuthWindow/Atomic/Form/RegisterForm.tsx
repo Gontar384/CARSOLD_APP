@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import Input from "./Atomic/Input.tsx";
-import SubmitButton from "./Atomic/SubmitButton.tsx";
+import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
+import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {AxiosResponse} from "axios";
-import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 

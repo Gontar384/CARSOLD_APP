@@ -11,7 +11,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.gontar.carsold.Config.JwtConfig.JwtService;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
@@ -197,10 +196,10 @@ public class UserServiceImpl implements UserService {
                         oauth2Token.getName()
                 );
             }
-            HttpSession session = request.getSession(false);    //deletes session
-            if (session != null) {
-                session.invalidate();
-            }
+        }
+        HttpSession session = request.getSession(false);    //deletes session
+        if (session != null) {
+            session.invalidate();
         }
         SecurityContextHolder.clearContext();
 
@@ -407,7 +406,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String uploadImageWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException {
+    public String uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException {
 
         if (file.getSize() > 3 * 1024 * 1024) {
             return "Could not upload, image is too large.";
@@ -419,14 +418,31 @@ public class UserServiceImpl implements UserService {
         String token = jwtService.extractTokenFromCookie(request);
         String username = jwtService.extractUsername(token);
         User user = repository.findByUsername(username);
-        user.setProfilePic(uploadImage(file, username));
+        user.setProfilePic(uploadProfilePic(file, username));
         repository.save(user);
 
         return null;
     }
 
+    @Override
+    public void deleteProfilePic(HttpServletRequest request) {
+        String token = jwtService.extractTokenFromCookie(request);
+        String username = jwtService.extractUsername(token);
+
+        String fileName = username + "/" + username + ".profilePic";
+
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        BlobId blobId = BlobId.of(bucketName, fileName);
+
+        storage.delete(blobId);
+
+        User user = repository.findByUsername(username);
+        user.setProfilePic(null);
+        repository.save(user);
+    }
+
     //uploads image to Google Cloud
-    private String uploadImage(MultipartFile file, String username) throws IOException {
+    private String uploadProfilePic(MultipartFile file, String username) throws IOException {
 
         String fileName = username + "/" + username + ".profilePic";
 
