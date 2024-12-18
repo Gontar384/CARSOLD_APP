@@ -24,6 +24,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [inputClickable, setInputClickable] = useState<boolean>(false);
     const [hideButton, setHideButton] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
+    const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
 
     const handleActivateInput = () => {
         setInputActive(true);
@@ -140,9 +141,10 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 ` ${profilePicFetched ? "" : "bg-lowLime"}`} style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
                     <div className="relative w-full h-full rounded-full">
-                        {profilePic !== "" ? (
+                        {profilePic !== "" && !imageError ? (
                             <img src={profilePic} alt="Profile Picture"
-                                 className="object-cover w-full h-full z-10"/>
+                                 className="object-cover w-full h-full z-10"
+                                 onError={() => setImageError(true)}/>
                         ) : (
                             <FontAwesomeIcon icon={faCircleUser} className="w-full h-full z-10"/>
                         )}
@@ -163,7 +165,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                     <ProfilePicLoader/>
                 )}
             </div>
-            {inputActive && picUploaded && profilePic &&
+            {inputActive && picUploaded && profilePic && !imageError &&
                 <button className={`absolute -bottom-[2px] -right-[5px] xs:-bottom-[1px] lg:bottom-0 lg:-right-[6px] 
                 xl:bottom-[1px] xl:-right-[8px] 2xl:-right-[9px] 3xl:bottom-[2px] 3xl:-right-[10px] z-10 
                 ${inputActive ? "animate-slideInDiagonal" : ""} ${hideButton ? "hidden" : ""}`}

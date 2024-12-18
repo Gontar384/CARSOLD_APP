@@ -411,9 +411,9 @@ public class UserServiceImpl implements UserService {
         if (file.getSize() > 3 * 1024 * 1024) {
             return "Could not upload, image is too large.";
         }
-        if (isImageSensitive(file)) {
-            return "Could not upload, image contains sensitive content.";
-        }
+//        if (isImageSensitive(file)) {
+//            return "Could not upload, image contains sensitive content.";
+//        }
 
         String token = jwtService.extractTokenFromCookie(request);
         String username = jwtService.extractUsername(token);

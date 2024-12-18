@@ -30,6 +30,8 @@ const UserDetails: React.FC = () => {
 
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
 
+    const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
+
     const {profilePicChange, messages} = useItems();
 
     //fetches username and profile pic
@@ -102,9 +104,11 @@ const UserDetails: React.FC = () => {
                         <div className="flex flex-row items-center h-full gap-[5px] lg:gap-[6px] xl:gap-[7px] 2xl:gap-[9px] 3xl:gap-[11px] relative">
                             <div className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px] xl:w-[26px] xl:h-[26px] 2xl:w-[32px]
                                                       2xl:h-[32px] 3xl:w-[38px] 3xl:h-[38px] mb-[4px] lg:mb-[3px] 3xl:mb-[5px]">
-                            {profilePic !== "" ?
-                                <img src={profilePic} alt="Profile Picture" className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}/> :
-                            <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>}
+                            {profilePic !== "" && !imageError ? (
+                                <img src={profilePic} alt="Profile Picture" className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}
+                                     onError={() => setImageError(true)}/>
+                            ) : (
+                            <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>)}
                             </div>
                             <div
                                 className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
