@@ -34,16 +34,25 @@ public class UserController {
 
     //checks if username already exists
     @GetMapping("/auth/register/check-username")
-    public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam("username") String username) {
+    public ResponseEntity<Map<String, Boolean>>checkUsername(@RequestParam("username") String username) {
         Map<String, Boolean> response = new HashMap<>();
         boolean exists = service.findUsername(username);
         response.put("exists", exists);
         return ResponseEntity.ok(response);
     }
 
+    //checks if username is appropriate
+    @GetMapping("/auth/register/is-username-safe")
+    public ResponseEntity<Map<String, Boolean>>isUsernameSafe(@RequestParam("username") String username){
+        HashMap<String, Boolean> response = new HashMap<>();
+        boolean isSafe = service.checkIfUsernameSafe(username);
+        response.put("isSafe", isSafe);
+        return ResponseEntity.ok(response);
+    }
+
     //registers user, saves to DB
     @PostMapping("/auth/register")
-    public ResponseEntity<String> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<String>register(@RequestBody UserDto userDto) {
         service.registerUser(userDto);
         return ResponseEntity.ok("User saved");
     }
@@ -200,6 +209,7 @@ public class UserController {
         }
     }
 
+    //deletes profilePic
     @DeleteMapping("/storage-delete-profilePic")
     public ResponseEntity<String> deleteImage(HttpServletRequest request) {
         service.deleteProfilePic(request);

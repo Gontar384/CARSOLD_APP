@@ -99,7 +99,7 @@ const RegisterForm: React.FC = () => {
         let isMounted: boolean = true;
 
         if (user.username !== "") {
-            if (/^[a-zA-Z0-9]+$/.test(user.username)) {
+            if (/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username)) {
                 if (user.username.length <= 15) {
                     if (user.username.length >= 3) {
                         const checkUsername = async () => {
@@ -215,7 +215,7 @@ const RegisterForm: React.FC = () => {
                 if (user.email.length > 30 || !validateEmail(user.email)) {
                     return;
                 }
-                if (user.username.length < 3 || user.username.length > 15 || (!/^[a-zA-Z0-9]+$/.test(user.username))) {
+                if (user.username.length < 3 || user.username.length > 15 || (!/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username))) {
                     return;
                 }
                 if (!checkPassword(user.password) || user.password !== passwordRep) {
@@ -236,9 +236,26 @@ const RegisterForm: React.FC = () => {
                 } else {
                     setMark(false);
                 }
-                const response = await api.post(`api/auth/register`, user);
+                const gateResponse: AxiosResponse = await api.get('api/auth/register/is-username-safe', {
+                    params: {username: user.username}
+                });
+                if (!gateResponse.data.isSafe) {
+                    setUsernameIcon(faCircleExclamation);
+                    setUsernameInfo("Username is inappropriate!")
+                    setUsernameActive(true);
+                    return;
+                }
+                const response: AxiosResponse = await api.post(`api/auth/register`, user);
                 if (response.data) {
                     setIsRegistered(true);
+                    setUser((prev) => ({
+                        ...prev,
+                        email: "",
+                        username: "",
+                        password: "",
+                    }));
+                    setPasswordRep("");
+                    setTermsCheck(false);
                 }
             } catch (error) {
                 console.log("Error during register:", error)
@@ -264,7 +281,7 @@ const RegisterForm: React.FC = () => {
                    setTermsCheck={setTermsCheck} icon={passwordRepIcon} mark={mark}/>
             <SubmitButton label={"Register"} onClick={handleRegister} disabled={isDisabled}/>
             {isRegistered ? <AnimatedBanner text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
-                                            onAnimationEnd={() => setIsRegistered(false)} delay={7000} color={"bg-lowLime"} z={"z-50"}/> : null}
+                                            onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/> : null}
         </div>
     )
 }

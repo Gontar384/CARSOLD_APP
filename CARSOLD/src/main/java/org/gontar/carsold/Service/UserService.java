@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public interface UserService {
     boolean findUsername(String username);
+    boolean checkIfUsernameSafe(String username);
     boolean findEmail(String email);
     void registerUser(UserDto userDto);
     void sendVerificationEmail(String email, String link);

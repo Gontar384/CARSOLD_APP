@@ -15,9 +15,12 @@ import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,6 +47,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    @Value("${PERSPECTIVE_API_KEY}")
+    private String perspectiveApiKey;
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
@@ -73,6 +80,52 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean findUsername(String username) {
         return repository.existsByUsername(username);
+    }
+
+    //checks if username is appropriate
+    @Override
+    public boolean checkIfUsernameSafe(String username) {
+
+        //custom additional check
+        String[] inappropriateWords = {"cwel"};
+        for (String word : inappropriateWords) {
+            if (username.toLowerCase().contains(word)) {
+                return false;
+            }
+        }
+
+        String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
+        List<String> languages = List.of("en", "pl");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            //builds JSON payload
+            JSONObject payload = new JSONObject();
+            payload.put("comment", new JSONObject().put("text", username));
+            payload.put("languages", languages); // Use inline languages list
+            payload.put("requestedAttributes", new JSONObject().put("TOXICITY", new JSONObject()));
+            //set headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/json");
+            //builds API url
+            String fullUrl = apiUrl + "?key=" + perspectiveApiKey;
+            //makes request
+            HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
+            //parses response
+            JSONObject jsonResponse = new JSONObject(response.getBody());
+            double toxicityScore = jsonResponse
+                    .getJSONObject("attributeScores")
+                    .getJSONObject("TOXICITY")
+                    .getJSONObject("summaryScore")
+                    .getDouble("value");
+
+            return toxicityScore < 0.5;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
     }
 
     //checks if email exists

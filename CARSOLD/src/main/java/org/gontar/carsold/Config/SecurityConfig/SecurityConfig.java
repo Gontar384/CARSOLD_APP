@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 "api/auth/check-authentication",
                                 "api/auth/register/check-email",
                                 "api/auth/register/check-username",
+                                "api/auth/register/is-username-safe",
                                 "api/auth/register",
                                 "api/auth/activate",
                                 "api/auth/check-active",
