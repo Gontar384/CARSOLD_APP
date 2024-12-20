@@ -41,12 +41,12 @@ const Settings: React.FC = () => {
 
     return (
         <div className="w-full h-full bg-lowLime rounded-sm">
-            <div className={`flex ${isWide ? "flex-row" : "flex-col"}`}>
-                <div className={`${isWide ? "w-1/2" : "w-full"}`}>
+            <div className={`flex items-center justify-center h-full w-full ${isWide ? "flex-row" : "flex-col"}`}>
+                <div className={`flex flex-col items-center ${isWide ? "justify-center w-1/2 h-full" : "w-full"}`}>
 
                 </div>
                 {!googleLogged ?
-                    <div className={`${isWide ? "w-1/2" : "w-full"}`}>
+                    <div className={`flex flex-col items-center ${isWide ? "justify-center w-1/2 h-full" : "w-full"}`}>
                         <PasswordChange setIsChanged={setIsChanged}/>
                     </div> : null}
             </div>

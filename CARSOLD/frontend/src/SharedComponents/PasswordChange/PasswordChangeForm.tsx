@@ -150,6 +150,8 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                     });
                     if (response.data === "success") {
                         setIsChanged?.(true);
+                        setPassword("");
+                        setPasswordRep("");
                         setTimeout(async () => {
                             await checkAuth();
                         }, 2500)
@@ -185,10 +187,11 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                     });
                     if (response.data === "success") {
                         setIsChanged?.(true);
+                        setOldPassword("");
+                        setPassword("");
+                        setPasswordRep("");
+                        setOldPasswordIcon(null);
                     }
-                    setOldPassword("");
-                    setPassword("");
-                    setPasswordRep("");
                 } catch (error) {
                     console.error("Error changing password: ", error)
                 } finally {
