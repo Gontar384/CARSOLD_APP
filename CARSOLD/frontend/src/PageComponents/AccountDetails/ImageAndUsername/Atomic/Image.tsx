@@ -156,7 +156,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                                            className="file-input absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
                                            onChange={handleUploadPic} onClick={() => setHideButton(true)}/>}
                                 <FontAwesomeIcon icon={faCirclePlus}
-                                                 className={`w-1/3 h-1/3 animate-shock ${hideButton ? "hidden" : ""}`}/>
+                                                 className={`w-1/2 h-1/2 animate-shock ${hideButton ? "hidden" : ""}`}/>
                             </div>
                         )}
                         {!picUploaded && <LoadingPicAnimation/>}
@@ -166,12 +166,12 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 )}
             </div>
             {inputActive && picUploaded && profilePic && !imageError &&
-                <button className={`absolute -bottom-[2px] -right-[5px] xs:-bottom-[1px] lg:bottom-0 lg:-right-[6px] 
-                xl:bottom-[1px] xl:-right-[8px] 2xl:-right-[9px] 3xl:bottom-[2px] 3xl:-right-[10px] z-10 
+                <button className={`absolute -bottom-[1px] -right-[6px] xs:bottom-0 lg:bottom-[1px] lg:-right-[8px] 
+                xl:bottom-[2px] xl:-right-[10px] 2xl:bottom-[3px] 2xl:-right-[11px] 3xl:bottom-1 3xl:-right-[12px] z-10 
                 ${inputActive ? "animate-slideInDiagonal" : ""} ${hideButton ? "hidden" : ""}`}
                         onClick={handleDeletePic}>
-                    <FontAwesomeIcon icon={faTrash} className="text-[9px] xs:text-[10px] lg:text-xs xl:text-sm 2xl:text-base
-                                                    3xl:text-lg scale-90"/>
+                    <FontAwesomeIcon icon={faTrash} className="text-[9px] xs:text-[10px] lg:text-[12px] xl:text-sm 2xl:text-base
+                                                    3xl:text-lg"/>
                 </button>}
         </div>
     )

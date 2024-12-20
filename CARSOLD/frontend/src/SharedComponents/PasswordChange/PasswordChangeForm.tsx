@@ -14,9 +14,11 @@ interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
     setWentWrong?: React.Dispatch<React.SetStateAction<boolean>>;
     loggedIn: boolean;
+    scaled?: boolean;
+    isShrink?: boolean;
 }
 
-const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, setWentWrong, loggedIn}) => {
+const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, setWentWrong, loggedIn, scaled, isShrink}) => {
 
     const [password, setPassword] = useState<string>("");
     const [passwordRep, setPasswordRep] = useState<string>("");
@@ -36,7 +38,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
 
     //displays info
     useEffect(() => {
-        if (oldPasswordIcon !== faCircleExclamation) {
+        if (loggedIn && oldPasswordIcon !== faCircleExclamation && oldPasswordIcon !== null || !loggedIn) {
             if (password !== "") {
                 if (password.length >= 7) {
                     if (password.length <= 25) {
@@ -72,14 +74,16 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             }
         } else {
             setPasswordIcon(null);
+            setPasswordInfo("");
+            setPasswordActive(false);
         }
     }, [oldPassword, oldPasswordIcon, password])   //checks if password is strong enough
 
     useEffect(() => {
-        if (oldPasswordIcon !== faCircleExclamation) {
+        if (loggedIn && oldPasswordIcon !== faCircleExclamation && oldPasswordIcon !== null || !loggedIn) {
             if (password !== "" && passwordRep !== "") {
-                if (checkPassword(password)) {
-                    if (passwordRep === password && password !== oldPassword) {
+                if (checkPassword(password) && password !== oldPassword) {
+                    if (passwordRep === password) {
                         setPasswordRepIcon(faCircleCheck);
                     } else {
                         setPasswordRepIcon(faCircleExclamation);
@@ -198,15 +202,17 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const [inputType, setInputType] = useState<"password" | "text">("password")
 
     return (
-        <div className="flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9">
+        <div
+            className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 ${scaled ? "scale-75" : ""}
+        text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl`}>
             {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
-                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon}/>}
+                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} isShrink={isShrink}/>}
             <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType}
                    value={password} setValue={setPassword} icon={passwordIcon} info={passwordInfo}
-                   isActive={passwordActive}/>
+                   isActive={passwordActive} isShrink={isShrink}/>
             <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType}
                    value={passwordRep} setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true}
-                   whichForm={"none"}/>
+                   whichForm={"none"} isShrink={isShrink}/>
             <SubmitButton label={"Change"} disabled={isDisabled}
                           onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
         </div>

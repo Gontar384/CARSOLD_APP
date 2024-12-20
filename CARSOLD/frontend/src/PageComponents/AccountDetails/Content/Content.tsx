@@ -33,7 +33,7 @@ const Content: React.FC = () => {
 
     return (
         <div className={`flex flex-col w-full rounded-sm justify-center items-center
-         ${isWide ? "" : "justify-center items-center min-h-72 xs:min-h-80"}`}>
+         ${isWide ? "" : "justify-center items-center min-h-72 max-h-[620px] xs:min-h-80 xs:max-h-[720px]"}`}>
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>
             : choice === "messages" ? <Messages/>

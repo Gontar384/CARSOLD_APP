@@ -2,11 +2,14 @@ import React, {useEffect, useState} from "react";
 import PasswordChange from "./Atomic/PasswordChange.tsx";
 import {useUserCheck} from "../../../../CustomHooks/useUserCheck.ts";
 import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 const Settings: React.FC = () => {
 
     const {checkGoogleAuth} = useUserCheck();
     const [googleLogged, setGoogleLogged] = useState<boolean | null>(null);
+
+    const {isWide} = useUtil();
 
     useEffect(() => {
         let isMounted = true;
@@ -37,9 +40,16 @@ const Settings: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-row items-center justify-center w-full h-full p-2 xl:p-3 2xl:p-4 3xl:p-5 text-center
-        text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl bg-lowLime rounded-sm">
-            {!googleLogged ? <PasswordChange setIsChanged={setIsChanged}/> : null}
+        <div className="w-full h-full bg-lowLime rounded-sm">
+            <div className={`flex ${isWide ? "flex-row" : "flex-col"}`}>
+                <div className={`${isWide ? "w-1/2" : "w-full"}`}>
+
+                </div>
+                {!googleLogged ?
+                    <div className={`${isWide ? "w-1/2" : "w-full"}`}>
+                        <PasswordChange setIsChanged={setIsChanged}/>
+                    </div> : null}
+            </div>
             {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
                                          onAnimationEnd={() => setIsChanged(false)} delay={3000}/> : null}
         </div>

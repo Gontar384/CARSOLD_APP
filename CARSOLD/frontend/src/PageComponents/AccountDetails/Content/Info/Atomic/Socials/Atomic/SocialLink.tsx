@@ -14,8 +14,8 @@ const SocialLink: React.FC<CreatorLinkProps> = ({link, imageUrl, name}) => {
     const {isMobile} = useUtil();
 
     return (
-        <Link to={link} target="_blank" className="flex flex-row items-center xs:mt-[2px] lg:mt-1 xl:mt-[6px]
-        2xl:mt-2 3xl:mt-3 gap-1 xs:gap-[6px] lg:gap-2 2xl:gap-3 3xl:gap-4"
+        <Link to={link} target="_blank" className="flex flex-row items-center gap-1
+        xs:gap-[6px] lg:gap-2 2xl:gap-3 3xl:gap-4"
               onMouseEnter={!isMobile ? () => setAnimation("animate-pop") : undefined}
               onMouseLeave={!isMobile ? () => setAnimation(null) : undefined}
               onTouchStart={isMobile ? () => setAnimation("animate-pop") : undefined}
