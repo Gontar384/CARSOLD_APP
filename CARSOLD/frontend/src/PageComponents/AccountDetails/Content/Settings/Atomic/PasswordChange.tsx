@@ -8,10 +8,8 @@ interface PasswordChangeProps {
 const PasswordChange: React.FC<PasswordChangeProps> = ({setIsChanged}) => {
 
     return (
-        <div className="flex flex-col">
-
+        <div className="flex flex-col border border-black">
             <PasswordChangeForm setIsChanged={setIsChanged} loggedIn={true} scaled={true} isShrink={true}/>
-
         </div>
     )
 }

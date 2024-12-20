@@ -31,14 +31,50 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [oldPasswordIcon, setOldPasswordIcon] = useState<IconProp | null>(null);
+    const [heldValue, setHeldValue] = useState<string>("");   //holds previous 'oldPassword' value, prevents display bug
 
     const {checkPassword, checkOldPassword} = useUserCheck();
     const {checkAuth, isAuthenticated} = useAuth();
     const navigate = useNavigate();
 
-    //displays info
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [inputType, setInputType] = useState<"password" | "text">("password")
+
     useEffect(() => {
-        if (loggedIn && oldPasswordIcon !== faCircleExclamation && oldPasswordIcon !== null || !loggedIn) {
+        let isMounted = true;
+
+        if (oldPassword !== "") {
+            if (oldPassword.length >= 7 && oldPassword.length <= 25) {
+                const validatePassword = async () => {
+                    try {
+                        const response: AxiosResponse = await checkOldPassword(oldPassword);
+                        if (isMounted) {
+                            if (response.data.checks) {
+                                setOldPasswordIcon(faCircleCheck);
+                                setHeldValue(oldPassword);
+                            } else {
+                                setOldPasswordIcon(faCircleExclamation);
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error checking old password: ", error)
+                    }
+                }
+                validatePassword().then();
+
+                return () => {
+                    isMounted = false;
+                };
+            } else {
+                setOldPasswordIcon(faCircleExclamation);
+            }
+        } else {
+            setOldPasswordIcon(null);
+        }
+    }, [debouncedOldPassword]);    //performs only when user is authenticated and oldPassword input is present
+
+    useEffect(() => {
+        if (loggedIn && oldPassword !== "" && oldPasswordIcon === faCircleCheck && oldPassword === heldValue || !loggedIn) {
             if (password !== "") {
                 if (password.length >= 7) {
                     if (password.length <= 25) {
@@ -80,7 +116,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }, [oldPassword, oldPasswordIcon, password])   //checks if password is strong enough
 
     useEffect(() => {
-        if (loggedIn && oldPasswordIcon !== faCircleExclamation && oldPasswordIcon !== null || !loggedIn) {
+        if (loggedIn && oldPassword !== "" && oldPasswordIcon === faCircleCheck && oldPassword === heldValue || !loggedIn) {
             if (password !== "" && passwordRep !== "") {
                 if (checkPassword(password) && password !== oldPassword) {
                     if (passwordRep === password) {
@@ -98,41 +134,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             setPasswordRepIcon(null);
         }
     }, [passwordRep, password, checkPassword, oldPasswordIcon, oldPassword])   //checks if repeated password equals password
-
-    useEffect(() => {
-        let isMounted = true;
-
-        if (oldPassword !== "") {
-            if (oldPassword.length >= 7 && oldPassword.length <= 25) {
-                const validatePassword = async () => {
-                    try {
-                        const response: AxiosResponse = await checkOldPassword(oldPassword);
-                        if (isMounted) {
-                            if (response.data.checks) {
-                                setOldPasswordIcon(faCircleCheck);
-                            } else {
-                                setOldPasswordIcon(faCircleExclamation);
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Error checking old password: ", error)
-                    }
-                }
-                validatePassword().then();
-
-                return () => {
-                    isMounted = false;
-                };
-            } else {
-                setOldPasswordIcon(faCircleExclamation);
-            }
-        } else {
-            setOldPasswordIcon(null);
-        }
-    }, [debouncedOldPassword]);    //performs only when user is authenticated (when oldPassword input is present)
-
-
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     const handleRecoveryPasswordChange = async () => {
         if (isDisabled) return;
@@ -199,11 +200,8 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         }
     }   //changes when user is authenticated
 
-    const [inputType, setInputType] = useState<"password" | "text">("password")
-
     return (
-        <div
-            className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 ${scaled ? "scale-75" : ""}
+        <div className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 ${scaled ? "scale-75" : ""}
         text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl`}>
             {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
                                 value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} isShrink={isShrink}/>}
