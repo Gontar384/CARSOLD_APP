@@ -535,6 +535,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public String changeName(String name, HttpServletRequest request) {
+        try {
+            System.out.println(name);
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            user.setName(name);
+            repository.save(user);
+            return "success";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "fail";
+        }
+    }
+
+    @Override
+    public String fetchName(HttpServletRequest request) {
+        String token = jwtService.extractTokenFromCookie(request);
+        String username = jwtService.extractUsername(token);
+        User user = repository.findByUsername(username);
+        return user.getName();
+    }
+
     //creates cookie
     private ResponseCookie createCookie(String token, long time) {
         return ResponseCookie.from("JWT", token)

@@ -3,6 +3,7 @@ import PasswordChange from "./Atomic/PasswordChange.tsx";
 import {useUserCheck} from "../../../../CustomHooks/useUserCheck.ts";
 import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import ContactInfo from "./Atomic/ContactInfo/ContactInfo.tsx";
 
 const Settings: React.FC = () => {
 
@@ -42,13 +43,13 @@ const Settings: React.FC = () => {
     return (
         <div className="w-full h-full bg-lowLime rounded-sm">
             <div className={`flex items-center justify-center h-full w-full ${isWide ? "flex-row" : "flex-col"}`}>
-                <div className={`flex flex-col items-center ${isWide ? "justify-center w-1/2 h-full" : "w-full"}`}>
-
+                <div className={`flex flex-col ${isWide ? " w-1/2 h-full" : "w-full"}`}>
+                    <ContactInfo/>
                 </div>
-                {!googleLogged ?
-                    <div className={`flex flex-col items-center ${isWide ? "justify-center w-1/2 h-full" : "w-full"}`}>
+                {!googleLogged &&
+                    <div className={`flex flex-col items-center ${isWide ? "justify-center w-1/2" : "w-full"}`}>
                         <PasswordChange setIsChanged={setIsChanged}/>
-                    </div> : null}
+                    </div>}
             </div>
             {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
                                          onAnimationEnd={() => setIsChanged(false)} delay={3000}/> : null}

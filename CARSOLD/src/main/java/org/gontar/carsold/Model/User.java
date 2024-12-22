@@ -32,4 +32,7 @@ public class User {
 
     @Column
     private String profilePic;
+
+    @Column
+    private String name;
 }

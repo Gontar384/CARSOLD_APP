@@ -15,4 +15,5 @@ public class UserDto {
     private Boolean active;
     private Boolean oauth2user;
     private String profilePic;
+    private String name;
 }

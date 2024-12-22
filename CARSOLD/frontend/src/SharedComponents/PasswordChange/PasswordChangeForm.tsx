@@ -144,7 +144,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                 if (!token) return;
                 setIsDisabled(true);
                 try {
-                    const response = await api.post('api/auth/password-recovery-change', {
+                    const response = await api.put('api/auth/password-recovery-change', {
                         token: token,
                         password: password,
                     });
@@ -182,7 +182,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                         return;
                     }
                     setIsDisabled(true);
-                    const response: AxiosResponse = await api.post("api/auth/password-change", {
+                    const response: AxiosResponse = await api.put("api/auth/password-change", {
                         password: password
                     });
                     if (response.data === "success") {

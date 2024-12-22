@@ -70,7 +70,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         return () => {
             document.removeEventListener("touchstart", handleClickOutside);
         };
-    }, [inputActive]);  //adds event listener to deactivate button
+    }, [inputActive, inputClickable]);  //adds event listener to deactivate button
 
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
     const {setProfilePicChange} = useItems();

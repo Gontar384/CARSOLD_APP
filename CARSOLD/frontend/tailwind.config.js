@@ -105,6 +105,10 @@ export default {
                 slideInDiagonal: {
                     '0%': {transform: "translate(-100%, -100%)"},
                     '100%': {transform: "translate(0, 0)"},
+                },
+                gentle: {
+                    '0%': {transform: "scale(1)"},
+                    '100%': {transform: "scale(1.05)"},
                 }
             },
             animation: {  //animations details
@@ -121,11 +125,12 @@ export default {
                 fill: 'fill 0.5s linear forwards',
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
-                grow: "grow 2s ease-out forwards",
-                wave: "wave 0.4s ease-out",
-                shock: "shock 0.3s ease-in-out forwards",
-                pulse1: "pulse1 5s ease-in-out infinite",
+                grow: 'grow 2s ease-out forwards',
+                wave: 'wave 0.4s ease-out',
+                shock: 'shock 0.3s ease-in-out forwards',
+                pulse1: 'pulse1 5s ease-in-out infinite',
                 slideInDiagonal: 'slideInDiagonal 0.3s ease-out forwards',
+                gentle: 'gentle 0.3s ease-in-out forwards',
             },
         },
     },

@@ -152,7 +152,7 @@ public class UserController {
     }
 
     //changes password
-    @PostMapping("/auth/password-recovery-change")
+    @PutMapping("/auth/password-recovery-change")
     public ResponseEntity<String> passwordRecoveryChange(
             @RequestBody Map<String, String> payload, HttpServletResponse response) {
         String token = payload.get("token");
@@ -161,7 +161,7 @@ public class UserController {
         return ResponseEntity.ok(message);
     }
 
-    @PostMapping("/auth/password-change")
+    @PutMapping("/auth/password-change")
     public ResponseEntity<String> passwordChange(
             @RequestBody Map<String, String> payload, HttpServletRequest request) {
         String password = payload.get("password");
@@ -214,5 +214,20 @@ public class UserController {
     public ResponseEntity<String> deleteImage(HttpServletRequest request) {
         service.deleteProfilePic(request);
         return ResponseEntity.ok("Image deleted");
+    }
+
+    @PostMapping("/contact-set-name")
+    public ResponseEntity<String>changeName(@RequestBody Map<String, String>payload, HttpServletRequest request) {
+        String name = payload.get("name");
+        String response = service.changeName(name, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/contact-fetch-name")
+    public ResponseEntity<Map<String, String>>fetchName(HttpServletRequest request) {
+        Map<String, String>response = new HashMap<>();
+        String name = service.fetchName(request);
+        response.put("name", name);
+        return ResponseEntity.ok(response);
     }
 }

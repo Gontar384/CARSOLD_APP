@@ -31,4 +31,7 @@ public interface UserService {
     String getProfilePic(HttpServletRequest request);
     String uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;
     void deleteProfilePic(HttpServletRequest request);
+    String changeName(String name, HttpServletRequest request);
+
+    String fetchName(HttpServletRequest request);
 }
