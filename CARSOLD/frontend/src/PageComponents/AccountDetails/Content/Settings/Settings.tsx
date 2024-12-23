@@ -42,7 +42,7 @@ const Settings: React.FC = () => {
 
     return (
         <div className="w-full h-full bg-lowLime rounded-sm">
-            <div className={`flex items-center justify-center h-full w-full ${isWide ? "flex-row" : "flex-col"}`}>
+            <div className={`flex items-center justify-center h-full w-full ${isWide ? "flex-row" : "flex-col gap-10"}`}>
                 <div className={`flex flex-col ${isWide ? " w-1/2 h-full" : "w-full"}`}>
                     <ContactInfo/>
                 </div>

@@ -39,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,12 @@ public class UserServiceImpl implements UserService {
         this.emailSender = emailSender;
         this.userDetailsService = userDetailsService;
         this.authorizedClientService = authorizedClientService;
+    }
+
+    //checks if email exists
+    @Override
+    public boolean findEmail(String email) {
+        return repository.existsByEmail(email);
     }
 
     //checks if username exists
@@ -126,12 +133,6 @@ public class UserServiceImpl implements UserService {
             System.err.println(e.getMessage());
             return false;
         }
-    }
-
-    //checks if email exists
-    @Override
-    public boolean findEmail(String email) {
-        return repository.existsByEmail(email);
     }
 
     // sends account activating token link via email
@@ -312,6 +313,18 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    //checks if username and password is valid before letting user authenticate
+    @Override
+    public boolean validateUser(String login, String password) {
+        User user;
+        if (login.contains("@")) {
+            user = repository.findByEmail(login);
+        } else {
+            user = repository.findByUsername(login);
+        }
+        return encoder.matches(password, user.getPassword());
+    }
+
     //auth user using email or username
     @Override
     public void authenticate(String login, String password, HttpServletResponse response) {
@@ -343,18 +356,6 @@ public class UserServiceImpl implements UserService {
                 response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
             }
         }
-    }
-
-    //checks if username and password is valid before letting user authenticate
-    @Override
-    public boolean validateUser(String login, String password) {
-        User user;
-        if (login.contains("@")) {
-            user = repository.findByEmail(login);
-        } else {
-            user = repository.findByUsername(login);
-        }
-        return encoder.matches(password, user.getPassword());
     }
 
     //sends email with link with JWT to where user can change password
@@ -477,23 +478,6 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public void deleteProfilePic(HttpServletRequest request) {
-        String token = jwtService.extractTokenFromCookie(request);
-        String username = jwtService.extractUsername(token);
-
-        String fileName = username + "/" + username + ".profilePic";
-
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        BlobId blobId = BlobId.of(bucketName, fileName);
-
-        storage.delete(blobId);
-
-        User user = repository.findByUsername(username);
-        user.setProfilePic(null);
-        repository.save(user);
-    }
-
     //uploads image to Google Cloud
     private String uploadProfilePic(MultipartFile file, String username) throws IOException {
 
@@ -536,9 +520,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteProfilePic(HttpServletRequest request) {
+        String token = jwtService.extractTokenFromCookie(request);
+        String username = jwtService.extractUsername(token);
+
+        String fileName = username + "/" + username + ".profilePic";
+
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        BlobId blobId = BlobId.of(bucketName, fileName);
+
+        storage.delete(blobId);
+
+        User user = repository.findByUsername(username);
+        user.setProfilePic(null);
+        repository.save(user);
+    }
+
+    @Override
     public String changeName(String name, HttpServletRequest request) {
         try {
-            System.out.println(name);
             String token = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(token);
             User user = repository.findByUsername(username);
@@ -547,16 +547,50 @@ public class UserServiceImpl implements UserService {
             return "success";
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "fail";
+            return "success";
         }
     }
 
     @Override
-    public String fetchName(HttpServletRequest request) {
+    public String changePhone(String phone, HttpServletRequest request) {
+        try {
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            user.setPhone(phone);
+            repository.save(user);
+            return "success";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "success";
+        }
+    }
+
+    @Override
+    public String changeCity(String city, HttpServletRequest request) {
+        try {
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            user.setCity(city);
+            repository.save(user);
+            return "success";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "success";
+        }
+    }
+
+    @Override
+    public Map<String, String>fetchInfo(HttpServletRequest request) {
         String token = jwtService.extractTokenFromCookie(request);
         String username = jwtService.extractUsername(token);
         User user = repository.findByUsername(username);
-        return user.getName();
+        HashMap<String, String> info = new HashMap<>();
+        info.put("name", user.getName());
+        info.put("phone", user.getPhone());
+        info.put("city", user.getCity());
+        return info;
     }
 
     //creates cookie

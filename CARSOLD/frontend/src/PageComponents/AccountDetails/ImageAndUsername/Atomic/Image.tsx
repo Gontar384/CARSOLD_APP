@@ -56,7 +56,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }    //makes "clickable" delayed
 
     useEffect(() => {
-        const handleClickOutside = (event: TouchEvent | MouseEvent) => {
+        const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setInputActive(false);
                 setInputClickable(false);

@@ -48,8 +48,9 @@ const Input = <T extends string | number | object>({placeholder, inputType, setI
                 {icon && <FontAwesomeIcon icon={icon}
                                           className="text-2xl xs:text-[27px] 2xl:text-[30px] 3xl:text-[36px]
                                            absolute right-2 3xl:right-3 top-[4px] xs:top-[5px] 3xl:top-[6px] opacity-90"/>}
-                <p className={isActive ? "text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[42px] " +
-                    "2xl:top-[44px] 3xl:top-[54px] whitespace-nowrap" : "hidden"}>{info}</p>
+                {isActive &&
+                <p className="text-[10px] xs:text-xs 2xl:text-base 3xl:text-lg absolute top-8 xs:top-[42px]
+                2xl:top-[44px] 3xl:top-[54px] whitespace-nowrap">{info}</p>}
             </div>
             {hasEye ? <Additional setInputType={setInputType} whichForm={whichForm} termsCheck={termsCheck} setTermsCheck={setTermsCheck} mark={mark}/> : null}
         </div>

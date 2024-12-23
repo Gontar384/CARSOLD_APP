@@ -34,7 +34,7 @@ const SearchBar: React.FC = () => {
     }   //handles input click
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
             if (isClicked && componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setMagnifierAnimation("animate-disappearRev");
                 setTimeout(() => {
@@ -49,10 +49,12 @@ const SearchBar: React.FC = () => {
 
         if (isClicked) {
             document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("touchstart", handleClickOutside);
         }
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
         }
     }, [isClicked])   //adds event listener to off input backlight
 

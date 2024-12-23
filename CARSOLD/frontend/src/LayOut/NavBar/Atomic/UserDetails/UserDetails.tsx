@@ -67,7 +67,7 @@ const UserDetails: React.FC = () => {
     };   //for mobile and keyboard
 
     useEffect(() => {
-        const handleClickOutside = (event: TouchEvent | MouseEvent) => {
+        const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setBarActive(false);
                 setUserIconAnimation(null);
