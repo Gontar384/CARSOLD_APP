@@ -117,7 +117,15 @@ export default {
                 slideLeft: {
                     '0%': {transform: "translateX(0)"},
                     '100%': {transform: "translateX(-150%)"}
-                }
+                },
+                slideOn: {
+                    '0%': {left: "translateX(0)"},
+                    '100%': {transform: "translateX(120%)"}
+                },
+                slideOff: {
+                    '0%': {transform: "translateX(120%)"},
+                    '100%': {transform: "translateX(0)"}
+                },
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -141,6 +149,8 @@ export default {
                 gentle: 'gentle 0.3s ease-in-out forwards',
                 slideRight: 'slideRight 0.3s ease-out forwards',
                 slideLeft: 'slideLeft 0.3s ease-out forwards',
+                slideOn: 'slideOn 0.3s ease-out forwards',
+                slideOff: 'slideOff 0.3s ease-out forwards',
             },
         },
     },

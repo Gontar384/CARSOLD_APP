@@ -11,7 +11,7 @@ const DeleteAccountButton: React.FC = () => {
             <button className="flex justify-center items-center w-[60px] xs:w-[70px] lg:w-[85px] xl:w-[95px]
             2xl:w-[115px] 3xl:w-[120px] h-[30px] xs:h-[35px] lg:h-[45px] xl:h-[53px] 2xl:h-[62px] 3xl:h-[66px]
             text-[10px] xs:text-xs lg:text-sm xl:text-base 2xl:text-lg 3xl:test-xl bg-coolRed text-white
-            rounded-full">
+            rounded-xl border border-white shadow-bottom">
                 Delete Account
             </button>
         </div>

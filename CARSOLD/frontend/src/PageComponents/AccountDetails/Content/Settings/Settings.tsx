@@ -50,7 +50,7 @@ const Settings: React.FC = () => {
                 <div className={`flex flex-col items-center ${isWide ? "w-6/12 justify-center" : "w-full"}`}>
                     {!googleLogged && <PasswordChange setIsChanged={setIsChanged}/>}
                 </div>
-                <div className={`${isWide ? "w-2/12" : "w-full mt-6 xs:mt-8"}`}>
+                <div className={`${isWide ? "w-2/12" : "w-full mt-2 xs:mt-4"}`}>
                     <DeleteAccountButton/>
                 </div>
             </div>
