@@ -109,6 +109,14 @@ export default {
                 gentle: {
                     '0%': {transform: "scale(1)"},
                     '100%': {transform: "scale(1.05)"},
+                },
+                slideRight: {
+                    '0%': {transform: "translateX(-150%)"},
+                    '100%': {transform: "translateX(0)"}
+                },
+                slideLeft: {
+                    '0%': {transform: "translateX(0)"},
+                    '100%': {transform: "translateX(-150%)"}
                 }
             },
             animation: {  //animations details
@@ -131,6 +139,8 @@ export default {
                 pulse1: 'pulse1 5s ease-in-out infinite',
                 slideInDiagonal: 'slideInDiagonal 0.3s ease-out forwards',
                 gentle: 'gentle 0.3s ease-in-out forwards',
+                slideRight: 'slideRight 0.3s ease-out forwards',
+                slideLeft: 'slideLeft 0.3s ease-out forwards',
             },
         },
     },
