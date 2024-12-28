@@ -244,8 +244,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete-user")
-    public ResponseEntity<Void> deleteUser(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        service.deleteUserAccount(request, response, authentication);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> deleteUser(HttpServletRequest request) {
+        return ResponseEntity.ok(service.deleteUserAccount(request));
     }
 }

@@ -36,5 +36,5 @@ public interface UserService {
     String changePhone(String phone, HttpServletRequest request);
     String changeCity(String address, HttpServletRequest request);
     Map<String, String>fetchInfo(HttpServletRequest request);
-    void deleteUserAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
+    boolean deleteUserAccount(HttpServletRequest request);
 }

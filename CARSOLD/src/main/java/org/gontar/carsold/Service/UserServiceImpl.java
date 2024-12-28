@@ -23,6 +23,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -36,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,6 +207,13 @@ public class UserServiceImpl implements UserService {
                 user.setActive(true);
                 repository.save(user);
             }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    null,
+                    Collections.singletonList(new SimpleGrantedAuthority("USER"))
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             String newToken = jwtService.generateToken(user.getUsername(), 600);
             ResponseCookie authCookie = createCookie(newToken, 10);
@@ -462,9 +471,9 @@ public class UserServiceImpl implements UserService {
         if (file.getSize() > 3 * 1024 * 1024) {
             return "Could not upload, image is too large.";
         }
-//        if (isImageSensitive(file)) {
-//            return "Could not upload, image contains sensitive content.";
-//        }
+        if (isImageSensitive(file)) {
+            return "Could not upload, image contains sensitive content.";
+        }
 
         String token = jwtService.extractTokenFromCookie(request);
         String username = jwtService.extractUsername(token);
@@ -596,7 +605,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public boolean deleteUserAccount(HttpServletRequest request) {
        try {
            String token = jwtService.extractTokenFromCookie(request);
            String username = jwtService.extractUsername(token);
@@ -609,14 +618,12 @@ public class UserServiceImpl implements UserService {
                    .iterateAll()
                    .forEach(Blob::delete);
 
-           logout(request, response, authentication);
-
-           response.sendRedirect(frontendUrl + "authentication/login");
-
            repository.delete(user);
 
+           return true;
        } catch (Exception e) {
            System.out.println(e.getMessage());
+           return false;
        }
     }
 

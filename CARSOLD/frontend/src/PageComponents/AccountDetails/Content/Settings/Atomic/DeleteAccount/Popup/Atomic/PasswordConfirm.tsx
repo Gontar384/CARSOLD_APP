@@ -7,6 +7,7 @@ import {useUserCheck} from "../../../../../../../../CustomHooks/useUserCheck.ts"
 import {AxiosResponse} from "axios";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
+import {useUserDetails} from "../../../../../../../../CustomHooks/useUserDetails.ts";
 
 const PasswordConfirm: React.FC = () => {
 
@@ -36,15 +37,20 @@ const PasswordConfirm: React.FC = () => {
         checkPassword().then();
     }, [debouncedPassword])
 
+    const {logout} = useUserDetails();
+
     const handleDeleteAccount = async () => {
         if (password.length >= 7 && password.length <= 25) {
             try {
                 const passwordResponse: AxiosResponse = await checkOldPassword(password);
                 if (passwordResponse.data.checks) {
-                    await api.delete("api/delete-user");
+                    const response: AxiosResponse = await api.delete('api/delete-user');
+                    if (response.data) {
+                        await logout();
+                    }
                 }
             } catch (error) {
-                console.error("Error checking password: ", error);
+                console.error("Error deleting account: ", error);
             }
         }
     }
