@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from "react";
-import PasswordChange from "./Atomic/PasswordChange.tsx";
+import PasswordChange from "./Atomic/PasswordChange/PasswordChange.tsx";
 import {useUserCheck} from "../../../../CustomHooks/useUserCheck.ts";
 import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import ContactInfo from "./Atomic/ContactInfo/ContactInfo.tsx";
-import DeleteAccountButton from "./Atomic/DeleteAccountButton.tsx";
+import DeleteAccountButton from "./Atomic/DeleteAccount/DeleteAccountButton.tsx";
+import Popup from "./Atomic/DeleteAccount/Popup/Popup.tsx";
 
 const Settings: React.FC = () => {
 
     const {checkGoogleAuth} = useUserCheck();
     const [googleLogged, setGoogleLogged] = useState<boolean | null>(null);
+    const [popup, setPopup] = useState<boolean>(false);
 
     const {isWide} = useUtil();
 
@@ -31,7 +33,7 @@ const Settings: React.FC = () => {
         return () => {
             isMounted = false;
         }
-    }, [checkGoogleAuth]);
+    }, []);
 
     const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
 
@@ -43,19 +45,20 @@ const Settings: React.FC = () => {
 
     return (
         <div className="w-full h-full bg-lowLime rounded-sm">
-            <div className={`flex h-full w-full ${isWide ? "flex-row" : "flex-col gap-14 xs:gap-16 mb-12 xs:mb-14"}`}>
+            <div className={`flex h-full w-full ${isWide ? "flex-row" : "flex-col gap-14 xs:gap-16 mb-6 xs:mb-7"}`}>
                 <div className={`flex flex-col ${isWide ? " w-4/12" : "w-full"}`}>
                     <ContactInfo/>
                 </div>
                 <div className={`flex flex-col items-center ${isWide ? "w-6/12 justify-center" : "w-full"}`}>
                     {!googleLogged && <PasswordChange setIsChanged={setIsChanged}/>}
                 </div>
-                <div className={`${isWide ? "w-2/12" : "w-full mt-2 xs:mt-4"}`}>
-                    <DeleteAccountButton/>
+                <div className={`${isWide ? "w-2/12" : "w-full xs:mt-2"}`}>
+                    <DeleteAccountButton setPopup={setPopup}/>
                 </div>
             </div>
             {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
                                          onAnimationEnd={() => setIsChanged(false)} delay={3000}/> : null}
+            {popup ? <Popup setPopup={setPopup}/> : null}
         </div>
     )
 }

@@ -167,7 +167,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             </div>
             {inputActive && picUploaded && profilePic && !imageError &&
                 <button className={`absolute -bottom-[1px] -right-[6px] xs:bottom-0 lg:bottom-[1px] lg:-right-[8px] 
-                xl:bottom-[2px] xl:-right-[10px] 2xl:bottom-[3px] 2xl:-right-[11px] 3xl:bottom-1 3xl:-right-[12px] z-10 
+                xl:bottom-[2px] xl:-right-[10px] 2xl:bottom-[3px] 2xl:-right-[11px] 3xl:bottom-1 3xl:-right-[12px] z-10
                 ${inputActive ? "animate-slideInDiagonal" : ""} ${hideButton ? "hidden" : ""}`}
                         onClick={handleDeletePic}>
                     <FontAwesomeIcon icon={faTrash} className="text-[9px] xs:text-[10px] lg:text-[12px] xl:text-sm 2xl:text-base

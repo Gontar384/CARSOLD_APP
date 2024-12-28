@@ -204,8 +204,9 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }   //changes when user is authenticated
 
     return (
-        <div className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 ${scaled ? "scale-75" : ""}
-        text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl`}>
+        <div className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 
+        ${scaled ? "scale-[69%] xs:scale-[69%] sm:scale-[67%] lg:scale-[76%] xl:scale-[83%] 2xl:scale-[85%] 3xl:scale-[77%]" : ""}
+        text-base xs:text-xl lg:text-[22px] 2xl:text-2xl 3xl:text-3xl`}>
             {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
                                 value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} isShrink={isShrink}/>}
             <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType}

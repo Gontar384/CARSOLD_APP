@@ -86,9 +86,8 @@ export default {
                     "100%": {width: "100%"},
                 },
                 wave: {
-                    '0%': {transform: "scale(0)", opacity: "0.1"},
-                    '50%': {transform: "scale(1)", opacity: "0.2"},
-                    '100%': {transform: "scale(1)", opacity: "0"}
+                    '0%': { transform: 'scale(0)', opacity: '0.3' },
+                    '100%': { transform: 'scale(4)', opacity: '0' },
                 },
                 shock: {
                     '0%': {transform: "scale(1) rotate(90deg)"},
@@ -120,12 +119,17 @@ export default {
                 },
                 slideOn: {
                     '0%': {left: "translateX(0)"},
-                    '100%': {transform: "translateX(120%)"}
+                    '100%': {transform: "translateX(104%)"}
                 },
                 slideOff: {
-                    '0%': {transform: "translateX(120%)"},
+                    '0%': {transform: "translateX(104%)"},
                     '100%': {transform: "translateX(0)"}
                 },
+                swing: {
+                    '0%': {transform: "rotate(180deg)"},
+                    '50%': {transform: "rotate(90deg)"},
+                    '100%': {transform: "rotate(180deg)"},
+                }
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -142,7 +146,7 @@ export default {
                 empty: 'empty 0.5s linear forwards',
                 dash: 'dash 1.6s ease-in-out infinite',
                 grow: 'grow 2s ease-out forwards',
-                wave: 'wave 0.4s ease-out',
+                wave: 'wave 0.6s linear',
                 shock: 'shock 0.3s ease-in-out forwards',
                 pulse1: 'pulse1 5s ease-in-out infinite',
                 slideInDiagonal: 'slideInDiagonal 0.3s ease-out forwards',
@@ -151,6 +155,7 @@ export default {
                 slideLeft: 'slideLeft 0.3s ease-out forwards',
                 slideOn: 'slideOn 0.3s ease-out forwards',
                 slideOff: 'slideOff 0.3s ease-out forwards',
+                swing: 'swing 0.7s ease-in-out forwards',
             },
         },
     },

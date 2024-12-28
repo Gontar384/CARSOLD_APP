@@ -256,13 +256,15 @@ const RegisterForm: React.FC = () => {
                     }));
                     setPasswordRep("");
                     setTermsCheck(false);
+                    setEmailIcon(null);
+                    setUsernameIcon(null);
                 }
             } catch (error) {
                 console.log("Error during register:", error)
             } finally {
-                setTimeout((): void => {
+                setTimeout(() => {
                     setIsDisabled(false);
-                }, 2000)
+                }, 3000)
             }
         }
     };

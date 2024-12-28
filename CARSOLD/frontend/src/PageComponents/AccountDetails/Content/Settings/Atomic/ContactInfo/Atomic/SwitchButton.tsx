@@ -9,12 +9,12 @@ const SwitchButton: React.FC = () => {
     }
 
     return (
-        <div className="w-12 h-6  rounded-full border border-black border-opacity-50">
-            <button className="w-full h-full bg-white rounded-full"
-            onClick={handleActivateButton}>
-                <div className={`w-5 h-5 ml-[1px] rounded-full border border-black border-opacity-5 bg-lime ${buttonAnimation}`}></div>
-            </button>
-        </div>
+        <button className={`flex items-center justify-center w-9 h-5 xs:scale-[110%] lg:scale-[120%] xl:scale-[130%] 2xl:scale-[145%] 3xl:scale-[155%] border border-black border-opacity-40 rounded-full transition-all duration-300 ${buttonAnimation === "animate-slideOn" ? "bg-lime" : "bg-gray-300"}`}
+                onClick={handleActivateButton}>
+            <div className="w-[calc(100%-3px)] h-[calc(100%-3px)] rounded-full">
+                <div className={`h-full aspect-square bg-white border border-black border-opacity-5 rounded-full ${buttonAnimation}`}></div>
+            </div>
+        </button>
     )
 }
 

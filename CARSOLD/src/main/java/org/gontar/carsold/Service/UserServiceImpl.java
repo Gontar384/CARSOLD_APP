@@ -1,9 +1,6 @@
 package org.gontar.carsold.Service;
 
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.*;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import io.jsonwebtoken.Claims;
@@ -547,7 +544,7 @@ public class UserServiceImpl implements UserService {
             return "success";
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "success";
+            return "fail";
         }
     }
 
@@ -562,7 +559,7 @@ public class UserServiceImpl implements UserService {
             return "success";
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "success";
+            return "fail";
         }
     }
 
@@ -577,20 +574,50 @@ public class UserServiceImpl implements UserService {
             return "success";
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "success";
+            return "fail";
         }
     }
 
     @Override
     public Map<String, String>fetchInfo(HttpServletRequest request) {
-        String token = jwtService.extractTokenFromCookie(request);
-        String username = jwtService.extractUsername(token);
-        User user = repository.findByUsername(username);
-        HashMap<String, String> info = new HashMap<>();
-        info.put("name", user.getName());
-        info.put("phone", user.getPhone());
-        info.put("city", user.getCity());
-        return info;
+        try {
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            HashMap<String, String> info = new HashMap<>();
+            info.put("name", user.getName());
+            info.put("phone", user.getPhone());
+            info.put("city", user.getCity());
+            return info;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteUserAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+       try {
+           String token = jwtService.extractTokenFromCookie(request);
+           String username = jwtService.extractUsername(token);
+           User user = repository.findByUsername(username);
+
+           String folderPrefix = username + "/";
+           Storage storage = StorageOptions.getDefaultInstance().getService();
+
+           storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                   .iterateAll()
+                   .forEach(Blob::delete);
+
+           logout(request, response, authentication);
+
+           response.sendRedirect(frontendUrl + "authentication/login");
+
+           repository.delete(user);
+
+       } catch (Exception e) {
+           System.out.println(e.getMessage());
+       }
     }
 
     //creates cookie

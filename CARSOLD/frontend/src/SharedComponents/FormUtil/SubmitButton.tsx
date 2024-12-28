@@ -6,28 +6,74 @@ interface SubmitButtonProps {
     disabled?: boolean;
 }
 
-const SubmitButton: React.FC<SubmitButtonProps> = ({ label, onClick, disabled }) => {
+const SubmitButton: React.FC<SubmitButtonProps> = ({label, onClick, disabled}) => {
 
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [debounce, setDebounce] = useState<boolean>(false);
+    const [wavePosition, setWavePosition] = useState<{ x: number; y: number } | null>(null);
 
-    const handleClick = () => {
+    //handles wave effect
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.TouchEvent<HTMLButtonElement>) => {
         if (debounce) return;
+
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+
+        let x, y;
+        const scaleFactor = rect.width / button.offsetWidth;
+
+        if ("touches" in event) {
+            const touch = event.touches[0];
+            x = (touch.clientX - rect.left) / scaleFactor - 40;
+            y = (touch.clientY - rect.top) / scaleFactor - 40;
+        } else {
+            x = (event.clientX - rect.left) / scaleFactor - 40;
+            y = (event.clientY - rect.top) / scaleFactor - 40;
+        }
+
+        setWavePosition({ x, y });
+
         setDebounce(true);
         setIsClicked(true);
         onClick();
         setTimeout(() => {
             setDebounce(false);
             setIsClicked(false);
-        }, 400)
+        }, 600);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (debounce) return;
+        if (event.key === "Enter") {
+            const button = event.currentTarget;
+            const x = button.offsetWidth / 2 - 40;
+            const y = button.offsetHeight / 2 - 40;
+
+            setWavePosition({ x, y });
+            setDebounce(true);
+            setIsClicked(true);
+            onClick();
+            setTimeout(() => {
+                setDebounce(false);
+                setIsClicked(false);
+            }, 600);
+        }
     };
 
     return (
         <button
-            className={`flex justify-center items-center relative w-24 xs:w-28 2xl:w-36 3xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:h-12
-            rounded-sm shadow-xl overflow-hidden`} onClick={handleClick} disabled={disabled}>
+            className={`relative flex justify-center items-center w-24 xs:w-28 2xl:w-36 3xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:h-12
+            rounded-sm shadow-xl overflow-hidden`}
+            onClick={handleClick} onTouchStart={handleClick} onKeyDown={handleKeyDown} disabled={disabled}>
             <span className="z-10">{label}</span>
-            <div className={`absolute inset-0 w-full h-full bg-black opacity-0 rounded-sm ${isClicked ? "animate-wave" : "hidden"}`}></div>
+            {isClicked && wavePosition &&
+                <div className={`absolute w-20 h-20 bg-black opacity-0 rounded-full animate-wave`}
+                     style={{
+                         top: wavePosition.y,
+                         left: wavePosition.x
+                     }}>
+                </div>
+            }
         </button>
     )
 }

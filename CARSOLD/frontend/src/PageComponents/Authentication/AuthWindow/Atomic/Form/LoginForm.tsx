@@ -91,14 +91,15 @@ const LoginForm: React.FC = () => {
         if (isDisabled) return;
         if (login && password) {
             setIsDisabled(true);
+            setWrongPassword(false);
             try {
                 const emailResponse: AxiosResponse = await emailExists(login);
                 const usernameResponse: AxiosResponse = await usernameExists(login);
                 const isActiveResponse: AxiosResponse = await isActive(login);
                 const isOauth2Response: AxiosResponse = await isOauth2(login);
-                const validateResponse: AxiosResponse = await validateUser(login, password);
                 if (emailResponse.data.exists || usernameResponse.data.exists && password.length >= 7 &&
                     !isOauth2Response.data.checks && isActiveResponse.data.checks) {
+                    const validateResponse: AxiosResponse = await validateUser(login, password);
                     if (!validateResponse.data.isValid) {
                         setWrongPassword(true);
                         return;
@@ -121,7 +122,7 @@ const LoginForm: React.FC = () => {
             } finally {
                 setTimeout(() => {
                     setIsDisabled(false);
-                }, 1000)
+                }, 2000)
             }
         }
     }
