@@ -127,6 +127,15 @@ const LoginForm: React.FC = () => {
         }
     }
 
+    const [isAccountDeleted, setIsAccountDeleted] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (sessionStorage.getItem("isAccountDeleted") === "true"){
+            setIsAccountDeleted(true);
+            sessionStorage.removeItem("isAccountDeleted");
+        }
+        }, []);     //detects if account was deleted and displays banner
+
     return (
         <div className="flex flex-col items-center w-11/12 pb-8 pt-6 2xl:pb-10 2xl:pt-8 3xl:pb-11 3xl:pt-9 mt-3 gap-6
         xs:gap-7 2xl:gap-8 3xl:gap-9 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl rounded-sm shadow-2xl ">
@@ -138,6 +147,8 @@ const LoginForm: React.FC = () => {
             {isLoggedIn ? <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
             {wrongPassword ? <AnimatedBanner text={"Wrong password"} onAnimationEnd={() => setWrongPassword(false)}
                                              delay={2000} color={"bg-coolRed"} z={"z-40"}/> : null}
+            {isAccountDeleted ? <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
+                                                delay={4000} color={"bg-coolYellow"} z={"z-40"}/> : null}
         </div>
     )
 }

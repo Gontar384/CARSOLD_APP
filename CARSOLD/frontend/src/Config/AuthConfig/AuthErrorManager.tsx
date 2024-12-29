@@ -15,14 +15,14 @@ const AuthErrorManager: React.FC = () => {
                 if (error.response.status === 401 || error.response.status === 403) {        //for authentication errors
                     setShowSessionExpired(true);        //displays banner
                     setTimeout(async () => {
-                        await api.get(`api/auth/logout`)      //logout (deletes JWT)
+                        await api.get(`api/auth/logout`) ;     //logout (deletes JWT)
                         window.location.href = '/authenticate/login';
                     }, 3000);
                 }
             } else if (error.message.includes('Network Error') || error.message.includes('CORS')) {  //for CORS errors
                 setShowSessionExpired(true);
                 setTimeout(async () => {
-                    await api.get(`api/auth/logout`)
+                    await api.get(`api/auth/logout`);
                     window.location.href = '/authenticate/login';
                 }, 3000);
             }

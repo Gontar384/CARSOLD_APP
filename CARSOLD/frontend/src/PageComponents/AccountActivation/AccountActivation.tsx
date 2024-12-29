@@ -8,7 +8,7 @@ const AccountActivation: React.FC = () => {
     const {checkAuth} = useAuth();
     const navigate = useNavigate();
 
-    const [count, setCount] = useState<number>(4);
+    const [count, setCount] = useState<number>(3);
     const [activationMessage, setActivationMessage] = useState<string>("Account activation success - redirecting...");
     const [color, setColor] = useState<"bg-lime" | "bg-coolYellow">("bg-lime");
     const [loaded, setLoaded] = useState<boolean>(false);
@@ -25,7 +25,7 @@ const AccountActivation: React.FC = () => {
                     setActivationMessage("Link has expired, register again please...");
                     setTimeout(() => {
                         navigate("/authenticate/register")
-                    }, 4500)
+                    }, 3500)
                 }
                 setLoaded(true);
             } catch (error) {
@@ -37,7 +37,7 @@ const AccountActivation: React.FC = () => {
             activateAccount(token).then();
             setTimeout(async () => {
                 await checkAuth();
-            }, 4500)
+            }, 3500)
         }
     }, [checkAuth, navigate]);   //gets token from url and activates account
 

@@ -58,7 +58,7 @@ const Settings: React.FC = () => {
             </div>
             {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
                                          onAnimationEnd={() => setIsChanged(false)} delay={3000}/> : null}
-            {popup ? <Popup setPopup={setPopup}/> : null}
+            {popup ? <Popup setPopup={setPopup} googleLogged={googleLogged}/> : null}
         </div>
     )
 }

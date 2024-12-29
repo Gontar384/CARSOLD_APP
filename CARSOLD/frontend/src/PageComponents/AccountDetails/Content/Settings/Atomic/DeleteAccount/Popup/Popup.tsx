@@ -1,13 +1,14 @@
 import React, {useState} from "react";
 import Decision from "./Atomic/Decision.tsx";
-import PasswordConfirm from "./Atomic/PasswordConfirm.tsx";
-import ExitButton from "./Atomic/ExitButton.tsx";
+import DeleteConfirm from "./Atomic/DeleteConfirm.tsx";
+import ExitButton from "./Atomic/Atomic/ExitButton.tsx";
 
 interface PopupProps {
     setPopup: React.Dispatch<React.SetStateAction<boolean>>;
+    googleLogged: boolean;
 }
 
-const Popup: React.FC<PopupProps> = ({setPopup}) => {
+const Popup: React.FC<PopupProps> = ({setPopup, googleLogged}) => {
 
     const [confirmed, setConfirmed] = useState<boolean>(false);
 
@@ -20,8 +21,11 @@ const Popup: React.FC<PopupProps> = ({setPopup}) => {
                 {!confirmed ? (
                     <Decision setConfirmed={setConfirmed} setPopup={setPopup}/>
                 ) : (
-                    <PasswordConfirm/>
-                )}
+                    !googleLogged ? (
+                        <DeleteConfirm googleLogged={googleLogged} label="Please, provide your password:"/>
+                    ) : (
+                        <DeleteConfirm googleLogged={googleLogged} label="Type in 'delete_account' to confirm:"/>
+                    ))}
                 <ExitButton onClick={() => setPopup(false)}/>
             </div>
         </div>
