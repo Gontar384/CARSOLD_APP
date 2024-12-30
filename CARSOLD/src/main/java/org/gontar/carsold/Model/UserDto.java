@@ -8,14 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Long id;
     private String email;
     private String username;
     private String password;
-    private Boolean active;
-    private Boolean oauth2user;
-    private String profilePic;
-    private String name;
-    private String phone;
-    private String city;
 }
