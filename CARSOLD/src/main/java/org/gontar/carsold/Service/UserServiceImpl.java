@@ -2,6 +2,8 @@ package org.gontar.carsold.Service;
 
 import com.google.cloud.storage.*;
 import com.google.cloud.vision.v1.*;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.google.protobuf.ByteString;
 import io.jsonwebtoken.Claims;
 import jakarta.mail.internet.MimeMessage;
@@ -14,10 +16,7 @@ import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,6 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${PERSPECTIVE_API_KEY}")
     private String perspectiveApiKey;
+
+    @Value("${CLOUD_NATURAL_LANGUAGE_API_KEY}")
+    private String cloudNaturalLanguageApiKey;
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
@@ -106,12 +108,11 @@ public class UserServiceImpl implements UserService {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            //builds JSON payload
             JSONObject payload = new JSONObject();
             payload.put("comment", new JSONObject().put("text", username));
-            payload.put("languages", languages); // Use inline languages list
+            payload.put("languages", languages);
             payload.put("requestedAttributes", new JSONObject().put("TOXICITY", new JSONObject()));
-            //set headers
+            //sets headers
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/json");
             //builds API url
@@ -543,47 +544,107 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String changeName(String name, HttpServletRequest request) {
+    public boolean changeName(String name, HttpServletRequest request) {
         try {
             String token = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(token);
             User user = repository.findByUsername(username);
-            user.setName(name);
-            repository.save(user);
-            return "success";
+
+            boolean apiResponse = isValidName(name);
+            if (apiResponse) {
+                user.setName(name);
+                repository.save(user);
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "fail";
+            return false;
         }
     }
 
-    @Override
-    public String changePhone(String phone, HttpServletRequest request) {
+    public boolean isValidName(String name) {
         try {
+            String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
+
+            //creates payload
+            JSONObject document = new JSONObject();
+            document.put("content", name);
+            document.put("type", "PLAIN_TEXT");
+
+            JSONObject requestPayload = new JSONObject();
+            requestPayload.put("document", document);
+
+            //crates headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            //sets up and sends request
+            HttpEntity<String> requestEntity = new HttpEntity<>(requestPayload.toString(), headers);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+            //parses response
+            JSONObject responseJson = new JSONObject(responseEntity.getBody());
+            for (Object entityObj : responseJson.getJSONArray("entities")) {
+                JSONObject entity = (JSONObject) entityObj;
+                String entityType = entity.getString("type");
+                if ("PERSON".equals(entityType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+
+    @Override
+    public boolean changePhone(String phone, HttpServletRequest request) {
+        try {
+            if (!phone.startsWith("+")) {
+                phone = "+48" + phone;
+            }
+
+            PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, "");
+
+            //checks if valid
+            if (!phoneNumberUtil.isValidNumber(phoneNumber)) {
+                return false;
+            }
+
+            //formats
+            String formattedPhoneNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
+
             String token = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(token);
             User user = repository.findByUsername(username);
-            user.setPhone(phone);
+            user.setPhone(formattedPhoneNumber);
             repository.save(user);
-            return "success";
+
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return "fail";
+            System.out.println("Error changing phone number: " + e.getMessage());
+            return false;
         }
     }
 
     @Override
-    public String changeCity(String city, HttpServletRequest request) {
+    public boolean changeCity(String city, HttpServletRequest request) {
         try {
             String token = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(token);
             User user = repository.findByUsername(username);
             user.setCity(city);
             repository.save(user);
-            return "success";
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return "fail";
+            return false;
         }
     }
 

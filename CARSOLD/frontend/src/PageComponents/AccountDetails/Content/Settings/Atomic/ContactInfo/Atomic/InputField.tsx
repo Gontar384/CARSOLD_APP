@@ -9,10 +9,11 @@ interface InputFieldProps {
     setValue: React.Dispatch<React.SetStateAction<string>>;
     valueType: "name" | "phone" | "city";
     setFetch: React.Dispatch<React.SetStateAction<boolean>>;
-    infoLoading: boolean;
+    isLoading: boolean;
+    errorInfo: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, infoLoading}) => {
+const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, isLoading, errorInfo}) => {
 
     const {isMobile, CreateDebouncedValue} = useUtil();
     const [buttonActive, setButtonActive] = useState<boolean>(false);
@@ -23,6 +24,9 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     const [buttonLabel, setButtonLabel] = useState<"Edit" | "Save">("Edit");
     const componentRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const [invalidInput, setInvalidInput] = useState<boolean>(false);
+    const [additionalInfo, setAdditionalInfo] = useState<string | null>(null);
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     const handleActivateButton = () => {
         setButtonHovered(true);
@@ -61,6 +65,8 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 setInputActive(false);
                 setButtonLabel("Edit");
                 setButtonAnimation("animate-slideLeft");
+                setInvalidInput(false);
+                setAdditionalInfo(null);
                 setTimeout(() => {
                     setButtonActive(false);
                     setButtonAnimation(null);
@@ -88,54 +94,98 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     const handleEditButtonClick = () => {
         setInputActive(true);
         setButtonLabel("Save");
+        setInvalidInput(false);
+        setAdditionalInfo(null);
     }
 
+    //saves values to db
     const handleSaveButtonClick = async () => {
-        try {
-            const response = await api.post(`api/contact-set-${valueType}`, {
-                [valueType]: value
-            });
-            if (response.data) {
-                setInputActive(false);
-                setButtonLabel("Edit");
-                setButtonActive(false);
-                setButtonHovered(false);
-                setButtonAnimation(null);
+        if (isDisabled) return;
+        if (value.length >= 3 || value.length === 0) {
+            if (value.length <= 15) {
+                setIsDisabled(true);
+                setAdditionalInfo(null);
+                try {
+                    const response = await api.post(`api/contact-set-${valueType}`, {
+                        [valueType]: value
+                    });
+                    if (response.data) {
+                        setFetch(prev => !prev);
+                        setInputActive(false);
+                        setButtonLabel("Edit");
+                        setButtonActive(false);
+                        setButtonHovered(false);
+                        setButtonAnimation(null);
+                        setInvalidInput(false);
+                    } else {
+                        setInvalidInput(true);
+                    }
+                } catch (error) {
+                    console.error("Error changing value: ", error);
+                } finally {
+                    setTimeout(() => {
+                        setIsDisabled(false);
+                    }, 2000)
+                }
+            } else {
+                setInvalidInput(false);
+                setAdditionalInfo("Provided value is too long.")
             }
-        } catch (error) {
-            console.error("Error changing name: ", error);
+        } else {
+            setInvalidInput(false);
+            setAdditionalInfo("Provided value is too short.");
         }
     }
 
+    //let put country code and '+' at the beginning
+    const formatPhoneNumber = (phoneNumber: string): string => {
+        let cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");
+
+        if (cleanedNumber.startsWith("+")) {
+            cleanedNumber = "+" + cleanedNumber.slice(1).replace(/\+/g, "");
+        } else {
+            cleanedNumber = cleanedNumber.replace(/\+/g, "");
+        }
+
+        return cleanedNumber;
+    };
+
     return (
         <div className="flex flex-col lg:gap-[1px] 2xl:gap-[2px]">
-            <label className="text-xs xs:text-sm lg:text-base xl:text-lg 2xl:text-xl 3xl:test-2xl">
+            <label className="text-sm lg:text-base xl:text-lg 2xl:text-xl 3xl:test-2xl">
                 {label}
             </label>
-            <div className="flex flex-row w-fit text-sm xs:text-base lg:text-lg xl:text-xl 2xl:text-2xl
+            <div className="flex flex-row w-fit text-base lg:text-lg xl:text-xl 2xl:text-2xl
             3xl:test-3xl cursor-pointer"
                  onMouseEnter={!isMobile && buttonLabel === "Edit" ? handleActivateButton : undefined}
                  onMouseLeave={!isMobile && buttonLabel === "Edit" ? handleDeactivateButton : undefined}
                  onTouchEnd={isMobile && buttonLabel === "Edit" ? toggleButton : undefined}
                  ref={componentRef}>
-                <div className={`w-[150px] xs:w-[180px] sm:w-[140px] lg:w-[180px] xl:w-[200px] 2xl:w-[240px] 3xl:w-[270px]
-                h-[21px] xs:h-[25px] lg:h-[29px] xl:h-[33px] 2xl:h-9 3xl:h-[38px] relative z-20 bg-lowLime
-                ${buttonActive ? "mr-[2px] xs:mr-[3px] lg:mr-1 xl:mr-[5px] 2xl:mr-[6px] 3xl:mr-[7px]" : ""}`}>
-                    {!infoLoading ?
-                        <div className={`flex items-center w-full h-full px-[2px] xs:px-[3px] lg:px-[4px] xl:px-[5px]
+                <div className={`w-[165px] sm:w-[140px] lg:w-[180px] xl:w-[200px] 2xl:w-[240px] 3xl:w-[270px]
+                h-[25px] lg:h-[29px] xl:h-[33px] 2xl:h-9 3xl:h-[38px] z-20 bg-lowLime relative
+                ${buttonActive ? "mr-[3px] lg:mr-1 xl:mr-[5px] 2xl:mr-[6px] 3xl:mr-[7px]" : ""}`}>
+                    {!isLoading ?
+                        <div className={`flex items-center w-full h-full px-[3px] lg:px-[4px] xl:px-[5px]
                         2xl:px-[6px] 3xl:px-[7px] rounded-sm overflow-hidden
                         ${!inputActive ? "border border-black border-opacity-10" : ""}`}>
                             {value}
                         </div> : <ContactInputLoader/>}
                     {inputActive &&
-                        <input className={`absolute inset-0 focus:outline-none rounded-sm px-[2px] xs:px-[3px]
+                        <input className={`absolute inset-0 focus:outline-none rounded-sm px-[3px]
                         lg:px-[4px] xl:px-[5px] 2xl:px-[6px] 3xl:px-[7px]`}
                                ref={inputRef}
-                               type="text" value={value}
-                               onChange={(e) => setValue(e.target.value.trim())}/>}
+                               type={valueType === "phone" ? "tel" : "text"} value={value}
+                               onChange={valueType === "phone" ?
+                                   (e) => setValue(formatPhoneNumber(e.target.value))
+                                   : (e) => setValue(e.target.value.trim())}/>}
+                    {inputActive && invalidInput || additionalInfo !== "" ?
+                        <p className="text-[11px] lg:text-[13px] xl:text-[14px] 2xl:text-[16px] 3xl:text-[17px]
+                        absolute left-[3px] 2xl:left-1 3xl:left-[5px] top-[21px] lg:top-[25px]
+                        xl:top-[30px] 2xl:top-[33px] 3xl:top-[37px] whitespace-nowrap">
+                            {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
                 </div>
                 {buttonActive &&
-                    <button className={`w-10 xs:w-11 lg:w-[50px] xl:w-14 2xl:w-16 3xl:w-[70px] h-[21px] xs:h-[25px] lg:h-[29px]
+                    <button className={`w-11 lg:w-[50px] xl:w-14 2xl:w-16 3xl:w-[70px] h-[25px] lg:h-[29px]
                     xl:h-[33px] 2xl:h-9 3xl:h-[38px] border border-black border-opacity-40 bg-lime rounded-sm z-10
                     ${buttonAnimation}`}
                             onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}>

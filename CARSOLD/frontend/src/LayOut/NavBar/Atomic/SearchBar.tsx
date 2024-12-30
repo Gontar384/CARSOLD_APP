@@ -1,13 +1,11 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useRef, useState} from "react";
-import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const SearchBar: React.FC = () => {
 
-    const { search, setSearch } = useItems();
-
+    const [search, setSearch] = useState<string>("");
     const searchRef = useRef<string>("");   //gives access to most recent value, makes it work efficiently
 
     const [isClicked, setIsClicked] = useState<boolean>(false);  //checks if it's clicked
@@ -82,7 +80,7 @@ const SearchBar: React.FC = () => {
                                  className={`absolute top-1 xs:top-[5px] lg:top-[5px] xl:top-[4px] 2xl:top-[6px] 3xl:top-[7px] left-2 lg:left-[9px] xl:left-xs 2xl:left-sm 
                                  3xl:left-lg text-[13px] xs:text-[16px] lg:text-[20px] xl:text-[25px] 2xl:text-[31px] 3xl:text-[34px] z-30 ${magnifierAnimation}`}/>}
             <input className={`w-full sm:w-64 lg:w-72 xl:w-80 2xl:w-96 3xl:w-[450px] h-5 xs:h-6 lg:h-7 xl:h-8
-            2xl:h-10 3xl:h-11 p-[2px] sm:p-1 lg:p-[6px] text-[10px] xs:text-[12px] lg:text-[14px] xl:text-[18px] 2xl:text-[20px] 3xl:text-[25px] border
+            2xl:h-10 3xl:h-11 p-[2px] sm:p-1 lg:p-[6px] text-xs xs:text-sm lg:text-base xl:text-xl 2xl:text-2xl 3xl:text-[28px] border
             border-black relative z-20 focus:outline-none focus:border-none focus:ring-1 xs:focus:ring-2 2xl:focus:ring-3 focus:ring-blue-500/30 focus:shadow-blue-500/50 
             ${isClicked ? 'bg-white rounded-sm' : 'bg-lime rounded-full'}`}
                    onClick={handleClick} value={search} onChange={e => setSearch(e.target.value)}/>

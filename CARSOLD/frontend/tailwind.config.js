@@ -83,6 +83,7 @@ export default {
                 },
                 grow: {
                     "0%": {width: "0%"},
+                    "75%": {width: "75%"},
                     "100%": {width: "100%"},
                 },
                 wave: {

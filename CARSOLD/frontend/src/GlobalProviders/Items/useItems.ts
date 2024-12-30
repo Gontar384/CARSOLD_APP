@@ -5,8 +5,6 @@ interface ItemsContextType {
     setMessages: React.Dispatch<React.SetStateAction<number>>,
     followed: number,
     setFollowed: React.Dispatch<React.SetStateAction<number>>
-    search: string;
-    setSearch: React.Dispatch<React.SetStateAction<string>>;
     profilePicChange: boolean;
     setProfilePicChange: React.Dispatch<React.SetStateAction<boolean>>;
 }

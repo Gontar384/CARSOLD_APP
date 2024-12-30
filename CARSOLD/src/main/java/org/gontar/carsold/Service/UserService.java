@@ -32,9 +32,9 @@ public interface UserService {
     String getProfilePic(HttpServletRequest request);
     String uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException;
     void deleteProfilePic(HttpServletRequest request);
-    String changeName(String name, HttpServletRequest request);
-    String changePhone(String phone, HttpServletRequest request);
-    String changeCity(String address, HttpServletRequest request);
+    boolean changeName(String name, HttpServletRequest request);
+    boolean changePhone(String phone, HttpServletRequest request);
+    boolean changeCity(String address, HttpServletRequest request);
     Map<String, String>fetchInfo(HttpServletRequest request);
     boolean deleteUserAccount(HttpServletRequest request);
 }

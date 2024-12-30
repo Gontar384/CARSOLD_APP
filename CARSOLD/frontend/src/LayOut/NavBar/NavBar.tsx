@@ -13,29 +13,23 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 const NavBar: React.FC = () => {
 
-    const { isWide } = useUtil();
-    const { loadingAuth } = useAuth();
+    const {isWide} = useUtil();
+    const {loadingAuth} = useAuth();
 
     return (
         <>
-            {isWide ? (
-                <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
-                     w-full h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
-                    <Logo/>
-                    <SearchBar/>
-                    <AddButton/>
-                    <UserDetails/>
-                </div>
-            ) : (
-                <>
-                    <div className="flex flex-row items-center justify-evenly h-7 xs:h-8 fixed left-0 top-0 right-0 bg-lime shadow-bottom z-50">
-                        <OptionsButton/>
-                        <Logo/>
-                        <SearchBar/>
-                    </div>
-                    <LowerBar/>
-                </>
-            )}
+            <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
+            w-full h-7 xs:h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
+                {!isWide && <OptionsButton/>}
+                <Logo/>
+                <SearchBar/>
+                {isWide &&
+                    <>
+                        <AddButton/>
+                        <UserDetails/>
+                    </>}
+            </div>
+            {!isWide && <LowerBar/>}
             {loadingAuth && <LoadingNavBarLine/>}
         </>
     )

@@ -217,24 +217,21 @@ public class UserController {
     }
 
     @PostMapping("/contact-set-name")
-    public ResponseEntity<String> cratedOrUpdateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> cratedOrUpdateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String name = payload.get("name");
-        String response = service.changeName(name, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.changeName(name, request));
     }
 
     @PostMapping("/contact-set-phone")
-    public ResponseEntity<String> createOrUpdatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> createOrUpdatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String phone = payload.get("phone");
-        String response = service.changePhone(phone, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.changePhone(phone, request));
     }
 
     @PostMapping("/contact-set-city")
-    public ResponseEntity<String> createOrUpdateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> createOrUpdateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String city = payload.get("city");
-        String response = service.changeCity(city, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.changeCity(city, request));
     }
 
     @GetMapping("/fetch-contact-info")

@@ -54,24 +54,26 @@ const LowerBar: React.FC = () => {
         handleUsernameFetch().then();
     }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
-    return (
-        <div
-            className={` ${lowerBarActive ? "flex" : "hidden"} flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 
-            right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
-            <MobileButton onClick={() => navigate("/home")} icon={faSquarePlus} label="Add Offer" serial={0}/>
-            <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed" count={followed} serial={1}/>
-            <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={messages} serial={2}/>
-            <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={isAuthenticated ? userDetails : "Account"} serial={3}/>
-            {isAuthenticated ? (
-                <>
-                    <DarkModeButton serial={5}/>
-                    <MobileButton onClick={logout} icon={faRightFromBracket} label="Logout" serial={4}/>
-                </>
-            ) : (
-                <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login" serial={5}/>
-            )}
-        </div>
-    )
+    if (lowerBarActive) {
+        return (
+            <div
+                className={`flex flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 
+                right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
+                <MobileButton onClick={() => navigate("/home")} icon={faSquarePlus} label="Add Offer" serial={0}/>
+                <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed" count={followed} serial={1}/>
+                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={messages} serial={2}/>
+                <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={isAuthenticated ? userDetails : "Account"} serial={3}/>
+                {isAuthenticated ? (
+                    <>
+                        <DarkModeButton serial={5}/>
+                        <MobileButton onClick={logout} icon={faRightFromBracket} label="Logout" serial={4}/>
+                    </>
+                ) : (
+                    <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login" serial={5}/>
+                )}
+            </div>
+        )
+    }
 }
 
 export default LowerBar
