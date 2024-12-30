@@ -37,4 +37,6 @@ public interface UserService {
     boolean changeCity(String address, HttpServletRequest request);
     Map<String, String>fetchInfo(HttpServletRequest request);
     boolean deleteUserAccount(HttpServletRequest request);
+    boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic);
+    boolean fetchContactInfoPublic(HttpServletRequest request);
 }

@@ -216,32 +216,56 @@ public class UserController {
         return ResponseEntity.ok("Image deleted");
     }
 
+    //creates or updates contact name
     @PostMapping("/contact-set-name")
     public ResponseEntity<Boolean> cratedOrUpdateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String name = payload.get("name");
         return ResponseEntity.ok(service.changeName(name, request));
     }
 
+    //creates or updates contact phone
     @PostMapping("/contact-set-phone")
     public ResponseEntity<Boolean> createOrUpdatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String phone = payload.get("phone");
         return ResponseEntity.ok(service.changePhone(phone, request));
     }
 
+    //creates or update contact city
     @PostMapping("/contact-set-city")
     public ResponseEntity<Boolean> createOrUpdateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String city = payload.get("city");
         return ResponseEntity.ok(service.changeCity(city, request));
     }
 
+    //returns contact info
     @GetMapping("/fetch-contact-info")
     public ResponseEntity<Map<String, String>> getContactInfo(HttpServletRequest request) {
         Map<String, String> response = service.fetchInfo(request);
         return ResponseEntity.ok(response);
     }
 
+    //deletes user
     @DeleteMapping("/delete-user")
     public ResponseEntity<Boolean> deleteUser(HttpServletRequest request) {
         return ResponseEntity.ok(service.deleteUserAccount(request));
+    }
+
+    //creates or updates contactInfoPublic, then returns its value
+    @PostMapping("/change-contactInfoPublic")
+    public ResponseEntity<Map<String, Boolean>> createOrUpdateContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
+        Boolean isPublic = payload.get("isPublic");
+        boolean changedValue = service.changeContactInfoPublic(request, isPublic);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("changedValue", changedValue);
+        return ResponseEntity.ok(response);
+    }
+
+    //returns contactInfoPublic
+    @GetMapping("/fetch-contactInfoPublic")
+    public ResponseEntity<Map<String, Boolean>> getContactInfoPublic(HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean isPublic = service.fetchContactInfoPublic(request);
+        response.put("isPublic", isPublic);
+        return ResponseEntity.ok(response);
     }
 }

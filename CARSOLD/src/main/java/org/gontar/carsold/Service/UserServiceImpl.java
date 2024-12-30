@@ -526,6 +526,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //deletes profile pic in cloud and repository
     @Override
     public void deleteProfilePic(HttpServletRequest request) {
         String token = jwtService.extractTokenFromCookie(request);
@@ -543,6 +544,7 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
+    //creates or updates contact name, checks if name is proper name
     @Override
     public boolean changeName(String name, HttpServletRequest request) {
         try {
@@ -601,7 +603,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
+    //creates or updates contact name, checks if number is proper
     @Override
     public boolean changePhone(String phone, HttpServletRequest request) {
         try {
@@ -633,6 +635,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //creates or updates contact city
     @Override
     public boolean changeCity(String city, HttpServletRequest request) {
         try {
@@ -648,6 +651,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //returns contact info using map
     @Override
     public Map<String, String>fetchInfo(HttpServletRequest request) {
         try {
@@ -665,6 +669,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //deletes user, also his cloud storage
     @Override
     public boolean deleteUserAccount(HttpServletRequest request) {
        try {
@@ -687,6 +692,37 @@ public class UserServiceImpl implements UserService {
            return false;
        }
     }
+
+    //creates or updates contactInfoPublic
+    @Override
+    public boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic) {
+        try {
+            String jwt = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(jwt);
+            User user = repository.findByUsername(username);
+            user.setContactInfoPublic(isPublic);
+            repository.save(user);
+            return user.getContactInfoPublic();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    //returns contactInfoPublic
+    @Override
+    public boolean fetchContactInfoPublic(HttpServletRequest request) {
+        try {
+            String jwt = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(jwt);
+            User user = repository.findByUsername(username);
+            return user.getContactInfoPublic();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 
     //creates cookie
     private ResponseCookie createCookie(String token, long time) {
