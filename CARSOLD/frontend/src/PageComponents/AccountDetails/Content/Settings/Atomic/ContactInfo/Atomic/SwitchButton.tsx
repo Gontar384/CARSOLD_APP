@@ -10,12 +10,12 @@ const SwitchButton: React.FC = () => {
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-    //changes contactInfoPublic and fetches its value, sets animations to button
+    //changes contactPublic in DB and fetches its value, sets animations to button
     const handleSwitchButton = async () => {
         if (isDisabled) return;
         setIsDisabled(true);
         try {
-            const response: AxiosResponse = await api.post('api/change-contactInfoPublic', {
+            const response: AxiosResponse = await api.put('api/change-contactInfoPublic', {
                 isPublic: !isPublic,
             });
             if (response.data) {

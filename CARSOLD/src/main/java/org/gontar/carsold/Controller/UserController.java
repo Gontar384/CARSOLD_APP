@@ -197,8 +197,8 @@ public class UserController {
     }
 
     //uploads images to cloud and checks for sensitive content
-    @PostMapping("/storage-upload-profilePic")
-    public ResponseEntity<Map<String, String>> createImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    @PutMapping ("/storage-upload-profilePic")
+    public ResponseEntity<Map<String, String>> updateImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             Map<String, String> response = new HashMap<>();
             String info = service.uploadProfilePicWithSafeSearch(file, request);
@@ -216,23 +216,23 @@ public class UserController {
         return ResponseEntity.ok("Image deleted");
     }
 
-    //creates or updates contact name
-    @PostMapping("/contact-set-name")
-    public ResponseEntity<Boolean> cratedOrUpdateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    //updates contact name
+    @PutMapping("/contact-set-name")
+    public ResponseEntity<Boolean> updatesName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String name = payload.get("name");
         return ResponseEntity.ok(service.changeName(name, request));
     }
 
-    //creates or updates contact phone
-    @PostMapping("/contact-set-phone")
-    public ResponseEntity<Boolean> createOrUpdatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    //updates contact phone
+    @PutMapping("/contact-set-phone")
+    public ResponseEntity<Boolean> updatesPhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String phone = payload.get("phone");
         return ResponseEntity.ok(service.changePhone(phone, request));
     }
 
-    //creates or update contact city
-    @PostMapping("/contact-set-city")
-    public ResponseEntity<Boolean> createOrUpdateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    //updates contact city
+    @PutMapping("/contact-set-city")
+    public ResponseEntity<Boolean> updatesCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String city = payload.get("city");
         return ResponseEntity.ok(service.changeCity(city, request));
     }
@@ -250,9 +250,9 @@ public class UserController {
         return ResponseEntity.ok(service.deleteUserAccount(request));
     }
 
-    //creates or updates contactInfoPublic, then returns its value
-    @PostMapping("/change-contactInfoPublic")
-    public ResponseEntity<Map<String, Boolean>> createOrUpdateContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
+    //updates contactPublic, then returns its value
+    @PutMapping("/change-contactInfoPublic")
+    public ResponseEntity<Map<String, Boolean>> updatesContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
         Boolean isPublic = payload.get("isPublic");
         boolean changedValue = service.changeContactInfoPublic(request, isPublic);
         Map<String, Boolean> response = new HashMap<>();
@@ -260,7 +260,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    //returns contactInfoPublic
+    //returns contactPublic
     @GetMapping("/fetch-contactInfoPublic")
     public ResponseEntity<Map<String, Boolean>> getContactInfoPublic(HttpServletRequest request) {
         Map<String, Boolean> response = new HashMap<>();

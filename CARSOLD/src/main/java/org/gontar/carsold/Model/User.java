@@ -43,5 +43,5 @@ public class User {
     private String city;
 
     @Column
-    private Boolean contactInfoPublic;
+    private Boolean contactPublic;
 }

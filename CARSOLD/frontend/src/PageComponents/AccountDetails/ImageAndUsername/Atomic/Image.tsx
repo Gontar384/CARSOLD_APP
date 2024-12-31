@@ -92,7 +92,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             formData.append('file', file);
 
             try {
-                const response: AxiosResponse = await api.post('api/storage-upload-profilePic', formData);
+                const response: AxiosResponse = await api.put('api/storage-upload-profilePic', formData);
                 if (response.data) {
                     setPicUploaded(true);
                     setInputActive(false);

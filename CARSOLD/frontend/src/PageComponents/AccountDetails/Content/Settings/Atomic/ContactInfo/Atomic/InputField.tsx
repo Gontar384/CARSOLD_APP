@@ -106,7 +106,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 setIsDisabled(true);
                 setAdditionalInfo(null);
                 try {
-                    const response = await api.post(`api/contact-set-${valueType}`, {
+                    const response = await api.put(`api/contact-set-${valueType}`, {
                         [valueType]: value
                     });
                     if (response.data) {

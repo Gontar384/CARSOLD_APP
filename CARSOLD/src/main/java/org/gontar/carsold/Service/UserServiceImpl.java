@@ -394,7 +394,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //changes password
+    //changes password when recovery
     @Override
     public String recoveryChangePassword(String token, String password, HttpServletResponse response) {
         try {
@@ -419,6 +419,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //changes password
     @Override
     public String changePassword(String password, HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
@@ -432,6 +433,7 @@ public class UserServiceImpl implements UserService {
         return "fail";
     }
 
+    //validates password
     @Override
     public boolean checkPassword(String password, HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
@@ -466,6 +468,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    //checks for profilePic sensitive content and then uploads profilePic to cloud
     @Override
     public String uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) throws IOException {
 
@@ -544,7 +547,7 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
-    //creates or updates contact name, checks if name is proper name
+    //updates contact name, checks if name is proper name
     @Override
     public boolean changeName(String name, HttpServletRequest request) {
         try {
@@ -565,6 +568,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //checks if the name is proper
     public boolean isValidName(String name) {
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
@@ -603,7 +607,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //creates or updates contact name, checks if number is proper
+    //updates contact phone, checks if number is proper
     @Override
     public boolean changePhone(String phone, HttpServletRequest request) {
         try {
@@ -635,7 +639,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //creates or updates contact city
+    //updates contact city
     @Override
     public boolean changeCity(String city, HttpServletRequest request) {
         try {
@@ -693,30 +697,30 @@ public class UserServiceImpl implements UserService {
        }
     }
 
-    //creates or updates contactInfoPublic
+    //updates contactPublic
     @Override
     public boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic) {
         try {
             String jwt = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(jwt);
             User user = repository.findByUsername(username);
-            user.setContactInfoPublic(isPublic);
+            user.setContactPublic(isPublic);
             repository.save(user);
-            return user.getContactInfoPublic();
+            return user.getContactPublic();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
         }
     }
 
-    //returns contactInfoPublic
+    //returns contactPublic
     @Override
     public boolean fetchContactInfoPublic(HttpServletRequest request) {
         try {
             String jwt = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(jwt);
             User user = repository.findByUsername(username);
-            return user.getContactInfoPublic();
+            return user.getContactPublic();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
