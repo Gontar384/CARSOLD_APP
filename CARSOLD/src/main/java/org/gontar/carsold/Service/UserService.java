@@ -39,4 +39,6 @@ public interface UserService {
     boolean deleteUserAccount(HttpServletRequest request);
     boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic);
     boolean fetchContactInfoPublic(HttpServletRequest request);
+
+    String fetchCitySuggestions(String value);
 }

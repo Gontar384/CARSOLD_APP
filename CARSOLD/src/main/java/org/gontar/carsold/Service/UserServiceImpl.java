@@ -33,6 +33,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -55,6 +56,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
+
+    @Value("${PLACES_API_KEY}")
+    private String placesApiKey;
 
     private final UserRepository repository;
     private final Mapper<User, UserDto> mapper;
@@ -727,6 +731,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //fetches suggestions from Places API
+    @Override
+    public String fetchCitySuggestions(String value) {
+        System.out.println("city: " + value);
+        RestTemplate restTemplate = new RestTemplate();
+        String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+                .queryParam("input", value)
+                .queryParam("components", "country:pl")
+                .queryParam("key", placesApiKey)
+                .queryParam("types", "geocode")
+                .build()
+                .toString();
+
+        return restTemplate.getForObject(url, String.class);
+    }
 
     //creates cookie
     private ResponseCookie createCookie(String token, long time) {

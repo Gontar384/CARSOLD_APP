@@ -60,7 +60,7 @@ const ContactInfo: React.FC = () => {
                                     setFetch={setFetch}
                                     isLoading={isLoading} errorInfo="Wrong phone number"/>
                         <InputField label="City" value={city} setValue={setCity} valueType="city" setFetch={setFetch}
-                                    isLoading={isLoading} errorInfo="Wrong address"/>
+                                    isLoading={isLoading} errorInfo="Wrong address" isCityInput={true}/>
                     </div>
                 </div>
             </div>

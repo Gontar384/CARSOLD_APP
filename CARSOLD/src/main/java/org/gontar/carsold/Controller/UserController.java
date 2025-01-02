@@ -218,21 +218,21 @@ public class UserController {
 
     //updates contact name
     @PutMapping("/contact-set-name")
-    public ResponseEntity<Boolean> updatesName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> updateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String name = payload.get("name");
         return ResponseEntity.ok(service.changeName(name, request));
     }
 
     //updates contact phone
     @PutMapping("/contact-set-phone")
-    public ResponseEntity<Boolean> updatesPhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> updatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String phone = payload.get("phone");
         return ResponseEntity.ok(service.changePhone(phone, request));
     }
 
     //updates contact city
     @PutMapping("/contact-set-city")
-    public ResponseEntity<Boolean> updatesCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+    public ResponseEntity<Boolean> updateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
         String city = payload.get("city");
         return ResponseEntity.ok(service.changeCity(city, request));
     }
@@ -252,7 +252,7 @@ public class UserController {
 
     //updates contactPublic, then returns its value
     @PutMapping("/change-contactInfoPublic")
-    public ResponseEntity<Map<String, Boolean>> updatesContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
+    public ResponseEntity<Map<String, Boolean>> updateContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
         Boolean isPublic = payload.get("isPublic");
         boolean changedValue = service.changeContactInfoPublic(request, isPublic);
         Map<String, Boolean> response = new HashMap<>();
@@ -267,5 +267,11 @@ public class UserController {
         boolean isPublic = service.fetchContactInfoPublic(request);
         response.put("isPublic", isPublic);
         return ResponseEntity.ok(response);
+    }
+
+    //returns city suggestions
+    @GetMapping("/get-city-suggestions")
+    public ResponseEntity<String> getCitySuggestions(@RequestParam String value) {
+        return ResponseEntity.ok(service.fetchCitySuggestions(value));
     }
 }

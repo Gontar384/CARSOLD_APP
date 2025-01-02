@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
 import {api} from "../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import ContactInputLoader from "../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
+import {AxiosResponse} from "axios";
 
 interface InputFieldProps {
     label: string,
@@ -11,9 +12,19 @@ interface InputFieldProps {
     setFetch: React.Dispatch<React.SetStateAction<boolean>>;
     isLoading: boolean;
     errorInfo: string;
+    isCityInput?: boolean;
 }
 
-const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, isLoading, errorInfo}) => {
+const InputField: React.FC<InputFieldProps> = ({
+                                                   label,
+                                                   value,
+                                                   setValue,
+                                                   valueType,
+                                                   setFetch,
+                                                   isLoading,
+                                                   errorInfo,
+                                                   isCityInput
+                                               }) => {
 
     const {isMobile, CreateDebouncedValue} = useUtil();
     const [buttonActive, setButtonActive] = useState<boolean>(false);
@@ -106,7 +117,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 setIsDisabled(true);
                 setAdditionalInfo(null);
                 try {
-                    const response = await api.put(`api/contact-set-${valueType}`, {
+                    const response: AxiosResponse = await api.put(`api/contact-set-${valueType}`, {
                         [valueType]: value
                     });
                     if (response.data) {
@@ -149,6 +160,30 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
         return cleanedNumber;
     };
+
+    let debouncedValue = null;
+
+    if (isCityInput) {
+        debouncedValue = CreateDebouncedValue(value, 300);
+    }
+
+    useEffect(() => {
+        const fetchCitySuggestions = async () => {
+            console.log("test");
+            try {
+                const response: AxiosResponse = await api.get('api/get-city-suggestions', {
+                    params: {value}
+                });
+                if (response.data) {
+                    console.log(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching city suggestions: ", error);
+            }
+        }
+        fetchCitySuggestions().then();
+
+    }, [debouncedValue]);
 
     return (
         <div className="flex flex-col lg:gap-[1px] 2xl:gap-[2px]">
