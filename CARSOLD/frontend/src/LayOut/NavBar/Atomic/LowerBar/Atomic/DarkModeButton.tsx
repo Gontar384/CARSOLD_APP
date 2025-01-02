@@ -5,11 +5,7 @@ import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {useButton} from "../../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
-interface DarkModeButtonProps {
-    serial: number;
-}
-
-const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
+const DarkModeButton: React.FC = () => {
 
     const { darkMode, toggleDarkMode, lowerBar, isMobile } = useUtil();
 
@@ -33,15 +29,15 @@ const DarkModeButton: React.FC<DarkModeButtonProps> = ({ serial }) => {
         <button
             className="flex flex-col items-center w-1/6 h-full p-1 relative"
             onClick={handleDarkMode}
-            onTouchStart={isMobile ? () => handleStart(serial) : undefined}
-            onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
-            onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
-            onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
-            <FontAwesomeIcon icon={faMoon} style={{color: buttonColor[serial] ? "white" : "black"}}
+            onTouchStart={isMobile ?handleStart : undefined}
+            onTouchEnd={isMobile ? handleEnd : undefined}
+            onMouseEnter={!isMobile ?handleStart : undefined}
+            onMouseLeave={!isMobile ?handleEnd : undefined}>
+            <FontAwesomeIcon icon={faMoon} style={{color: buttonColor ? "white" : "black"}}
                              className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
-            <FontAwesomeIcon icon={faSun} style={{color: buttonColor[serial] ? "white" : "black"}}
+            <FontAwesomeIcon icon={faSun} style={{color: buttonColor ? "white" : "black"}}
                              className={`text-[12px] xs:text-[14px] top-[8px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor[serial] ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
+            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
             <p className="text-[9px] xs:text-[10px]">Mode</p>
         </button>
     )

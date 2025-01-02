@@ -21,10 +21,10 @@ const Headers: React.FC = () => {
     return (
         <div className="flex flex-col w-11/12 gap-2 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl">
             <div className="flex flex-row divide-x divide-black">
-                <HeaderButton label={"Login"} serial={1} onClick={() => handleNavigation("login")}/>
-                <HeaderButton label={"Register"} serial={2} onClick={() => handleNavigation("register")}/>
+                <HeaderButton label={"Login"} onClick={() => handleNavigation("login")}/>
+                <HeaderButton label={"Register"} onClick={() => handleNavigation("register")}/>
             </div>
-            <HeaderButton label={"Authenticate using Google"} serial={3} onClick={handleGoogleAuth} isGoogle={true}/>
+            <HeaderButton label={"Authenticate using Google"} onClick={handleGoogleAuth} isGoogle={true}/>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import InputField from "./Atomic/InputField.tsx";
+import InputField from "./Atomic/InputField/InputField.tsx";
 import {api} from "../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import SwitchButton from "./Atomic/SwitchButton.tsx";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
@@ -58,9 +58,9 @@ const ContactInfo: React.FC = () => {
                                     isLoading={isLoading} errorInfo="It doesn't look like a name."/>
                         <InputField label="Phone" value={phone} setValue={setPhone} valueType="phone"
                                     setFetch={setFetch}
-                                    isLoading={isLoading} errorInfo="Wrong phone number"/>
+                                    isLoading={isLoading} errorInfo="Wrong phone number."/>
                         <InputField label="City" value={city} setValue={setCity} valueType="city" setFetch={setFetch}
-                                    isLoading={isLoading} errorInfo="Wrong address" isCityInput={true}/>
+                                    isLoading={isLoading} errorInfo="Wrong address." isCityInput={true}/>
                     </div>
                 </div>
             </div>

@@ -1,29 +1,28 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
-import {useButton} from "../../../../../CustomHooks/useButton.ts";
-import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useButton} from "../../../../../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface DropdownButtonProps {
     label: string;
     onClick: () => void;
     count?: number;
-    serial: number;
 }
 
-const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count, serial }) => {
+const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }) => {
 
     const { buttonColor, handleStart, handleEnd } = useButton();
     const {isMobile} = useUtil();
 
     return (
         <button className={'flex items-center justify-center w-full h-[22px] lg:h-[28px] xl:h-[32px] 2xl:h-[39px] 3xl:h-[47px] ' +
-            `text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] ${buttonColor[serial] ? "bg-white" : "bg-lime"} `}
+            `text-[11px] lg:text-[15px] xl:text-[18px] 2xl:text-[23px] 3xl:text-[28px] ${buttonColor ? "bg-white" : "bg-lime"} `}
                 onClick={onClick} onKeyDown={(event) => { if (event.key === "Enter") onClick() }}
-                onTouchStart={isMobile ? () => handleStart(serial) : undefined}
-                onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
-                onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
-                onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
+                onTouchStart={isMobile ? handleStart : undefined}
+                onTouchEnd={isMobile ? handleEnd : undefined}
+                onMouseEnter={!isMobile ? handleStart : undefined}
+                onMouseLeave={!isMobile ? handleEnd : undefined}>
             <span>{label}</span>
             {count && count > 0 ? <div className="relative mt-[1px] ml-[2px] xl:ml-1 3xl:ml-[6px]">
                 <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}

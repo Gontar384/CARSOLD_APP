@@ -14,6 +14,7 @@ import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -37,10 +38,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -99,7 +97,7 @@ public class UserServiceImpl implements UserService {
     public boolean checkIfUsernameSafe(String username) {
 
         //custom additional check
-        String[] inappropriateWords = {"cwel"};
+        String[] inappropriateWords = {"cwel", "frajer", "chuj"};
         for (String word : inappropriateWords) {
             if (username.toLowerCase().contains(word)) {
                 return false;
@@ -574,6 +572,28 @@ public class UserServiceImpl implements UserService {
 
     //checks if the name is proper
     public boolean isValidName(String name) {
+        List<String> polishSpecificNames = Arrays.asList(
+                //male
+                "Łukasz", "Wojciech", "Krzysztof", "Tomasz", "Jerzy", "Mieczysław", "Zbigniew", "Andrzej",
+                "Piotr", "Janusz", "Ryszard", "Sławomir", "Tadeusz", "Bolesław", "Kazimierz", "Mariusz",
+                "Czesław", "Leszek", "Stanislaw", "Marek", "Wacław", "Radosław", "Artur", "Zdzisław",
+                "Jarosław", "Bogdan", "Grzegorz", "Adam", "Dariusz", "Marcin", "Jacek", "Rafał", "Patryk",
+                "Mariusz", "Wojtek", "Zygmunt", "Marian", "Kamil", "Albert", "Dominik", "Krzysztof", "Marek",
+                "Feliks", "Kornel", "Sebastian", "Roman", "Michał", "Alojzy", "Jerzy", "Seweryn", "Łukasz",
+                //female
+                "Żaneta", "Jolanta", "Grażyna", "Bożena", "Stefania", "Wanda", "Irena", "Halina", "Cecylia",
+                "Eugenia", "Teresa", "Aneta", "Danuta", "Zofia", "Alicja", "Barbara", "Joanna", "Katarzyna",
+                "Magdalena", "Anna", "Maria", "Małgorzata", "Elżbieta", "Karolina", "Monika", "Ewa", "Hanna",
+                "Zdzisława", "Jadwiga", "Patrycja", "Ewa", "Lidia", "Kamila", "Kinga", "Dominika", "Urszula",
+                "Justyna", "Aleksandra", "Renata", "Izabela", "Bożena", "Krzysztofka", "Lucyna", "Wioletta",
+                "Tereska", "Barbara", "Weronika", "Krystyna", "Malwina", "Elżbieta", "Wiesława", "Dagmara",
+                "Joanna", "Zuzanna", "Honorata", "Beata", "Marta", "Liliana", "Monika", "Małgorzata", "Anita"
+        );
+
+        if (polishSpecificNames.contains(name)) {
+            return true;
+        }
+
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
 
@@ -647,6 +667,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean changeCity(String city, HttpServletRequest request) {
         try {
+            if (!isCityValid(city)) {
+                return false;
+            }
+
             String token = jwtService.extractTokenFromCookie(request);
             String username = jwtService.extractUsername(token);
             User user = repository.findByUsername(username);
@@ -659,46 +683,68 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //returns contact info using map
-    @Override
-    public Map<String, String>fetchInfo(HttpServletRequest request) {
+    //checks if city is valid
+    private boolean isCityValid(String city) {
         try {
-            String token = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(token);
-            User user = repository.findByUsername(username);
-            HashMap<String, String> info = new HashMap<>();
-            info.put("name", user.getName());
-            info.put("phone", user.getPhone());
-            info.put("city", user.getCity());
-            return info;
+            RestTemplate restTemplate = new RestTemplate();
+            String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+                    .queryParam("input", city)
+                    .queryParam("types", "(cities)")
+                    .queryParam("key", placesApiKey)
+                    .build()
+                    .toString();
+
+            String response = restTemplate.getForObject(url, String.class);
+            JSONObject jsonResponse = new JSONObject(response);
+            JSONArray predictions = jsonResponse.getJSONArray("predictions");
+
+            for (int i = 0; i < predictions.length(); i++) {
+                JSONObject prediction = predictions.getJSONObject(i);
+                String description = prediction.getString("description");
+
+                if (description != null && description.equals(city)) {
+                    return true;
+                } else if (description != null && description.contains(",")) {
+                    String cityNoCountry = description.split(",")[0].trim();
+                    if (cityNoCountry.equals(city)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+            System.out.println("Error validating city: " + e.getMessage());
+            return false;
         }
     }
 
-    //deletes user, also his cloud storage
+    //fetches suggestions from Places API
     @Override
-    public boolean deleteUserAccount(HttpServletRequest request) {
-       try {
-           String token = jwtService.extractTokenFromCookie(request);
-           String username = jwtService.extractUsername(token);
-           User user = repository.findByUsername(username);
+    public List<String> fetchCitySuggestions(String value) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+                .queryParam("input", value)
+                .queryParam("key", placesApiKey)
+                .queryParam("types", "(cities)")
+                .queryParam("location", "52.13,19.39")
+                .queryParam("radius", "500000")
+                .queryParam("strictbounds", "false")
+                .build()
+                .toString();
 
-           String folderPrefix = username + "/";
-           Storage storage = StorageOptions.getDefaultInstance().getService();
+        String response = restTemplate.getForObject(url, String.class);
 
-           storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
-                   .iterateAll()
-                   .forEach(Blob::delete);
+        //parses JSON, extracts city names
+        JSONObject jsonResponse = new JSONObject(response);
+        JSONArray predictions = jsonResponse.getJSONArray("predictions");
 
-           repository.delete(user);
+        List<String> cityNames = new ArrayList<>();
+        for (int i = 0; i < predictions.length(); i++) {
+            JSONObject prediction = predictions.getJSONObject(i);
+            cityNames.add(prediction.getString("description"));
+        }
 
-           return true;
-       } catch (Exception e) {
-           System.out.println(e.getMessage());
-           return false;
-       }
+        return cityNames;
     }
 
     //updates contactPublic
@@ -731,20 +777,46 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //fetches suggestions from Places API
+    //returns contact info using map
     @Override
-    public String fetchCitySuggestions(String value) {
-        System.out.println("city: " + value);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
-                .queryParam("input", value)
-                .queryParam("components", "country:pl")
-                .queryParam("key", placesApiKey)
-                .queryParam("types", "geocode")
-                .build()
-                .toString();
+    public Map<String, String> fetchInfo(HttpServletRequest request) {
+        try {
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            HashMap<String, String> info = new HashMap<>();
+            info.put("name", user.getName());
+            info.put("phone", user.getPhone());
+            info.put("city", user.getCity());
+            return info;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
-        return restTemplate.getForObject(url, String.class);
+    //deletes user, also his cloud storage
+    @Override
+    public boolean deleteUserAccount(HttpServletRequest request) {
+        try {
+            String token = jwtService.extractTokenFromCookie(request);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+
+            String folderPrefix = username + "/";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+
+            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                    .iterateAll()
+                    .forEach(Blob::delete);
+
+            repository.delete(user);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     //creates cookie

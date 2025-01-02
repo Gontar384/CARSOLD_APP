@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -35,10 +36,9 @@ public interface UserService {
     boolean changeName(String name, HttpServletRequest request);
     boolean changePhone(String phone, HttpServletRequest request);
     boolean changeCity(String address, HttpServletRequest request);
-    Map<String, String>fetchInfo(HttpServletRequest request);
-    boolean deleteUserAccount(HttpServletRequest request);
+    List<String> fetchCitySuggestions(String value);
     boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic);
     boolean fetchContactInfoPublic(HttpServletRequest request);
-
-    String fetchCitySuggestions(String value);
+    Map<String, String>fetchInfo(HttpServletRequest request);
+    boolean deleteUserAccount(HttpServletRequest request);
 }

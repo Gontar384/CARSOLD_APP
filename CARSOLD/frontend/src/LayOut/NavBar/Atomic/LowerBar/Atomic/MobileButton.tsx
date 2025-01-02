@@ -6,13 +6,12 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface MobileButtonProps {
     onClick: () => void;
-    serial: number;
     icon: IconProp;
     label: string;
     count?: number;
 }
 
-const MobileButton: React.FC<MobileButtonProps> = ({serial, onClick, icon, label, count}) => {
+const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}) => {
 
     const {isMobile} = useUtil();
 
@@ -21,11 +20,11 @@ const MobileButton: React.FC<MobileButtonProps> = ({serial, onClick, icon, label
     return (
         <button className="flex flex-col items-center w-1/6 h-full p-1 relative"
                 onClick={onClick}
-                onTouchStart={isMobile ? () => handleStart(serial) : undefined}
-                onTouchEnd={isMobile ? () => handleEnd(serial) : undefined}
-                onMouseEnter={!isMobile ? () => handleStart(serial) : undefined}
-                onMouseLeave={!isMobile ? () => handleEnd(serial) : undefined}>
-            <FontAwesomeIcon icon={icon} style={{color: buttonColor[serial] ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
+                onTouchStart={isMobile ? handleStart : undefined}
+                onTouchEnd={isMobile ? handleEnd : undefined}
+                onMouseEnter={!isMobile ? handleStart : undefined}
+                onMouseLeave={!isMobile ? handleEnd : undefined}>
+            <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
             {count && count > 0 ? (
                 <p className="text-[9px] xs:text-[10px] top-[7px] text-white absolute">
                     {count}

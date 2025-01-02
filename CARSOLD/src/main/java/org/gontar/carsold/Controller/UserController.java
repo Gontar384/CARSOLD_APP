@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -237,17 +238,10 @@ public class UserController {
         return ResponseEntity.ok(service.changeCity(city, request));
     }
 
-    //returns contact info
-    @GetMapping("/fetch-contact-info")
-    public ResponseEntity<Map<String, String>> getContactInfo(HttpServletRequest request) {
-        Map<String, String> response = service.fetchInfo(request);
-        return ResponseEntity.ok(response);
-    }
-
-    //deletes user
-    @DeleteMapping("/delete-user")
-    public ResponseEntity<Boolean> deleteUser(HttpServletRequest request) {
-        return ResponseEntity.ok(service.deleteUserAccount(request));
+    //returns city suggestions
+    @GetMapping("/get-city-suggestions")
+    public ResponseEntity<List<String>> getCitySuggestions(@RequestParam String value) {
+        return ResponseEntity.ok(service.fetchCitySuggestions(value));
     }
 
     //updates contactPublic, then returns its value
@@ -269,9 +263,16 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    //returns city suggestions
-    @GetMapping("/get-city-suggestions")
-    public ResponseEntity<String> getCitySuggestions(@RequestParam String value) {
-        return ResponseEntity.ok(service.fetchCitySuggestions(value));
+    //returns contact info
+    @GetMapping("/fetch-contact-info")
+    public ResponseEntity<Map<String, String>> getContactInfo(HttpServletRequest request) {
+        Map<String, String> response = service.fetchInfo(request);
+        return ResponseEntity.ok(response);
+    }
+
+    //deletes user
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<Boolean> deleteUser(HttpServletRequest request) {
+        return ResponseEntity.ok(service.deleteUserAccount(request));
     }
 }

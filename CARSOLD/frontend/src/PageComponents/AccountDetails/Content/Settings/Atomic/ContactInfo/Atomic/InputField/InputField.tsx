@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
-import {api} from "../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
-import ContactInputLoader from "../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
+import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
+import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
+import ContactInputLoader from "../../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
 import {AxiosResponse} from "axios";
+import SuggestionsBar from "./Atomic/SuggestionsBar.tsx";
+import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
 
 interface InputFieldProps {
     label: string,
@@ -15,21 +17,14 @@ interface InputFieldProps {
     isCityInput?: boolean;
 }
 
-const InputField: React.FC<InputFieldProps> = ({
-                                                   label,
-                                                   value,
-                                                   setValue,
-                                                   valueType,
-                                                   setFetch,
-                                                   isLoading,
-                                                   errorInfo,
-                                                   isCityInput
-                                               }) => {
+const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, isLoading, errorInfo, isCityInput}) => {
+
+    const { buttonColor, handleStart, handleEnd } = useButton();
 
     const {isMobile, CreateDebouncedValue} = useUtil();
     const [buttonActive, setButtonActive] = useState<boolean>(false);
-    const [buttonHovered, setButtonHovered] = useState<boolean>(false);
-    const debouncedHover: boolean = CreateDebouncedValue(buttonHovered, 300);
+    const [elementHovered, setElementHovered] = useState<boolean>(false);
+    const debouncedHover: boolean = CreateDebouncedValue(elementHovered, 300);
     const [buttonAnimation, setButtonAnimation] = useState<"animate-slideRight" | "animate-slideLeft" | null>(null);
     const [inputActive, setInputActive] = useState<boolean>(false);
     const [buttonLabel, setButtonLabel] = useState<"Edit" | "Save">("Edit");
@@ -39,12 +34,13 @@ const InputField: React.FC<InputFieldProps> = ({
     const [additionalInfo, setAdditionalInfo] = useState<string | null>(null);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
+    //button and input management
     const handleActivateButton = () => {
-        setButtonHovered(true);
+        setElementHovered(true);
     }
 
     const handleDeactivateButton = () => {
-        setButtonHovered(false);
+        setElementHovered(false);
     }
 
     const toggleButton = () => {
@@ -53,31 +49,33 @@ const InputField: React.FC<InputFieldProps> = ({
     }
 
     useEffect(() => {
-        if (buttonHovered && debouncedHover) {
+        if (elementHovered && debouncedHover) {
             setButtonActive(true);
             setButtonAnimation("animate-slideRight");
         }
-        if (!buttonHovered && !debouncedHover) {
+        if (!elementHovered && !debouncedHover) {
             setButtonAnimation("animate-slideLeft");
             setTimeout(() => {
                 setButtonActive(false);
                 setButtonAnimation(null);
             }, 300)
         }
-    }, [buttonHovered, debouncedHover]);
+    }, [elementHovered, debouncedHover]);
 
+    //focus input when clicked on button and deactivates when clicked away
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 if (buttonLabel === "Save") {
                     setFetch(prev => !prev);
                 }
-                setButtonHovered(false);
+                setElementHovered(false);
                 setInputActive(false);
                 setButtonLabel("Edit");
                 setButtonAnimation("animate-slideLeft");
                 setInvalidInput(false);
                 setAdditionalInfo(null);
+                setCitySuggestions(null);
                 setTimeout(() => {
                     setButtonActive(false);
                     setButtonAnimation(null);
@@ -90,30 +88,31 @@ const InputField: React.FC<InputFieldProps> = ({
             document.addEventListener("touchstart", handleClickOutside);
         }
 
+        if (inputActive && inputRef.current) {
+            inputRef.current.focus();
+        }
+
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
             document.removeEventListener("touchstart", handleClickOutside);
         };
     }, [inputActive, buttonActive, setFetch, buttonLabel]);  //adds event listener to deactivate button
 
-    useEffect(() => {
-        if (inputActive && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [inputActive]);   //sets cursor inside input
-
     const handleEditButtonClick = () => {
         setInputActive(true);
         setButtonLabel("Save");
         setInvalidInput(false);
         setAdditionalInfo(null);
+        setCitySuggestions(null);
+        setClickedSuggestion("");
     }
 
     //saves values to db
     const handleSaveButtonClick = async () => {
         if (isDisabled) return;
         if (value.length >= 3 || value.length === 0) {
-            if (value.length <= 15) {
+            if (value.length <= 20 || valueType === "city" && value.length <= 35) {
+                setCitySuggestions(null);
                 setIsDisabled(true);
                 setAdditionalInfo(null);
                 try {
@@ -125,9 +124,10 @@ const InputField: React.FC<InputFieldProps> = ({
                         setInputActive(false);
                         setButtonLabel("Edit");
                         setButtonActive(false);
-                        setButtonHovered(false);
+                        setElementHovered(false);
                         setButtonAnimation(null);
                         setInvalidInput(false);
+                        setCitySuggestions(null);
                     } else {
                         setInvalidInput(true);
                     }
@@ -148,7 +148,7 @@ const InputField: React.FC<InputFieldProps> = ({
         }
     }
 
-    //let put country code and '+' at the beginning
+    //for phone only, let put country code and '+' at the beginning
     const formatPhoneNumber = (phoneNumber: string): string => {
         let cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");
 
@@ -161,21 +161,24 @@ const InputField: React.FC<InputFieldProps> = ({
         return cleanedNumber;
     };
 
-    let debouncedValue = null;
+    //logic for city value
+    const debouncedValue: string | null = isCityInput ? CreateDebouncedValue(value, 300) : null;
+    const [citySuggestions, setCitySuggestions] = useState<string[] | null>(isCityInput ? [] : null)
+    const [clickedSuggestion, setClickedSuggestion] = useState<string | null>(isCityInput ? "" : null);
 
-    if (isCityInput) {
-        debouncedValue = CreateDebouncedValue(value, 300);
-    }
-
+    //fetches cities suggestions based on input
     useEffect(() => {
+        if (!debouncedValue || !inputActive) return;
+        if (value === clickedSuggestion) return;
+        setInvalidInput(false);
+        setAdditionalInfo(null);
         const fetchCitySuggestions = async () => {
-            console.log("test");
             try {
                 const response: AxiosResponse = await api.get('api/get-city-suggestions', {
                     params: {value}
                 });
                 if (response.data) {
-                    console.log(response.data);
+                    setCitySuggestions(response.data);
                 }
             } catch (error) {
                 console.error("Error fetching city suggestions: ", error);
@@ -201,8 +204,8 @@ const InputField: React.FC<InputFieldProps> = ({
                 ${buttonActive ? "mr-[3px] lg:mr-1 xl:mr-[5px] 2xl:mr-[6px] 3xl:mr-[7px]" : ""}`}>
                     {!isLoading ?
                         <div className={`flex items-center w-full h-full px-[3px] lg:px-[4px] xl:px-[5px]
-                        2xl:px-[6px] 3xl:px-[7px] rounded-sm overflow-hidden
-                        ${!inputActive ? "border border-black border-opacity-10" : ""}`}>
+                        2xl:px-[6px] 3xl:px-[7px] rounded-sm overflow-hidden whitespace-nowrap
+                        ${!inputActive ? "border border-black border-opacity-10" : ""}`} title={value}>
                             {value}
                         </div> : <ContactInputLoader/>}
                     {inputActive &&
@@ -212,18 +215,25 @@ const InputField: React.FC<InputFieldProps> = ({
                                type={valueType === "phone" ? "tel" : "text"} value={value}
                                onChange={valueType === "phone" ?
                                    (e) => setValue(formatPhoneNumber(e.target.value))
-                                   : (e) => setValue(e.target.value.trim())}/>}
+                                   : valueType === "name" ? (e) => setValue(e.target.value.trim())
+                                   : (e) => setValue(e.target.value)}/>}
                     {inputActive && invalidInput || additionalInfo !== "" ?
                         <p className="text-[11px] lg:text-[13px] xl:text-[14px] 2xl:text-[16px] 3xl:text-[17px]
                         absolute left-[3px] 2xl:left-1 3xl:left-[5px] top-[21px] lg:top-[25px]
                         xl:top-[30px] 2xl:top-[33px] 3xl:top-[37px] whitespace-nowrap">
                             {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
+                    {isCityInput && inputActive && <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
+                                                                   setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
                 </div>
                 {buttonActive &&
                     <button className={`w-11 lg:w-[50px] xl:w-14 2xl:w-16 3xl:w-[70px] h-[25px] lg:h-[29px]
-                    xl:h-[33px] 2xl:h-9 3xl:h-[38px] border border-black border-opacity-40 bg-lime rounded-sm z-10
+                    xl:h-[33px] 2xl:h-9 3xl:h-[38px] ${buttonColor ? "text-white" : ""} border border-black border-opacity-40 bg-lime rounded-sm z-10
                     ${buttonAnimation}`}
-                            onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}>
+                            onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
+                    onMouseEnter={!isMobile ? handleStart : undefined}
+                    onMouseLeave={!isMobile ? handleEnd : undefined}
+                    onTouchStart={isMobile ? handleStart : undefined}
+                    onTouchEnd={isMobile ? handleEnd : undefined}>
                         {buttonLabel}
                     </button>
                 }

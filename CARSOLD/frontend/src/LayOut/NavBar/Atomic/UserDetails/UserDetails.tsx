@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "./Atomic/LoginButton.tsx";
-import Dropdown from "./Atomic/Dropdown.tsx";
+import Dropdown from "./Atomic/Dropdown/Dropdown.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
