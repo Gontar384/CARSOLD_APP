@@ -17,10 +17,12 @@ const PasswordRecChange: React.FC = () => {
                 xl:max-w-[570px] 2xl:max-w-[640px] 3xl:max-w-[720px] mt-20 xs:mt-24 sm:mt-12 lg:mt-14 xl:mt-16 2xl:mt-[72px] 3xl:mt-20
                 pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-8 xs:pb-9 sm:pb-10 lg:pb-12 xl:pb-14 2xl:pb-16 3xl-pb-[72px]
                 bg-lime rounded-sm">
-                    <p className="text-center text-xs xs:text-base 2xl:text-xl 3xl:text-2xl w-10/12 mb-7 xs:mb-8 2xl:mb-9 3xl:mb-10">
-                        Now you can change your password.
+                    <p className="text-center text-sm xs:text-base lg:text-lg 2xl:text-xl 3xl:text-2xl w-10/12 mb-7 xs:mb-8 lg:mb-9 2xl:mb-12 3xl:mb-14">
+                        Now, you can change your password.
                     </p>
+                    <div className="w-full max-w-[250px] xs:max-w-[320px] sm:max-w-[340px] lg:max-w-[370px] xl:max-w-[390px] 2xl:max-w-[430px] 3xl:max-w-[500px]">
                     <PasswordChangeForm setIsChanged={setIsChanged} setWentWrong={setWentWrong} loggedIn={false}/>
+                    </div>
                     {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
                     {wentWrong? <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/>: null}
                 </div>
