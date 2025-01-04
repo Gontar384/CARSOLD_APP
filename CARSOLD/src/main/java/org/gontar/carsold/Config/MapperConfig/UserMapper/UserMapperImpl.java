@@ -1,5 +1,6 @@
-package org.gontar.carsold.Config.MapperConfig;
+package org.gontar.carsold.Config.MapperConfig.UserMapper;
 
+import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.modelmapper.ModelMapper;

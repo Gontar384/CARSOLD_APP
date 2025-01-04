@@ -94,7 +94,7 @@ const PasswordRecovery: React.FC = () => {
                 xl:max-w-[480px] 2xl:max-w-[640px] 3xl:max-w-[770px] mt-20 xs:mt-24 sm:mt-12 lg:mt-14 xl:mt-16 2xl:mt-[72px] 3xl:mt-20
                 pt-5 xs:pt-7 sm:pt-8 lg:pt-9 xl:pt-10 2xl:pt-11 3xl:pt-12 pb-10 xs:pb-11 sm:pb-12 lg:pb-14 xl:pb-16 2xl:pb-[70px] 3xl-pb-[80px]
                 gap-5 xs:gap-7 lg:gap-9 xl:gap-10 2xl:gap-11 3xl:gap-13 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl bg-lime rounded-sm">
-                    <p className="text-center text-xs xs:text-base 2xl:text-xl 3xl:text-2xl w-10/12">
+                    <p className="text-center text-sm xs:text-base lg:text-lg 2xl:text-[21px] 3xl:text-2xl w-10/12">
                         Enter your email, we will automatically send you link to change your password.
                     </p>
                     <Input placeholder={"E-mail"} inputType={"text"} value={email} setValue={setEmail}

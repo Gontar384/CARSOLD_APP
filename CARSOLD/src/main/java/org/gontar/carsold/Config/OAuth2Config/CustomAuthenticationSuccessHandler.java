@@ -2,7 +2,8 @@ package org.gontar.carsold.Config.OAuth2Config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.gontar.carsold.Service.JwtService;
+import org.gontar.carsold.Service.CookieService.CookieService;
+import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.Duration;
 
 //Google authentication
 @Component
@@ -30,10 +30,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final JwtService jwtService;
     private final UserRepository repository;
+    private final CookieService cookieService;
 
-    public CustomAuthenticationSuccessHandler(JwtService jwtService, UserRepository repository) {
+    public CustomAuthenticationSuccessHandler(JwtService jwtService, UserRepository repository, CookieService cookieService) {
         this.jwtService = jwtService;
         this.repository = repository;
+        this.cookieService = cookieService;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             String token = jwtService.generateToken(user.getUsername(), 600);
 
-            ResponseCookie authCookie = createCookie(token);
+            ResponseCookie authCookie = cookieService.createCookie(token,10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
 
             response.sendRedirect(frontendUrl + "details/myOffers");
@@ -71,16 +73,5 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
         return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
-    }
-
-    //creates cookie
-    private ResponseCookie createCookie(String token) {
-        return ResponseCookie.from("JWT", token)
-                .httpOnly(true)
-                .secure(false)                                  //enabled only for production
-                .path("/")
-                .sameSite("Lax")                                //restricts cookies sending via cross-site request
-                .maxAge(Duration.ofHours(10))
-                .build();
     }
 }

@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service;
+package org.gontar.carsold.Service.UserService.MyUserDetailsService;
 
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserPrincipal;
