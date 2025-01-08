@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserGetInfoServiceImpl implements UserGetInfoService {
@@ -46,15 +47,23 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     //checks if username is appropriate
     @Override
     public boolean checkIfUsernameSafe(String username) {
+        if (!isUsernameFreeOfInappropriateWords(username)) {
+            return false;
+        }
+        return isUsernameNonToxic(username);
+    }
 
-        //custom additional check
-        String[] inappropriateWords = {"cwel", "frajer", "chuj"};
+    private boolean isUsernameFreeOfInappropriateWords(String username) {
+        String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn"};
         for (String word : inappropriateWords) {
             if (username.toLowerCase().contains(word)) {
                 return false;
             }
         }
+        return true;
+    }
 
+    private boolean isUsernameNonToxic(String username) {
         String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
         List<String> languages = List.of("en", "pl");
 
@@ -74,7 +83,7 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
             HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
             //parses response
-            JSONObject jsonResponse = new JSONObject(response.getBody());
+            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(response.getBody()));
             double toxicityScore = jsonResponse
                     .getJSONObject("attributeScores")
                     .getJSONObject("TOXICITY")

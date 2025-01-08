@@ -103,7 +103,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
             //parses response
-            JSONObject responseJson = new JSONObject(responseEntity.getBody());
+            JSONObject responseJson = new JSONObject(Objects.requireNonNull(responseEntity.getBody()));
             for (Object entityObj : responseJson.getJSONArray("entities")) {
                 JSONObject entity = (JSONObject) entityObj;
                 String entityType = entity.getString("type");
@@ -183,6 +183,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                     .toString();
 
             String response = restTemplate.getForObject(url, String.class);
+            assert response != null;
             JSONObject jsonResponse = new JSONObject(response);
             JSONArray predictions = jsonResponse.getJSONArray("predictions");
 
@@ -223,6 +224,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
         String response = restTemplate.getForObject(url, String.class);
 
         //parses JSON, extracts city names
+        assert response != null;
         JSONObject jsonResponse = new JSONObject(response);
         JSONArray predictions = jsonResponse.getJSONArray("predictions");
 

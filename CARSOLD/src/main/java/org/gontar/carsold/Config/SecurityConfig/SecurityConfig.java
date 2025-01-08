@@ -43,21 +43,21 @@ public class SecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(                              //path available for authenticated users
-                                "api/auth/csrf",
-                                "api/auth/check-authentication",
-                                "api/auth/register/check-email",
-                                "api/auth/register/check-username",
-                                "api/auth/register/is-username-safe",
-                                "api/auth/register",
-                                "api/auth/activate",
-                                "api/auth/check-active",
-                                "api/auth/check-oauth2",
-                                "api/auth/login",
-                                "api/auth/logout", //this one has to be there to clear JWT if user isn't authenticated or any error occurs
-                                "api/auth/keep-alive",
-                                "api/auth/validate-user",
-                                "api/auth/password-recovery",
-                                "api/auth/password-recovery-change"
+                                "/api/auth/csrf",
+                                "/api/auth/check-authentication",
+                                "/api/auth/register/check-email",
+                                "/api/auth/register/check-username",
+                                "/api/auth/register/is-username-safe",
+                                "/api/auth/register",
+                                "/api/auth/activate",
+                                "/api/auth/check-active",
+                                "/api/auth/check-oauth2",
+                                "/api/auth/login",
+                                "/api/auth/logout", //this one has to be there to clear JWT if user isn't authenticated or any error occurs
+                                "/api/auth/keep-alive",
+                                "/api/auth/validate-user",
+                                "/api/auth/password-recovery",
+                                "/api/auth/password-recovery-change"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing)
