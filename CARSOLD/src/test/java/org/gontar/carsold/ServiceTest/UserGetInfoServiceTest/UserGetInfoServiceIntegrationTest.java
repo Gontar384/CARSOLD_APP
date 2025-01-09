@@ -26,12 +26,16 @@ public class UserGetInfoServiceIntegrationTest {
     }
 
     @Test
-    public void testCheckIfUsernameSafe_withInappropriateUsername() {
+    public void testCheckIfUsernameSafe_withToxicUsername() {
         assertFalse(service.checkIfUsernameSafe("n1gg3r"), "Should return false, username is inappropriate");
+        assertFalse(service.checkIfUsernameSafe("bitch"), "Should return false, username is inappropriate");
+        assertFalse(service.checkIfUsernameSafe("debilJebany"), "Should return false, username is inappropriate");
     }
 
     @Test
-    public void testCheckIfUsernameSafe_withAppropriateUsername() {
+    public void testCheckIfUsernameSafe_withNonToxicUsername() {
         assertTrue(service.checkIfUsernameSafe("Mikey"), "Should return true, username is appropriate");
+        assertTrue(service.checkIfUsernameSafe("CarEnjoyer23"), "Should return true, username is appropriate");
+        assertTrue(service.checkIfUsernameSafe("Ziomal32"), "Should return true, username is appropriate");
     }
 }

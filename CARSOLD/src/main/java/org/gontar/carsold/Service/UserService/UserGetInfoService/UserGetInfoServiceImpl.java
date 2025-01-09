@@ -54,7 +54,7 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     }
 
     private boolean isUsernameFreeOfInappropriateWords(String username) {
-        String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn"};
+        String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn", "hitler"};
         for (String word : inappropriateWords) {
             if (username.toLowerCase().contains(word)) {
                 return false;
@@ -133,7 +133,9 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
         if (jwt != null) {
             String username = jwtService.extractUsername(jwt);
             User user = repository.findByUsername(username);
-            return user.getOauth2User();
+            if (user != null) {
+                return user.getOauth2User();
+            }
         }
         return false;
     }
@@ -145,7 +147,9 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
         if (jwt != null) {
             String username = jwtService.extractUsername(jwt);
             User user = repository.findByUsername(username);
-            return encoder.matches(password, user.getPassword());
+            if (user != null) {
+                return encoder.matches(password, user.getPassword());
+            }
         }
         return false;
     }
@@ -153,12 +157,17 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     //checks if username and password is valid before letting user authenticate
     @Override
     public boolean validateUser(String login, String password) {
-        User user;
-        if (login.contains("@")) {
-            user = repository.findByEmail(login);
-        } else {
-            user = repository.findByUsername(login);
+        if (login != null) {
+            User user;
+            if (login.contains("@")) {
+                user = repository.findByEmail(login);
+            } else {
+                user = repository.findByUsername(login);
+            }
+            if (user != null) {
+                return encoder.matches(password, user.getPassword());
+            }
         }
-        return encoder.matches(password, user.getPassword());
+        return false;
     }
 }
