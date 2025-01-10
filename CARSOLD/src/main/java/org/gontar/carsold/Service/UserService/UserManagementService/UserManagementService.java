@@ -6,9 +6,9 @@ import org.gontar.carsold.Model.UserDto;
 
 
 public interface UserManagementService {
-    void registerUser(UserDto userDto);
-    String recoveryChangePassword(String token, String password, HttpServletResponse response);
-    String changePassword(String password, HttpServletRequest request);
+    boolean registerUser(UserDto userDto);
+    boolean recoveryChangePassword(String token, String password, HttpServletResponse response);
+    boolean changePassword(String password, HttpServletRequest request);
     String getUsername(HttpServletRequest request);
     boolean deleteUserAccount(HttpServletRequest request);
 }

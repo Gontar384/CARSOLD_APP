@@ -79,7 +79,7 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
             headers.add("Content-Type", "application/json");
             //builds API url
             String fullUrl = apiUrl + "?key=" + perspectiveApiKey;
-            //makes request
+            //creates request
             HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
             //parses response

@@ -47,32 +47,50 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     // sends account activating token link via email
     @Override
-    public void registerUser(UserDto userDto) {
-        User existingEmail = repository.findByEmail(userDto.getEmail());
-        User existingUsername = repository.findByUsername(userDto.getUsername());
-        User user;
-        if (existingEmail != null && !existingEmail.getActive()) {
-            user = existingEmail;
-            user.setUsername(userDto.getUsername());
-            user.setPassword(encoder.encode(userDto.getPassword()));
-            user.setActive(false);
-            user.setOauth2User(false);
-        } else if (existingUsername != null && !existingUsername.getActive()) {
-            user = existingUsername;
-            user.setEmail(userDto.getEmail());
-            user.setPassword(encoder.encode(userDto.getPassword()));
-            user.setActive(false);
-            user.setOauth2User(false);
-        } else {
-            user = mapper.mapToEntity(userDto);
-            user.setEmail(userDto.getEmail());
-            user.setUsername(userDto.getUsername());
-            user.setPassword(encoder.encode(userDto.getPassword()));
-            user.setActive(false);
-            user.setOauth2User(false);
-        }
-        repository.save(user);
+    public boolean registerUser(UserDto userDto) {
+        try {
+            User user = findOrCreateUser(userDto);
+            updateUserDetails(user, userDto);
+            repository.save(user);
 
+            sendActivationEmail(user);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error during registration: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private User findOrCreateUser(UserDto userDto) {
+        User existingEmail = repository.findByEmail(userDto.getEmail());
+        if (existingEmail != null) {
+            if (!existingEmail.getActive()) {
+                return existingEmail;
+            } else {
+                throw new IllegalStateException("Account with email " + userDto.getEmail() + " already exists and it's active");
+            }
+        }
+
+        User existingUsername = repository.findByUsername(userDto.getUsername());
+        if (existingUsername != null) {
+            if (!existingUsername.getActive()) {
+                return existingUsername;
+            }
+            throw new IllegalStateException("Account with username " + userDto.getUsername() + " already exists and it's active");
+        }
+
+        return mapper.mapToEntity(userDto);
+    }
+
+    private void updateUserDetails(User user, UserDto userDto) {
+        user.setEmail(userDto.getEmail());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(encoder.encode(userDto.getPassword()));
+        user.setActive(false);
+        user.setOauth2User(false);
+    }
+
+    private void sendActivationEmail(User user) {
         String token = jwtService.generateToken(user.getUsername(), 30);
         String link = frontendUrl + "activate?token=" + token;
         userEmailNotificationService.sendVerificationEmail(user.getEmail(), link);
@@ -80,41 +98,45 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     //changes password when recovery
     @Override
-    public String recoveryChangePassword(String token, String password, HttpServletResponse response) {
-        try {
-            Claims claims = jwtService.extractAllClaims(token);    //gets info about user and token
-            String username = claims.getSubject();                 //gets username from claims
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            boolean isValid = jwtService.validateToken(token, userDetails);
-            if (isValid) {
-                User user = repository.findByUsername(username);
-                user.setPassword(encoder.encode(password));
-                repository.save(user);
-
-                String newToken = jwtService.generateToken(user.getUsername(), 600);    //generates new token for authenticated session
-                ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
-                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());   //adds cookie to response
-                return "success";
-            }
-            return "fail";
-        } catch (Exception e) {
-            System.err.println("Failed to change authenticated user and change password: " + e.getMessage());
-            return "fail";
+    public boolean recoveryChangePassword(String token, String password, HttpServletResponse response) {
+        Claims claims = jwtService.extractAllClaims(token);
+        if (claims == null) {
+            return false;
         }
+
+        String username = claims.getSubject();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (!jwtService.validateToken(token, userDetails)) {
+            return false;
+        }
+
+        User user = repository.findByUsername(username);
+        if (user == null) {
+            return false;
+        }
+
+        user.setPassword(encoder.encode(password));
+        repository.save(user);
+
+        String newToken = jwtService.generateToken(username, 600);
+        ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
+        response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+
+        return true;
     }
 
     //changes password
     @Override
-    public String changePassword(String password, HttpServletRequest request) {
+    public boolean changePassword(String password, HttpServletRequest request) {
         String jwt = jwtService.extractTokenFromCookie(request);
         if (jwt != null) {
             String username = jwtService.extractUsername(jwt);
             User user = repository.findByUsername(username);
             user.setPassword(encoder.encode(password));
             repository.save(user);
-            return "success";
+            return true;
         }
-        return "fail";
+        return false;
     }
 
     //sends username

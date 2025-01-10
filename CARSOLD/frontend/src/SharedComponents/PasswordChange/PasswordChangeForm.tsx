@@ -148,7 +148,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                         token: token,
                         password: password,
                     });
-                    if (response.data === "success") {
+                    if (response.data.success) {
                         setIsChanged?.(true);
                         setPassword("");
                         setPasswordRep("");
@@ -185,7 +185,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                     const response: AxiosResponse = await api.put("api/auth/password-change", {
                         password: password
                     });
-                    if (response.data === "success") {
+                    if (response.data.success) {
                         setIsChanged?.(true);
                         setOldPassword("");
                         setPassword("");
