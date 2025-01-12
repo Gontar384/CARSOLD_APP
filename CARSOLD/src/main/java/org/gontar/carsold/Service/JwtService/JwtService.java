@@ -6,6 +6,9 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +24,14 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+
+    private final UserRepository repository;
+    private final ErrorHandler errorHandler;
     private final String secretKey;
 
-    public JwtService() {
+    public JwtService(UserRepository repository, ErrorHandler errorHandler) {
+        this.repository = repository;
+        this.errorHandler = errorHandler;
         try{
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();                                     //generates HMAC SHA-256 key
@@ -93,5 +101,16 @@ public class JwtService {
             }
         }
         return null;
+    }
+
+    //helper method for user extraction
+    public User extractUserFromRequest(HttpServletRequest request) {
+        String jwt = extractTokenFromCookie(request);
+        if (jwt == null) return errorHandler.logObject("Invalid jwt token");
+        String username = extractUsername(jwt);
+        if (username == null) return errorHandler.logObject("Username not found");
+        User user = repository.findByUsername(username);
+        if (user == null) return errorHandler.logObject("User not found");
+        return user;
     }
 }

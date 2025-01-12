@@ -9,6 +9,6 @@ public interface UserManagementService {
     boolean registerUser(UserDto userDto);
     boolean recoveryChangePassword(String token, String password, HttpServletResponse response);
     boolean changePassword(String password, HttpServletRequest request);
-    String getUsername(HttpServletRequest request);
+    String fetchUsername(HttpServletRequest request);
     boolean deleteUserAccount(HttpServletRequest request);
 }

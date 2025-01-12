@@ -1,6 +1,7 @@
 package org.gontar.carsold.Service.UserService.UserGetInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.ErrorHandler.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -25,11 +26,15 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     private final UserRepository repository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
+    private final ErrorHandler errorHandler;
 
-    public UserGetInfoServiceImpl(UserRepository repository, JwtService jwtService, BCryptPasswordEncoder encoder) {
+    public UserGetInfoServiceImpl(UserRepository repository,
+                                  JwtService jwtService, BCryptPasswordEncoder encoder,
+                                  ErrorHandler errorHandler) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.encoder = encoder;
+        this.errorHandler = errorHandler;
     }
 
     //checks if email exists
@@ -47,18 +52,14 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     //checks if username is appropriate
     @Override
     public boolean checkIfUsernameSafe(String username) {
-        if (!isUsernameFreeOfInappropriateWords(username)) {
-            return false;
-        }
+        if (!isUsernameFreeOfInappropriateWords(username)) return false;
         return isUsernameNonToxic(username);
     }
 
     private boolean isUsernameFreeOfInappropriateWords(String username) {
         String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn", "hitler"};
         for (String word : inappropriateWords) {
-            if (username.toLowerCase().contains(word)) {
-                return false;
-            }
+            if (username.toLowerCase().contains(word)) return false;
         }
         return true;
     }
@@ -92,82 +93,51 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
 
             return toxicityScore < 0.5;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error checking if username is toxic: " + e.getMessage());
             return false;
         }
     }
 
-    //checks if user's account is active
+    //helper method
+    private User manageLogin(String login) {
+        if (login == null) return errorHandler.logObject("No login provided");
+        User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+        if (user == null) return errorHandler.logObject("User not found");
+        return user;
+    }
+
+    //checks if account is active
     @Override
     public boolean checkActive(String login) {
-        User user;
-        if (login.contains("@")) {
-            user = repository.findByEmail(login);
-        } else {
-            user = repository.findByUsername(login);
-        }
-        if (user != null) {
-            return user.getActive();
-        }
-        return false;
+        User user = manageLogin(login);
+        return user != null && user.getActive();
     }
 
-    //checks if user auth with OAuth2
+    //checks if user auth with OAuth2 being non aut
     @Override
     public boolean checkOauth2(String login) {
-        User user;
-        if (login.contains("@")) {
-            user = repository.findByEmail(login);
-        } else {
-            user = repository.findByUsername(login);
-        }
-        if (user != null) {
-            return user.getOauth2User();
-        }
-        return false;
+        User user = manageLogin(login);
+        return user != null && user.getOauth2User();
     }
 
+    //checks if user auth with OAuth2 being auth
     @Override
     public boolean checkGoogleAuth(HttpServletRequest request) {
-        String jwt = jwtService.extractTokenFromCookie(request);
-        if (jwt != null) {
-            String username = jwtService.extractUsername(jwt);
-            User user = repository.findByUsername(username);
-            if (user != null) {
-                return user.getOauth2User();
-            }
-        }
-        return false;
+        User user = jwtService.extractUserFromRequest(request);
+        return user != null && user.getOauth2User();
     }
 
     //validates password
     @Override
     public boolean checkPassword(String password, HttpServletRequest request) {
-        String jwt = jwtService.extractTokenFromCookie(request);
-        if (jwt != null) {
-            String username = jwtService.extractUsername(jwt);
-            User user = repository.findByUsername(username);
-            if (user != null) {
-                return encoder.matches(password, user.getPassword());
-            }
-        }
-        return false;
+        User user = jwtService.extractUserFromRequest(request);
+        return user != null && encoder.matches(password, user.getPassword());
     }
 
     //checks if username and password is valid before letting user authenticate
     @Override
     public boolean validateUser(String login, String password) {
-        if (login != null) {
-            User user;
-            if (login.contains("@")) {
-                user = repository.findByEmail(login);
-            } else {
-                user = repository.findByUsername(login);
-            }
-            if (user != null) {
-                return encoder.matches(password, user.getPassword());
-            }
-        }
-        return false;
+        User user = manageLogin(login);
+        return user != null && encoder.matches(password, user.getPassword());
     }
 }

@@ -1,8 +1,10 @@
 package org.gontar.carsold.ServiceTest.UserManagementServiceTest;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
+import org.gontar.carsold.ErrorHandler.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
@@ -50,13 +52,19 @@ public class UserManagementServiceUnitTest {
     private HttpServletResponse response;
 
     @Mock
+    private HttpServletRequest request;
+
+    @Mock
     private CookieService cookieService;
+
+    @Mock
+    private ErrorHandler errorHandler;
 
     @InjectMocks
     private UserManagementServiceImpl service;
 
     @Test
-    public void registerUser_successfulRegistration_createsNewUser() {
+    public void registerUser_success_createsNewUser() {
         UserDto userDto = new UserDto("test@gmail.com", "testUsername", "testPassword");
         User newUser = new User();
 
@@ -83,7 +91,7 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void registerUser_successfulRegistration_updatesExistingUser() {
+    public void registerUser_success_updatesExistingUser() {
         UserDto userDto = new UserDto("test@gmail.com", "testUsername", "testPassword");
         User existingUser = new User();
         existingUser.setActive(false);
@@ -105,7 +113,7 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void registerUser_unsuccessfulRegistration_userExistsAndIsActive () {
+    public void registerUser_failure_userExistsAndIsActive () {
         UserDto userDto = new UserDto("test@gmail.com", "testUsername", "testPassword");
         User existingUser = new User();
         existingUser.setActive(true);
@@ -120,7 +128,7 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void recoveryChangePassword_tokenHasWrongFormat() {
+    public void recoveryChangePassword_failure_invalidToken() {
         String newPassword = "newPassword";
         String testToken = "testToken";
         when(jwtService.extractAllClaims(testToken)).thenReturn(null);
@@ -134,7 +142,7 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void recoveryChangePassword_tokenHasExpired() {
+    public void recoveryChangePassword_failure_tokenHasExpired() {
         String newPassword = "newPassword";
         String expiredToken = "testToken";
         String testUsername = "extractedUsername";
@@ -156,14 +164,14 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void recoveryChangePassword_passwordChangedSuccessfully() {
+    public void recoveryChangePassword_success_passwordChanged() {
         String newPassword = "newPassword";
         String testToken = "testToken";
         String testUsername = "extractedUsername";
         UserDetails userDetails = mock(UserDetails.class);
         Claims mockedClaims = mock(Claims.class);
         User mockedUser = new User();
-        ResponseCookie mockedCookie = mock(ResponseCookie.class); // Mocked cookie response
+        ResponseCookie mockedCookie = mock(ResponseCookie.class);
         when(jwtService.extractAllClaims(testToken)).thenReturn(mockedClaims);
         when(mockedClaims.getSubject()).thenReturn(testUsername);
         when(userDetailsService.loadUserByUsername(testUsername)).thenReturn(userDetails);
@@ -175,7 +183,7 @@ public class UserManagementServiceUnitTest {
 
         boolean result = service.recoveryChangePassword(testToken, newPassword, response);
 
-        assertTrue(result, "Should return true, token is valid, password changed successfully");
+        assertTrue(result, "Should return true, password changed successfully");
         verify(jwtService).extractAllClaims(testToken);
         verify(userDetailsService).loadUserByUsername(testUsername);
         verify(jwtService).validateToken(testToken, userDetails);
@@ -186,5 +194,72 @@ public class UserManagementServiceUnitTest {
         verify(cookieService).createCookie(anyString(), anyLong());
         verify(response).addHeader(HttpHeaders.SET_COOKIE, mockedCookie.toString()); // Verify cookie added to response
         verifyNoMoreInteractions(jwtService, userDetailsService, repo, encoder, cookieService);
+    }
+
+    @Test
+    public void changePassword_failure_problemWithRequest() {
+        String newPassword = "newPassword";
+        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+
+        boolean result = service.changePassword(newPassword, request);
+
+        assertFalse(result, "Should return false, problem with request");
+        verify(jwtService).extractUserFromRequest(request);
+        verifyNoMoreInteractions(jwtService);
+    }
+
+    @Test
+    public void changePassword_success_passwordChanged() {
+        String newPassword = "newPassword";
+        User mockedUser = new User();
+
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
+        when(encoder.encode(newPassword)).thenReturn("encodedPassword");
+        when(repo.save(mockedUser)).thenReturn(mockedUser);
+
+        boolean result = service.changePassword(newPassword, request);
+
+        assertTrue(result, "Should return true, password changed successfully");
+        verify(jwtService).extractUserFromRequest(request);
+        verify(encoder).encode(newPassword);
+        verify(repo).save(mockedUser);
+        verifyNoMoreInteractions(jwtService, repo, encoder);
+    }
+
+    @Test
+    public void fetchUsername_failure_noProperCookieOrToken() {
+        when(jwtService.extractTokenFromCookie(request)).thenReturn(null);
+
+        String result = service.fetchUsername(request);
+
+        assertNull(result, "Should return null, no proper cookie or token");
+        verify(jwtService).extractTokenFromCookie(request);
+        verifyNoMoreInteractions(jwtService);
+    }
+
+    @Test
+    public void fetchUsername_success_fetched() {
+        String testToken = "testToken";
+        String testUsername = "extractedUsername";
+        when(jwtService.extractTokenFromCookie(request)).thenReturn(testToken);
+        when(jwtService.extractUsername(testToken)).thenReturn(testUsername);
+
+        String result = service.fetchUsername(request);
+
+        assertEquals(testUsername, result);
+        verify(jwtService).extractTokenFromCookie(request);
+        verify(jwtService).extractUsername(testToken);
+        verifyNoMoreInteractions(jwtService);
+    }
+
+    @Test
+    public void deleteUserAccount_failure_problemWithRequest() {
+        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+
+        boolean result = service.deleteUserAccount(request);
+
+        assertFalse(result, "Should return false, problem with request");
+        verify(jwtService).extractUserFromRequest(request);
+        verifyNoMoreInteractions(jwtService);
     }
 }

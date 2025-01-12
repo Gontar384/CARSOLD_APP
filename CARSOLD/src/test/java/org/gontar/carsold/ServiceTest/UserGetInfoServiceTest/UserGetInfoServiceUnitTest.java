@@ -1,6 +1,7 @@
 package org.gontar.carsold.ServiceTest.UserGetInfoServiceTest;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.ErrorHandler.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -30,6 +31,9 @@ public class UserGetInfoServiceUnitTest {
 
     @Mock
     private BCryptPasswordEncoder encoder;
+
+    @Mock
+    private ErrorHandler errorHandler;
 
     @InjectMocks
     private UserGetInfoServiceImpl service;
@@ -77,9 +81,9 @@ public class UserGetInfoServiceUnitTest {
     @Test
     public void testCheckActive_withEmail_isActive() {
         String testEmail = "test@gmail.com";
-        User mockUser = new User();
-        when(repo.findByEmail(testEmail)).thenReturn(mockUser);
-        mockUser.setActive(true);
+        User mockedUser = new User();
+        when(repo.findByEmail(testEmail)).thenReturn(mockedUser);
+        mockedUser.setActive(true);
 
         assertTrue(service.checkActive(testEmail), "Should return true, user is active");
         verify(repo).findByEmail(testEmail);
@@ -89,9 +93,9 @@ public class UserGetInfoServiceUnitTest {
     @Test
     public void testCheckActive_withUsername_isNotActive() {
         String testUsername = "testUsername";
-        User mockUser = new User();
-        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
-        mockUser.setActive(false);
+        User mockedUser = new User();
+        when(repo.findByUsername(testUsername)).thenReturn(mockedUser);
+        mockedUser.setActive(false);
 
         assertFalse(service.checkActive(testUsername), "Should return false, user is not active");
         verify(repo).findByUsername(testUsername);
@@ -111,9 +115,9 @@ public class UserGetInfoServiceUnitTest {
     @Test
     public void testCheckOauth2_withEmail_isOauth2User() {
         String testEmail = "test@gmail.com";
-        User mockUser = new User();
-        when(repo.findByEmail(testEmail)).thenReturn(mockUser);
-        mockUser.setOauth2User(true);
+        User mockedUser = new User();
+        when(repo.findByEmail(testEmail)).thenReturn(mockedUser);
+        mockedUser.setOauth2User(true);
 
         assertTrue(service.checkOauth2(testEmail), "Should return true, it is an oauth2 user");
         verify(repo).findByEmail(testEmail);
@@ -123,11 +127,11 @@ public class UserGetInfoServiceUnitTest {
     @Test
     public void testCheckOauth2_withUsername_isNotOauth2User() {
         String testUsername = "testUsername";
-        User mockUser = new User();
-        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
-        mockUser.setOauth2User(false);
+        User mockedUser = new User();
+        when(repo.findByUsername(testUsername)).thenReturn(mockedUser);
+        mockedUser.setOauth2User(false);
 
-        assertFalse(service.checkOauth2(testUsername), "Should return false, it is not an oauth2 user");
+        assertFalse(service.checkOauth2(testUsername), "Should return false, it is not a oauth2 user");
         verify(repo).findByUsername(testUsername);
         verify(repo, never()).findByEmail(anyString());
     }
@@ -143,160 +147,83 @@ public class UserGetInfoServiceUnitTest {
     }
 
     @Test
-    public void testCheckGoogleAuth_validJwt_isAuthViaGoogle() {
-        String jwt = "validJwt";
-        String username = "testUsername";
-        User mockUser = new User();
-        mockUser.setOauth2User(true);
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(mockUser);
+    public void testCheckGoogleAuth_isAuthViaGoogle() {
+        User mockedUser = new User();
+        mockedUser.setOauth2User(true);
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
 
         boolean result = service.checkGoogleAuth(request);
 
         assertTrue(result, "Should return true, jwt is valid, user is auth via Google");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verifyNoMoreInteractions(repo, jwtService);
+        verify(jwtService).extractUserFromRequest(request);
+        verifyNoMoreInteractions(jwtService);
     }
 
     @Test
-    public void testCheckGoogleAuth_validJwt_isNotAuthViaGoogle() {
-        String jwt = "validJwt";
-        String username = "testUsername";
-        User mockUser = new User();
-        mockUser.setOauth2User(false);
+    public void testCheckGoogleAuth_isNotAuthViaGoogle() {
+        User mockedUser = new User();
+        mockedUser.setOauth2User(false);
 
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(mockUser);
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
 
         boolean result = service.checkGoogleAuth(request);
 
         assertFalse(result, "Should return false, jwt is valid, user is not auth via Google");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verifyNoMoreInteractions(repo, jwtService);
+        verify(jwtService).extractUserFromRequest(request);
+        verifyNoMoreInteractions(jwtService);
     }
 
     @Test
-    public void testCheckGoogleAuth_invalidJwt() {
-        String jwt = "invalidJwt";
-
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(null);
+    public void testCheckGoogleAuth_problemWithRequest() {
+        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
 
         boolean result = service.checkGoogleAuth(request);
 
-        assertFalse(result, "Should return false, jwt is invalid, username not extracted");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
+        assertFalse(result, "Should return false, problem with request");
+        verify(jwtService).extractUserFromRequest(request);
         verifyNoMoreInteractions(jwtService);
     }
 
     @Test
-    public void testCheckGoogleAuth_noJwt() {
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(null);
-
-        boolean result = service.checkGoogleAuth(request);
-
-        assertFalse(result, "Should return false, jwt is not present");
-        verify(jwtService).extractTokenFromCookie(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testCheckGoogleAuth_validJwt_invalidUsername() {
-        String jwt = "validJwt";
-        String username = "userNotFound";
-
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(null);
-
-        boolean result = service.checkGoogleAuth(request);
-
-        assertFalse(result, "Should return false, user not found");
-
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testCheckPassword_invalidJwt() {
-        String password = "testPassword";
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(null);
-
-        boolean result = service.checkPassword(password, request);
-
-        assertFalse(result, "Should return false, jwt is not valid");
-        verify(jwtService).extractTokenFromCookie(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testCheckPassword_validJwt_userNotFound() {
-        String jwt = "validJwt";
-        String username = "userNotFound";
-
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(null);
-
-        boolean result = service.checkPassword(jwt, request);
-
-        assertFalse(result, "Should return false, jwt is valid, but user not found");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testCheckPassword_validJwt_invalidPassword() {
-        String jwt = "testJwt";
-        String username = "testUsername";
-        User mockUser = new User();
-        String password = "invalidPassword";
-
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(mockUser);
-        when(encoder.matches(password, mockUser.getPassword())).thenReturn(false);
-
-        boolean result = service.checkPassword(password, request);
-
-        assertFalse(result, "Should return false, password is invalid");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verify(encoder).matches(password, mockUser.getPassword());
-        verifyNoMoreInteractions(jwtService, repo, encoder);
-    }
-
-    @Test
-    public void testCheckPassword_validJwt_validPassword() {
-        String jwt = "validJwt";
-        String username = "testUsername";
-        User mockUser = new User();
+    public void testCheckPassword_passwordIsTheSame() {
+        User mockedUser = new User();
         String password = "validPassword";
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(jwt);
-        when(jwtService.extractUsername(jwt)).thenReturn(username);
-        when(repo.findByUsername(username)).thenReturn(mockUser);
-        when(encoder.matches(password, mockUser.getPassword())).thenReturn(true);
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
+        when(encoder.matches(password, mockedUser.getPassword())).thenReturn(true);
 
         boolean result = service.checkPassword(password, request);
 
-        assertTrue(result, "Should return true, password is valid");
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(jwt);
-        verify(repo).findByUsername(username);
-        verify(encoder).matches(password, mockUser.getPassword());
-        verifyNoMoreInteractions(jwtService, repo, encoder);
+        assertTrue(result, "Should return true, password is the same");
+        verify(jwtService).extractUserFromRequest(request);
+        verify(encoder).matches(password, mockedUser.getPassword());
+        verifyNoMoreInteractions(jwtService, encoder);
+    }
+
+    @Test
+    public void testCheckPassword_passwordIsDifferent() {
+        User mockedUser = new User();
+        String password = "validPassword";
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
+        when(encoder.matches(password, mockedUser.getPassword())).thenReturn(false);
+
+        boolean result = service.checkPassword(password, request);
+
+        assertFalse(result, "Should return false, password is not the same");
+        verify(jwtService).extractUserFromRequest(request);
+        verify(encoder).matches(password, mockedUser.getPassword());
+        verifyNoMoreInteractions(jwtService, encoder);
+    }
+
+    @Test
+    public void testCheckPassword_problemWithRequest() {
+        String password = "testPassword";
+        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+
+        boolean result = service.checkPassword(password, request);
+
+        assertFalse(result, "Should return false, problem with request");
+        verify(jwtService).extractUserFromRequest(request);
+        verifyNoMoreInteractions(jwtService);
     }
 
     @Test
@@ -334,22 +261,6 @@ public class UserGetInfoServiceUnitTest {
     }
 
     @Test
-    public void testValidateUser_validPassword() {
-        String testPassword = "testPassword";
-        String username = "testUsername";
-        User mockUser = new User();
-        when(repo.findByUsername(username)).thenReturn(mockUser);
-        when(encoder.matches(testPassword, mockUser.getPassword())).thenReturn(true);
-
-        boolean result = service.validateUser(username, testPassword);
-
-        assertTrue(result, "Should return true, password is valid");
-        verify(repo).findByUsername(username);
-        verify(encoder).matches(testPassword, mockUser.getPassword());
-        verifyNoMoreInteractions(repo, encoder);
-    }
-
-    @Test
     public void testValidateUser_invalidPassword() {
         String password = "testPassword";
         String username = "testUsername";
@@ -362,6 +273,22 @@ public class UserGetInfoServiceUnitTest {
         assertFalse(result, "Should return false, password is invalid");
         verify(repo).findByUsername(username);
         verify(encoder).matches(password, mockUser.getPassword());
+        verifyNoMoreInteractions(repo, encoder);
+    }
+
+    @Test
+    public void testValidateUser_validPassword() {
+        String testPassword = "testPassword";
+        String username = "testUsername";
+        User mockUser = new User();
+        when(repo.findByUsername(username)).thenReturn(mockUser);
+        when(encoder.matches(testPassword, mockUser.getPassword())).thenReturn(true);
+
+        boolean result = service.validateUser(username, testPassword);
+
+        assertTrue(result, "Should return true, password is valid");
+        verify(repo).findByUsername(username);
+        verify(encoder).matches(testPassword, mockUser.getPassword());
         verifyNoMoreInteractions(repo, encoder);
     }
 }
