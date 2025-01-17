@@ -26,10 +26,9 @@ public class UserAuthenticationController {
 
     //activates account
     @GetMapping("/auth/activate")
-    public ResponseEntity<String> getUserActivated(@RequestParam("token") String token,
-                                                   HttpServletResponse response) {
-        String message = service.activateAccount(token, response);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<Boolean> getUserActivated(@RequestParam("token") String token, HttpServletResponse response) {
+        boolean result = service.activateAccount(token, response);
+        return ResponseEntity.ok(result);
     }
 
     //gets csrf token when app mounts
@@ -38,9 +37,17 @@ public class UserAuthenticationController {
         return token;
     }
 
+    //login, authenticate and authorize user
+    @GetMapping("/auth/login")
+    public ResponseEntity<Boolean> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
+    String password, HttpServletResponse response) {
+        boolean result = service.authenticate(login, password, response);
+        return ResponseEntity.ok(result);
+    }
+
     //checks user authentication
     @GetMapping("/auth/check-authentication")
-    public ResponseEntity<Map<String, Boolean>> getAuthentication(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Boolean>> getAuthenticationCheck(HttpServletRequest request) {
         Map<String, Boolean> response = new HashMap<>();
         boolean isAuth = service.checkAuthentication(request);
         response.put("isAuth", isAuth);
@@ -49,17 +56,9 @@ public class UserAuthenticationController {
 
     //logs out, deletes JWT
     @GetMapping("/auth/logout")
-    public ResponseEntity<String> getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        service.logout(request, response, authentication);
-        return ResponseEntity.ok("Logged out");
-    }
-
-    //login, authenticate and authorize user
-    @GetMapping("/auth/login")
-    public ResponseEntity<String> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
-    String password, HttpServletResponse response) {
-        service.authenticate(login, password, response);
-        return ResponseEntity.ok("User logged in");
+    public ResponseEntity<Boolean> getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        boolean result = service.logout(request, response, authentication);
+        return ResponseEntity.ok(result);
     }
 
     //refreshes JWT, sends new one with new expiration date

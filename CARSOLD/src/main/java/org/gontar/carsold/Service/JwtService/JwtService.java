@@ -10,6 +10,7 @@ import org.gontar.carsold.ErrorHandler.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -28,10 +29,12 @@ public class JwtService {
     private final UserRepository repository;
     private final ErrorHandler errorHandler;
     private final String secretKey;
+    private final UserDetailsService userDetailsService;
 
-    public JwtService(UserRepository repository, ErrorHandler errorHandler) {
+    public JwtService(UserRepository repository, ErrorHandler errorHandler, UserDetailsService userDetailsService) {
         this.repository = repository;
         this.errorHandler = errorHandler;
+        this.userDetailsService = userDetailsService;
         try{
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();                                     //generates HMAC SHA-256 key
@@ -103,7 +106,16 @@ public class JwtService {
         return null;
     }
 
-    //helper method for user extraction
+    //helper method for username extraction from request
+    public String extractUsernameFromRequest(HttpServletRequest request) {
+        String jwt = extractTokenFromCookie(request);
+        if (jwt == null) return errorHandler.logString("Invalid jwt token");
+        String username = extractUsername(jwt);
+        if (username == null) return errorHandler.logString("Username not found");
+        return username;
+    }
+
+    //helper method for user extraction from request
     public User extractUserFromRequest(HttpServletRequest request) {
         String jwt = extractTokenFromCookie(request);
         if (jwt == null) return errorHandler.logObject("Invalid jwt token");
@@ -112,5 +124,16 @@ public class JwtService {
         User user = repository.findByUsername(username);
         if (user == null) return errorHandler.logObject("User not found");
         return user;
+    }
+
+    //helper method for token extraction and validation
+    public boolean extractAndValidateTokenFromRequest(HttpServletRequest request) {
+        String jwt = extractTokenFromCookie(request);
+        if (jwt == null) return false; //no log because it performs too many times, even when user is logged out
+        String username = extractUsername(jwt);
+        if (username == null) return errorHandler.logBoolean("Username not found");
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (userDetails == null) return errorHandler.logBoolean("User details not found");
+        return validateToken(jwt, userDetails);
     }
 }

@@ -20,7 +20,7 @@ public class UserEmailNotificationController {
     //sends password recovery email
     @GetMapping("/auth/password-recovery")
     public ResponseEntity<String> getPasswordRecoveryEmail(@RequestParam("email") String email) {
-        service.sendPasswordRecoveryEmail(email);
-        return ResponseEntity.ok("Email sent");
+        boolean result = service.sendPasswordRecoveryEmail(email);
+        return ResponseEntity.ok(result ? "Email sent" : "Email sent failed");
     }
 }

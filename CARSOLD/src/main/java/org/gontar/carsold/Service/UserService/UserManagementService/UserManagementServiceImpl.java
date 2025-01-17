@@ -56,11 +56,13 @@ public class UserManagementServiceImpl implements UserManagementService {
     public boolean registerUser(UserDto userDto) {
         try {
             User user = findOrCreateUser(userDto);
-            if (user == null) return errorHandler.logBoolean("It's impossible to register user");
+            if (user == null) return errorHandler.logBoolean("User not provided");
             updateUserDetails(user, userDto);
-            repository.save(user);
 
-            sendActivationEmail(user);
+            boolean emailSendingResult = sendActivationEmail(user);
+            if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
+
+            repository.save(user);
             return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error registering user: " + e.getMessage());
@@ -76,7 +78,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         User existingUsername = repository.findByUsername(userDto.getUsername());
         if (existingUsername != null) {
             if (!existingUsername.getActive()) return existingUsername;
-            return errorHandler.logObject("Account exists and it's active");
+            return errorHandler.logObject("Account with username " + userDto.getUsername() + " already exists and it's active");
         }
         return mapper.mapToEntity(userDto);
     }
@@ -90,11 +92,11 @@ public class UserManagementServiceImpl implements UserManagementService {
         user.setOauth2User(false);
     }
 
-    private void sendActivationEmail(User user) {
-        if (user == null) return;
+    private boolean sendActivationEmail(User user) {
+        if (user == null) return errorHandler.logBoolean("User not found");
         String token = jwtService.generateToken(user.getUsername(), 30);
         String link = frontendUrl + "activate?token=" + token;
-        userEmailNotificationService.sendVerificationEmail(user.getEmail(), link);
+        return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
     }
 
     //changes password when recovery

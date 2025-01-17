@@ -83,7 +83,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 return;
             }
             if (file.size > 3 * 1024 * 1024) {
-                setMessage("Couldn't upload, image is too large.");
+                setMessage("Couldn't upload, image is too large");
                 return;
             }
             setMessage("");
@@ -98,9 +98,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                     setInputActive(false);
                     setProfilePicChange(true);
                     setInputClickable(false)
-                    if (response.data.info) {
-                        setMessage(response.data.info);
-                    }
+                    if (!response.data.info) setMessage("Couldn't upload, image is inappropriate");
                 }
             } catch (error) {
                 console.log('Error uploading pic: ', error);

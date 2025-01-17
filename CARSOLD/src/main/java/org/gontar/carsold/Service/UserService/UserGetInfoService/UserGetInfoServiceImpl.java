@@ -98,12 +98,10 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
         }
     }
 
-    //helper method
+    //helper method to find user by email or username
     private User manageLogin(String login) {
         if (login == null) return errorHandler.logObject("No login provided");
-        User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
-        if (user == null) return errorHandler.logObject("User not found");
-        return user;
+        return login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
     }
 
     //checks if account is active

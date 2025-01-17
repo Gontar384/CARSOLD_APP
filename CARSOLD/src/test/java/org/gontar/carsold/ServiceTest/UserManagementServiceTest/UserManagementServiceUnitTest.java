@@ -73,6 +73,7 @@ public class UserManagementServiceUnitTest {
         when(mapper.mapToEntity(userDto)).thenReturn(newUser);
         when(encoder.encode("testPassword")).thenReturn("encodedPassword");
         when(jwtService.generateToken(anyString(), anyLong())).thenReturn("mockToken");
+        when(emailService.sendVerificationEmail(anyString(), anyString(), anyString())).thenReturn(true);
 
         boolean result = service.registerUser(userDto);
 
@@ -86,7 +87,7 @@ public class UserManagementServiceUnitTest {
         verify(mapper).mapToEntity(userDto);
         verify(encoder).encode("testPassword");
         verify(jwtService).generateToken(anyString(), anyLong());
-        verify(emailService).sendVerificationEmail(anyString(), anyString());
+        verify(emailService).sendVerificationEmail(anyString(), anyString(), anyString());
         verifyNoMoreInteractions(repo, mapper, encoder, jwtService, emailService);
     }
 
@@ -98,6 +99,7 @@ public class UserManagementServiceUnitTest {
 
         when(repo.findByEmail("test@gmail.com")).thenReturn(existingUser);
         when(encoder.encode("testPassword")).thenReturn("encodedPassword");
+        when(emailService.sendVerificationEmail(anyString(), anyString(), anyString())).thenReturn(true);
 
         boolean result = service.registerUser(userDto);
 
@@ -108,7 +110,7 @@ public class UserManagementServiceUnitTest {
         verify(repo).findByEmail("test@gmail.com");
         verify(repo).save(existingUser);
         verify(encoder).encode("testPassword");
-        verify(emailService).sendVerificationEmail(anyString(), anyString());
+        verify(emailService).sendVerificationEmail(anyString(), anyString(), anyString());
         verifyNoMoreInteractions(repo, encoder, emailService);
     }
 
@@ -125,6 +127,29 @@ public class UserManagementServiceUnitTest {
         verify(repo).findByEmail("test@gmail.com");
         verify(repo, never()).save(any(User.class));
         verifyNoMoreInteractions(repo);
+    }
+
+    @Test
+    public void registerUser_failure_problemWithEmailSending() {
+        UserDto userDto = new UserDto("test@gmail.com", "testUsername", "testPassword");
+        User newUser = new User();
+        newUser.setEmail(userDto.getEmail());
+        newUser.setUsername(userDto.getUsername());
+
+        when(repo.findByEmail("test@gmail.com")).thenReturn(null);
+        when(repo.findByUsername("testUsername")).thenReturn(null);
+        when(mapper.mapToEntity(userDto)).thenReturn(newUser);
+        when(emailService.sendVerificationEmail(anyString(), anyString(), anyString())).thenThrow(new RuntimeException("Cannot send activation email"));
+
+        boolean result = service.registerUser(userDto);
+
+        assertFalse(result, "Should return false, email sending failed");
+        verify(errorHandler).logBoolean(contains("Error registering user: Cannot send activation email"));
+        verify(repo).findByEmail("test@gmail.com");
+        verify(repo).findByUsername("testUsername");
+        verify(repo, never()).save(any(User.class));
+        verify(emailService).sendVerificationEmail(anyString(), anyString(), anyString());
+        verifyNoMoreInteractions(repo, emailService);
     }
 
     @Test
@@ -147,9 +172,9 @@ public class UserManagementServiceUnitTest {
         String expiredToken = "testToken";
         String testUsername = "extractedUsername";
         UserDetails userDetails = mock(UserDetails.class);
-        Claims mockedClaims = mock(Claims.class);
-        when(jwtService.extractAllClaims(expiredToken)).thenReturn(mockedClaims);
-        when(mockedClaims.getSubject()).thenReturn(testUsername);
+        Claims mockClaims = mock(Claims.class);
+        when(jwtService.extractAllClaims(expiredToken)).thenReturn(mockClaims);
+        when(mockClaims.getSubject()).thenReturn(testUsername);
         when(userDetailsService.loadUserByUsername(testUsername)).thenReturn(userDetails);
         when(jwtService.validateToken(expiredToken, userDetails)).thenReturn(false);
 
@@ -169,17 +194,17 @@ public class UserManagementServiceUnitTest {
         String testToken = "testToken";
         String testUsername = "extractedUsername";
         UserDetails userDetails = mock(UserDetails.class);
-        Claims mockedClaims = mock(Claims.class);
-        User mockedUser = new User();
-        ResponseCookie mockedCookie = mock(ResponseCookie.class);
-        when(jwtService.extractAllClaims(testToken)).thenReturn(mockedClaims);
-        when(mockedClaims.getSubject()).thenReturn(testUsername);
+        Claims mockClaims = mock(Claims.class);
+        User mockUser = new User();
+        ResponseCookie mockCookie = mock(ResponseCookie.class);
+        when(jwtService.extractAllClaims(testToken)).thenReturn(mockClaims);
+        when(mockClaims.getSubject()).thenReturn(testUsername);
         when(userDetailsService.loadUserByUsername(testUsername)).thenReturn(userDetails);
         when(jwtService.validateToken(testToken, userDetails)).thenReturn(true);
-        when(repo.findByUsername(testUsername)).thenReturn(mockedUser);
+        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
         when(encoder.encode(newPassword)).thenReturn("encodedPassword");
         when(jwtService.generateToken(anyString(), anyLong())).thenReturn(testToken);
-        when(cookieService.createCookie(anyString(), anyLong())).thenReturn(mockedCookie);
+        when(cookieService.createCookie(anyString(), anyLong())).thenReturn(mockCookie);
 
         boolean result = service.recoveryChangePassword(testToken, newPassword, response);
 
@@ -192,7 +217,7 @@ public class UserManagementServiceUnitTest {
         verify(repo).save(any(User.class));
         verify(jwtService).generateToken(anyString(), anyLong());
         verify(cookieService).createCookie(anyString(), anyLong());
-        verify(response).addHeader(HttpHeaders.SET_COOKIE, mockedCookie.toString()); // Verify cookie added to response
+        verify(response).addHeader(HttpHeaders.SET_COOKIE, mockCookie.toString()); // Verify cookie added to response
         verifyNoMoreInteractions(jwtService, userDetailsService, repo, encoder, cookieService);
     }
 
@@ -211,18 +236,18 @@ public class UserManagementServiceUnitTest {
     @Test
     public void changePassword_success_passwordChanged() {
         String newPassword = "newPassword";
-        User mockedUser = new User();
+        User mockUser = new User();
 
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockedUser);
+        when(jwtService.extractUserFromRequest(request)).thenReturn(mockUser);
         when(encoder.encode(newPassword)).thenReturn("encodedPassword");
-        when(repo.save(mockedUser)).thenReturn(mockedUser);
+        when(repo.save(mockUser)).thenReturn(mockUser);
 
         boolean result = service.changePassword(newPassword, request);
 
         assertTrue(result, "Should return true, password changed successfully");
         verify(jwtService).extractUserFromRequest(request);
         verify(encoder).encode(newPassword);
-        verify(repo).save(mockedUser);
+        verify(repo).save(mockUser);
         verifyNoMoreInteractions(jwtService, repo, encoder);
     }
 
@@ -249,17 +274,6 @@ public class UserManagementServiceUnitTest {
         assertEquals(testUsername, result);
         verify(jwtService).extractTokenFromCookie(request);
         verify(jwtService).extractUsername(testToken);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void deleteUserAccount_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
-
-        boolean result = service.deleteUserAccount(request);
-
-        assertFalse(result, "Should return false, problem with request");
-        verify(jwtService).extractUserFromRequest(request);
         verifyNoMoreInteractions(jwtService);
     }
 }

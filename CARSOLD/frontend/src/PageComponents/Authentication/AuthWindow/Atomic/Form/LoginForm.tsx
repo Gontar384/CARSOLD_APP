@@ -107,13 +107,12 @@ const LoginForm: React.FC = () => {
                     const response = await api.get(`api/auth/login`, {
                         params: {login, password}
                     });
-                    if (response) {
+                    if (response.data) {
                         setIsLoggedIn(true);
                         setTimeout(async () => {
                             await checkAuth();
                         }, 2000)
-                    }
-                    if (!response.data) {
+                    } else {
                         console.log("Authentication failed");
                     }
                 }

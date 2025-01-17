@@ -3,6 +3,7 @@ import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
+import {AxiosResponse} from "axios";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {
@@ -53,15 +54,18 @@ export const useUserDetails = () => {
     const logout = async () => {
         try {
             setTimeout( async () => {
-                await api.get(`api/auth/logout`);
-                navigate("/authenticate/login");
-                await checkAuth();
+                const response: AxiosResponse = await api.get(`api/auth/logout`);
+                if (response.data) {
+                    navigate("/authenticate/login");
+                    await checkAuth();
+                } else {
+                    console.log("Logout failed")
+                }
             }, 1000)
         } catch (error) {
             console.log("Error during logout: ", error);
         }
     }  //logout
-
 
     return {userDetails, usernameFetched, handleUsernameFetch, logout, profilePic, profilePicFetched, handleProfilePicFetch}
 }

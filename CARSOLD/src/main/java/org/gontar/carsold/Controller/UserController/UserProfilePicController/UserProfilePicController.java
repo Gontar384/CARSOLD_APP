@@ -30,21 +30,17 @@ public class UserProfilePicController {
 
     //uploads images to cloud and checks for sensitive content
     @PutMapping("/storage-upload-profilePic")
-    public ResponseEntity<Map<String, String>> updateImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        try {
-            Map<String, String> response = new HashMap<>();
-            String info = service.uploadProfilePicWithSafeSearch(file, request);
-            response.put("info", info);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.ok(Map.of("Error uploading image: ", e.getMessage()));
-        }
+    public ResponseEntity<Map<String, Boolean>> updateImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<>();
+        boolean result = service.uploadProfilePicWithSafeSearch(file, request);
+        response.put("info", result);
+        return ResponseEntity.ok(response);
     }
 
     //deletes profilePic
     @DeleteMapping("/storage-delete-profilePic")
     public ResponseEntity<String> deleteImage(HttpServletRequest request) {
-        service.deleteProfilePic(request);
-        return ResponseEntity.ok("Image deleted");
+        boolean result = service.deleteProfilePic(request);
+        return ResponseEntity.ok(result ? "Image deleted" : "Error deleting image");
     }
 }

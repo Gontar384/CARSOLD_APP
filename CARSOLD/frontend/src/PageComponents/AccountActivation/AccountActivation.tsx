@@ -20,7 +20,7 @@ const AccountActivation: React.FC = () => {
         const activateAccount = async (token: string) => {
             try {
                 const response = await api.get(`api/auth/activate`, {params: {token}});
-                if (response.data === "Activation failed") {
+                if (!response.data) {
                     setColor("bg-coolYellow");
                     setActivationMessage("Link has expired, register again please...");
                     setTimeout(() => {

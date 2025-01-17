@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+//need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarsoldApplication.class)
 public class UserGetInfoServiceIntegrationTest {
@@ -26,16 +27,24 @@ public class UserGetInfoServiceIntegrationTest {
     }
 
     @Test
+    public void testCheckIfUsernameSafe_withInappropriateUsername() {
+        assertFalse(service.checkIfUsernameSafe("testCwel"), "Should return false, username is inappropriate");
+        assertFalse(service.checkIfUsernameSafe("testFrajer"));
+        assertFalse(service.checkIfUsernameSafe("testMurzyn"));
+        assertFalse(service.checkIfUsernameSafe("hitler12"));
+    }
+
+    @Test
     public void testCheckIfUsernameSafe_withToxicUsername() {
         assertFalse(service.checkIfUsernameSafe("n1gg3r"), "Should return false, username is inappropriate");
-        assertFalse(service.checkIfUsernameSafe("bitch"), "Should return false, username is inappropriate");
-        assertFalse(service.checkIfUsernameSafe("debilJebany"), "Should return false, username is inappropriate");
+        assertFalse(service.checkIfUsernameSafe("bitch"));
+        assertFalse(service.checkIfUsernameSafe("debilJebany"));
     }
 
     @Test
     public void testCheckIfUsernameSafe_withNonToxicUsername() {
         assertTrue(service.checkIfUsernameSafe("Mikey"), "Should return true, username is appropriate");
-        assertTrue(service.checkIfUsernameSafe("CarEnjoyer23"), "Should return true, username is appropriate");
-        assertTrue(service.checkIfUsernameSafe("Ziomal32"), "Should return true, username is appropriate");
+        assertTrue(service.checkIfUsernameSafe("CarEnjoyer23"));
+        assertTrue(service.checkIfUsernameSafe("Ziomal32"));
     }
 }

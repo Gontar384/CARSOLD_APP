@@ -64,7 +64,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             ResponseCookie authCookie = cookieService.createCookie(token,10);
             response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
-
             response.sendRedirect(frontendUrl + "details/myOffers");
         }
     }

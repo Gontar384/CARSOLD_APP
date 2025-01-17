@@ -19,4 +19,8 @@ public class ErrorHandler {
         System.err.println(message);
         return null;
     }
+
+    public void logVoid(String message) {
+        System.err.println(message);
+    }
 }
