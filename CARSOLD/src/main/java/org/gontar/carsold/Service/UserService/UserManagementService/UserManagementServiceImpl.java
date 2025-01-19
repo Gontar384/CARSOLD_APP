@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
@@ -55,15 +55,18 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public boolean registerUser(UserDto userDto) {
         try {
-            User user = findOrCreateUser(userDto);
-            if (user == null) return errorHandler.logBoolean("User not provided");
-            updateUserDetails(user, userDto);
+            if (userDto != null) {
+                User user = findOrCreateUser(userDto);
+                if (user == null) return false;
+                updateUserDetails(user, userDto);
 
-            boolean emailSendingResult = sendActivationEmail(user);
-            if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
+                boolean emailSendingResult = sendActivationEmail(user);
+                if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
 
-            repository.save(user);
-            return true;
+                repository.save(user);
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error registering user: " + e.getMessage());
         }
@@ -93,31 +96,36 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean sendActivationEmail(User user) {
-        if (user == null) return errorHandler.logBoolean("User not found");
-        String token = jwtService.generateToken(user.getUsername(), 30);
-        String link = frontendUrl + "activate?token=" + token;
-        return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
+        if (user != null) {
+            String token = jwtService.generateToken(user.getUsername(), 30);
+            String link = frontendUrl + "activate?token=" + token;
+            return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
+        }
+        return false;
     }
 
     //changes password when recovery
     @Override
     public boolean recoveryChangePassword(String token, String password, HttpServletResponse response) {
         try {
-            Claims claims = jwtService.extractAllClaims(token);
-            if (claims == null) return errorHandler.logBoolean("Token is invalid");
-            String username = claims.getSubject();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if (!jwtService.validateToken(token, userDetails)) return errorHandler.logBoolean("Token has expired");
+            if (token != null) {
+                Claims claims = jwtService.extractAllClaims(token);
+                if (claims == null) return errorHandler.logBoolean("Token is invalid");
+                String username = claims.getSubject();
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (!jwtService.validateToken(token, userDetails)) return errorHandler.logBoolean("Token has expired");
 
-            User user = repository.findByUsername(username);
-            if (user == null) return errorHandler.logBoolean("User not found");
-            user.setPassword(encoder.encode(password));
-            repository.save(user);
+                User user = repository.findByUsername(username);
+                if (user == null) return errorHandler.logBoolean("User not found");
+                user.setPassword(encoder.encode(password));
+                repository.save(user);
 
-            String newToken = jwtService.generateToken(username, 600);
-            ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
-            return true;
+                String newToken = jwtService.generateToken(username, 600);
+                ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
+                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error recovery changing password");
         }
@@ -127,21 +135,24 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public boolean changePassword(String password, HttpServletRequest request) {
         try {
-            User user = jwtService.extractUserFromRequest(request);
-            user.setPassword(encoder.encode(password));
-            repository.save(user);
-            return true;
+            if (password != null) {
+                User user = jwtService.extractUserFromRequest(request);
+                if (user != null){
+                    user.setPassword(encoder.encode(password));
+                    repository.save(user);
+                    return true;
+                }
+            }
+            return false;
         } catch (Exception e) {
-            return errorHandler.logBoolean("Error changing password");
+            return errorHandler.logBoolean("Error changing password: " + e.getMessage());
         }
     }
 
     //sends username
     @Override
     public String fetchUsername(HttpServletRequest request) {
-        String jwt = jwtService.extractTokenFromCookie(request);
-        if (jwt == null) return errorHandler.logString("Invalid jwt token");
-        return jwtService.extractUsername(jwt);
+        return jwtService.extractUsernameFromRequest(request);
     }
 
     //deletes user, also his cloud storage
@@ -149,15 +160,20 @@ public class UserManagementServiceImpl implements UserManagementService {
     public boolean deleteUserAccount(HttpServletRequest request) {
         try {
             User user = jwtService.extractUserFromRequest(request);
-            repository.delete(user);
-            deleteUserInCloud(user.getUsername());
-            return true;
+            if (user != null) {
+                boolean result = deleteUserInCloud(user.getUsername());
+                if (result) {
+                    repository.delete(user);
+                    return true;
+                }
+            }
+            return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error deleting user: " + e.getMessage());
         }
     }
 
-    private void deleteUserInCloud(String username) {
+    private boolean deleteUserInCloud(String username) {
         try {
             String folderPrefix = username + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -165,8 +181,9 @@ public class UserManagementServiceImpl implements UserManagementService {
             storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
                     .iterateAll()
                     .forEach(Blob::delete);
+            return true;
         } catch (Exception e) {
-            System.err.println("Error deleting user in cloud: " + e.getMessage());
+            return errorHandler.logBoolean("Error deleting user in cloud: " + e.getMessage());
         }
     }
 }

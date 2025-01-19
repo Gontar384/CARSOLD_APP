@@ -3,7 +3,7 @@ package org.gontar.carsold.Service.UserService.UserAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
@@ -47,27 +47,27 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public boolean activateAccount(String token, HttpServletResponse response) {
         try {
-            if (token == null) return errorHandler.logBoolean("No token provided");
-            String username = jwtService.extractUsername(token);
-            if (username == null) return errorHandler.logBoolean("Username not found");
-            User user = repository.findByUsername(username);
-            if (user == null) return errorHandler.logBoolean("User not found");
-            if (!user.getActive()) {  //can't return false here, because react strict mode, which performs twice and break my logic
-                user.setActive(true);
-                repository.save(user);
-            } else {
-                errorHandler.logVoid("User is already active");
+            if (token != null) {
+                String username = jwtService.extractUsername(token);
+                if (username == null) return false;
+                User user = repository.findByUsername(username);
+                if (user == null) return errorHandler.logBoolean("User not found");
+                if (!user.getActive()) {  //can't return false here, because react strict mode performs it twice and breaks logic
+                    user.setActive(true);
+                    repository.save(user);
+                }
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        user.getUsername(),
+                        null,
+                        Collections.singletonList(new SimpleGrantedAuthority("USER"))
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                addCookieWithNewTokenToResponse(username, response);
+                return true;
             }
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    null,
-                    Collections.singletonList(new SimpleGrantedAuthority("USER"))
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            addCookieWithNewTokenToResponse(username, response);
-            return true;
+            return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Failed to activate account: " + e.getMessage());
         }
@@ -77,12 +77,14 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public boolean authenticate(String login, String password, HttpServletResponse response) {
         try {
-            if (login == null) return errorHandler.logBoolean("No login provided");
-            User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
-            if (user == null) return errorHandler.logBoolean("User not found");
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
-            addCookieWithNewTokenToResponse(user.getUsername(), response);
-            return true;
+            if (login != null) {
+                User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+                if (user == null) return errorHandler.logBoolean("User not found");
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
+                addCookieWithNewTokenToResponse(user.getUsername(), response);
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Authentication failed: " + e.getMessage());
         }

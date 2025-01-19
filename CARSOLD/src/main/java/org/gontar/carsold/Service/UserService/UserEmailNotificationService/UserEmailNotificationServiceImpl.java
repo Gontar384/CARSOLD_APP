@@ -1,7 +1,7 @@
 package org.gontar.carsold.Service.UserService.UserEmailNotificationService;
 
 import jakarta.mail.internet.MimeMessage;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -70,23 +70,25 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     @Override
     public boolean sendPasswordRecoveryEmail(String email) {
         try {
-            User user = repository.findByEmail(email);
-            if (user == null) return errorHandler.logBoolean("User not found");
-            String token = jwtService.generateToken(user.getUsername(), 10);
-            String link = frontendUrl + "very3secret8password4change?token=" + token;
-            String subject = "CAR$OLD Password Recovery";
-            String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
-                    "! To change your password, please click the following link:</p>" +
-                    "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                    "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
-                    "Change password" +
-                    "</a>" +
-                    "</div><hr>" +
-                    "<p>This message was sent automatically. Do not reply.</p>";
-            sendEmail(email, subject, content);
-            return true;
-        }
-        catch (Exception e) {
+            if (email != null) {
+                User user = repository.findByEmail(email);
+                if (user == null) return errorHandler.logBoolean("User not found");
+                String token = jwtService.generateToken(user.getUsername(), 10);
+                String link = frontendUrl + "very3secret8password4change?token=" + token;
+                String subject = "CAR$OLD Password Recovery";
+                String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
+                        "! To change your password, please click the following link:</p>" +
+                        "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
+                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                        "Change password" +
+                        "</a>" +
+                        "</div><hr>" +
+                        "<p>This message was sent automatically. Do not reply.</p>";
+                sendEmail(email, subject, content);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
             return errorHandler.logBoolean("Failed to send email: " + e.getMessage());
         }
     }

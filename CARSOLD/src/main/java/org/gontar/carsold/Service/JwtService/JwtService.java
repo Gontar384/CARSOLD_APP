@@ -6,7 +6,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
+import org.gontar.carsold.ErrorsAndExceptions.InvalidUsernameException;
+import org.gontar.carsold.ErrorsAndExceptions.UserNotFoundException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,7 +98,7 @@ public class JwtService {
     }
 
     //extracts token from cookie
-    public String extractTokenFromCookie(HttpServletRequest request) {
+    public String extractTokenFromCookie(HttpServletRequest request) throws InvalidTokenException {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("JWT".equals(cookie.getName())) {
@@ -103,37 +106,53 @@ public class JwtService {
                 }
             }
         }
-        return null;
+        throw new InvalidTokenException("JWT token is missing or invalid");
     }
 
-    //helper method for username extraction from request
-    public String extractUsernameFromRequest(HttpServletRequest request) {
+    //helper method for username extraction from request, for independent use
+    public String extractUsernameFromRequest(HttpServletRequest request) throws InvalidTokenException, InvalidUsernameException {
+        try {
+            String jwt = extractTokenFromCookie(request);
+            String username = extractUsername(jwt);
+            if (username == null) throw new InvalidUsernameException("Username not found in token");
+            return username;
+        } catch (InvalidTokenException | InvalidUsernameException e) {
+            return errorHandler.logString("Problem with request: " + e.getMessage());
+        }
+    }
+
+    //clone of extractUsernameFromRequest, but with no logs, used to prevent logs doubling, extractUserFromRequest method use only
+    public String extractUsernameFromRequestHelper(HttpServletRequest request) throws InvalidTokenException, InvalidUsernameException {
         String jwt = extractTokenFromCookie(request);
-        if (jwt == null) return errorHandler.logString("Invalid jwt token");
         String username = extractUsername(jwt);
-        if (username == null) return errorHandler.logString("Username not found");
+        if (username == null) throw new InvalidUsernameException("Username not found in token");
         return username;
     }
 
     //helper method for user extraction from request
     public User extractUserFromRequest(HttpServletRequest request) {
-        String jwt = extractTokenFromCookie(request);
-        if (jwt == null) return errorHandler.logObject("Invalid jwt token");
-        String username = extractUsername(jwt);
-        if (username == null) return errorHandler.logObject("Username not found");
-        User user = repository.findByUsername(username);
-        if (user == null) return errorHandler.logObject("User not found");
-        return user;
+        try {
+            String username = extractUsernameFromRequestHelper(request);
+            User user = repository.findByUsername(username);
+            if (user == null) throw new UserNotFoundException("User not found");
+            return user;
+        } catch (InvalidTokenException | InvalidUsernameException | UserNotFoundException e) {
+            return errorHandler.logObject("Problem with request: " + e.getMessage());
+        }
     }
 
     //helper method for token extraction and validation
     public boolean extractAndValidateTokenFromRequest(HttpServletRequest request) {
-        String jwt = extractTokenFromCookie(request);
-        if (jwt == null) return false; //no log because it performs too many times, even when user is logged out
-        String username = extractUsername(jwt);
-        if (username == null) return errorHandler.logBoolean("Username not found");
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if (userDetails == null) return errorHandler.logBoolean("User details not found");
-        return validateToken(jwt, userDetails);
+        try {
+            String jwt = extractTokenFromCookie(request);
+            String username = extractUsername(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (userDetails == null) return false;
+            return validateToken(jwt, userDetails);
+        } catch (InvalidTokenException | InvalidUsernameException e) {
+            return errorHandler.logBoolean("Problem with token: " + e.getMessage());
+        } catch (Exception e) {
+            return errorHandler.logBoolean("Unexpected error: " + e.getMessage());
+        }
     }
 }

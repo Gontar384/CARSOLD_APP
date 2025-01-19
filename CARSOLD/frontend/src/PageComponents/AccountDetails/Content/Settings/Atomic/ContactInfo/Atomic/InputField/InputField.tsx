@@ -185,7 +185,11 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             }
         }
         fetchCitySuggestions().then();
+    }, [debouncedValue]);
 
+    //to reset city suggestions
+    useEffect(() => {
+        if (value === "") setCitySuggestions(null);
     }, [debouncedValue]);
 
     return (

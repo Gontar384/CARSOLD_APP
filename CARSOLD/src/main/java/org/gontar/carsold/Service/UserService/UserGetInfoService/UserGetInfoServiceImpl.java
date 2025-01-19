@@ -1,7 +1,7 @@
 package org.gontar.carsold.Service.UserService.UserGetInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -65,12 +65,12 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     }
 
     private boolean isUsernameNonToxic(String username) {
-        String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
-        List<String> languages = List.of("en", "pl");
-
-        RestTemplate restTemplate = new RestTemplate();
-
         try {
+            String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
+            List<String> languages = List.of("en", "pl");
+
+            RestTemplate restTemplate = new RestTemplate();
+
             JSONObject payload = new JSONObject();
             payload.put("comment", new JSONObject().put("text", username));
             payload.put("languages", languages);
@@ -100,8 +100,12 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
 
     //helper method to find user by email or username
     private User manageLogin(String login) {
-        if (login == null) return errorHandler.logObject("No login provided");
-        return login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+        if (login != null) {
+            User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+            if (user == null) return errorHandler.logObject("User not found");
+            return user;
+        }
+        return null;
     }
 
     //checks if account is active

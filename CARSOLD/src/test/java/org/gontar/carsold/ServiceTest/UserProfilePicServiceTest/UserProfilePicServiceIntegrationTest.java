@@ -2,6 +2,8 @@ package org.gontar.carsold.ServiceTest.UserProfilePicServiceTest;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.CarsoldApplication;
+import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 //need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(classes = CarsoldApplication.class)
 public class UserProfilePicServiceIntegrationTest {
 
     @BeforeAll
@@ -111,7 +113,8 @@ public class UserProfilePicServiceIntegrationTest {
                 "image/png",
                 fileBytes
         );
-        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+        when(jwtService.extractUserFromRequest(request))
+                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
 
         boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
 
@@ -120,7 +123,8 @@ public class UserProfilePicServiceIntegrationTest {
 
     @Test
     public void testDeleteProfilePic_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+        when(jwtService.extractUserFromRequest(request))
+                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
 
         boolean result = service.deleteProfilePic(request);
 

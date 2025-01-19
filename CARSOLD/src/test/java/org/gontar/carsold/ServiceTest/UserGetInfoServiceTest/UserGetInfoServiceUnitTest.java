@@ -1,7 +1,7 @@
 package org.gontar.carsold.ServiceTest.UserGetInfoServiceTest;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -101,7 +101,8 @@ public class UserGetInfoServiceUnitTest {
 
         assertFalse(service.checkActive(testLogin), "Should return false, user not found");
         verify(repo).findByUsername(testLogin);
-        verifyNoMoreInteractions(repo);
+        verify(errorHandler).logObject("User not found");
+        verifyNoMoreInteractions(repo, errorHandler);
     }
 
     @Test
@@ -136,6 +137,8 @@ public class UserGetInfoServiceUnitTest {
         assertFalse(service.checkOauth2(testLogin), "Should return false, user not found");
         verify(repo).findByUsername(testLogin);
         verify(repo, never()).findByEmail(anyString());
+        verify(errorHandler).logObject("User not found");
+        verifyNoMoreInteractions(repo, errorHandler);
     }
 
     @Test
@@ -237,7 +240,8 @@ public class UserGetInfoServiceUnitTest {
 
         assertFalse(result, "Should return false, user not found");
         verify(repo).findByUsername(username);
-        verifyNoMoreInteractions(repo);
+        verify(errorHandler).logObject("User not found");
+        verifyNoMoreInteractions(repo, errorHandler);
     }
 
     @Test

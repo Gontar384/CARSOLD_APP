@@ -58,7 +58,7 @@ public class UserProfilePicServiceUnitTest {
     }
 
     @Test
-    public void testGetProfilePic_failure_userNotFound() {
+    public void testGetProfilePic_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request)).thenReturn(null);
 
         String result = service.getProfilePic(request);

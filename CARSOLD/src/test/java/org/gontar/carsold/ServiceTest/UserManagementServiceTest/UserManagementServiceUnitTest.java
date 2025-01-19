@@ -4,7 +4,8 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
@@ -224,13 +225,15 @@ public class UserManagementServiceUnitTest {
     @Test
     public void changePassword_failure_problemWithRequest() {
         String newPassword = "newPassword";
-        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+        when(jwtService.extractUserFromRequest(request))
+                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
 
         boolean result = service.changePassword(newPassword, request);
 
         assertFalse(result, "Should return false, problem with request");
         verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
+        verify(errorHandler).logBoolean("Error changing password: JWT token is missing or invalid");
+        verifyNoMoreInteractions(jwtService, errorHandler);
     }
 
     @Test
@@ -252,28 +255,25 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
-    public void fetchUsername_failure_noProperCookieOrToken() {
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(null);
+    public void fetchUsername_failure_problemWithRequest() {
+        when(jwtService.extractUsernameFromRequest(request)).thenReturn(null);
 
         String result = service.fetchUsername(request);
 
         assertNull(result, "Should return null, no proper cookie or token");
-        verify(jwtService).extractTokenFromCookie(request);
+        verify(jwtService).extractUsernameFromRequest(request);
         verifyNoMoreInteractions(jwtService);
     }
 
     @Test
     public void fetchUsername_success_fetched() {
-        String testToken = "testToken";
         String testUsername = "extractedUsername";
-        when(jwtService.extractTokenFromCookie(request)).thenReturn(testToken);
-        when(jwtService.extractUsername(testToken)).thenReturn(testUsername);
+        when(jwtService.extractUsernameFromRequest(request)).thenReturn(testUsername);
 
         String result = service.fetchUsername(request);
 
         assertEquals(testUsername, result);
-        verify(jwtService).extractTokenFromCookie(request);
-        verify(jwtService).extractUsername(testToken);
+        verify(jwtService).extractUsernameFromRequest(request);
         verifyNoMoreInteractions(jwtService);
     }
 }

@@ -3,7 +3,7 @@ package org.gontar.carsold.ServiceTest.UserAuthenticationServiceTest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.gontar.carsold.ErrorHandler.ErrorHandler;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
@@ -79,11 +79,11 @@ public class UserAuthenticationServiceUnitTest {
         mockUser.setActive(true);
         when(repo.findByUsername(testUsername)).thenReturn(mockUser);
 
-        service.activateAccount(testToken, response);
+        boolean result = service.activateAccount(testToken, response);
 
+        assertTrue(result, "Should return true, but user is not updated");
         verify(repo).findByUsername(testUsername);
         verify(repo, never()).save(mockUser);
-        verify(errorHandler).logVoid("User is already active");
     }
 
     @Test
@@ -112,7 +112,6 @@ public class UserAuthenticationServiceUnitTest {
         boolean result = service.authenticate(null, password, response);
 
         assertFalse(result, "Should return false, no login provided");
-        verify(errorHandler).logBoolean("No login provided");
     }
 
     @Test

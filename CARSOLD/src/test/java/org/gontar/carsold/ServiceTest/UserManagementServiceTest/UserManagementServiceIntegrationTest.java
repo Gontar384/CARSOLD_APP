@@ -3,6 +3,7 @@ package org.gontar.carsold.ServiceTest.UserManagementServiceTest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.CarsoldApplication;
+import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -54,7 +55,6 @@ public class UserManagementServiceIntegrationTest {
         repo.save(user);
 
         String testToken = jwtService.generateToken(testUsername, 1L);
-
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCookies(new Cookie("JWT", testToken));
 
@@ -66,7 +66,8 @@ public class UserManagementServiceIntegrationTest {
 
     @Test
     public void deleteUserAccount_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request)).thenReturn(null);
+        when(jwtService.extractUserFromRequest(request))
+                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
 
         boolean result = service.deleteUserAccount(request);
 

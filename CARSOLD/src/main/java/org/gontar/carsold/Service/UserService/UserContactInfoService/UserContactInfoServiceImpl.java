@@ -3,6 +3,7 @@ package org.gontar.carsold.Service.UserService.UserContactInfoService;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -30,36 +31,34 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
     private final UserRepository repository;
     private final JwtService jwtService;
+    private final ErrorHandler errorHandler;
 
-    public UserContactInfoServiceImpl(UserRepository repository, JwtService jwtService) {
+    public UserContactInfoServiceImpl(UserRepository repository, JwtService jwtService, ErrorHandler errorHandler) {
         this.repository = repository;
         this.jwtService = jwtService;
+        this.errorHandler = errorHandler;
     }
 
     //updates contact name, checks if name is proper name
     @Override
     public boolean changeName(String name, HttpServletRequest request) {
         try {
-            String token = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(token);
-            User user = repository.findByUsername(username);
-
-            boolean apiResponse = isValidName(name);
-            if (apiResponse) {
-                user.setName(name);
-                repository.save(user);
-                return true;
+            User user = jwtService.extractUserFromRequest(request);
+            if (user != null) {
+                if (isPolishName(name) || isValidName(name)) {
+                    user.setName(name);
+                    repository.save(user);
+                    return true;
+                }
             }
             return false;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
+            return errorHandler.logBoolean("Error changing name: " + e.getMessage());
         }
     }
 
-
-    //checks if the name is proper
-    public boolean isValidName(String name) {
+    //checks if name contains polish name
+    private boolean isPolishName(String name) {
         List<String> polishSpecificNames = Arrays.asList(
                 //male
                 "Łukasz", "Wojciech", "Krzysztof", "Tomasz", "Jerzy", "Mieczysław", "Zbigniew", "Andrzej",
@@ -77,11 +76,11 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 "Tereska", "Barbara", "Weronika", "Krystyna", "Malwina", "Elżbieta", "Wiesława", "Dagmara",
                 "Joanna", "Zuzanna", "Honorata", "Beata", "Marta", "Liliana", "Monika", "Małgorzata", "Anita"
         );
+        return polishSpecificNames.contains(name);
+    }
 
-        if (polishSpecificNames.contains(name)) {
-            return true;
-        }
-
+    //checks if name is proper by sending to api
+    private boolean isValidName(String name) {
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
 
@@ -107,15 +106,11 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             for (Object entityObj : responseJson.getJSONArray("entities")) {
                 JSONObject entity = (JSONObject) entityObj;
                 String entityType = entity.getString("type");
-                if ("PERSON".equals(entityType)) {
-                    return true;
-                }
+                if ("PERSON".equals(entityType)) return true;
             }
-
             return false;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
+            return errorHandler.logBoolean("Error checking name validity: " + e.getMessage());
         }
     }
 
@@ -123,31 +118,26 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     @Override
     public boolean changePhone(String phone, HttpServletRequest request) {
         try {
-            if (!phone.startsWith("+")) {
-                phone = "+48" + phone;
-            }
+            User user = jwtService.extractUserFromRequest(request);
+            if (user == null) return false;
+
+            if (!phone.startsWith("+")) phone = "+48" + phone;
 
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, "");
 
             //checks if valid
-            if (!phoneNumberUtil.isValidNumber(phoneNumber)) {
-                return false;
-            }
+            if (!phoneNumberUtil.isValidNumber(phoneNumber)) return false;
 
-            //formats
+            //formats phone
             String formattedPhoneNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
 
-            String token = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(token);
-            User user = repository.findByUsername(username);
             user.setPhone(formattedPhoneNumber);
             repository.save(user);
 
             return true;
         } catch (Exception e) {
-            System.out.println("Error changing phone number: " + e.getMessage());
-            return false;
+            return errorHandler.logBoolean("Error changing phone number: " + e.getMessage());
         }
     }
 
@@ -155,78 +145,39 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     @Override
     public boolean changeCity(String city, HttpServletRequest request) {
         try {
-            if (!isCityValid(city)) {
-                return false;
-            }
-
-            String token = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(token);
-            User user = repository.findByUsername(username);
-            user.setCity(city);
-            repository.save(user);
-            return true;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
-    //checks if city is valid
-    private boolean isCityValid(String city) {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
-                    .queryParam("input", city)
-                    .queryParam("types", "(cities)")
-                    .queryParam("key", placesApiKey)
-                    .build()
-                    .toString();
-
-            String response = restTemplate.getForObject(url, String.class);
-            assert response != null;
-            JSONObject jsonResponse = new JSONObject(response);
-            JSONArray predictions = jsonResponse.getJSONArray("predictions");
-
-            for (int i = 0; i < predictions.length(); i++) {
-                JSONObject prediction = predictions.getJSONObject(i);
-                String description = prediction.getString("description");
-
-                if (description != null && description.equals(city)) {
+            User user = jwtService.extractUserFromRequest(request);
+            if (user != null) {
+                if (isCityValid(city)) {
+                    user.setCity(city);
+                    repository.save(user);
                     return true;
-                } else if (description != null && description.contains(",")) {
-                    String cityNoCountry = description.split(",")[0].trim();
-                    if (cityNoCountry.equals(city)) {
-                        return true;
-                    }
                 }
             }
             return false;
         } catch (Exception e) {
-            System.out.println("Error validating city: " + e.getMessage());
-            return false;
+            return errorHandler.logBoolean("Error changing city: " + e.getMessage());
         }
     }
 
-    //fetches suggestions from Places API
+    //checks if city is valid by comparing it against suggestions
+    private boolean isCityValid(String city) {
+        JSONArray predictions = fetchCitySuggestionsFromApi(city);
+
+        for (int i = 0; i < predictions.length(); i++) {
+            JSONObject prediction = predictions.getJSONObject(i);
+            String description = prediction.getString("description");
+
+            if (description != null && (description.equals(city) || description.split(",")[0].trim().equals(city))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //fetches city suggestions from Places API
     @Override
     public List<String> fetchCitySuggestions(String value) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
-                .queryParam("input", value)
-                .queryParam("key", placesApiKey)
-                .queryParam("types", "(cities)")
-                .queryParam("location", "52.13,19.39")
-                .queryParam("radius", "500000")
-                .queryParam("strictbounds", "false")
-                .build()
-                .toString();
-
-        String response = restTemplate.getForObject(url, String.class);
-
-        //parses JSON, extracts city names
-        assert response != null;
-        JSONObject jsonResponse = new JSONObject(response);
-        JSONArray predictions = jsonResponse.getJSONArray("predictions");
+        JSONArray predictions = fetchCitySuggestionsFromApi(value);
 
         List<String> cityNames = new ArrayList<>();
         for (int i = 0; i < predictions.length(); i++) {
@@ -237,19 +188,43 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
         return cityNames;
     }
 
+    //helper method to fetch city suggestions from Places API
+    private JSONArray fetchCitySuggestionsFromApi(String input) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+                    .queryParam("input", input)
+                    .queryParam("key", placesApiKey)
+                    .queryParam("types", "(cities)")
+                    .queryParam("location", "52.13,19.39")
+                    .queryParam("radius", "500000")
+                    .queryParam("strictbounds", "false")
+                    .build()
+                    .toString();
+
+            String response = restTemplate.getForObject(url, String.class);
+            assert response != null;
+            JSONObject jsonResponse = new JSONObject(response);
+            return jsonResponse.getJSONArray("predictions");
+        } catch (Exception e) {
+            errorHandler.logVoid("Error fetching city suggestions: " + e.getMessage());
+            return new JSONArray();
+        }
+    }
+
     //updates contactPublic
     @Override
     public boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic) {
         try {
-            String jwt = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(jwt);
-            User user = repository.findByUsername(username);
-            user.setContactPublic(isPublic);
-            repository.save(user);
-            return user.getContactPublic();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            User user = jwtService.extractUserFromRequest(request);
+            if (user != null) {
+                user.setContactPublic(isPublic);
+                repository.save(user);
+                return user.getContactPublic();
+            }
             return false;
+        } catch (Exception e) {
+            return errorHandler.logBoolean("Error changing contact info: " + e.getMessage());
         }
     }
 
@@ -257,13 +232,13 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     @Override
     public boolean fetchContactInfoPublic(HttpServletRequest request) {
         try {
-            String jwt = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(jwt);
-            User user = repository.findByUsername(username);
-            return user.getContactPublic();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            User user = jwtService.extractUserFromRequest(request);
+            if (user != null){
+                if (user.getContactPublic() != null) return user.getContactPublic();
+            }
             return false;
+        } catch (Exception e) {
+            return errorHandler.logBoolean("Error fetching contact info: " + e.getMessage());
         }
     }
 
@@ -271,17 +246,18 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     @Override
     public Map<String, String> fetchInfo(HttpServletRequest request) {
         try {
-            String token = jwtService.extractTokenFromCookie(request);
-            String username = jwtService.extractUsername(token);
-            User user = repository.findByUsername(username);
-            HashMap<String, String> info = new HashMap<>();
-            info.put("name", user.getName());
-            info.put("phone", user.getPhone());
-            info.put("city", user.getCity());
-            return info;
+            User user = jwtService.extractUserFromRequest(request);
+            if (user != null) {
+                HashMap<String, String> info = new HashMap<>();
+                info.put("name", user.getName());
+                info.put("phone", user.getPhone());
+                info.put("city", user.getCity());
+                return info;
+            }
+            return Collections.emptyMap();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+            errorHandler.logVoid("Error fetching info: " + e.getMessage());
+            return Collections.emptyMap();
         }
     }
 }
