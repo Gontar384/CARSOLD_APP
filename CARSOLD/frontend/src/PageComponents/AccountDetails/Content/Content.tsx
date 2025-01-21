@@ -11,7 +11,7 @@ const Content: React.FC = () => {
 
     const {section} = useParams();
     const navigate = useNavigate();
-    const {isWide} = useUtil();
+    const {mobileWidth} = useUtil();
 
     const [choice, setChoice] = useState<"myOffers" | "followed" | "messages" | "settings" | "info">("myOffers");
     const [isLoading, setIsLoading] = useState<boolean>(true);   //prevent blinking
@@ -33,7 +33,7 @@ const Content: React.FC = () => {
 
     return (
         <div className={`flex flex-col w-full rounded-sm justify-center items-center border border-black border-opacity-40
-         ${isWide ? "" : "justify-center items-center min-h-72 xs:min-h-80 max-h-[720px]"}`}>
+         ${!mobileWidth ? "" : "justify-center items-center min-h-72 xs:min-h-80 max-h-[720px]"}`}>
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>
             : choice === "messages" ? <Messages/>

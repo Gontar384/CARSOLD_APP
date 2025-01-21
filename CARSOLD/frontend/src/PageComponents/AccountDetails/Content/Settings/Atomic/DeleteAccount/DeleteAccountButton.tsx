@@ -9,7 +9,7 @@ interface DeleteAccountButtonProps {
 
 const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => {
 
-    const {isWide, isMobile} = useUtil();
+    const {mobileWidth, isMobile} = useUtil();
     const [buttonAnimation, setButtonAnimation] = useState<"animate-swing" | null>(null);
 
     const handleActivateAnimation = () => {
@@ -24,7 +24,7 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => 
 
     return (
         <div className={`flex flex-col-reverse w-full h-full
-        ${isWide ? "items-center pb-3 lg:pb-5 xl:pb-6 2xl:pb-7 3xl:pb-8 sm:pr-2 lg:pr-0" : "items-end pr-5"}`}>
+        ${!mobileWidth ? "items-center pb-3 lg:pb-5 xl:pb-6 2xl:pb-7 3xl:pb-8 sm:pr-2 lg:pr-0" : "items-end pr-5"}`}>
             <div className="flex flex-col items-center justify-center">
                 <button className="flex"
                         onClick={() => setPopup(true)}

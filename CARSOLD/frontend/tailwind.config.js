@@ -139,7 +139,15 @@ export default {
                     '0%': {transform: "rotate(180deg)"},
                     '50%': {transform: "rotate(90deg)"},
                     '100%': {transform: "rotate(180deg)"},
-                }
+                },
+                slideShow: {
+                    '0%': {transform: "translateX(-100%)"},
+                    '100%': {transform: "translateX(0)"}
+                },
+                slideHide: {
+                    '0%': {transform: "translateX(0)"},
+                    '100%': {transform: "translateX(-100%)"}
+                },
             },
             animation: {  //animations details
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -168,6 +176,8 @@ export default {
                 slideOff1: 'slideOff1 0.3s ease-out forwards',
                 slideOff2: 'slideOff2 0.3s ease-out forwards',
                 swing: 'swing 0.7s ease-in-out forwards',
+                slideShow: 'slideShow 0.3s ease-out forwards',
+                slideHide: 'slideHide 0.3s ease-out forwards',
             },
         },
     },

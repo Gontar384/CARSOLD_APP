@@ -22,7 +22,7 @@ const LowerBar: React.FC = () => {
 
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
 
-    const { lowerBar, isWide } = useUtil();
+    const { lowerBar, mobileWidth } = useUtil();
 
     useEffect(() => {
         if (lowerBar) {
@@ -37,10 +37,10 @@ const LowerBar: React.FC = () => {
             return () => clearTimeout(timeout);
         }
 
-        if (isWide) {
+        if (!mobileWidth) {
             setBarAnimation(null);
         }
-    }, [lowerBar, isWide]);   //activates/deactivates lower bar and resets animation
+    }, [lowerBar, mobileWidth]);   //activates/deactivates lower bar and resets animation
 
     const { isAuthenticated } = useAuth();
 
@@ -48,7 +48,7 @@ const LowerBar: React.FC = () => {
 
     const { followed, messages } = useItems();
 
-    const { userDetails, logout, handleUsernameFetch } = useUserDetails();
+    const { logout, handleUsernameFetch } = useUserDetails();
 
     useEffect(() => {
         handleUsernameFetch().then();
@@ -57,12 +57,12 @@ const LowerBar: React.FC = () => {
     if (lowerBarActive) {
         return (
             <div
-                className={`flex flex-row items-center justify-evenly h-10 xs:h-11 fixed left-0 bottom-0 
+                className={`flex flex-row items-center justify-evenly h-12 fixed left-0 bottom-0 
                 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
                 <MobileButton onClick={() => navigate("/home")} icon={faSquarePlus} label="Add Offer"/>
                 <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed" count={followed}/>
                 <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={messages}/>
-                <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={isAuthenticated ? userDetails : "Account"}/>
+                <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>
                 {isAuthenticated ? (
                     <>
                         <DarkModeButton/>

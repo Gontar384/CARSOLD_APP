@@ -53,17 +53,24 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }, [darkMode]);  //manages dark mode on initial load
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);
+    const [midBar, setMidBar] = useState<boolean>(false);
 
-    const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 450);
+    const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth <= 450);
+    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth > 450 && window.innerWidth <= 960);
+    const [bigWidth, setBitWidth] = useState<boolean>(window.innerWidth > 960);
 
     useEffect(() => {
-        const handleResize = () => setIsWide(window.innerWidth >= 450);
+        const handleResize = () => {
+            setMobileWidth(window.innerWidth <= 450);
+            setMidWidth(window.innerWidth > 450 && window.innerWidth <= 960);
+            setBitWidth(window.innerWidth > 960);
+        }
 
         window.addEventListener('resize', handleResize);
 
         return () => window.removeEventListener('resize', handleResize)
 
-    }, [])  //manages isWide state
+    }, [midWidth, mobileWidth])  //manages mobileWidth and midWidth state
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
     const CreateDebouncedValue = <T, >(value: T, delay: number): T => {
@@ -108,7 +115,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     return (
         <UtilContext.Provider
-            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, isWide, CreateDebouncedValue, isMobile}}>
+            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth, bigWidth, CreateDebouncedValue, isMobile}}>
             {children}
         </UtilContext.Provider>
     );

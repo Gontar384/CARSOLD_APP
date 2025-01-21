@@ -5,7 +5,7 @@ import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const ChoiceHeaders: React.FC = () => {
 
-    const {isWide} = useUtil();
+    const {mobileWidth} = useUtil();
     const navigate = useNavigate();
 
     const {section} = useParams();
@@ -30,15 +30,15 @@ const ChoiceHeaders: React.FC = () => {
     }
 
     return (
-        <div className={`flex flex-col ${isWide ? "justify-start gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
+        <div className={`flex flex-col ${!mobileWidth ? "justify-start gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "gap-2"}`}>
-            <div className={`flex ${isWide ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
+            <div className={`flex ${!mobileWidth ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "flex-row justify-evenly"}`}>
                 <ChoiceButton label={"My Offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
                 <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
                 <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
             </div>
-            <div className={`flex ${isWide ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
+            <div className={`flex ${!mobileWidth ? "flex-col gap-6 lg:gap-8 xl:gap-10 2xl:gap-12 3xl:gap-14"
                 : "flex-row justify-evenly mx-[50px] xs:mx-[72px]"}`}>
                 <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
                 <ChoiceButton label={"Info"} onClick={() => handleNavigation("info")} active={buttonState[4]}/>

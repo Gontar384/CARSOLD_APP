@@ -5,7 +5,11 @@ interface UtilContextType {
     toggleDarkMode: () => void;
     lowerBar: boolean;
     setLowerBar: React.Dispatch<React.SetStateAction<boolean>>;
-    isWide: boolean;
+    midBar: boolean;
+    setMidBar: React.Dispatch<React.SetStateAction<boolean>>;
+    mobileWidth: boolean;
+    midWidth: boolean;
+    bigWidth: boolean;
     CreateDebouncedValue: <T>(value: T, delay: number) => T;
     isMobile: boolean;
 }

@@ -18,7 +18,7 @@ const SearchBar: React.FC = () => {
 
     const [isInitial, setIsInitial] = useState<boolean>(false);
 
-    const { isWide } = useUtil();
+    const { mobileWidth } = useUtil();
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -69,11 +69,11 @@ const SearchBar: React.FC = () => {
 
     useEffect(() => {
         setButtonAnimation(null);
-    }, [isWide])    //resets animation
+    }, [mobileWidth])    //resets animation
 
     return (
         <div
-            className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[500px]"
+            className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[280px]"
             ref={componentRef}>
             {!isClicked && search === "" &&
                 <FontAwesomeIcon icon={faMagnifyingGlass}

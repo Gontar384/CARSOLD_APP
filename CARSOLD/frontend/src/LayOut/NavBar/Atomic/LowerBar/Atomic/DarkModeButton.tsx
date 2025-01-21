@@ -27,18 +27,18 @@ const DarkModeButton: React.FC = () => {
 
     return (
         <button
-            className="flex flex-col items-center w-1/6 h-full p-1 relative"
+            className="flex flex-col items-center w-1/6 h-full pt-[6px] relative"
             onClick={handleDarkMode}
             onTouchStart={isMobile ?handleStart : undefined}
             onTouchEnd={isMobile ? handleEnd : undefined}
             onMouseEnter={!isMobile ?handleStart : undefined}
             onMouseLeave={!isMobile ?handleEnd : undefined}>
             <FontAwesomeIcon icon={faMoon} style={{color: buttonColor ? "white" : "black"}}
-                             className={`text-[13px] xs:text-[15px] top-[7px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
+                             className={`text-[18px] top-[9px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
             <FontAwesomeIcon icon={faSun} style={{color: buttonColor ? "white" : "black"}}
-                             className={`text-[12px] xs:text-[14px] top-[8px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
-            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor ? "white" : "black"}} className="text-xl xs:text-[22px]"/>
-            <p className="text-[9px] xs:text-[10px]">Mode</p>
+                             className={`text-[16px] top-[10px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
+            <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor ? "white" : "black"}} className="text-2xl"/>
+            <p className="text-[10px]">Mode</p>
         </button>
     )
 }

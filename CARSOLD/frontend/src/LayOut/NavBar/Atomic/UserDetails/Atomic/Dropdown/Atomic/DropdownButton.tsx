@@ -26,7 +26,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }
             {count && count > 0 ? <div className="relative ml-1">
                 <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}
                                  className="text-[22px]"/>
-                <p className="inset-0 m-auto top-[2px] m:top-1 text-[10px] m:text-xs text-white absolute">
+                <p className="inset-0 m-auto top-[2px] m:top-[5px] text-[10px] m:text-xs text-white absolute">
                     {count}</p>
             </div> : null}
         </button>

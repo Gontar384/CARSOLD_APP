@@ -42,17 +42,17 @@ const ContactInfo: React.FC = () => {
         fetchName().then();
     }, [fetch]);
 
-    const {isWide} = useUtil();
+    const {mobileWidth} = useUtil();
 
     return (
         <div
-            className={`flex ${isWide ? "flex-col" : "flex-row"} m-6 sm:m-0 sm:mt-2 sm:ml-2 lg:mt-3 lg:ml-3 xl:mt-4 ` +
+            className={`flex ${!mobileWidth ? "flex-col" : "flex-row"} m-6 sm:m-0 sm:mt-2 sm:ml-2 lg:mt-3 lg:ml-3 xl:mt-4 ` +
                 'xl:ml-4 2xl:mt-5 2xl:ml-5 3xl:mt-6 3xl:ml-6 relative'}>
             <div className="flex flex-col">
                 <p className="text-xs lg:text-sm xl:text-base 2xl:text-lg 3xl:test-xl
                 mb-4 sm:mb-[3px] lg:mb-1 xl:mb-[7px] 2xl:mb-[9px] 3xl:mb-[11px]">
                     Edit contact details:</p>
-                <div className={`flex ${isWide ? "flex-col" : "flex-row"}`}>
+                <div className={`flex ${!mobileWidth ? "flex-col" : "flex-row"}`}>
                     <div className="flex flex-col gap-3 lg:gap-4 xl:gap-5 2xl:gap-6 3xl:gap-7">
                         <InputField label="Name" value={name} setValue={setName} valueType="name" setFetch={setFetch}
                                     isLoading={isLoading} errorInfo="It doesn't look like a name."/>
@@ -64,10 +64,10 @@ const ContactInfo: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className={`flex w-fit flex-col ${isWide ? "mt-4 lg:mt-5 xl:mt-[18px] 2xl:mt-7 3xl:mt-11" : "absolute right-0 items-center"} `}>
-                <p className={`text-xs lg:text-sm xl:text-base 2xl:text-lg 3xl:test-xl ${isWide ? "mb-3 lg:mb-4 xl:mb-[14px] 2xl:mb-5 3xl:mb-7" : "mb-3"}`}>
+            <div className={`flex w-fit flex-col ${!mobileWidth ? "mt-4 lg:mt-5 xl:mt-[18px] 2xl:mt-7 3xl:mt-11" : "absolute right-0 items-center"} `}>
+                <p className={`text-xs lg:text-sm xl:text-base 2xl:text-lg 3xl:test-xl ${!mobileWidth ? "mb-3 lg:mb-4 xl:mb-[14px] 2xl:mb-5 3xl:mb-7" : "mb-3"}`}>
                     Contact details public:</p>
-                <div className={`flex ${isWide ? "justify-center" : ""}`}>
+                <div className={`flex ${!mobileWidth ? "justify-center" : ""}`}>
                     <SwitchButton/>
                 </div>
             </div>

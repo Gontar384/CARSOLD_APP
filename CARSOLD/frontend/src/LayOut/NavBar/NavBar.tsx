@@ -9,27 +9,29 @@ import LowerBar from "./Atomic/LowerBar/LowerBar.tsx";
 import LoadingNavBarLine from "../../SharedComponents/Additional/Loading/LoadingNavBarLine.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
+import MidBar from "./Atomic/MidBar/MidBar.tsx";
 
 
 const NavBar: React.FC = () => {
 
-    const {isWide} = useUtil();
+    const {mobileWidth, midWidth, bigWidth} = useUtil();
     const {loadingAuth} = useAuth();
 
     return (
         <>
             <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0 gap-2
             w-full h-10 m:h-11 shadow-bottom bg-lime z-50">
-                {!isWide && <OptionsButton/>}
+                {(mobileWidth || midWidth) && <OptionsButton/>}
                 <Logo/>
                 <SearchBar/>
-                {isWide &&
+                {bigWidth &&
                     <>
                         <AddButton/>
                         <UserDetails/>
                     </>}
             </div>
-            {!isWide && <LowerBar/>}
+            {mobileWidth && <LowerBar/>}
+            {midWidth && <MidBar/>}
             {loadingAuth && <LoadingNavBarLine/>}
         </>
     )
