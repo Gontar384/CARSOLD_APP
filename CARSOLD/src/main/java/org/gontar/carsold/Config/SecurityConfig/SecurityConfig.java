@@ -30,8 +30,7 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    public SecurityConfig(JwtFilter jwtFilter,
-                          CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+    public SecurityConfig(JwtFilter jwtFilter, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
 
         this.jwtFilter = jwtFilter;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
@@ -42,7 +41,7 @@ public class SecurityConfig {
         return http
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(                              //path available for authenticated users
+                        .requestMatchers(                              //paths available for authenticated users
                                 "/api/auth/csrf",
                                 "/api/auth/check-authentication",
                                 "/api/auth/register/check-email",

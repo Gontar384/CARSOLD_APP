@@ -16,6 +16,7 @@ export default {
                 "coolYellow": "#d3d61c"
             },
             screens: {  //custom screens
+                "m": "450px",
                 "xs": "480px",
                 "3xl": "1800px"
             },

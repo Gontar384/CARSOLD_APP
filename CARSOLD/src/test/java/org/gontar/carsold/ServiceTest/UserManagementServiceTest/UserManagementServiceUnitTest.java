@@ -226,13 +226,13 @@ public class UserManagementServiceUnitTest {
     public void changePassword_failure_problemWithRequest() {
         String newPassword = "newPassword";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.changePassword(newPassword, request);
 
         assertFalse(result, "Should return false, problem with request");
         verify(jwtService).extractUserFromRequest(request);
-        verify(errorHandler).logBoolean("Error changing password: JWT token is missing or invalid");
+        verify(errorHandler).logBoolean("Error changing password: JWT is missing in the cookie");
         verifyNoMoreInteractions(jwtService, errorHandler);
     }
 

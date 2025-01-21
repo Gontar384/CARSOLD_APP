@@ -18,8 +18,8 @@ const NavBar: React.FC = () => {
 
     return (
         <>
-            <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0
-            w-full h-7 xs:h-8 sm:h-9 lg:h-10 xl:h-12 2xl:h-[52px] 3xl:h-14 shadow-bottom bg-lime z-50">
+            <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0 gap-2
+            w-full h-10 m:h-11 shadow-bottom bg-lime z-50">
                 {!isWide && <OptionsButton/>}
                 <Logo/>
                 <SearchBar/>

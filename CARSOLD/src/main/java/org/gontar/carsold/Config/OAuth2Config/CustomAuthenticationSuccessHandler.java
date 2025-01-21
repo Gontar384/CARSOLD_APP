@@ -19,8 +19,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 //Google authentication
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -39,32 +37,34 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        try {
+            if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
 
-        if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+                OAuth2User oAuth2User = oauth2Token.getPrincipal();
+                String email = (String) oAuth2User.getAttributes().get("email");
 
-            OAuth2User oAuth2User = oauth2Token.getPrincipal();                   //retrieves authenticated user's details
+                boolean exists = repository.existsByEmail(email);
+                User user;
+                if (!exists) {
+                    user = new User();
+                    user.setEmail(email);
+                    user.setUsername(email.split("@")[0]);
+                } else {
+                    user = repository.findByEmail(email);
+                    user.setPassword(null);
+                }
+                user.setActive(true);
+                user.setOauth2User(true);
+                repository.save(user);
 
-            String email = (String) oAuth2User.getAttributes().get("email");      //retrieves email
-            boolean exists = repository.existsByEmail(email);
-            User user;                                                            //user management in DB
-            if (!exists) {
-                user = new User();
-                user.setEmail(email);
-                user.setUsername(email.split("@")[0]);
-            } else {
-                user = repository.findByEmail(email);
-                user.setPassword(null);
+                String token = jwtService.generateToken(user.getUsername(), 600);
+                ResponseCookie authCookie = cookieService.createCookie(token, 10);
+                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+                response.sendRedirect(frontendUrl + "details/myOffers");
             }
-            user.setActive(true);
-            user.setOauth2User(true);
-            repository.save(user);
-
-            String token = jwtService.generateToken(user.getUsername(), 600);
-
-            ResponseCookie authCookie = cookieService.createCookie(token,10);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
-            response.sendRedirect(frontendUrl + "details/myOffers");
+        } catch (Exception e) {
+            System.err.println("Error during OAuth2 authentication success handling: " + e.getMessage());
         }
     }
 

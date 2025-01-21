@@ -27,7 +27,7 @@ const OptionsButton: React.FC = () => {
     }   //activates and hides lower bar
 
     return (
-        <button onClick={handleLowerBar} className="text-base xs:text-xl">
+        <button onClick={handleLowerBar} className="text-lg m:text-[22px] ml-4">
             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
         </button>
     )

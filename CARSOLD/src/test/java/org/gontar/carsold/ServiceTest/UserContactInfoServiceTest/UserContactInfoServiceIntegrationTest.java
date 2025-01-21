@@ -50,7 +50,7 @@ public class UserContactInfoServiceIntegrationTest {
     public void testChangeName_failure_problemWithRequest() {
         String testName = "Kuba";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.changeName(testName, request);
 
@@ -136,7 +136,7 @@ public class UserContactInfoServiceIntegrationTest {
     public void testChangePhone_failure_problemWithRequest() {
         String testPhone = "721721721";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.changePhone(testPhone, request);
 

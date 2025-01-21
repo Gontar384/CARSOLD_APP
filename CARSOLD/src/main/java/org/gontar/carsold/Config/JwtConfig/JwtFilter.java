@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 //validates token, extracts username, loads UserPrincipal via MyUserDetailsService
 //and sets it in SecurityContextHolder
@@ -35,31 +36,28 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+        try {
+            Optional<String> token = jwtService.extractTokenFromCookie(request);
+            String username = null;
 
-        String token = jwtService.extractTokenFromCookie(request);
-        String username = null;
-
-        //if there are errors with token, clears token-cookie, makes user unauthenticated, then frontend logs him out
-        if (token != null) {
-            try {
-                username = jwtService.extractUsername(token);
-            } catch (Exception e) {
-                clearJwtCookie(response);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                return;
+            if (token.isPresent()) username = jwtService.extractUsername(token.get());
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+                if (jwtService.validateToken(token.get(), userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            //clears JWT cookie and returns an error status in case of token or authentication issues
+            System.err.println("Error during JWT processing: " + e.getMessage());
+            clearJwtCookie(response);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
 
-        //authenticate user
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
-            if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
         filterChain.doFilter(request, response);
     }
 

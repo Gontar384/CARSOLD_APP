@@ -90,7 +90,7 @@ const UserDetails: React.FC = () => {
 
     return (
         <div
-            className="flex justify-center items-center h-full min-w-[150px] lg:min-w-[190px] xl:min-w-[225px] 2xl:min-w-[280px] 3xl:min-w-[335px]"
+            className="flex justify-center items-center h-full min-w-[200px] m:min-w-[220px]"
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (
@@ -101,9 +101,8 @@ const UserDetails: React.FC = () => {
                             onKeyDown={(event) => {
                         if (event.key === "Enter") handleToggleBar()
                     }}>
-                        <div className="flex flex-row items-center h-full gap-[5px] lg:gap-[6px] xl:gap-[7px] 2xl:gap-[9px] 3xl:gap-[11px] relative">
-                            <div className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px] xl:w-[26px] xl:h-[26px] 2xl:w-[32px]
-                                                      2xl:h-[32px] 3xl:w-[38px] 3xl:h-[38px] mb-[4px] lg:mb-[3px] 3xl:mb-[5px]">
+                        <div className="flex flex-row items-center h-full gap-[3px] m:gap-[5px] relative">
+                            <div className="w-[22px] h-[22px] m:w-[25px] m:h-[25px]">
                             {profilePic !== "" && !imageError ? (
                                 <img src={profilePic} alt="Profile Picture" className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}
                                      onError={() => setImageError(true)}/>
@@ -111,13 +110,12 @@ const UserDetails: React.FC = () => {
                             <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>)}
                             </div>
                             <div
-                                className="text-base lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl pb-1 3xl:pb-2 whitespace-nowrap cursor-pointer">
+                                className="text-xl m:text-2xl whitespace-nowrap cursor-pointer">
                                 {userDetails}
                             </div>
                             {messages > 0 && (
                                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
-                                                 className="absolute -right-[10px] lg:-right-[12px] xl:-right-[15px] 2xl:-right-[18px] 3xl:-right-[22px] top-[13px] lg:top-[14px]
-                                                 xl:top-[17px] 2xl:top-[18px] 3xl:top-[16px] text-[6px] lg:text-[7px] xl:text-[9px] 2xl:text-[11px] 3xl:text-[13px]"/>)}
+                                                 className="absolute -right-[14px] m:-right-4 top-[14px] m:top-4 text-[8px] m:text-[10px]"/>)}
                         </div>
                         <Dropdown barActive={barActive}/>
                     </div>

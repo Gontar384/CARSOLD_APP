@@ -40,13 +40,13 @@ public class UserContactInfoServiceUnitTest {
     @Test
     public void testChangeContactInfoPublic_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.changeContactInfoPublic(request, true);
 
         assertFalse(result, "Should return false, problem with request");
         verify(jwtService).extractUserFromRequest(request);
-        verify(errorHandler).logBoolean("Error changing contact info: JWT token is missing or invalid");
+        verify(errorHandler).logBoolean("Error changing contact info: JWT is missing in the cookie");
         verifyNoMoreInteractions(jwtService, errorHandler);
     }
 
@@ -115,13 +115,13 @@ public class UserContactInfoServiceUnitTest {
     @Test
     public void testFetchInfo_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         Map<String, String> result = service.fetchInfo(request);
 
         assertEquals(Collections.emptyMap(), result);
         verify(jwtService).extractUserFromRequest(request);
-        verify(errorHandler).logVoid("Error fetching info: JWT token is missing or invalid");
+        verify(errorHandler).logVoid("Error fetching info: JWT is missing in the cookie");
         verifyNoMoreInteractions(jwtService, errorHandler);
     }
 

@@ -6,8 +6,7 @@ const Logo: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <button className="flex flex-row justify-center text-xl xs:text-2xl lg:text-3xl xl:text-4xl
-        2xl:text-[44px] 3xl:text-[50px]"
+        <button className="flex flex-row justify-center text-[26px] m:text-3xl mx-2"
                 onClick={() => navigate("/home")}>
             <p className="text-white">CAR</p>
             <p className="text-black">$</p>

@@ -114,7 +114,7 @@ public class UserProfilePicServiceIntegrationTest {
                 fileBytes
         );
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
 
@@ -124,7 +124,7 @@ public class UserProfilePicServiceIntegrationTest {
     @Test
     public void testDeleteProfilePic_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT token is missing or invalid"));
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.deleteProfilePic(request);
 

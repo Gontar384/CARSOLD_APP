@@ -54,10 +54,10 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const [lowerBar, setLowerBar] = useState<boolean>(false);
 
-    const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 640);
+    const [isWide, setIsWide] = useState<boolean>(window.innerWidth >= 450);
 
     useEffect(() => {
-        const handleResize = () => setIsWide(window.innerWidth >= 640);
+        const handleResize = () => setIsWide(window.innerWidth >= 450);
 
         window.addEventListener('resize', handleResize);
 
