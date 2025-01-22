@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import Logo from "./Atomic/Logo.tsx";
 import SearchBar from "./Atomic/SearchBar.tsx";
@@ -16,12 +16,19 @@ const NavBar: React.FC = () => {
 
     const {mobileWidth, midWidth, bigWidth} = useUtil();
     const {loadingAuth} = useAuth();
+    const excludedButtonRef = useRef<HTMLButtonElement | null>(null);  //excludes OptionsButton from MidBar closing effect
+    const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
+
+    useEffect(() => {
+        if (bigWidth) setIconAnimation(null);
+    }, [bigWidth]);
 
     return (
         <>
             <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0 gap-2
             w-full h-10 m:h-11 shadow-bottom bg-lime z-50">
-                {(mobileWidth || midWidth) && <OptionsButton/>}
+                {(mobileWidth || midWidth) && <OptionsButton excludedButtonRef={excludedButtonRef}
+                                                             iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
                 <Logo/>
                 <SearchBar/>
                 {bigWidth &&
@@ -31,7 +38,7 @@ const NavBar: React.FC = () => {
                     </>}
             </div>
             {mobileWidth && <LowerBar/>}
-            {midWidth && <MidBar/>}
+            {midWidth && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
             {loadingAuth && <LoadingNavBarLine/>}
         </>
     )

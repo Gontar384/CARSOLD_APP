@@ -1,48 +1,35 @@
-import React, {useState} from "react";
+import React, {SetStateAction, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars} from "@fortawesome/free-solid-svg-icons";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
-const OptionsButton: React.FC = () => {
+interface OptionsButtonProps {
+    excludedButtonRef: React.RefObject<HTMLButtonElement>;
+    iconAnimation: "animate-flip" | "animate-flipRev" | null;
+    setIconAnimation: React.Dispatch<SetStateAction<"animate-flip" | "animate-flipRev" | null>>;
+}
 
-    const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);
+const OptionsButton: React.FC<OptionsButtonProps> = ({excludedButtonRef, iconAnimation, setIconAnimation}) => {
 
     const [isDisabled, setIsDisabled] = useState<boolean>(false);  //prevents from spamming button
+    const { lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth } = useUtil();
 
-    const { lowerBar, setLowerBar, midBar, setMidBar, mobileWidth } = useUtil();
-
-    const handleLowerBar = () => {
+    const handleBar = (bar: boolean, setBar: React.Dispatch<SetStateAction<boolean>>) => {
         if (isDisabled) return;
-        setIconAnimation((prev) =>
-            prev === "animate-flip" ? "animate-flipRev" : "animate-flip");
-        if (!lowerBar) {
-            setLowerBar(true);
-        } else {
-            setLowerBar(false)
-        }
+        setIconAnimation(mobileWidth && lowerBar || midWidth && midBar ? "animate-flipRev" : "animate-flip");
+
+        if (!bar) setBar(true);
+        else setBar(false)
+
         setIsDisabled(true);
         setTimeout(() => {
             setIsDisabled(false);
         }, 300)
-    }   //activates and hides lower bar
-
-    const handleMidBar = () => {
-        if (isDisabled) return;
-        setIconAnimation((prev) =>
-            prev === "animate-flip" ? "animate-flipRev" : "animate-flip");
-        if (!midBar) {
-            setMidBar(true);
-        } else {
-            setMidBar(false)
-        }
-        setIsDisabled(true);
-        setTimeout(() => {
-            setIsDisabled(false);
-        }, 300)
-    }   //activates and hides mid-bar
+    }   //activates and hides lower and mid-bar
 
     return (
-        <button onClick={mobileWidth ? handleLowerBar : handleMidBar} className="text-lg m:text-[22px] ml-4">
+        <button onClick={mobileWidth ? () => handleBar(lowerBar, setLowerBar) : () => handleBar(midBar, setMidBar)}
+                className="text-lg m:text-[22px] ml-4" ref={excludedButtonRef}>
             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
         </button>
     )

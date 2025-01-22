@@ -9,7 +9,7 @@ const AccountDetails: React.FC = () => {
 
     const { mobileWidth } = useUtil();
 
-    document.title = "CARSOLD | Account Details";
+    document.title = "CARSOLD | Account UsernameAndPic";
 
     return (
         <LayOut>

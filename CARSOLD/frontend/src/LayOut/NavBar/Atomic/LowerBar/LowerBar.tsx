@@ -19,10 +19,13 @@ import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 const LowerBar: React.FC = () => {
 
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
-
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
 
     const { lowerBar, mobileWidth } = useUtil();
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const { followed, messages } = useItems();
+    const { logout } = useUserDetails();
 
     useEffect(() => {
         if (lowerBar) {
@@ -36,23 +39,7 @@ const LowerBar: React.FC = () => {
 
             return () => clearTimeout(timeout);
         }
-
-        if (!mobileWidth) {
-            setBarAnimation(null);
-        }
     }, [lowerBar, mobileWidth]);   //activates/deactivates lower bar and resets animation
-
-    const { isAuthenticated } = useAuth();
-
-    const navigate = useNavigate();
-
-    const { followed, messages } = useItems();
-
-    const { logout, handleUsernameFetch } = useUserDetails();
-
-    useEffect(() => {
-        handleUsernameFetch().then();
-    }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
     if (lowerBarActive) {
         return (

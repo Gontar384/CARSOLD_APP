@@ -1,0 +1,40 @@
+import React, {useState} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
+import {useItems} from "../../../../../GlobalProviders/Items/useItems.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+
+interface DetailsProps {
+    userIconAnimation?: "animate-pop" | null;
+    userDetails: string;
+    profilePic: string;
+}
+
+const Details: React.FC<DetailsProps> = ({userIconAnimation, userDetails, profilePic}) => {
+
+    const {messages} = useItems();
+    const {bigWidth} = useUtil();
+    const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
+
+    return (
+        <div className="flex flex-row items-center h-full gap-[5px] relative">
+            <div className="w-[25px] h-[25px]">
+                {profilePic !== "" && !imageError ? (
+                    <img src={profilePic} alt="Profile Picture"
+                         className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}
+                         onError={() => setImageError(true)}/>
+                ) : (
+                    <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>)}
+            </div>
+            <div
+                className="text-2xl whitespace-nowrap">
+                {userDetails}
+            </div>
+            {messages > 0 && bigWidth &&(
+                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
+                                 className="absolute -right-4 top-4 text-[10px]"/>)}
+        </div>
+    )
+}
+
+export default Details

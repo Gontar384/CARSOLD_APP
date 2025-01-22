@@ -57,20 +57,25 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth <= 450);
     const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth > 450 && window.innerWidth <= 960);
-    const [bigWidth, setBitWidth] = useState<boolean>(window.innerWidth > 960);
+    const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 960);
 
     useEffect(() => {
         const handleResize = () => {
-            setMobileWidth(window.innerWidth <= 450);
-            setMidWidth(window.innerWidth > 450 && window.innerWidth <= 960);
-            setBitWidth(window.innerWidth > 960);
-        }
+            const width = window.innerWidth;
 
-        window.addEventListener('resize', handleResize);
+            setMobileWidth(width <= 450);
+            setMidWidth(width > 450 && width <= 960);
+            setBigWidth(width > 960);
+        };
 
-        return () => window.removeEventListener('resize', handleResize)
+        window.addEventListener("resize", handleResize);
 
-    }, [midWidth, mobileWidth])  //manages mobileWidth and midWidth state
+        handleResize();
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []); //manages width states
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
     const CreateDebouncedValue = <T, >(value: T, delay: number): T => {

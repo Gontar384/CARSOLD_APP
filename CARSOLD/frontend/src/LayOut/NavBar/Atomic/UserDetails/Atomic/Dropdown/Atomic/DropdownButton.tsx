@@ -16,17 +16,17 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }
     const {isMobile} = useUtil();
 
     return (
-        <button className={`flex items-center justify-center w-full h-8 m:h-9 text-lg m:text-xl ${buttonColor ? "bg-white" : "bg-lime"}`}
+        <button className={`flex items-center justify-center w-full h-9 ${buttonColor ? "bg-white" : "bg-lime"}`}
                 onClick={onClick} onKeyDown={(event) => { if (event.key === "Enter") onClick() }}
                 onTouchStart={isMobile ? handleStart : undefined}
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
-            <span>{label}</span>
+            <span className="text-xl">{label}</span>
             {count && count > 0 ? <div className="relative ml-1">
                 <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}
                                  className="text-[22px]"/>
-                <p className="inset-0 m-auto top-[2px] m:top-[5px] text-[10px] m:text-xs text-white absolute">
+                <p className="inset-0 m-auto top-[5px] text-xs text-white absolute">
                     {count}</p>
             </div> : null}
         </button>
