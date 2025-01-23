@@ -13,10 +13,9 @@ const Contact: React.FC<ContactProps> = ({email}) => {
     const {isMobile} = useUtil();
 
     return (
-        <div className="flex flex-col mt-7 xs:mt-9 sm:mt-3 lg:mt-5 xl:mt-7 2xl:mt-10 3xl:mt-12">
+        <div className="flex flex-col mt-8 m:mt-10">
             <p>We will be glad, if you report any issues at: </p>
-            <div className="flex flex-row items-center justify-center gap-2 xs:gap-[10px] lg:gap-3 2xl:gap-4 3xl:gap-5
-            mt-[1px] xs:mt-[2px] lg:mt-[3px] xl:mt-1 2xl:mt-[6px] 3xl:mt-2">
+            <div className="flex flex-row items-center justify-center gap-2 m:gap-3 mt-1 m:mt-[6px]">
                 <p className="font-bold">{email}</p>
                 <FontAwesomeIcon icon={faEnvelope} className={`${animation}`}
                                  onMouseEnter={!isMobile ? () => setAnimation("animate-pop") : undefined}

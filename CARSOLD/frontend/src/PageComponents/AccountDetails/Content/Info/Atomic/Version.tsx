@@ -13,8 +13,8 @@ const Version: React.FC<VersionProps> = ({v}) => {
     const {isMobile} = useUtil();
 
     return (
-        <div className="flex flex-row items-center gap-2 xs:gap-[10px] lg:gap-3 2xl:gap-4 3xl:gap-5
-            mt-9 xs:mt-11 sm:mt-7 lg:mt-9 xl:mt-10 2xl:mt-14 3xl:mt-16">
+        <div className="flex flex-row items-center gap-2 m:gap-3
+            mt-10 m:mt-12">
             <p>CARSOLD version {v.toFixed(1)}</p>
             <FontAwesomeIcon icon={faGear} className={`${animation}`}
                              onMouseEnter={!isMobile ? () => setAnimation("animate-shock") : undefined}

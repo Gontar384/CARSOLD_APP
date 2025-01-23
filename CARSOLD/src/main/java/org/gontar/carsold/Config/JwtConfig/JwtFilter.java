@@ -52,7 +52,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             //clears JWT cookie and returns an error status in case of token or authentication issues
-            System.err.println("Error during JWT processing: " + e.getMessage());
             clearJwtCookie(response);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return;
