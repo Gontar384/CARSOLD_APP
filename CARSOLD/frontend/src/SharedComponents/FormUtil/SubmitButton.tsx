@@ -62,8 +62,8 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({label, onClick, disabled}) =
 
     return (
         <button
-            className={`relative flex justify-center items-center w-24 xs:w-28 2xl:w-36 3xl:w-44 h-9 xs:h-10 2xl:h-11 3xl:h-12
-            rounded-sm shadow-xl overflow-hidden`}
+            className={`relative flex justify-center items-center w-24 m:w-28 h-9 m:h-10 text-lg m:text-xl
+            rounded-sm shadow-xl overflow-hidden m:mt-1`}
             onClick={handleClick} onTouchStart={handleClick} onKeyDown={handleKeyDown} disabled={disabled}>
             <span className="z-10">{label}</span>
             {isClicked && wavePosition &&

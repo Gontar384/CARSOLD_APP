@@ -83,7 +83,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 return;
             }
             if (file.size > 3 * 1024 * 1024) {
-                setMessage("Couldn't upload, image is too large");
+                setMessage("Couldn't upload, image is too large.");
                 return;
             }
             setMessage("");
@@ -98,7 +98,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                     setInputActive(false);
                     setProfilePicChange(true);
                     setInputClickable(false)
-                    if (!response.data.info) setMessage("Couldn't upload, image is inappropriate");
+                    if (!response.data.info) setMessage("Couldn't upload, image is inappropriate.");
                 }
             } catch (error) {
                 console.log('Error uploading pic: ', error);
@@ -129,14 +129,13 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }, [handleProfilePicFetch, isAuthenticated, picUploaded]);  //fetches pic
 
     return (
-        <div className="absolute left-0 scale-110 rounded-full" ref={componentRef}
+        <div className="absolute left-0 scale-125 rounded-full" ref={componentRef}
              onMouseEnter={!isMobile ? handleActivateInput : undefined}
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
              onTouchStart={isMobile ? handleToggleInput : undefined}
              onTouchEnd={isMobile ? handleClickable : undefined}>
-            <div className={'relative w-14 h-14 xs:w-16 xs:h-16 lg:w-[72px] lg:h-[72px] xl:w-[80px] xl:h-[80px] ' +
-                '2xl:w-[92px] 2xl:h-[92px] 3xl:w-[108px] 3xl:h-[108px] overflow-hidden z-20 ' +
-                ` ${profilePicFetched ? "" : "bg-lowLime"}`} style={{clipPath: 'circle(50%)'}}>
+            <div className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
+                 style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
                     <div className="relative w-full h-full rounded-full">
                         {profilePic !== "" && !imageError ? (
@@ -153,8 +152,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                                     <input type="file" accept="image/*" title=""
                                            className="file-input absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
                                            onChange={handleUploadPic} onClick={() => setHideButton(true)}/>}
-                                <FontAwesomeIcon icon={faCirclePlus}
-                                                 className={`w-1/2 h-1/2 animate-shock ${hideButton ? "hidden" : ""}`}/>
+                                {!hideButton && <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
                             </div>
                         )}
                         {!picUploaded && <LoadingPicAnimation/>}
@@ -163,13 +161,11 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                     <ProfilePicLoader/>
                 )}
             </div>
-            {inputActive && picUploaded && profilePic && !imageError &&
-                <button className={`absolute -bottom-[1px] -right-[6px] xs:bottom-0 lg:bottom-[1px] lg:-right-[8px] 
-                xl:bottom-[2px] xl:-right-[10px] 2xl:bottom-[3px] 2xl:-right-[11px] 3xl:bottom-1 3xl:-right-[12px] z-10
-                ${inputActive ? "animate-slideInDiagonal" : ""} ${hideButton ? "hidden" : ""}`}
+            {inputActive && picUploaded && profilePic && !imageError && !hideButton &&
+                <button className={`absolute -bottom-1 -right-[14px] m:-right-4 px-[6px] m:pt-[2px] z-10 
+                ${inputActive ? "animate-slideInDiagonal" : ""}`}
                         onClick={handleDeletePic}>
-                    <FontAwesomeIcon icon={faTrash} className="text-[9px] xs:text-[10px] lg:text-[12px] xl:text-sm 2xl:text-base
-                                                    3xl:text-lg"/>
+                    <FontAwesomeIcon icon={faTrash} className="text-sm m:text-base"/>
                 </button>}
         </div>
     )

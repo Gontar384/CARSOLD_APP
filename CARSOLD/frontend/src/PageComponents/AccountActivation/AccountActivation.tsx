@@ -9,7 +9,7 @@ const AccountActivation: React.FC = () => {
     const navigate = useNavigate();
 
     const [count, setCount] = useState<number>(3);
-    const [activationMessage, setActivationMessage] = useState<string>("Account activation success - redirecting...");
+    const [activationMessage, setActivationMessage] = useState<string>("Account activation success.");
     const [color, setColor] = useState<"bg-lime" | "bg-coolYellow">("bg-lime");
     const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -22,7 +22,7 @@ const AccountActivation: React.FC = () => {
                 const response = await api.get(`api/auth/activate`, {params: {token}});
                 if (!response.data) {
                     setColor("bg-coolYellow");
-                    setActivationMessage("Link has expired, register again please...");
+                    setActivationMessage("Link has expired, register again please.");
                     setTimeout(() => {
                         navigate("/authenticate/register")
                     }, 3500)
@@ -59,11 +59,14 @@ const AccountActivation: React.FC = () => {
     }
 
     return (
-        <div className={`flex flex-col gap-3 text-xl sm:text-5xl justify-center items-center h-screen`}>
+        <div className={`flex flex-col justify-center items-center h-screen`}>
             <div className={`absolute inset-0 animate-pulse z-0 ${color}`}></div>
-            <div className="z-10">
+            <div className="flex flex-col items-center justify-center text-2xl m:text-3xl gap-5 m:gap-8 z-10">
                 <p className="text-center">{activationMessage}</p>
-                <p className="text-5xl sm:text-8xl font-bold font-mono text-center">{count}</p>
+                <div className="flex justify-center items-center w-20 h-20 m:w-24 m:h-24 bg-lowBlack rounded-xl">
+                    <p className="text-white text-6xl m:text-7xl font-bold font-mono">{count}</p>
+                </div>
+                <p>Redirecting...</p>
             </div>
         </div>
     );

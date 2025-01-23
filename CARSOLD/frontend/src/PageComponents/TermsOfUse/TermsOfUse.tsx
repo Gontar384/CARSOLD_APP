@@ -9,9 +9,9 @@ const TermsOfUse: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col w-11/12 sm:w-10/12 md:w-9/12 lg:w-8/12 2xl:w-8/12 3xl:max-w-[1250px] bg-lowLime
-                p-4 xs:pt-5 xl:p-6 2xl:p-7 3xl:p-8 mb-20 rounded-sm">
-                    <h1 className="text-xl xs:text-[22px] xl:text-2xl 2xl:text-[26px] 3xl:text-[28px] text-center font-bold">
+                <div className="flex flex-col w-11/12 max-w-[1200px] bg-lowLime
+                p-5 m:p-7 rounded-sm">
+                    <h1 className="text-2xl m:text-3xl text-center font-bold">
                         Terms of Use
                     </h1>
 

@@ -55,16 +55,16 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [lowerBar, setLowerBar] = useState<boolean>(false);
     const [midBar, setMidBar] = useState<boolean>(false);
 
-    const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth <= 450);
-    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth > 450 && window.innerWidth <= 960);
+    const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth < 450);
+    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth <= 960);
     const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 960);
 
     useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
 
-            setMobileWidth(width <= 450);
-            setMidWidth(width > 450 && width <= 960);
+            setMobileWidth(width < 450);
+            setMidWidth(width >= 450 && width <= 960);
             setBigWidth(width > 960);
         };
 

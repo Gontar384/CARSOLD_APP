@@ -14,15 +14,15 @@ const HeaderButton: React.FC<HeaderButtonProps> = ({onClick, isGoogle, label}) =
     const {isMobile} = useUtil();
 
     return (
-        <button className={`flex flex-row items-center justify-center w-full h-8 xs:h-9 2xl:h-11 3xl:h-[52px] shadow rounded-sm  
-        ${buttonColor ? "bg-white" : "bg-lime"}`}
+        <button className={`flex flex-row items-center justify-center w-full h-10 m:h-11 text-xl m:text-2xl   
+        ${buttonColor ? "bg-white" : "bg-lime"} shadow rounded-sm`}
                 onClick={onClick}
                 onTouchStart={isMobile ? handleStart : undefined}
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
             {isGoogle ? <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
-                             alt='Google logo' className="w-5 h-5 xs:w-6 xs:h-6 2xl:w-8 2xl:h-8 3xl:w-9 3xl:h-9 mr-1"/> : null}
+                             alt='Google logo' className="w-6 h-6 m:w-7 m:h-7 mr-1"/> : null}
             {label}
         </button>
     )

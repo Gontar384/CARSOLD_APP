@@ -7,7 +7,7 @@ const LoginButton: React.FC = () => {
 
     return (
         <button onClick={() => navigate("/authenticate/login")}
-                className="text-xl m:2xl:text-2xl whitespace-nowrap cursor-pointer">
+                className="text-2xl whitespace-nowrap cursor-pointer">
             <p>Login | Register</p>
         </button>
     )

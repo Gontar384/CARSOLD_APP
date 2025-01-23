@@ -18,7 +18,7 @@ const Details: React.FC<DetailsProps> = ({userIconAnimation, userDetails, profil
 
     return (
         <div className="flex flex-row items-center h-full gap-[5px] relative">
-            <div className="w-[25px] h-[25px]">
+            <div className="w-7 h-7">
                 {profilePic !== "" && !imageError ? (
                     <img src={profilePic} alt="Profile Picture"
                          className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}

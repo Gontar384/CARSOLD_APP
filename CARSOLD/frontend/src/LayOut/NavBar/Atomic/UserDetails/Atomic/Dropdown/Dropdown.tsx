@@ -29,8 +29,8 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
             {barActive &&
                 <div
                     onTouchStart={isMobile ? handleDropdownInteraction : undefined}
-                    className="flex flex-col items-center justify-center w-[115px] m:w-[130px]
-                    absolute m:top-11 bg-lime shadow-bottom">
+                    className="flex flex-col items-center justify-center w-[130px]
+                    absolute top-12 bg-lime shadow-bottom">
                     <DropdownButton label="MyOffers" onClick={() => navigate("/details/myOffers")}/>
                     <DropdownButton label="Followed" onClick={() => navigate('/details/followed')} count={followed}/>
                     <DropdownButton label="Messages" onClick={() => navigate('/details/messages')} count={messages}/>

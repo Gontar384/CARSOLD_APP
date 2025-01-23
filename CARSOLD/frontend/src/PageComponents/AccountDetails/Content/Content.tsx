@@ -32,7 +32,7 @@ const Content: React.FC = () => {
     }
 
     return (
-        <div className={`flex flex-col w-full rounded-sm justify-center items-center border border-black border-opacity-40
+        <div className={`flex flex-col w-full rounded-sm justify-center items-center border max-w-[1200px]border-black border-opacity-40
          ${!mobileWidth ? "" : "justify-center items-center min-h-72 xs:min-h-80 max-h-[720px]"}`}>
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>

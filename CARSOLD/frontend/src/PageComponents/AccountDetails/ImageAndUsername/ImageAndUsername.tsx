@@ -2,15 +2,16 @@ import React, {useState} from "react";
 import Image from "./Atomic/Image.tsx";
 import Username from "./Atomic/Username.tsx";
 import Message from "./Atomic/Message.tsx";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const ImageAndUsername: React.FC = () => {
 
     const [message, setMessage] = useState<string>('');
+    const {bigWidth} = useUtil();
 
     return (
-        <div className="flex items-center w-7/12 min-h-14 xs:min-h-16 lg:h-[72px] xl:h-[80px] 2xl:h-[92px]
-        3xl:h-[108px] min-w-[250px] sm:max-w-[445px] lg:max-w-[600px] xl:max-w-[700px] 2xl:max-w-[850px]
-        3xl:max-w-[920px] relative bg-lowLime rounded-l-full">
+        <div className={`flex items-center w-11/12 ${bigWidth ? "max-w-[700px]" : "max-w-[550px]"} 
+        min-h-[70px] m:min-h-[80px] relative bg-lowLime rounded-l-full`}>
             <Image setMessage={setMessage}/>
             <Username/>
             {message !== "" && (

@@ -73,7 +73,7 @@ const SearchBar: React.FC = () => {
 
     return (
         <div
-            className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[280px]"
+            className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[320px]"
             ref={componentRef}>
             {!isClicked && search === "" &&
                 <FontAwesomeIcon icon={faMagnifyingGlass}

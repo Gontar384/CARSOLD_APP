@@ -19,7 +19,7 @@ const Headers: React.FC = () => {
     };       //for Google auth
 
     return (
-        <div className="flex flex-col w-11/12 gap-2 text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl">
+        <div className="flex flex-col w-11/12 gap-2">
             <div className="flex flex-row divide-x divide-black">
                 <HeaderButton label={"Login"} onClick={() => handleNavigation("login")}/>
                 <HeaderButton label={"Register"} onClick={() => handleNavigation("register")}/>

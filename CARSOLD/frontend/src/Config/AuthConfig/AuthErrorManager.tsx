@@ -8,8 +8,7 @@ const AuthErrorManager: React.FC = () => {
 
     const [showSessionExpired, setShowSessionExpired] = useState<boolean>(false);
 
-    api.interceptors.response.use(
-        (response: AxiosResponse) => response,
+    api.interceptors.response.use((response: AxiosResponse) => response,
         async (error: AxiosError) => {
             if (error.response) {
                 if (error.response.status === 401 || error.response.status === 403) {        //for authentication errors
@@ -29,6 +28,7 @@ const AuthErrorManager: React.FC = () => {
             return Promise.reject(error);
         }
     );
+
     return (
         <>
             {showSessionExpired && <SessionExpiredBanner/>} {/*displays banner*/}

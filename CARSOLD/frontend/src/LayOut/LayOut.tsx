@@ -10,7 +10,7 @@ const LayOut: React.FC<LayOutProps> = ({children}) => {
     return (
         <div className="flex flex-col min-h-screen">
             <NavBar/>
-            <div className="flex-grow min-h-screen mt-20 xs:mt-24 sm:mt-20 lg:mt-[88px] xl:mt-24 2xl:mt-28 3xl:mt-32">
+            <div className="flex-grow min-h-screen mt-24 m:mt-28">
                 {children}
             </div>
             <Footer/>

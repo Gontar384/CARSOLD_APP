@@ -40,13 +40,13 @@ const UserDetails: React.FC = () => {
 
     const handleDeactivateBar = () => {
         setBarHovered(false);
-        setUserIconAnimation(null);
     }   //deactivates on mouse
 
     useEffect(() => {
         if (!debouncedHover && !barHovered) {
             setBarActive(false);
             setAnimationActive(false);
+            setUserIconAnimation(null);
         }
     }, [debouncedHover, barHovered]);  //for user-friendly delay on MouseLeave
 
@@ -79,7 +79,7 @@ const UserDetails: React.FC = () => {
 
     return (
         <div
-            className="flex justify-center items-center h-full min-w-[200px] m:min-w-[220px]"
+            className="flex justify-center items-center h-full min-w-[220px]"
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (

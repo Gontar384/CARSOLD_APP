@@ -1,9 +1,13 @@
 import React from "react";
 
-const AuthWindowLoader: React.FC = () => {
+interface AuthWindowLoaderProps {
+    choice: "login" | "register";
+}
+
+const AuthWindowLoader: React.FC<AuthWindowLoaderProps> = ({choice}) => {
     return (
-        <div className="bg-lime w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:min-w-[420px] 2xl:max-w-[500px]
-            3xl:max-w-[600px] rounded-sm h-[368px] xs:h-[420px] 2xl:h-[497px] 3xl:h-[555px] animate-pulse">
+        <div className={`w-11/12 max-w-[460px] ${choice  === "login" ? "h-[432px] m:h-[472px]" : "h-[536px] m:h-[592px]"} 
+        bg-lime rounded-sm animate-pulse`}>
         </div>
     )
 }

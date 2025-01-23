@@ -16,8 +16,8 @@ const AddButton: React.FC = () => {
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
-            <FontAwesomeIcon icon={faPlus} className="text-xl m:text-2xl"/>
-            <p className="text-xl m:text-2xl whitespace-nowrap">
+            <FontAwesomeIcon icon={faPlus} className="text-2xl"/>
+            <p className="text-2xl whitespace-nowrap">
                 Add Offer</p>
         </button>
     )

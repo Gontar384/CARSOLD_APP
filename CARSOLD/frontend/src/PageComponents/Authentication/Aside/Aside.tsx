@@ -15,16 +15,15 @@ const Aside: React.FC = () => {
     ];
 
     return (
-        <div className="flex flex-col w-11/12 xs:w-10/12 max-w-[360px] xs:max-w-[420px] sm:max-w-[700px] 2xl:max-w-[850px]
-        3xl:max-w-[950px] 3xl:h-[650px] text-base xs:text-xl 2xl:text-2xl 3xl:text-3xl p-3 rounded-sm bg-lowLime
+        <div className="flex flex-col w-11/12 max-w-[900px] text-xl m:text-2xl p-3 rounded-sm bg-lowLime
         bg-[url('/AsideBackground.jpg')] bg-center bg-cover">
-            <p className="text-center text-xl xs:text-2xl 2xl:text-3xl 3xl:text-4xl pb-3 font-bold">Why to use?</p>
+            <p className="text-center text-2xl m:text-3xl pb-3 font-bold">Why to use?</p>
             {features.map((feature, index) => (
                 <p key={index}>
                     <FontAwesomeIcon icon={faCheck}/> {feature}
                 </p>
             ))}
-            <p className="mb-72"></p>
+            <p className="mb-80"></p>
         </div>
     )
 }

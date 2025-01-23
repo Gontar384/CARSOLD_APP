@@ -28,13 +28,12 @@ const AuthWindow: React.FC = () => {
 
     if (isLoading) {
         return (
-            <AuthWindowLoader/>
+            <AuthWindowLoader choice={choice}/>
         )
     }  //to prevent /login blinking
 
     return (
-        <div className="flex flex-col items-center bg-lime py-6 xs:py-8 2xl:py-10 w-11/12 xs:w-10/12
-        max-w-[360px] xs:max-w-[420px] sm:min-w-[420px] 2xl:max-w-[500px] 3xl:max-w-[600px] rounded-sm">
+        <div className="flex flex-col items-center w-11/12 bg-lime py-6 max-w-[460px] rounded-sm">
             <Headers/>
             {choice === "login" ? <LoginForm/> : <RegisterForm/>}
         </div>

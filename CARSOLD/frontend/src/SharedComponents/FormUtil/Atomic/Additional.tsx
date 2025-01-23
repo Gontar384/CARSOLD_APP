@@ -23,17 +23,15 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
     const navigate = useNavigate();
 
     return (
-        <div className={`flex flex-row ${whichForm === "none" ? "justify-end" : "justify-between"} items-center mt-2 xs:mt-3 2xl:mt-4 3xl:mt-5`}>
+        <div className={`flex flex-row ${whichForm === "none" ? "justify-end" : "justify-between"} items-center mt-6 m:mt-7`}>
             {whichForm === "login" ? (
                 <button onClick={() => navigate('/password-recovery')}
-                        className="text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px] underline">Forgot password?
+                        className="text-sm m:text-base underline">Forgot password?
                 </button>
             ) : whichForm === "register" ? (
-                <div className={`${mark ? "text-coolRed" : "text-black"}
-                 text-xs xs:text-[14px] 2xl:text-[18px] 3xl:text-[21px]`}>
-                    <input id="myCheckbox" type="checkbox" className="w-[8px] h-[8px] xs:w-[10px] xs:h-[10px] 2xl:w-[13px]
-                     2xl:h-[13px] 3xl:w-[15px] 3xl:h-[15px] mr-3 bg-white border border-solid border-black rounded-full
-                      appearance-none checked:bg-black checked:border-white"
+                <div className={`${mark ? "text-coolRed" : "text-black"} text-sm m:text-base`}>
+                    <input id="myCheckbox" type="checkbox" className="w-[10px] h-[10px] m:w-[11px] m:h-[11px] mr-2 m:mr-3
+                    bg-white border border-solid border-black rounded-full appearance-none checked:bg-black checked:border-white"
                            checked={termsCheck} onChange={(e) => {setTermsCheck?.(e.target.checked)}}
                            onKeyDown={(e) => {if (e.key === 'Enter') {setTermsCheck?.(!termsCheck)}}}/>
                     <label htmlFor="myCheckbox">Accept</label>
@@ -42,8 +40,8 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
                     </button>
                 </div>
             ) : null}
-            <button onClick={toggleInput} className="w-5 h-5 xs:w-6 xs:h-6 2xl:w-7 2xl:h-7 3xl:w-8 3xl:h-8">
-                <FontAwesomeIcon icon={eyeIcon} className={`w-full h-full ${eyeIcon === faEyeSlash ? "scale-110" : ""}`}/>
+            <button onClick={toggleInput} className="w-6 h-6 m:w-7 m:h-7">
+                <FontAwesomeIcon icon={eyeIcon} className={`w-full h-full ${eyeIcon === faEyeSlash ? "scale-[106%]" : ""}`}/>
             </button>
         </div>
     )

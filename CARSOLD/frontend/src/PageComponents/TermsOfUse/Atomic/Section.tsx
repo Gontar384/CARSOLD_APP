@@ -6,11 +6,11 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({title, content}) => (
-    <div className="mt-3 xs:mt-4 xl:mt-5 2xl:mt-6 3xl:mt-7">
-        <h3 className="text-lg xs:text-xl xl:text-[22px] 2xl:text-[24px] 3xl:text-[26px] font-bold">{title}</h3>
-        <div className="text-sm xs:text-base xl:text-lg 2xl:text-xl 3xl:text-[22px]">
+    <div className="mt-4 m:mt-6">
+        <h3 className="text-xl m:text-2xl font-bold">{title}</h3>
+        <div className="text-base m:text-xl mt-2 m:mt-3">
             {content.map((text, index) => (
-                <p key={index} className="mt-1">
+                <p key={index} className="mt-1 m:mt-2">
                     {text}
                 </p>
             ))}

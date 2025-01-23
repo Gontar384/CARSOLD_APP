@@ -13,8 +13,7 @@ const Username: React.FC = () => {
     }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
     return (
-        <div className="flex justify-center text-xl xs:text-2xl lg:text-[28px] xl:text-[32px] 2xl:text-4xl 3xl:text-[40px]
-        text-white font-bold w-full text-center ml-12 xs:ml-14 sm:ml-8 lg:ml-7 xl:ml-6 2xl:ml-8">
+        <div className="flex justify-center text-2xl m:text-[28px] text-white font-bold w-full text-center ml-[75px] m:ml-[50px]">
             {usernameFetched ? userDetails :
             <UsernameLoader/>}
         </div>

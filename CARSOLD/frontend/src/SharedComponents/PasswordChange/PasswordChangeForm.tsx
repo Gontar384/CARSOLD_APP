@@ -14,11 +14,9 @@ interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
     setWentWrong?: React.Dispatch<React.SetStateAction<boolean>>;
     loggedIn: boolean;
-    scaled?: boolean;
-    isShrink?: boolean;
 }
 
-const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, setWentWrong, loggedIn, scaled, isShrink}) => {
+const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, setWentWrong, loggedIn}) => {
 
     const [password, setPassword] = useState<string>("");
     const [passwordRep, setPasswordRep] = useState<string>("");
@@ -204,19 +202,14 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }   //changes when user is authenticated
 
     return (
-        <div className={`flex flex-col items-center w-full h-full gap-6 xs:gap-7 2xl:gap-8 3xl:gap-9 
-        ${scaled ? "scale-[99%] xs:scale-[80%] sm:scale-[70%] lg:scale-[76%] xl:scale-[83%] 2xl:scale-[85%] 3xl:scale-[77%]" : ""}
-        text-base xs:text-xl lg:text-[22px] 2xl:text-2xl 3xl:text-3xl`}>
+        <div className={`flex flex-col items-center w-full`}>
             {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
-                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} isShrink={isShrink}/>}
-            <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType}
-                   value={password} setValue={setPassword} icon={passwordIcon} info={passwordInfo}
-                   isActive={passwordActive} isShrink={isShrink}/>
-            <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType}
-                   value={passwordRep} setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true}
-                   whichForm={"none"} isShrink={isShrink}/>
-            <SubmitButton label={"Change"} disabled={isDisabled}
-                          onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
+                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon}/>}
+            <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType} value={password}
+                   setValue={setPassword} icon={passwordIcon} info={passwordInfo} isActive={passwordActive}/>
+            <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
+                   setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true} whichForm={"none"}/>
+            <SubmitButton label={"Change"} disabled={isDisabled} onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
         </div>
     )
 }

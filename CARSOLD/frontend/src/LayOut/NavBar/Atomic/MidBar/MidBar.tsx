@@ -94,7 +94,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     if (midBarActive) {
         return (
             <div
-                className={`flex flex-col items-center w-[230px] h-screen fixed top-11 bg-lime shadow ${barAnimation} z-50`}
+                className={`flex flex-col items-center w-[230px] h-screen fixed top-12 bg-lime shadow ${barAnimation} z-50`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
