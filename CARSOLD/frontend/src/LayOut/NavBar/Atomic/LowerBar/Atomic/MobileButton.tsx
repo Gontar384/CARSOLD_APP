@@ -18,19 +18,19 @@ const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}
     const { buttonColor, handleStart, handleEnd } = useButton();
 
     return (
-        <button className="flex flex-col items-center w-1/6 h-full pt-[6px] relative"
+        <button className="flex flex-col items-center w-1/6 h-full pt-[7px] relative"
                 onClick={onClick}
                 onTouchStart={isMobile ? handleStart : undefined}
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
-            <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-2xl"/>
+            <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-[28px]"/>
             {count && count > 0 ? (
-                <p className="text-[10px] top-[10px] text-white absolute">
+                <p className="text-xs top-3 text-white absolute">
                     {count}
                 </p>
             ) : null}
-            <p className="text-[10px]">{label}</p>
+            <p className="text-xs">{label}</p>
         </button>
     )
 }

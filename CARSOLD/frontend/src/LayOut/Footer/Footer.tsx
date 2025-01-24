@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
 
     return (
         <div className={`flex flex-col justify-center items-center w-full bg-lowLime shadow-top
-        mt-24 m:mt-96 text-sm m:text-base py-2 m:py-3 ${lowerBar && mobileWidth ? "mb-12 animate-slideUp" : ""} `}>
+        text-sm m:text-base py-2 m:py-3 ${lowerBar && mobileWidth ? "mb-14 animate-slideUp" : ""} `}>
             <div className="flex flex-row gap-[2px]">
                 <p>Give feedback:</p>
                 <p className="font-bold">carsold384@gmail.com</p>

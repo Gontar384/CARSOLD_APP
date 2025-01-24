@@ -5,6 +5,7 @@ import Followed from "./Followed/Followed.tsx";
 import Messages from "./Messages/Messages.tsx";
 import Settings from "./Settings/Settings.tsx";
 import Info from "./Info/Info.tsx";
+import ContentLoader from "../../../SharedComponents/Additional/Loading/ContentLoader.tsx";
 
 const Content: React.FC = () => {
 
@@ -26,7 +27,7 @@ const Content: React.FC = () => {
     }, [section, navigate])   //navigates when section changes
 
     if (isLoading) {
-        return null;
+        return <ContentLoader/>
     }
 
     return (

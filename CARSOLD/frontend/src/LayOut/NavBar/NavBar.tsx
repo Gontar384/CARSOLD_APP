@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
     return (
         <>
             <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0 gap-2
-            w-full h-11 m:h-12 shadow-bottom bg-lime z-50">
+            w-full h-12 m:h-14 shadow-bottom bg-lime z-50">
                 {(mobileWidth || midWidth) && <OptionsButton excludedButtonRef={excludedButtonRef}
                                                              iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
                 <Logo/>

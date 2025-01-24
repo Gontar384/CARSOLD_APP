@@ -31,7 +31,7 @@ const AnimatedBanner: React.FC<AnimatedBannerProps> = ({ text, onAnimationEnd, d
     }, [delay, onAnimationEnd]);
 
     return (
-        <div className={`flex justify-center items-center fixed ${lowerBar && mobileWidth ? "bottom-12 transition-all duration-300 ease-out" : "bottom-0"} 
+        <div className={`flex justify-center items-center fixed ${lowerBar && mobileWidth ? "bottom-14 transition-all duration-300 ease-out" : "bottom-0"} 
             left-0 right-0 ${text.length > 30 ? "h-24 m:h-20" : "h-12 m:h-14"} ${color} border-t border-x border-gray-400 rounded-t-2xl ${z} shadow-top ${animation}`}>
             <p className="p-4 text-xl m:text-[22px] text-center">
                 {text}

@@ -110,28 +110,28 @@ export default {
                     '100%': {transform: "scale(1.05)"},
                 },
                 slideRight: {
-                    '0%': {transform: "translateX(-150%)"},
+                    '0%': {transform: "translateX(-110%)"},
                     '100%': {transform: "translateX(0)"}
                 },
                 slideLeft: {
                     '0%': {transform: "translateX(0)"},
-                    '100%': {transform: "translateX(-150%)"}
+                    '100%': {transform: "translateX(-110%)"}
                 },
                 slideOn1: {
                     '0%': {transform: "translateX(0)"},
-                    '100%': {transform: "translateX(104%)"}
+                    '100%': {transform: "translateX(106%)"}
                 },
                 slideOff1: {
-                    '0%': {transform: "translateX(104%)"},
+                    '0%': {transform: "translateX(106%)"},
                     '100%': {transform: "translateX(0)"}
                 },
                 slideOn2: {
-                    '0%': {transform: "translateX(-104%)"},
+                    '0%': {transform: "translateX(-106%)"},
                     '100%': {transform: "translateX(0)"}
                 },
                 slideOff2: {
                     '0%': {transform: "translateX(0)"},
-                    '100%': {transform: "translateX(-104%)"}
+                    '100%': {transform: "translateX(-106%)"}
                 },
                 swing: {
                     '0%': {transform: "rotate(180deg)"},

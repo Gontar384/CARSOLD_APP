@@ -193,28 +193,23 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     }, [debouncedValue]);
 
     return (
-        <div className="flex flex-col lg:gap-[1px] 2xl:gap-[2px]">
-            <label className="text-sm lg:text-base xl:text-lg 2xl:text-xl 3xl:test-2xl">
+        <div className="flex flex-col gap-[2px] m:gap-1">
+            <label className="text-lg m:text-xl">
                 {label}
             </label>
-            <div className="flex flex-row w-fit text-base lg:text-lg xl:text-xl 2xl:text-2xl
-            3xl:test-3xl cursor-pointer"
+            <div className="w-[280px] m:w-[350px] text-xl m:text-2xl cursor-pointer relative"
                  onMouseEnter={!isMobile && buttonLabel === "Edit" ? handleActivateButton : undefined}
                  onMouseLeave={!isMobile && buttonLabel === "Edit" ? handleDeactivateButton : undefined}
                  onTouchEnd={isMobile && buttonLabel === "Edit" ? toggleButton : undefined}
                  ref={componentRef}>
-                <div className={`w-[165px] sm:w-[140px] lg:w-[180px] xl:w-[200px] 2xl:w-[240px] 3xl:w-[270px]
-                h-[25px] lg:h-[29px] xl:h-[33px] 2xl:h-9 3xl:h-[38px] z-20 bg-lowLime relative
-                ${buttonActive ? "mr-[3px] lg:mr-1 xl:mr-[5px] 2xl:mr-[6px] 3xl:mr-[7px]" : ""}`}>
+                <div className="w-[220px] m:w-[280px] h-9 m:h-10 bg-lowLime z-20 relative">
                     {!isLoading ?
-                        <div className={`flex items-center w-full h-full px-[3px] lg:px-[4px] xl:px-[5px]
-                        2xl:px-[6px] 3xl:px-[7px] rounded-sm overflow-hidden whitespace-nowrap
+                        <div className={`flex items-center w-full h-full px-1 m:px-[6px] rounded-sm overflow-hidden whitespace-nowrap
                         ${!inputActive ? "border border-black border-opacity-10" : ""}`} title={value}>
                             {value}
                         </div> : <ContactInputLoader/>}
                     {inputActive &&
-                        <input className={`absolute inset-0 focus:outline-none rounded-sm px-[3px]
-                        lg:px-[4px] xl:px-[5px] 2xl:px-[6px] 3xl:px-[7px]`}
+                        <input className={`absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
                                ref={inputRef}
                                type={valueType === "phone" ? "tel" : "text"} value={value}
                                onChange={valueType === "phone" ?
@@ -222,17 +217,15 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                                    : valueType === "name" ? (e) => setValue(e.target.value.trim())
                                    : (e) => setValue(e.target.value)}/>}
                     {inputActive && invalidInput || additionalInfo !== "" ?
-                        <p className="text-[11px] lg:text-[13px] xl:text-[14px] 2xl:text-[16px] 3xl:text-[17px]
-                        absolute left-[3px] 2xl:left-1 3xl:left-[5px] top-[21px] lg:top-[25px]
-                        xl:top-[30px] 2xl:top-[33px] 3xl:top-[37px] whitespace-nowrap">
+                        <p className="text-sm m:text-base absolute left-[3px] m:left-[5px] top-10 m:top-11 whitespace-nowrap">
                             {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
                     {isCityInput && inputActive && <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
                                                                    setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
                 </div>
                 {buttonActive &&
-                    <button className={`w-11 lg:w-[50px] xl:w-14 2xl:w-16 3xl:w-[70px] h-[25px] lg:h-[29px]
-                    xl:h-[33px] 2xl:h-9 3xl:h-[38px] ${buttonColor ? "text-white" : ""} border border-black border-opacity-40 bg-lime rounded-sm z-10
-                    ${buttonAnimation}`}
+                    <button className={`w-14 m:w-16 h-9 m:h-10 absolute top-0 right-0 
+                    border border-black border-opacity-40 bg-lime rounded-sm z-10
+                    ${buttonAnimation} ${buttonColor ? "text-white" : ""}`}
                             onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
                     onMouseEnter={!isMobile ? handleStart : undefined}
                     onMouseLeave={!isMobile ? handleEnd : undefined}

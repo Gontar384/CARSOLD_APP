@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {api} from "../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import {AxiosResponse} from "axios";
+import ContactPublicLoader from "../../../../../../../SharedComponents/Additional/Loading/ContactPublicLoader.tsx";
 
 const SwitchButton: React.FC = () => {
 
@@ -20,14 +21,14 @@ const SwitchButton: React.FC = () => {
             });
             if (response.data) {
                 setIsPublic(response.data.changedValue);
-                if (!initialLoad){
+                if (!initialLoad) {
                     if (response.data.changedValue) {
                         setButtonAnimation("animate-slideOn1");
                     } else {
                         setButtonAnimation("animate-slideOff1");
                     }
                 }
-                if (initialLoad){
+                if (initialLoad) {
                     if (!response.data.changedValue) {
                         setButtonAnimation("animate-slideOff2");
                     } else {
@@ -64,24 +65,22 @@ const SwitchButton: React.FC = () => {
         fetchContactInfoPublic().then();
     }, []);
 
-    if (isFetching) {
-        return (
-            <div className="w-9 h-5 scale-[110%] lg:scale-[120%] xl:scale-[130%] 2xl:scale-[145%] 3xl:scale-[155%]
-            border border-black border-opacity-40 bg-black bg-opacity-10 animate-pulse rounded-full">
-            </div>
-        )
-    }
-
     return (
-        <button className={`flex items-center justify-center w-9 h-5 scale-[110%] lg:scale-[120%]
-        xl:scale-[130%] 2xl:scale-[145%] 3xl:scale-[155%] border border-black border-opacity-40
-        rounded-full transition-all duration-300 ${isPublic ? "bg-lime" : "bg-gray-300"}`}
-                onClick={handleSwitchButton}>
-            <div className={`w-[calc(100%-3px)] h-[calc(100%-3px)] flex ${initialLoad ? "justify-end" : "justify-start"} relative rounded-full`}>
-                    <div className={`h-full aspect-square bg-white border border-black 
-                    border-opacity-5 rounded-full ${buttonAnimation}`}></div>
-            </div>
-        </button>
+        <div className="flex flex-col gap-[2px] m:gap-1">
+            <p className="text-lg m:text-xl">
+                Public</p>
+            {!isFetching ? (
+                <button className={`flex items-center justify-center w-[54px] h-[30px] m:scale-110 border border-black border-opacity-40
+                rounded-full transition-all duration-300 ${isPublic ? "bg-lime" : "bg-gray-300"} `} onClick={handleSwitchButton}>
+                    <div className={`w-[calc(100%-6px)] h-[calc(100%-6px)] flex ${initialLoad ? "justify-end" : "justify-start"} relative rounded-full`}>
+                        <div className={`h-full aspect-square bg-white border border-black 
+                        border-opacity-5 rounded-full ${buttonAnimation}`}></div>
+                    </div>
+                </button>
+            ) : (
+                <ContactPublicLoader/>
+            )}
+        </div>
     )
 }
 

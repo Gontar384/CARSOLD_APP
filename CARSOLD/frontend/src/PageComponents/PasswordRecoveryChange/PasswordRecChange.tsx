@@ -18,10 +18,9 @@ const PasswordRecChange: React.FC = () => {
                         Now, you can change your password.
                     </p>
                     <PasswordChangeForm setIsChanged={setIsChanged} setWentWrong={setWentWrong} loggedIn={false}/>
-                    {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
-                    {wentWrong ?
-                        <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/> : null}
                 </div>
+                {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
+                {wentWrong ? <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/> : null}
             </div>
         </LayOut>
     )
