@@ -7,14 +7,7 @@ import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "../UserDetails/Atomic/LoginButton.tsx";
 import BarButton from "./Atomic/BarButton.tsx";
-import {
-    faFileCirclePlus,
-    faHeart,
-    faMessage,
-    faMoneyCheckDollar,
-    faScrewdriverWrench,
-    faLightbulb, faArrowRightFromBracket
-} from "@fortawesome/free-solid-svg-icons";
+import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverWrench, faLightbulb, faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-icons";
 import {useNavigate} from "react-router-dom";
 
@@ -26,10 +19,16 @@ interface MidBarProps {
 const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) => {
 
     const [midBarActive, setMidBarActive] = useState<boolean>(false);
-    const {midBar, midWidth} = useUtil();
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
+    const navigate = useNavigate();
+    const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
+    const {isAuthenticated} = useAuth();
+    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch, logout} = useUserDetails();
+    const {profilePicChange, messages, followed} = useItems();
+    const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
     useEffect(() => {
+
         if (midBar) {
             setMidBarActive(true);
             setBarAnimation("animate-slideShow")
@@ -43,21 +42,14 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
         }
     }, [midBar, midWidth]);   //activates/deactivates lower bar and resets animation
 
-    const {isAuthenticated} = useAuth();
-
-    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
-    const {profilePicChange, messages, followed} = useItems();
-    const {setMidBar} = useUtil();
-
     //fetches username and profile pic
     useEffect(() => {
-        handleUsernameFetch().then();
-        handleProfilePicFetch().then();
+        handleUsernameFetch();
+        handleProfilePicFetch();
     }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
-    const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
-
     useEffect(() => {
+
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
 
             if (excludedButtonRef.current && excludedButtonRef.current.contains(event.target as Node)) {
@@ -84,12 +76,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
             document.addEventListener("mousedown", handleClickOutside);
             document.removeEventListener("touchstart", handleClickOutside);
         };
-    }, [midBarActive]); //adds event listener for faster button deactivation
-
-    const navigate = useNavigate();
-
-    const {darkMode, toggleDarkMode} = useUtil();
-    const {logout} = useUserDetails();
+    }, [excludedButtonRef, midBarActive, setIconAnimation, setMidBar]); //adds event listener for faster button deactivation
 
     if (midBarActive) {
         return (

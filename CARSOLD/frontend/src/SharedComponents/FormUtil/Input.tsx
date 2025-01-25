@@ -24,6 +24,7 @@ const Input = <T extends string | number | object>({placeholder, inputType, setI
                                                        isActive, info, hasEye, whichForm, termsCheck, setTermsCheck, mark}: InputProps<T>) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
         const newValue = e.target.value.trim();
 
         if (setValue) {

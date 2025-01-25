@@ -14,6 +14,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({label, onClick, disabled}) =
 
     //handles wave effect
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.TouchEvent<HTMLButtonElement>) => {
+
         if (debounce) return;
 
         const button = event.currentTarget;
@@ -43,7 +44,9 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({label, onClick, disabled}) =
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+
         if (debounce) return;
+
         if (event.key === "Enter") {
             const button = event.currentTarget;
             const x = button.offsetWidth / 2 - 40;

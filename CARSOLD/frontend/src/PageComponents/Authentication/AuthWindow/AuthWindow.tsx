@@ -8,16 +8,16 @@ import AuthWindowLoader from "../../../SharedComponents/Additional/Loading/AuthW
 
 const AuthWindow: React.FC = () => {
 
-    const {section} = useParams();   //retrieves params from url
-
-    const navigate = useNavigate();
-
     const [choice, setChoice] = useState<"login" | "register">("login");  //sets display: login or register form
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const {section} = useParams();   //retrieves params from url
+    const navigate = useNavigate();
 
     useEffect(() => {
+
         const validSections: Array<"login" | "register"> = [
             "login", "register"];
+
         if (section && validSections.includes(section as never)) {
             setChoice(section as "login" | "register");
             setIsLoading(false);
@@ -26,14 +26,10 @@ const AuthWindow: React.FC = () => {
         }
     }, [section, navigate])       //checks for section change
 
-    if (isLoading) {
-        return (
-            <AuthWindowLoader choice={choice}/>
-        )
-    }  //to prevent /login blinking
+    if (isLoading) return <AuthWindowLoader choice={choice}/>  //prevents /login blinking
 
     return (
-        <div className="flex flex-col items-center w-11/12 bg-lime py-6 max-w-[460px] rounded-sm">
+        <div className="flex flex-col items-center w-11/12 h-full bg-lime py-6 max-w-[460px] rounded-sm">
             <Headers/>
             {choice === "login" ? <LoginForm/> : <RegisterForm/>}
         </div>

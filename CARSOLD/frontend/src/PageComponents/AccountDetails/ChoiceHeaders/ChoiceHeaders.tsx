@@ -7,23 +7,21 @@ const ChoiceHeaders: React.FC = () => {
 
     const {bigWidth} = useUtil();
     const navigate = useNavigate();
-
     const {section} = useParams();
     const [choice, setChoice] = useState<number | null>(null);
-
     const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info"> = [
         "myOffers", "followed", "messages", "settings", "info"
     ];
+    //sets true where index of validSections === choice, creates array of true and false
+    const buttonState: boolean[] = validSections.map((_, index) => index === choice);
 
     useEffect(() => {
+
         if (section && validSections.includes(section as never)) {
             const choiceIndex = validSections.indexOf(section as "myOffers" | "followed" | "messages" | "settings" | "info");
             setChoice(choiceIndex);
         }
     }, [section, navigate]);  //sets index to choice
-
-    //sets true where index of validSections === choice, creates array of true and false
-    const buttonState: boolean[] = validSections.map((_, index) => index === choice);
 
     const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info") => {
         navigate(`/details/${destination}`);

@@ -38,6 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
 
@@ -46,6 +47,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
                 boolean exists = repository.existsByEmail(email);
                 User user;
+
                 if (!exists) {
                     user = new User();
                     user.setEmail(email);
@@ -54,6 +56,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     user = repository.findByEmail(email);
                     user.setPassword(null);
                 }
+
                 user.setActive(true);
                 user.setOauth2User(true);
                 repository.save(user);

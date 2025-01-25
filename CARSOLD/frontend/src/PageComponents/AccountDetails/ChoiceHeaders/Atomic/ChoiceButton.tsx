@@ -10,7 +10,7 @@ interface ChoiceButtonProps {
 
 const ChoiceButton: React.FC<ChoiceButtonProps> = ({ label, onClick, active }) => {
 
-    const { buttonColor, handleStart, handleEnd } = useButton();
+    const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
 
     return (

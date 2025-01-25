@@ -13,41 +13,39 @@ const SwitchButton: React.FC = () => {
 
     //changes contactPublic in DB and fetches its value, sets animations to button
     const handleSwitchButton = async () => {
+
         if (isDisabled) return;
+
         setIsDisabled(true);
+
         try {
             const response: AxiosResponse = await api.put('api/change-contactInfoPublic', {
                 isPublic: !isPublic,
             });
+
             if (response.data) {
                 setIsPublic(response.data.changedValue);
-                if (!initialLoad) {
-                    if (response.data.changedValue) {
-                        setButtonAnimation("animate-slideOn1");
-                    } else {
-                        setButtonAnimation("animate-slideOff1");
-                    }
-                }
-                if (initialLoad) {
-                    if (!response.data.changedValue) {
-                        setButtonAnimation("animate-slideOff2");
-                    } else {
-                        setButtonAnimation("animate-slideOn2");
-                    }
-                }
+
+                const animationClass = initialLoad
+                    ? response.data.changedValue ? "animate-slideOn2" : "animate-slideOff2"
+                    : response.data.changedValue ? "animate-slideOn1" : "animate-slideOff1";
+
+                setButtonAnimation(animationClass);
             }
         } catch (error) {
             console.error("Error changing contactInfoPublic value: ", error);
         } finally {
             setTimeout(() => {
                 setIsDisabled(false);
-            }, 500)
+            }, 500);
         }
-    }
+    };
 
     //sets isPublic and initialLoad only on initial load
     useEffect(() => {
+
         setIsFetching(true);
+
         const fetchContactInfoPublic = async () => {
             try {
                 const response: AxiosResponse = await api.get('api/fetch-contactInfoPublic');
@@ -62,7 +60,8 @@ const SwitchButton: React.FC = () => {
             }
         }
 
-        fetchContactInfoPublic().then();
+        fetchContactInfoPublic();
+
     }, []);
 
     return (

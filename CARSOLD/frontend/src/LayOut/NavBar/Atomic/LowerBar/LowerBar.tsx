@@ -20,14 +20,14 @@ const LowerBar: React.FC = () => {
 
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
-
-    const { lowerBar, mobileWidth } = useUtil();
-    const { isAuthenticated } = useAuth();
+    const {lowerBar, mobileWidth} = useUtil();
+    const {isAuthenticated} = useAuth();
     const navigate = useNavigate();
-    const { followed, messages } = useItems();
-    const { logout } = useUserDetails();
+    const {followed, messages} = useItems();
+    const {logout} = useUserDetails();
 
     useEffect(() => {
+
         if (lowerBar) {
             setLowerBarActive(true);
             setBarAnimation("animate-slideUp")

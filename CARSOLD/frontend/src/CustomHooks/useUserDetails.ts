@@ -8,16 +8,18 @@ import {AxiosResponse} from "axios";
 //manages username fetch and logout function
 export const useUserDetails = () => {
 
+    const [userDetails, setUserDetails] = useState<string>("");   //username fetched
+    const [usernameFetched, setUsernameFetched] = useState<boolean>(false);
+    const [profilePic, setProfilePic] = useState<string>("");
+    const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
+    const {setProfilePicChange} = useItems();
+    const navigate = useNavigate();
     const {checkAuth, isAuthenticated} = useAuth();
 
-    const navigate = useNavigate();
-
-    const [userDetails, setUserDetails] = useState<string>("");   //username fetched
-
-    const [usernameFetched, setUsernameFetched] = useState<boolean>(false);
-
     const handleUsernameFetch = async () => {
+
         if (!isAuthenticated) return;
+
         try {
             const response = await api.get('api/get-username');
             if (response.data.username) {
@@ -30,12 +32,10 @@ export const useUserDetails = () => {
         }
     } //fetches username
 
-    const [profilePic, setProfilePic] = useState<string>("");
-    const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
-    const {setProfilePicChange} = useItems();
-
     const handleProfilePicFetch = async () => {
+
         if (!isAuthenticated) return;
+
         try {
             const response = await api.get('api/get-profilePic');
             if (response.data.profilePic) {

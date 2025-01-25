@@ -5,27 +5,28 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 const AccountActivation: React.FC = () => {
 
-    const {checkAuth} = useAuth();
-    const navigate = useNavigate();
+    document.title = "CARSOLD | Account Activation";
 
     const [count, setCount] = useState<number>(3);
     const [activationMessage, setActivationMessage] = useState<string>("Account activation success.");
     const [color, setColor] = useState<"bg-lime" | "bg-coolYellow">("bg-lime");
     const [loaded, setLoaded] = useState<boolean>(false);
+    const navigate = useNavigate();
+    const {checkAuth} = useAuth();
 
     useEffect(() => {
+
         const urlParams = new URLSearchParams(window.location.search);
         const token: string | null = urlParams.get('token');
 
         const activateAccount = async (token: string) => {
             try {
-                const response = await api.get(`api/auth/activate`, {params: {token}});
+                const response = await api.get(`api/auth/activate`, { params: { token } });
                 if (!response.data) {
                     setColor("bg-coolYellow");
                     setActivationMessage("Link has expired, register again please.");
-                    setTimeout(() => {
-                        navigate("/authenticate/register")
-                    }, 3500)
+                    setTimeout(() => navigate("/authenticate/register"), 3500);
+                    return;
                 }
                 setLoaded(true);
             } catch (error) {
@@ -34,14 +35,14 @@ const AccountActivation: React.FC = () => {
         };
 
         if (token) {
-            activateAccount(token).then();
-            setTimeout(async () => {
-                await checkAuth();
-            }, 3500)
+            activateAccount(token);
+            setTimeout(() => checkAuth(), 3500);
         }
+
     }, [checkAuth, navigate]);   //gets token from url and activates account
 
     useEffect(() => {
+
         const interval: number = setInterval((): void => {
             setCount(c => {
                 if (c > 0) return c - 1;
@@ -49,14 +50,11 @@ const AccountActivation: React.FC = () => {
                 return c;
             });
         }, 1000)
+
         return () => clearInterval(interval)
-    }, []);     //timer
+    }, []);    //timer
 
-    document.title = "CARSOLD | Account Activation";
-
-    if (!loaded) {
-        return null;
-    }
+    if (!loaded) return null;
 
     return (
         <div className={`flex flex-col justify-center items-center h-screen`}>

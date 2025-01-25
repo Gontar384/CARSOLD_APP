@@ -11,12 +11,13 @@ const Headers: React.FC = () => {
     }
 
     const handleGoogleAuth = async () => {
+
         try {
             window.location.href = `${import.meta.env.VITE_BACKEND_URL}oauth2/authorization/google`;
         } catch (error) {
             console.error('Error during google authentication:', error);
         }
-    };       //for Google auth
+    };   //for Google auth
 
     return (
         <div className="flex flex-col w-11/12 gap-2">

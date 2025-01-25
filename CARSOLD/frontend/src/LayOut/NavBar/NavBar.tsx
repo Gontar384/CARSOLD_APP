@@ -14,10 +14,10 @@ import MidBar from "./Atomic/MidBar/MidBar.tsx";
 
 const NavBar: React.FC = () => {
 
+    const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
+    const excludedButtonRef = useRef<HTMLButtonElement | null>(null);  //excludes OptionsButton from MidBar closing effect
     const {mobileWidth, midWidth, bigWidth} = useUtil();
     const {loadingAuth} = useAuth();
-    const excludedButtonRef = useRef<HTMLButtonElement | null>(null);  //excludes OptionsButton from MidBar closing effect
-    const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
 
     useEffect(() => {
         if (bigWidth) setIconAnimation(null);

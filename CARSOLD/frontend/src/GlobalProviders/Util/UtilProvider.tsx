@@ -8,6 +8,12 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
         const savedTheme = localStorage.getItem('theme');
         return savedTheme === 'dark';
     });
+    const [lowerBar, setLowerBar] = useState<boolean>(false);
+    const [midBar, setMidBar] = useState<boolean>(false);
+    const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth < 450);
+    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth <= 960);
+    const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 960);
+    const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
@@ -52,13 +58,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
         };
     }, [darkMode]);  //manages dark mode on initial load
 
-    const [lowerBar, setLowerBar] = useState<boolean>(false);
-    const [midBar, setMidBar] = useState<boolean>(false);
-
-    const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth < 450);
-    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth <= 960);
-    const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 960);
-
     useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
@@ -93,8 +92,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         return debouncedValue;
     }
-
-    const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
     useEffect(() => {
         const detectDeviceType = () => {

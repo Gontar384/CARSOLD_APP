@@ -4,7 +4,9 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
+
     const {isAuthenticated} = useAuth();
+
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
@@ -14,13 +16,16 @@ export const useFetchCsrf = () => {
                 console.log("Error fetching csrf: ", error)
             }
         };
+
         fetchCsrf().then();
     }, [isAuthenticated])
 }
 
 //refreshes and changes JWT token every 2 minutes
 export const useRefreshJwt = () => {
+
     const {isAuthenticated} = useAuth();  //checks if user is authenticated
+
     useEffect(() => {
         const refreshInterval: number = setInterval(async () => {
             if (!isAuthenticated) return;
@@ -30,13 +35,16 @@ export const useRefreshJwt = () => {
                 console.error("Error refreshing JWT token:", error);
             }
         }, 2 * 60 * 1000);
+
         return () => clearInterval(refreshInterval);
     }, [isAuthenticated]);
 };
 
 //tracks user activity and send keep-alive requests to server, one request on every minute
 export const useTrackUserActivity = () => {
+
     const [isDisabled, setIsDisabled] = useState(false);
+
     useEffect(() => {
         const events: string[] = ['click', 'mousemove', 'keydown', 'scroll'];
         const activityHandler = () => {
@@ -52,6 +60,7 @@ export const useTrackUserActivity = () => {
             }, 60000);
         };
         events.forEach(event => window.addEventListener(event, activityHandler));
+
         return () => {
             events.forEach(event => window.removeEventListener(event, activityHandler));
         };

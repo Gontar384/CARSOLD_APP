@@ -8,13 +8,15 @@ const ContactInfo: React.FC = () => {
     const [name, setName] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [city, setCity] = useState<string>("");
-
     const [fetch, setFetch] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
+
         const fetchName = async () => {
+
             setIsLoading(true)
+
             try {
                 const response = await api.get("api/fetch-contact-info");
                 if (response.data.name) {
@@ -38,7 +40,9 @@ const ContactInfo: React.FC = () => {
                 setIsLoading(false);
             }
         }
-        fetchName().then();
+
+        fetchName();
+
     }, [fetch]);
 
     return (

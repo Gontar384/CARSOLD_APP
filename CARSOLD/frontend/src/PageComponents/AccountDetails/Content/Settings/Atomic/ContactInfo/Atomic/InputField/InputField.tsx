@@ -19,8 +19,6 @@ interface InputFieldProps {
 
 const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, isLoading, errorInfo, isCityInput}) => {
 
-    const { buttonColor, handleStart, handleEnd } = useButton();
-
     const {isMobile, CreateDebouncedValue} = useUtil();
     const [buttonActive, setButtonActive] = useState<boolean>(false);
     const [elementHovered, setElementHovered] = useState<boolean>(false);
@@ -33,6 +31,10 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     const [invalidInput, setInvalidInput] = useState<boolean>(false);
     const [additionalInfo, setAdditionalInfo] = useState<string | null>(null);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const {buttonColor, handleStart, handleEnd} = useButton();
+    const debouncedValue: string | null = isCityInput ? CreateDebouncedValue(value, 300) : null;
+    const [citySuggestions, setCitySuggestions] = useState<string[] | null>(isCityInput ? [] : null)
+    const [clickedSuggestion, setClickedSuggestion] = useState<string | null>(isCityInput ? "" : null);
 
     //button and input management
     const handleActivateButton = () => {
@@ -49,10 +51,12 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     }
 
     useEffect(() => {
+
         if (elementHovered && debouncedHover) {
             setButtonActive(true);
             setButtonAnimation("animate-slideRight");
         }
+
         if (!elementHovered && !debouncedHover) {
             setButtonAnimation("animate-slideLeft");
             setTimeout(() => {
@@ -64,11 +68,14 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //focus input when clicked on button and deactivates when clicked away
     useEffect(() => {
+
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+
                 if (buttonLabel === "Save") {
                     setFetch(prev => !prev);
                 }
+
                 setElementHovered(false);
                 setInputActive(false);
                 setButtonLabel("Edit");
@@ -109,47 +116,52 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //saves values to db
     const handleSaveButtonClick = async () => {
+
         if (isDisabled) return;
-        if (value.length >= 3 || value.length === 0) {
-            if (value.length <= 20 || valueType === "city" && value.length <= 35) {
-                setCitySuggestions(null);
-                setIsDisabled(true);
-                setAdditionalInfo(null);
-                try {
-                    const response: AxiosResponse = await api.put(`api/contact-set-${valueType}`, {
-                        [valueType]: value
-                    });
-                    if (response.data) {
-                        setFetch(prev => !prev);
-                        setInputActive(false);
-                        setButtonLabel("Edit");
-                        setButtonActive(false);
-                        setElementHovered(false);
-                        setButtonAnimation(null);
-                        setInvalidInput(false);
-                        setCitySuggestions(null);
-                    } else {
-                        setInvalidInput(true);
-                    }
-                } catch (error) {
-                    console.error("Error changing value: ", error);
-                } finally {
-                    setTimeout(() => {
-                        setIsDisabled(false);
-                    }, 2000)
-                }
-            } else {
-                setInvalidInput(false);
-                setAdditionalInfo("Provided value is too long.")
-            }
-        } else {
+
+        if (value.length < 3) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too short.");
+            return;
+        }
+        if (value.length > 20 || valueType === "city" && value.length > 35) {
+            setInvalidInput(false);
+            setAdditionalInfo("Provided value is too long.");
+            return;
+        }
+
+        setCitySuggestions(null);
+        setIsDisabled(true);
+        setAdditionalInfo(null);
+
+        try {
+            const response: AxiosResponse = await api.put(`api/contact-set-${valueType}`, {
+                [valueType]: value
+            });
+            if (response.data) {
+                setFetch(prev => !prev);
+                setInputActive(false);
+                setButtonLabel("Edit");
+                setButtonActive(false);
+                setElementHovered(false);
+                setButtonAnimation(null);
+                setInvalidInput(false);
+                setCitySuggestions(null);
+            } else {
+                setInvalidInput(true);
+            }
+        } catch (error) {
+            console.error("Error changing value: ", error);
+        } finally {
+            setTimeout(() => {
+                setIsDisabled(false);
+            }, 2000)
         }
     }
 
     //for phone only, let put country code and '+' at the beginning
     const formatPhoneNumber = (phoneNumber: string): string => {
+
         let cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");
 
         if (cleanedNumber.startsWith("+")) {
@@ -161,17 +173,16 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         return cleanedNumber;
     };
 
-    //logic for city value
-    const debouncedValue: string | null = isCityInput ? CreateDebouncedValue(value, 300) : null;
-    const [citySuggestions, setCitySuggestions] = useState<string[] | null>(isCityInput ? [] : null)
-    const [clickedSuggestion, setClickedSuggestion] = useState<string | null>(isCityInput ? "" : null);
-
     //fetches cities suggestions based on input
     useEffect(() => {
+
         if (!debouncedValue || !inputActive) return;
+
         if (value === clickedSuggestion) return;
+
         setInvalidInput(false);
         setAdditionalInfo(null);
+
         const fetchCitySuggestions = async () => {
             try {
                 const response: AxiosResponse = await api.get('api/get-city-suggestions', {
@@ -184,7 +195,9 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 console.error("Error fetching city suggestions: ", error);
             }
         }
-        fetchCitySuggestions().then();
+
+        fetchCitySuggestions();
+
     }, [debouncedValue]);
 
     //to reset city suggestions
@@ -215,22 +228,23 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                                onChange={valueType === "phone" ?
                                    (e) => setValue(formatPhoneNumber(e.target.value))
                                    : valueType === "name" ? (e) => setValue(e.target.value.trim())
-                                   : (e) => setValue(e.target.value)}/>}
+                                       : (e) => setValue(e.target.value)}/>}
                     {inputActive && invalidInput || additionalInfo !== "" ?
                         <p className="text-sm m:text-base absolute left-[3px] m:left-[5px] top-10 m:top-11 whitespace-nowrap">
                             {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
-                    {isCityInput && inputActive && <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
-                                                                   setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
+                    {isCityInput && inputActive &&
+                        <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
+                                        setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
                 </div>
                 {buttonActive &&
                     <button className={`w-14 m:w-16 h-9 m:h-10 absolute top-0 right-0 
                     border border-black border-opacity-40 bg-lime rounded-sm z-10
                     ${buttonAnimation} ${buttonColor ? "text-white" : ""}`}
                             onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
-                    onMouseEnter={!isMobile ? handleStart : undefined}
-                    onMouseLeave={!isMobile ? handleEnd : undefined}
-                    onTouchStart={isMobile ? handleStart : undefined}
-                    onTouchEnd={isMobile ? handleEnd : undefined}>
+                            onMouseEnter={!isMobile ? handleStart : undefined}
+                            onMouseLeave={!isMobile ? handleEnd : undefined}
+                            onTouchStart={isMobile ? handleStart : undefined}
+                            onTouchEnd={isMobile ? handleEnd : undefined}>
                         {buttonLabel}
                     </button>
                 }

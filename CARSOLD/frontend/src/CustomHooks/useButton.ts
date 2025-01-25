@@ -14,5 +14,5 @@ export const useButton = () => {
         setButtonsColor(false);
     };
 
-    return { buttonColor, handleStart, handleEnd }
+    return {buttonColor, handleStart, handleEnd}
 }

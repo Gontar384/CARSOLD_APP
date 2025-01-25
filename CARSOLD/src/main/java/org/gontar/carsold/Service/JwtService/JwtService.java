@@ -51,8 +51,10 @@ public class JwtService {
 
     //creates token for username
     public String generateToken(String username, long minutesToExpire){
+
         Map<String, Object> claims = new HashMap<>();
         long expirationTime = System.currentTimeMillis() + (1000 * 60 * minutesToExpire);
+
         return Jwts.builder()
                 .claims()               //statements about entity and additional metadata
                 .add(claims)
@@ -74,6 +76,7 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
+
         try {
             return Jwts.parser()                                       //parses entire JWT and extracts all claims
                     .verifyWith(getKey())                              //verifies token using secret key
@@ -87,6 +90,7 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails){
+
         try {
             final String username = extractUsername(token);                                     //validates token, extracts username and checks if it matches
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));      //provided UserDetails username, ensures token didn't expire
@@ -96,6 +100,7 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
+
         try {
             return extractExpiration(token).before(new Date());                        //checks if token expired
         } catch (Exception e) {
@@ -109,6 +114,7 @@ public class JwtService {
 
     //extracts token from cookie
     public Optional<String> extractTokenFromCookie(HttpServletRequest request) throws InvalidTokenException {
+
         Cookie[] cookies = request.getCookies();
         if (cookies == null) return Optional.empty();
 
@@ -126,6 +132,7 @@ public class JwtService {
 
     //extracts username from request
     public String extractUsernameFromRequest(HttpServletRequest request) throws InvalidUsernameException{
+
         try {
             Optional<String> jwtOptional = extractTokenFromCookie(request);
             if (jwtOptional.isEmpty()) return null;
@@ -145,6 +152,7 @@ public class JwtService {
 
     //extracts user from request
     public User extractUserFromRequest(HttpServletRequest request) throws UserNotFoundException{
+
         try {
             String username = extractUsernameFromRequest(request);
             User user = repository.findByUsername(username);
@@ -160,6 +168,7 @@ public class JwtService {
 
     //extracts and validates token
     public boolean extractAndValidateTokenFromRequest(HttpServletRequest request) {
+
         try {
             Optional<String> jwtOptional = extractTokenFromCookie(request);
 

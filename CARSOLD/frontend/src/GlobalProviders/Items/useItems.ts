@@ -12,9 +12,10 @@ interface ItemsContextType {
 export const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
 
 export const useItems = (): ItemsContextType => {
+
     const context = useContext(ItemsContext);
-    if (context === undefined) {
-        throw new Error("useNotifications must be used within an ItemsProvider");
-    }
+
+    if (context === undefined) throw new Error("useNotifications must be used within an ItemsProvider");
+
     return context;
 }

@@ -31,6 +31,7 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email message
     @Override
     public void sendEmail(String email, String subject, String content) {
+
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -48,6 +49,7 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email to activate account
     @Override
     public boolean sendVerificationEmail(String email, String username, String link) {
+
         try {
             String subject = "CAR$OLD Account Activation";
             String content = "<p style='font-size: 25px;'>Thank you for registering " + username +
@@ -60,6 +62,7 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
                     "<p>If link expired - register again.<br><br><hr>" +
                     "<p>This message was sent automatically. Do not reply.</p>";
             sendEmail(email, subject, content);
+
             return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Failed to send email: " + e.getMessage());
@@ -69,12 +72,15 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email message with link to change password
     @Override
     public boolean sendPasswordRecoveryEmail(String email) {
+
         try {
             if (email != null) {
                 User user = repository.findByEmail(email);
                 if (user == null) return errorHandler.logBoolean("User not found");
+
                 String token = jwtService.generateToken(user.getUsername(), 10);
                 String link = frontendUrl + "very3secret8password4change?token=" + token;
+
                 String subject = "CAR$OLD Password Recovery";
                 String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
                         "! To change your password, please click the following link:</p>" +
@@ -85,8 +91,10 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
                         "</div><hr>" +
                         "<p>This message was sent automatically. Do not reply.</p>";
                 sendEmail(email, subject, content);
+
                 return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Failed to send email: " + e.getMessage());

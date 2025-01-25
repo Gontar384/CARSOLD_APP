@@ -22,79 +22,77 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     const debouncedPassword = CreateDebouncedValue(password, 300);
     const {checkOldPassword} = useUserCheck();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-
-    useEffect(() => {
-        const checkPassword = async () => {
-            if (password.length >= 7 && password.length <= 25) {
-                try {
-                    const response: AxiosResponse = await checkOldPassword(password);
-                    if (response.data.checks) {
-                        setIcon(faCircleCheck);
-                    } else {
-                        setIcon(faCircleExclamation);
-                    }
-                } catch (error) {
-                    console.error("Error checking password: ", error);
-                }
-            } else {
-                setIcon(null);
-            }
-        }
-        checkPassword().then();
-    }, [debouncedPassword])
-
     const {logout} = useUserDetails();
-
-    const handleDeleteAccount = async () => {
-        if (password.length >= 7 && password.length <= 25) {
-            setIsDisabled(true);
-            try {
-                const passwordResponse: AxiosResponse = await checkOldPassword(password);
-                if (passwordResponse.data.checks) {
-                    const response: AxiosResponse = await api.delete('api/delete-user');
-                    if (response.data) {
-                        await logout();
-                        sessionStorage.setItem("isAccountDeleted", "true");
-                    }
-                }
-            } catch (error) {
-                console.error("Error deleting account: ", error);
-            } finally {
-                setTimeout(() => {
-                    setIsDisabled(false);
-                }, 2000)
-            }
-        }
-    }
-
     const [confirmation, setConfirmation] = useState<string>("");
 
-    const handleDeleteGoogleAccount = async () => {
-        if (confirmation === "delete_account") {
-            setIsDisabled(true);
+    useEffect(() => {
+
+        const checkPassword = async () => {
+
+            if (password.length < 7 || password.length > 25) {
+                setIcon(null);
+                return;
+            }
+
             try {
+                const response: AxiosResponse = await checkOldPassword(password);
+                setIcon(response.data.checks ? faCircleCheck : faCircleExclamation);
+            } catch (error) {
+                console.error("Error checking password: ", error);
+            }
+        };
+
+        checkPassword();
+    }, [debouncedPassword]);
+
+    const handleDeleteAccount = async () => {
+
+        if (password.length < 7 || password.length > 25) return;
+
+        setIsDisabled(true);
+
+        try {
+            const passwordResponse: AxiosResponse = await checkOldPassword(password);
+            if (passwordResponse.data.checks) {
                 const response: AxiosResponse = await api.delete('api/delete-user');
                 if (response.data) {
                     await logout();
                     sessionStorage.setItem("isAccountDeleted", "true");
                 }
-            } catch (error) {
-                console.error("Error deleting Google account: ", error);
-            } finally {
-                setTimeout(() => {
-                    setIsDisabled(false);
-                }, 2000)
+            } else {
+                console.error("Old password verification failed.");
             }
+        } catch (error) {
+            console.error("Error deleting account: ", error);
+        } finally {
+            setIsDisabled(false);
         }
-    }
+    };
+
+    const handleDeleteGoogleAccount = async () => {
+
+        if (confirmation !== "delete_account") return;
+
+        setIsDisabled(true);
+
+        try {
+            const response: AxiosResponse = await api.delete('api/delete-user');
+            if (response.data) {
+                await logout();
+                sessionStorage.setItem("isAccountDeleted", "true");
+            }
+        } catch (error) {
+            console.error("Error deleting Google account: ", error);
+        } finally {
+            setIsDisabled(false);
+        }
+    };
 
     return (
-        <div className="flex flex-col items-center w-full h-ful relative">
-            <p className="text-center mt-3 xs:mt-4 lg:mt-6 xl:mt-7 2xl:mt-8 3xl:mt-9 mb-3 xs:mb-4
-            lg:mb-6 xl:mb-7 2xl:mb-8 3xl:mb-9">
+        <div className="flex flex-col items-center mb-8 m:mb-10">
+            <p className="text-center mt-8 m:mt-10">
                 {label}</p>
-            <div className="flex justify-center w-4/5 max-w-[280px] xs:max-w-[350px] sm:max-w-[500px]
-            mb-4 xs:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8 3xl:mb-9">
+            <div className="flex w-full justify-center mt-5 m:mt-7 mb-2 m:mb-3">
                 {!googleLogged ? (
                     <Input placeholder="Password" inputType="password" value={password} setValue={setPassword}
                            icon={icon}/>

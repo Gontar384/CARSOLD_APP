@@ -1,13 +1,13 @@
 import {ReactElement, useEffect, useState} from "react";
 
-//will be needed further when dealing with pics loading
 function LoadingPicAnimation(): ReactElement {
 
-    //state to add accumulating degrees every cycle
-    const [rotationDegrees, setRotationDegrees] = useState<number>(0);  // Store the accumulated rotation
+    //stores accumulating degrees every cycle
+    const [rotationDegrees, setRotationDegrees] = useState<number>(0);
 
-    //make cycle every 16 millis to maintain its smooth flow
+    //makes cycle every 16 millis to maintain its smooth flow
     useEffect(() => {
+
         const interval = setInterval(() => {
             setRotationDegrees(prev => prev + 2);
         }, 16);  //for 60FPS

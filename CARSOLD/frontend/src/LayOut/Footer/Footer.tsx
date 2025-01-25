@@ -3,7 +3,7 @@ import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Footer: React.FC = () => {
 
-    const { lowerBar, mobileWidth } = useUtil();
+    const {lowerBar, mobileWidth} = useUtil();
 
     return (
         <div className={`flex flex-col justify-center items-center w-full bg-lowLime shadow-top

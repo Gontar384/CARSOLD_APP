@@ -9,7 +9,7 @@ const Username: React.FC = () => {
     const {userDetails, usernameFetched, handleUsernameFetch} = useUserDetails();
 
     useEffect(() => {
-        handleUsernameFetch().then();
+        handleUsernameFetch();
     }, [handleUsernameFetch, isAuthenticated]);  //fetches username
 
     return (

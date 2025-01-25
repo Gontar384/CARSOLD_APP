@@ -12,10 +12,12 @@ interface OptionsButtonProps {
 const OptionsButton: React.FC<OptionsButtonProps> = ({excludedButtonRef, iconAnimation, setIconAnimation}) => {
 
     const [isDisabled, setIsDisabled] = useState<boolean>(false);  //prevents from spamming button
-    const { lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth } = useUtil();
+    const {lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth} = useUtil();
 
     const handleBar = (bar: boolean, setBar: React.Dispatch<SetStateAction<boolean>>) => {
+
         if (isDisabled) return;
+
         setIconAnimation(mobileWidth && lowerBar || midWidth && midBar ? "animate-flipRev" : "animate-flip");
 
         if (!bar) setBar(true);

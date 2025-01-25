@@ -7,28 +7,23 @@ const SearchBar: React.FC = () => {
 
     const [search, setSearch] = useState<string>("");
     const searchRef = useRef<string>("");   //gives access to most recent value, makes it work efficiently
-
     const [isClicked, setIsClicked] = useState<boolean>(false);  //checks if it's clicked
-
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
-
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
-
     const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
-
     const [isInitial, setIsInitial] = useState<boolean>(false);
-
-    const { mobileWidth } = useUtil();
+    const {mobileWidth} = useUtil();
 
     const handleClick = () => {
+
         setMagnifierAnimation("animate-disappear");
+
         setTimeout(() => {
             setMagnifierAnimation(null)
             setIsClicked(true);
         }, 100)
-        if (search) {
-            setButtonAnimation("animate-slideDown");
-        }
+
+        if (search) setButtonAnimation("animate-slideDown");
     }   //handles input click
 
     useEffect(() => {
@@ -38,9 +33,9 @@ const SearchBar: React.FC = () => {
                 setTimeout(() => {
                     setMagnifierAnimation(null)
                 }, 100)
-                if (searchRef.current) {
-                    setButtonAnimation("animate-slideUp");
-                }
+
+                if (searchRef.current) setButtonAnimation("animate-slideUp");
+
                 setIsClicked(false);
             }
         }
@@ -57,13 +52,16 @@ const SearchBar: React.FC = () => {
     }, [isClicked])   //adds event listener to off input backlight
 
     useEffect(() => {
+
         searchRef.current = search;
+
         if (search && isInitial) {
             setIsClicked(true);
             setButtonAnimation("animate-slideDown");
         } else {
             setButtonAnimation("animate-slideUp")
         }
+
         setIsInitial(true);
     }, [isInitial, search]);   //manages button animation
 

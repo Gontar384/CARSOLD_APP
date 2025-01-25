@@ -16,15 +16,18 @@ interface ImageProps {
 
 const Image: React.FC<ImageProps> = ({setMessage}) => {
 
-    const {isMobile, CreateDebouncedValue} = useUtil();
-
     const [inputActive, setInputActive] = useState<boolean>(false);
     const [inputHovered, setInputHovered] = useState<boolean>(false);
+    const {isMobile, CreateDebouncedValue} = useUtil();
     const debouncedHover: boolean = CreateDebouncedValue(inputHovered, 300)
     const [inputClickable, setInputClickable] = useState<boolean>(false);
     const [hideButton, setHideButton] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
+    const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
+    const {setProfilePicChange} = useItems();
+    const {profilePic, profilePicFetched, handleProfilePicFetch} = useUserDetails();
+    const {isAuthenticated} = useAuth();
 
     const handleActivateInput = () => {
         setInputActive(true);
@@ -39,9 +42,9 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }   //deactivates on mouse
 
     useEffect(() => {
-        if (!debouncedHover && !inputHovered) {
-            setInputActive(false);
-        }
+
+        if (!debouncedHover && !inputHovered) setInputActive(false);
+
     }, [debouncedHover, inputHovered]);   //delays deactivation
 
     const handleToggleInput = () => {
@@ -56,6 +59,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }    //makes "clickable" delayed
 
     useEffect(() => {
+
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setInputActive(false);
@@ -72,11 +76,10 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         };
     }, [inputActive, inputClickable]);  //adds event listener to deactivate button
 
-    const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
-    const {setProfilePicChange} = useItems();
-
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
         const file = event.target.files?.[0];
+
         if (file) {
             if (!file.type.startsWith('image/')) {
                 setMessage("This is not an image!");
@@ -86,6 +89,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 setMessage("Couldn't upload, image is too large.");
                 return;
             }
+
             setMessage("");
             setPicUploaded(false);
             const formData = new FormData();
@@ -107,8 +111,10 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }   //uploads pic
 
     const handleDeletePic = async () => {
+
         setPicUploaded(false);
         setInputActive(false);
+
         try {
             const response: AxiosResponse = await api.delete('api/storage-delete-profilePic');
             if (response.data) {
@@ -121,11 +127,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         }
     }
 
-    const {profilePic, profilePicFetched, handleProfilePicFetch} = useUserDetails();
-    const {isAuthenticated} = useAuth();
-
     useEffect(() => {
-        handleProfilePicFetch().then();
+        handleProfilePicFetch();
     }, [handleProfilePicFetch, isAuthenticated, picUploaded]);  //fetches pic
 
     return (

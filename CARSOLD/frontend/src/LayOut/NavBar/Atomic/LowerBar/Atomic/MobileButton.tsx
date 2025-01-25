@@ -14,8 +14,7 @@ interface MobileButtonProps {
 const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}) => {
 
     const {isMobile} = useUtil();
-
-    const { buttonColor, handleStart, handleEnd } = useButton();
+    const {buttonColor, handleStart, handleEnd} = useButton();
 
     return (
         <button className="flex flex-col items-center w-1/6 h-full pt-[7px] relative"

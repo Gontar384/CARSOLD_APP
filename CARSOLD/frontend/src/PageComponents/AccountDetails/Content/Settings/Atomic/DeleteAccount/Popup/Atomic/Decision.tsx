@@ -9,11 +9,10 @@ interface DecisionProps {
 const Decision: React.FC<DecisionProps> = ({setPopup, setConfirmed}) => {
 
     return (
-        <div className="flex flex-col w-full h-full">
-            <p className="text-center mt-5 xs:mt-6 lg:mt-8 xl:mt-9 2xl:mt-10 3xl:mt-14">
+        <div className="flex flex-col items-center w-full h-full mb-8 m:mb-10">
+            <p className="w-10/12 text-center mt-8 m:mt-10">
                 Are you sure you want to delete your account?</p>
-            <div className="flex flex-row items-center justify-center mt-9 xs:mt-10
-                    lg:mt-12 xl:mt-[52px] 3xl:mt-[60px] gap-9 xs:gap-10 lg:gap-12 xl:gap-[52px] 2xl:gap-14 3xl:gap-16">
+            <div className="flex flex-row items-center justify-center mt-5 m:mt-7 gap-8 m:gap-10">
                 <ConfirmButton label="Yes" type="choice" onClick={() => setConfirmed(true)}/>
                 <ConfirmButton label="No" type="choice" onClick={() => setPopup(false)}/>
             </div>

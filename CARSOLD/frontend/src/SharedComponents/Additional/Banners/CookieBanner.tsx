@@ -2,14 +2,14 @@ import React, {useState} from "react";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const CookieBanner: React.FC = () => {
+
     const [visible, setVisible] = useState<boolean>(true);
+    const {lowerBar, mobileWidth} = useUtil();
 
     const handleDismiss = () => {
         setVisible(false);
         localStorage.setItem('cookie-banner', 'accepted');
     };
-
-    const {lowerBar, mobileWidth} = useUtil();
 
     if (visible && !localStorage.getItem('cookie-banner')) {
         return (

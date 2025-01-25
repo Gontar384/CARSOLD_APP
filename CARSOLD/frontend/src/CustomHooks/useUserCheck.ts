@@ -44,5 +44,5 @@ export const useUserCheck = () => {
         return await api.get('api/auth/check-google-auth');
     }
 
-    return { emailExists, usernameExists, isActive, isOauth2, checkPassword, checkOldPassword, checkGoogleAuth }
+    return {emailExists, usernameExists, isActive, isOauth2, checkPassword, checkOldPassword, checkGoogleAuth}
 }

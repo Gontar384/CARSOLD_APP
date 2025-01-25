@@ -5,10 +5,10 @@ import PasswordChangeForm from "../../SharedComponents/PasswordChange/PasswordCh
 
 const PasswordRecChange: React.FC = () => {
 
-    const [isChanged, setIsChanged] = useState<boolean>(false);   //banners
-    const [wentWrong, setWentWrong] = useState<boolean>(false);
-
     document.title = "CARSOLD | Password Recovery";
+
+    const [isChanged, setIsChanged] = useState<boolean>(false);
+    const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     return (
         <LayOut>
@@ -19,9 +19,9 @@ const PasswordRecChange: React.FC = () => {
                     </p>
                     <PasswordChangeForm setIsChanged={setIsChanged} setWentWrong={setWentWrong} loggedIn={false}/>
                 </div>
-                {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
-                {wentWrong ? <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/> : null}
             </div>
+            {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
+            {wentWrong ? <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/> : null}
         </LayOut>
     )
 }

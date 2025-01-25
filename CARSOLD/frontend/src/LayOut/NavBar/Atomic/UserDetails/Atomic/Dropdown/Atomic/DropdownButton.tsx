@@ -12,7 +12,7 @@ interface DropdownButtonProps {
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }) => {
 
-    const { buttonColor, handleStart, handleEnd } = useButton();
+    const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
 
     return (

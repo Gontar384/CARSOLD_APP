@@ -2,6 +2,7 @@ import React from "react";
 import SocialLink from "./Atomic/SocialLink.tsx";
 
 const Socials: React.FC = () => {
+
     return (
         <div className="mt-12 m:mt-14">
             <p className="mb-6 m:mb-8 font-bold">Check our socials:</p>

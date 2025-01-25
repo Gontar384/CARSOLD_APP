@@ -54,9 +54,12 @@ public class UserManagementServiceImpl implements UserManagementService {
     // sends account activating token link via email
     @Override
     public boolean registerUser(UserDto userDto) {
+
         try {
+
             if (userDto != null) {
                 User user = findOrCreateUser(userDto);
+
                 if (user == null) return false;
                 updateUserDetails(user, userDto);
 
@@ -64,8 +67,10 @@ public class UserManagementServiceImpl implements UserManagementService {
                 if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
 
                 repository.save(user);
+
                 return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error registering user: " + e.getMessage());
@@ -73,21 +78,26 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private User findOrCreateUser(UserDto userDto) {
+
         User existingEmail = repository.findByEmail(userDto.getEmail());
         if (existingEmail != null) {
             if (!existingEmail.getActive()) return existingEmail;
             return errorHandler.logObject("Account with email " + userDto.getEmail() + " already exists and it's active");
         }
+
         User existingUsername = repository.findByUsername(userDto.getUsername());
         if (existingUsername != null) {
             if (!existingUsername.getActive()) return existingUsername;
             return errorHandler.logObject("Account with username " + userDto.getUsername() + " already exists and it's active");
         }
+
         return mapper.mapToEntity(userDto);
     }
 
     private void updateUserDetails(User user, UserDto userDto) {
+
         if (user == null || userDto == null) return;
+
         user.setEmail(userDto.getEmail());
         user.setUsername(userDto.getUsername());
         user.setPassword(encoder.encode(userDto.getPassword()));
@@ -96,21 +106,26 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean sendActivationEmail(User user) {
+
         if (user != null) {
             String token = jwtService.generateToken(user.getUsername(), 30);
             String link = frontendUrl + "activate?token=" + token;
+
             return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
         }
+
         return false;
     }
 
     //changes password when recovery
     @Override
     public boolean recoveryChangePassword(String token, String password, HttpServletResponse response) {
+
         try {
             if (token != null) {
                 Claims claims = jwtService.extractAllClaims(token);
                 if (claims == null) return errorHandler.logBoolean("Token is invalid");
+
                 String username = claims.getSubject();
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (!jwtService.validateToken(token, userDetails)) return errorHandler.logBoolean("Token has expired");
@@ -123,8 +138,10 @@ public class UserManagementServiceImpl implements UserManagementService {
                 String newToken = jwtService.generateToken(username, 600);
                 ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
                 response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+
                 return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error recovery changing password");
@@ -134,15 +151,19 @@ public class UserManagementServiceImpl implements UserManagementService {
     //changes password
     @Override
     public boolean changePassword(String password, HttpServletRequest request) {
+
         try {
             if (password != null) {
                 User user = jwtService.extractUserFromRequest(request);
+
                 if (user != null){
                     user.setPassword(encoder.encode(password));
                     repository.save(user);
+
                     return true;
                 }
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error changing password: " + e.getMessage());
@@ -158,15 +179,19 @@ public class UserManagementServiceImpl implements UserManagementService {
     //deletes user, also his cloud storage
     @Override
     public boolean deleteUserAccount(HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 boolean result = deleteUserInCloud(user.getUsername());
                 if (result) {
                     repository.delete(user);
+
                     return true;
                 }
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error deleting user: " + e.getMessage());
@@ -174,6 +199,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean deleteUserInCloud(String username) {
+
         try {
             String folderPrefix = username + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -181,6 +207,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
                     .iterateAll()
                     .forEach(Blob::delete);
+
             return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error deleting user in cloud: " + e.getMessage());

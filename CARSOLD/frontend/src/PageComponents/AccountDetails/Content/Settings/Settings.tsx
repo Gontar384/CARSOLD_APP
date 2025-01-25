@@ -11,13 +11,14 @@ const Settings: React.FC = () => {
     const {checkGoogleAuth} = useUserCheck();
     const [googleLogged, setGoogleLogged] = useState<boolean | null>(null);
     const [popup, setPopup] = useState<boolean>(false);
+    const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
 
     useEffect(() => {
-        let isMounted = true;
+
         const fetchGoogleAuthStatus = async () => {
             try {
                 const response = await checkGoogleAuth();
-                if (response.data && isMounted) {
+                if (response.data) {
                     setGoogleLogged(response.data.checks);
                 }
             } catch (error) {
@@ -25,14 +26,9 @@ const Settings: React.FC = () => {
             }
         }
 
-        fetchGoogleAuthStatus().then();
+        fetchGoogleAuthStatus();
 
-        return () => {
-            isMounted = false;
-        }
     }, [checkGoogleAuth]);
-
-    const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
 
     if (googleLogged === null) {
         return null;

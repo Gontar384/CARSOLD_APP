@@ -23,183 +23,172 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const [oldPassword, setOldPassword] = useState<string>("");
     const {CreateDebouncedValue} = useUtil();
     const debouncedOldPassword: string = CreateDebouncedValue(oldPassword, 300);
-
     const [passwordIcon, setPasswordIcon] = useState<IconProp | null>(null);
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [oldPasswordIcon, setOldPasswordIcon] = useState<IconProp | null>(null);
     const [heldValue, setHeldValue] = useState<string>("");   //holds previous 'oldPassword' value, prevents display bug
-
-    const {checkPassword, checkOldPassword} = useUserCheck();
-    const {checkAuth, isAuthenticated} = useAuth();
-    const navigate = useNavigate();
-
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [inputType, setInputType] = useState<"password" | "text">("password")
+    const navigate = useNavigate();
+    const {checkPassword, checkOldPassword} = useUserCheck();
+    const {checkAuth, isAuthenticated} = useAuth();
 
     useEffect(() => {
+
         let isMounted = true;
 
-        if (oldPassword !== "") {
-            if (oldPassword.length >= 7 && oldPassword.length <= 25) {
-                const validatePassword = async () => {
-                    try {
-                        const response: AxiosResponse = await checkOldPassword(oldPassword);
-                        if (isMounted) {
-                            if (response.data.checks) {
-                                setOldPasswordIcon(faCircleCheck);
-                                setHeldValue(oldPassword);
-                            } else {
-                                setOldPasswordIcon(faCircleExclamation);
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Error checking old password: ", error)
+        if (oldPassword === "") {
+            setOldPasswordIcon(null);
+            return;
+        }
+
+        if (oldPassword.length < 7 || oldPassword.length > 25) {
+            setOldPasswordIcon(faCircleExclamation);
+            return;
+        }
+
+        const validatePassword = async () => {
+            try {
+                const response: AxiosResponse = await checkOldPassword(oldPassword);
+                if (isMounted) {
+                    if (response.data.checks) {
+                        setOldPasswordIcon(faCircleCheck);
+                        setHeldValue(oldPassword);
+                    } else {
+                        setOldPasswordIcon(faCircleExclamation);
                     }
                 }
-                validatePassword().then();
-
-                return () => {
-                    isMounted = false;
-                };
-            } else {
-                setOldPasswordIcon(faCircleExclamation);
+            } catch (error) {
+                console.error("Error checking old password: ", error);
             }
-        } else {
-            setOldPasswordIcon(null);
-        }
-    }, [debouncedOldPassword]);    //performs only when user is authenticated and oldPassword input is present
+        };
+
+        validatePassword();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [debouncedOldPassword]);  //for auth user, compares provided password with oldPassword
 
     useEffect(() => {
-        if (loggedIn && oldPassword !== "" && oldPasswordIcon === faCircleCheck && oldPassword === heldValue || !loggedIn) {
-            if (password !== "") {
-                if (password.length >= 7) {
-                    if (password.length <= 25) {
-                        if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)) {
-                            if (password !== oldPassword) {
-                                setPasswordIcon(faCircleCheck);
-                                setPasswordInfo("");
-                                setPasswordActive(false);
-                            } else {
-                                setPasswordIcon(faCircleExclamation);
-                                setPasswordInfo("New password cannot be the same!");
-                                setPasswordActive(true);
-                            }
-                        } else {
-                            setPasswordIcon(faCircleExclamation);
-                            setPasswordInfo("Must include lowercase, uppercase and number.");
-                            setPasswordActive(true);
-                        }
-                    } else {
-                        setPasswordIcon(faCircleExclamation);
-                        setPasswordInfo("Password is too long.");
-                        setPasswordActive(true);
-                    }
-                } else {
-                    setPasswordIcon(faCircleExclamation);
-                    setPasswordInfo("Password is too short.");
-                    setPasswordActive(true);
-                }
-            } else {
-                setPasswordIcon(null);
-                setPasswordInfo("");
-                setPasswordActive(false);
-            }
-        } else {
+        //reset when conditions are not met
+        if (password === "") {
             setPasswordIcon(null);
             setPasswordInfo("");
             setPasswordActive(false);
-        }
-    }, [oldPassword, oldPasswordIcon, password])   //checks if password is strong enough
-
-    useEffect(() => {
-        if (loggedIn && oldPassword !== "" && oldPasswordIcon === faCircleCheck && oldPassword === heldValue || !loggedIn) {
-            if (password !== "" && passwordRep !== "") {
-                if (checkPassword(password) && password !== oldPassword) {
-                    if (passwordRep === password) {
-                        setPasswordRepIcon(faCircleCheck);
-                    } else {
-                        setPasswordRepIcon(faCircleExclamation);
-                    }
-                } else {
-                    setPasswordRepIcon(null);
-                }
-            } else {
-                setPasswordRepIcon(null);
-            }
-        } else {
             setPasswordRepIcon(null);
+            return;
         }
-    }, [passwordRep, password, checkPassword, oldPasswordIcon, oldPassword])   //checks if repeated password equals password
+        if (password.length < 7) {
+            setPasswordIcon(faCircleExclamation);
+            setPasswordInfo("Password is too short.");
+            setPasswordActive(true);
+            setPasswordRepIcon(null);
+            return;
+        }
+        if (password.length > 25) {
+            setPasswordIcon(faCircleExclamation);
+            setPasswordInfo("Password is too long.");
+            setPasswordActive(true);
+            setPasswordRepIcon(null);
+            return;
+        }
+        if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
+            setPasswordIcon(faCircleExclamation);
+            setPasswordInfo("Must include lowercase, uppercase, and number.");
+            setPasswordActive(true);
+            setPasswordRepIcon(null);
+            return;
+        }
+        //for auth user
+        if (loggedIn) {
+            if (oldPassword === "" || oldPasswordIcon !== faCircleCheck || oldPassword !== heldValue) {
+                setPasswordIcon(null);
+                setPasswordInfo("");
+                setPasswordActive(false);
+                setPasswordRepIcon(null);
+                return;
+            }
+            if (password === oldPassword) {
+                setPasswordIcon(faCircleExclamation);
+                setPasswordInfo("New password cannot be the same!");
+                setPasswordActive(true);
+                setPasswordRepIcon(null);
+                return;
+            }
+        }
+
+        setPasswordIcon(faCircleCheck);
+        setPasswordInfo("");
+        setPasswordActive(false);
+
+        //checks repeated password validity
+        if (passwordRep === "") {
+            setPasswordRepIcon(null);
+        } else if (passwordRep !== password) {
+            setPasswordRepIcon(faCircleExclamation);
+        } else {
+            setPasswordRepIcon(faCircleCheck);
+        }
+
+    }, [loggedIn, oldPassword, oldPasswordIcon, heldValue, password, passwordRep]);
 
     const handleRecoveryPasswordChange = async () => {
-        if (isDisabled) return;
-        if (password && passwordRep) {
-            if (checkPassword(password) && password === passwordRep) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const token: string | null = urlParams.get('token');
-                if (!token) return;
-                setIsDisabled(true);
-                try {
-                    const response = await api.put('api/auth/password-recovery-change', {
-                        token: token,
-                        password: password,
-                    });
-                    if (response.data.success) {
-                        setIsChanged?.(true);
-                        setPassword("");
-                        setPasswordRep("");
-                        setTimeout(async () => {
-                            await checkAuth();
-                        }, 2500)
-                    } else {
-                        setWentWrong?.(true);
-                        setTimeout(async () => {
-                            navigate("/authenticate/login");
-                        }, 2500)
-                    }
-                } catch (error) {
-                    console.error("Error recovery changing password: ", error);
-                } finally {
-                    setTimeout(() => {
-                        setIsDisabled(false);
-                    }, 2500)
-                }
+
+        if (isDisabled || !password || !passwordRep) return;
+        if (!checkPassword(password)) return;
+        if (password !== passwordRep) return;
+
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) return;
+
+        setIsDisabled(true);
+
+        try {
+            const response = await api.put('api/auth/password-recovery-change', { token, password });
+            if (response.data.success) {
+                setIsChanged?.(true);
+                setPassword("");
+                setPasswordRep("");
+                await checkAuth();
+            } else {
+                setWentWrong?.(true);
+                setTimeout(() => navigate("/authenticate/login"), 2500);
             }
+        } catch (error) {
+            console.error("Error changing password during recovery: ", error);
+        } finally {
+            setIsDisabled(false);
         }
-    }   //changes password during recover
+    };   //changes password during recover
 
     const handlePasswordChange = async () => {
-        if (isDisabled) return;
-        if (oldPassword && password && passwordRep) {
-            if (checkPassword(password) && password === passwordRep && password !== oldPassword) {
-                try {
-                    const oldPasswordResponse: AxiosResponse = await checkOldPassword(oldPassword);
-                    if (!oldPasswordResponse.data.checks) {
-                        return;
-                    }
-                    setIsDisabled(true);
-                    const response: AxiosResponse = await api.put("api/auth/password-change", {
-                        password: password
-                    });
-                    if (response.data.success) {
-                        setIsChanged?.(true);
-                        setOldPassword("");
-                        setPassword("");
-                        setPasswordRep("");
-                        setOldPasswordIcon(null);
-                    }
-                } catch (error) {
-                    console.error("Error changing password: ", error)
-                } finally {
-                    setTimeout(() => {
-                        setIsDisabled(false);
-                    }, 5000)
-                }
+
+        if (isDisabled || !oldPassword || !password || !passwordRep) return;
+        if (!checkPassword(password)) return;
+        if (password === oldPassword) return;
+        if (password !== passwordRep) return;
+
+        try {
+            const oldPasswordResponse: AxiosResponse = await checkOldPassword(oldPassword);
+            if (!oldPasswordResponse.data.checks) return;
+            setIsDisabled(true);
+            const response: AxiosResponse = await api.put("api/auth/password-change", { password });
+            if (response.data.success) {
+                setIsChanged?.(true);
+                setOldPassword("");
+                setPassword("");
+                setPasswordRep("");
+                setOldPasswordIcon(null);
             }
+        } catch (error) {
+            console.error("Error changing password: ", error);
+        } finally {
+            setIsDisabled(false);
         }
-    }   //changes when user is authenticated
+    };   //changes when user is authenticated
 
     return (
         <div className={`flex flex-col items-center w-full`}>
@@ -209,7 +198,8 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
                    setValue={setPassword} icon={passwordIcon} info={passwordInfo} isActive={passwordActive}/>
             <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true} whichForm={"none"}/>
-            <SubmitButton label={"Change"} disabled={isDisabled} onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
+            <SubmitButton label={"Change"} disabled={isDisabled}
+                          onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
         </div>
     )
 }

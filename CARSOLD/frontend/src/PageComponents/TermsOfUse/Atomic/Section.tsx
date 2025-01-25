@@ -6,6 +6,7 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({title, content}) => (
+
     <div className="mt-4 m:mt-6">
         <h3 className="text-xl m:text-2xl font-bold">{title}</h3>
         <div className="text-base m:text-xl mt-2 m:mt-3">

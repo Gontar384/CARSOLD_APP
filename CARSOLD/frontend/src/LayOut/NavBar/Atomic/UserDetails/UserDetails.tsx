@@ -8,13 +8,11 @@ import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import Details from "./Atomic/Details.tsx";
 
-
 const UserDetails: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
     const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
     const {profilePicChange} = useItems();
-
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
     const [animationActive, setAnimationActive] = useState<boolean>(false);   //prevents too many animations
     const [barActive, setBarActive] = useState<boolean>(false);
@@ -25,8 +23,8 @@ const UserDetails: React.FC = () => {
 
     //fetches username and profile pic
     useEffect(() => {
-        handleUsernameFetch().then();
-        handleProfilePicFetch().then();
+        handleUsernameFetch();
+        handleProfilePicFetch();
     }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
@@ -56,6 +54,7 @@ const UserDetails: React.FC = () => {
     };   //for mobile and keyboard
 
     useEffect(() => {
+
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setBarActive(false);
@@ -64,9 +63,7 @@ const UserDetails: React.FC = () => {
             }
         };
 
-        if (barActive) {
-            document.addEventListener("touchstart", handleClickOutside);
-        }
+        if (barActive) document.addEventListener("touchstart", handleClickOutside);
 
         return () => {
             document.removeEventListener("touchstart", handleClickOutside);

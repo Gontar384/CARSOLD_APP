@@ -42,15 +42,19 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     //updates contact name, checks if name is proper name
     @Override
     public boolean changeName(String name, HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 if (isPolishName(name) || isValidName(name)) {
                     user.setName(name);
                     repository.save(user);
+
                     return true;
                 }
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error changing name: " + e.getMessage());
@@ -59,6 +63,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
     //checks if name contains polish name
     private boolean isPolishName(String name) {
+
         List<String> polishSpecificNames = Arrays.asList(
                 //male
                 "Łukasz", "Wojciech", "Krzysztof", "Tomasz", "Jerzy", "Mieczysław", "Zbigniew", "Andrzej",
@@ -76,11 +81,13 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 "Tereska", "Barbara", "Weronika", "Krystyna", "Malwina", "Elżbieta", "Wiesława", "Dagmara",
                 "Joanna", "Zuzanna", "Honorata", "Beata", "Marta", "Liliana", "Monika", "Małgorzata", "Anita"
         );
+
         return polishSpecificNames.contains(name);
     }
 
     //checks if name is proper by sending to api
     private boolean isValidName(String name) {
+
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
 
@@ -108,6 +115,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 String entityType = entity.getString("type");
                 if ("PERSON".equals(entityType)) return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error checking name validity: " + e.getMessage());
@@ -117,6 +125,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     //updates contact phone, checks if number is proper
     @Override
     public boolean changePhone(String phone, HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
             if (user == null) return false;
@@ -144,15 +153,19 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     //updates contact city
     @Override
     public boolean changeCity(String city, HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 if (isCityValid(city)) {
                     user.setCity(city);
                     repository.save(user);
+
                     return true;
                 }
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error changing city: " + e.getMessage());
@@ -161,6 +174,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
     //checks if city is valid by comparing it against suggestions
     private boolean isCityValid(String city) {
+
         JSONArray predictions = fetchCitySuggestionsFromApi(city);
 
         for (int i = 0; i < predictions.length(); i++) {
@@ -171,12 +185,14 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 return true;
             }
         }
+
         return false;
     }
 
     //fetches city suggestions from Places API
     @Override
     public List<String> fetchCitySuggestions(String value) {
+
         JSONArray predictions = fetchCitySuggestionsFromApi(value);
 
         List<String> cityNames = new ArrayList<>();
@@ -190,6 +206,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
     //helper method to fetch city suggestions from Places API
     private JSONArray fetchCitySuggestionsFromApi(String input) {
+
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
@@ -205,6 +222,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             String response = restTemplate.getForObject(url, String.class);
             assert response != null;
             JSONObject jsonResponse = new JSONObject(response);
+
             return jsonResponse.getJSONArray("predictions");
         } catch (Exception e) {
             errorHandler.logVoid("Error fetching city suggestions: " + e.getMessage());
@@ -220,6 +238,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             if (user != null) {
                 user.setContactPublic(isPublic);
                 repository.save(user);
+
                 return user.getContactPublic();
             }
             return false;
@@ -233,9 +252,9 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     public boolean fetchContactInfoPublic(HttpServletRequest request) {
         try {
             User user = jwtService.extractUserFromRequest(request);
-            if (user != null){
-                if (user.getContactPublic() != null) return user.getContactPublic();
-            }
+
+            if (user != null && user.getContactPublic() != null) return user.getContactPublic();
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error fetching contact info: " + e.getMessage());
@@ -245,15 +264,19 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     //returns contact info using map
     @Override
     public Map<String, String> fetchInfo(HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 HashMap<String, String> info = new HashMap<>();
                 info.put("name", user.getName());
                 info.put("phone", user.getPhone());
                 info.put("city", user.getCity());
+
                 return info;
             }
+
             return Collections.emptyMap();
         } catch (Exception e) {
             errorHandler.logVoid("Error fetching info: " + e.getMessage());

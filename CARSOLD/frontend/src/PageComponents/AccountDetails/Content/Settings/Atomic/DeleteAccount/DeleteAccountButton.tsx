@@ -9,8 +9,8 @@ interface DeleteAccountButtonProps {
 
 const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => {
 
-    const {isMobile} = useUtil();
     const [buttonAnimation, setButtonAnimation] = useState<"animate-swing" | null>(null);
+    const {isMobile} = useUtil();
 
     const handleActivateAnimation = () => {
         setButtonAnimation("animate-swing");

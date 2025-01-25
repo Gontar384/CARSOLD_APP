@@ -41,6 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String username = null;
 
             if (token.isPresent()) username = jwtService.extractUsername(token.get());
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
                 if (jwtService.validateToken(token.get(), userDetails)) {
@@ -62,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     //deletes jwt cookie
     private void clearJwtCookie(HttpServletResponse response) {
+
         response.addHeader(HttpHeaders.SET_COOKIE,
                 "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");
     }

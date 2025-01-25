@@ -12,17 +12,14 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
 
-    const { followed, messages } = useItems();
-
+    const {followed, messages} = useItems();
     const navigate = useNavigate();
-
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
+    const {logout} = useUserDetails();
 
     const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };  //prevents closing bar
-
-    const { logout } = useUserDetails();
 
     return (
         <>

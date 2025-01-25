@@ -10,7 +10,7 @@ interface HeaderButtonProps {
 
 const HeaderButton: React.FC<HeaderButtonProps> = ({onClick, isGoogle, label}) => {
 
-    const { buttonColor, handleStart, handleEnd } = useButton();
+    const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
 
     return (

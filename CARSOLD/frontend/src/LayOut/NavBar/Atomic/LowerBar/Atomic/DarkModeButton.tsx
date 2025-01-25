@@ -7,12 +7,10 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 const DarkModeButton: React.FC = () => {
 
-    const { darkMode, toggleDarkMode, lowerBar, isMobile } = useUtil();
-
-    const { buttonColor, handleStart, handleEnd } = useButton();
-
     const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);   //dark mode icons animations
     const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
+    const {darkMode, toggleDarkMode, lowerBar, isMobile} = useUtil();
+    const {buttonColor, handleStart, handleEnd} = useButton();
 
     const handleDarkMode = () => {
         toggleDarkMode();

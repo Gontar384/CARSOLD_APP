@@ -46,12 +46,15 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //activates account
     @Override
     public boolean activateAccount(String token, HttpServletResponse response) {
+
         try {
             if (token != null) {
                 String username = jwtService.extractUsername(token);
                 if (username == null) return false;
+
                 User user = repository.findByUsername(username);
                 if (user == null) return errorHandler.logBoolean("User not found");
+
                 if (!user.getActive()) {  //can't return false here, because react strict mode performs it twice and breaks logic
                     user.setActive(true);
                     repository.save(user);
@@ -65,6 +68,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 addCookieWithNewTokenToResponse(username, response);
+
                 return true;
             }
             return false;
@@ -76,10 +80,12 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //auth user using email or username
     @Override
     public boolean authenticate(String login, String password, HttpServletResponse response) {
+
         try {
             if (login != null) {
                 User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
                 if (user == null) return errorHandler.logBoolean("User not found");
+
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
                 addCookieWithNewTokenToResponse(user.getUsername(), response);
                 return true;
@@ -99,12 +105,14 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //logs user out (deletes jwt and delete OAuth2 session if needed)
     @Override
     public boolean logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
                 OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
                         oauth2Token.getAuthorizedClientRegistrationId(),
                         oauth2Token.getName()
                 );
+
                 if (client != null) {
                     String tokenValue = client.getAccessToken().getTokenValue();
                     revokeGoogleToken(tokenValue);
@@ -114,12 +122,14 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
                     );
                 }
             }
+
             HttpSession session = request.getSession(false);    //deletes session
             if (session != null) session.invalidate();
             SecurityContextHolder.clearContext();
 
             ResponseCookie deleteCookie = cookieService.createCookie("", 0);
             response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
             return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Failed to log out: " + e.getMessage());
@@ -140,7 +150,9 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //refreshes JWT, validates previous one and sends new
     @Override
     public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
+
         boolean result = jwtService.extractAndValidateTokenFromRequest(request);
+
         if (result) {
             String username = jwtService.extractUsernameFromRequest(request);
             addCookieWithNewTokenToResponse(username, response);
@@ -151,10 +163,13 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
     //helper method to add cookie with Jwt to response
     private void addCookieWithNewTokenToResponse(String username, HttpServletResponse response) {
+
         String newToken = jwtService.generateToken(username, 600);
         if (newToken == null) errorHandler.logVoid("Failed to generate token");
+
         ResponseCookie jwtCookie = cookieService.createCookie(newToken, 10);
         if (jwtCookie == null) errorHandler.logVoid("Failed to create cookie");
+
         response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie != null ? jwtCookie.toString() : null);
     }
 }

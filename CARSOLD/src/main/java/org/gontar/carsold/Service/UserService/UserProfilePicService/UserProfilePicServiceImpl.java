@@ -41,19 +41,23 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
     //checks for profilePic sensitive content and then uploads profilePic to cloud
     @Override
     public boolean uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) {
+
         try {
             if (!isValidImage(file)) return errorHandler.logBoolean("Could not upload, this is not an image");
             if (file.getSize() > 3 * 1024 * 1024) return errorHandler.logBoolean("Could not upload, image is too large");
             if (isImageSensitive(file)) return errorHandler.logBoolean("Could not upload, image contains sensitive content");
 
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 String profilePicLink = uploadProfilePic(file, user.getUsername());
                 if (profilePicLink == null) return errorHandler.logBoolean("Could not upload image to the cloud");
                 user.setProfilePic(profilePicLink);
                 repository.save(user);
+
                 return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error uploading profile picture: " + e.getMessage());
@@ -62,6 +66,7 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //checks if file is an image based on its magic number (signature)
     private boolean isValidImage(MultipartFile file) {
+
         try {
             byte[] fileBytes = file.getBytes();
 
@@ -70,6 +75,7 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
                     fileBytes[2] == (byte) 0x4E && fileBytes[3] == (byte) 0x47 &&
                     fileBytes[4] == (byte) 0x0D && fileBytes[5] == (byte) 0x0A &&
                     fileBytes[6] == (byte) 0x1A && fileBytes[7] == (byte) 0x0A) {
+
                 return true;
             }
 
@@ -83,6 +89,7 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
                     fileBytes[2] == (byte) 0x46 && fileBytes[3] == (byte) 0x46 &&
                     fileBytes[4] == (byte) 0x57 && fileBytes[5] == (byte) 0x45 &&
                     fileBytes[6] == (byte) 0x42 && fileBytes[7] == (byte) 0x50;
+
         } catch (Exception e) {
             return errorHandler.logBoolean("Couldn't recognize image type");
         }
@@ -90,6 +97,7 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //uploads image to Google Cloud
     private String uploadProfilePic(MultipartFile file, String username) {
+
         try {
             String fileName = username + "/" + username + ".profilePic";
 
@@ -106,6 +114,7 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //checks if image contains sensitive content
     private boolean isImageSensitive(MultipartFile file) {
+
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
             ByteString imgBytes = ByteString.copyFrom(file.getBytes());
             Image img = Image.newBuilder().setContent(imgBytes).build();
@@ -136,18 +145,23 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
     //deletes profile pic in cloud and repository
     @Override
     public boolean deleteProfilePic(HttpServletRequest request) {
+
         try {
             User user = jwtService.extractUserFromRequest(request);
+
             if (user != null) {
                 String fileName = user.getUsername() + "/" + user.getUsername() + ".profilePic";
                 Storage storage = StorageOptions.getDefaultInstance().getService();
                 BlobId blobId = BlobId.of(bucketName, fileName);
                 boolean deleteResult = storage.delete(blobId);
+
                 if (!deleteResult) return errorHandler.logBoolean("Couldn't delete pic from cloud");
                 user.setProfilePic(null);
                 repository.save(user);
+
                 return true;
             }
+
             return false;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error deleting profile picture: " + e.getMessage());

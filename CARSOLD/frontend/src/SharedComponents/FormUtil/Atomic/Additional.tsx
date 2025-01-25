@@ -14,13 +14,13 @@ interface AdditionalProps {
 const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCheck, setTermsCheck, mark}) => {
 
     const [eyeIcon, setEyeIcon] = useState<IconDefinition>(faEye);
+    const navigate = useNavigate();
 
     const toggleInput = () => {
+
         setInputType?.((prev) => prev === "password" ? "text" : "password");
         setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
     }   //changes password input
-
-    const navigate = useNavigate();
 
     return (
         <div className={`flex flex-row ${whichForm === "none" ? "justify-end" : "justify-between"} items-center mt-6 m:mt-7`}>

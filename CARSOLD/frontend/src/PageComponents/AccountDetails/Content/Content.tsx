@@ -16,8 +16,10 @@ const Content: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);  //prevents blinking
 
     useEffect(() => {
+
         const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info"> = [
             "myOffers", "followed", "messages", "settings", "info"];
+
         if (section && validSections.includes(section as never)) {
             setChoice(section as "myOffers" | "followed" | "messages" | "settings" | "info");
             setIsLoading(false);
@@ -31,7 +33,7 @@ const Content: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col w-full rounded-sm justify-center items-center
+        <div className="flex flex-col items-center w-full rounded-sm
         max-w-[1500px] min-h-[550px] bg-lowLime border border-black border-opacity-40">
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>
