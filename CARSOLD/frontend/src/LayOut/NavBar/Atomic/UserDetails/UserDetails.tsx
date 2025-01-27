@@ -28,8 +28,10 @@ const UserDetails: React.FC = () => {
     }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
+
         setBarActive(true);
         setBarHovered(true);
+
         if (!animationActive) {
             setUserIconAnimation("animate-pop");
             setAnimationActive(true);
@@ -41,6 +43,7 @@ const UserDetails: React.FC = () => {
     }   //deactivates on mouse
 
     useEffect(() => {
+
         if (!debouncedHover && !barHovered) {
             setBarActive(false);
             setAnimationActive(false);

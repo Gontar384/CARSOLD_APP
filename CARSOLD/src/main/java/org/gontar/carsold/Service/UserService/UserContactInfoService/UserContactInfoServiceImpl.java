@@ -46,14 +46,15 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
         try {
             User user = jwtService.extractUserFromRequest(request);
 
-            if (user != null) {
-                if (isPolishName(name) || isValidName(name)) {
-                    user.setName(name);
-                    repository.save(user);
+            if (user == null) return false;
 
-                    return true;
-                }
+            if (Objects.equals(name, "") || isPolishName(name) || isValidName(name)) {
+                user.setName(name);
+                repository.save(user);
+
+                return true;
             }
+
 
             return false;
         } catch (Exception e) {
@@ -130,6 +131,13 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             User user = jwtService.extractUserFromRequest(request);
             if (user == null) return false;
 
+            if (Objects.equals(phone, "")) {
+                user.setPhone(phone);
+                repository.save(user);
+
+                return true;
+            }
+
             if (!phone.startsWith("+")) phone = "+48" + phone;
 
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
@@ -157,13 +165,13 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
         try {
             User user = jwtService.extractUserFromRequest(request);
 
-            if (user != null) {
-                if (isCityValid(city)) {
-                    user.setCity(city);
-                    repository.save(user);
+            if (user == null) return false;
 
-                    return true;
-                }
+            if (Objects.equals(city, "") || isCityValid(city)) {
+                user.setCity(city);
+                repository.save(user);
+
+                return true;
             }
 
             return false;
@@ -235,13 +243,12 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
     public boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic) {
         try {
             User user = jwtService.extractUserFromRequest(request);
-            if (user != null) {
-                user.setContactPublic(isPublic);
-                repository.save(user);
+            if (user == null) return false;
 
-                return user.getContactPublic();
-            }
-            return false;
+            user.setContactPublic(isPublic);
+            repository.save(user);
+
+            return user.getContactPublic();
         } catch (Exception e) {
             return errorHandler.logBoolean("Error changing contact info: " + e.getMessage());
         }

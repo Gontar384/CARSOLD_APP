@@ -6,6 +6,7 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = ({message, setMessage}) => {
+
     return (
         <div className="fixed flex items-center justify-center inset-0 bg-black bg-opacity-50 z-50">
             <div className="p-5 m:p-6 text-lg m:text-xl bg-white text-center rounded-sm shadow-lg">

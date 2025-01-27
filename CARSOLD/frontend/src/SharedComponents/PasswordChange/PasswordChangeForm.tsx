@@ -8,7 +8,6 @@ import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
-import {AxiosResponse} from "axios";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,7 +50,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
 
         const validatePassword = async () => {
             try {
-                const response: AxiosResponse = await checkOldPassword(oldPassword);
+                const response = await checkOldPassword(oldPassword);
                 if (isMounted) {
                     if (response.data.checks) {
                         setOldPasswordIcon(faCircleCheck);
@@ -147,12 +146,13 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         setIsDisabled(true);
 
         try {
-            const response = await api.put('api/auth/password-recovery-change', { token, password });
-            if (response.data.success) {
+            const response = await api.put('api/auth/password-recovery-change',
+                { token: token, password: password });
+            if (response.data) {
                 setIsChanged?.(true);
                 setPassword("");
                 setPasswordRep("");
-                await checkAuth();
+                setTimeout(async () => await checkAuth(), 2500);
             } else {
                 setWentWrong?.(true);
                 setTimeout(() => navigate("/authenticate/login"), 2500);
@@ -160,9 +160,9 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         } catch (error) {
             console.error("Error changing password during recovery: ", error);
         } finally {
-            setIsDisabled(false);
+            setTimeout(() => setIsDisabled(false), 2500);
         }
-    };   //changes password during recover
+    };   //changes password - recovery
 
     const handlePasswordChange = async () => {
 
@@ -172,10 +172,11 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         if (password !== passwordRep) return;
 
         try {
-            const oldPasswordResponse: AxiosResponse = await checkOldPassword(oldPassword);
+            const oldPasswordResponse = await checkOldPassword(oldPassword);
             if (!oldPasswordResponse.data.checks) return;
             setIsDisabled(true);
-            const response: AxiosResponse = await api.put("api/auth/password-change", { password });
+            const response = await api.put("api/auth/password-change",
+                { password: password });
             if (response.data.success) {
                 setIsChanged?.(true);
                 setOldPassword("");
@@ -188,7 +189,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         } finally {
             setIsDisabled(false);
         }
-    };   //changes when user is authenticated
+    };   //changes password - auth user
 
     return (
         <div className={`flex flex-col items-center w-full`}>

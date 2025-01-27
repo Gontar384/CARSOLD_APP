@@ -23,6 +23,7 @@ const LoginForm: React.FC = () => {
     const [isAccountDeleted, setIsAccountDeleted] = useState<boolean>(false);
     const {CreateDebouncedValue} = useUtil();
     const debouncedLogin: string = CreateDebouncedValue(login, 300);
+    const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {emailExists, usernameExists, isActive, isOauth2} = useUserCheck();
     const {checkAuth} = useAuth();
 
@@ -117,24 +118,23 @@ const LoginForm: React.FC = () => {
                     setWrongPassword(true);
                     return;
                 }
-                const response = await api.get(`api/auth/login`, { params: { login, password } });
+                const response = await api.get(`api/auth/login`,
+                    { params: { login, password } });
                 if (response.data) {
                     setIsLoggedIn(true);
-                    setTimeout(async () => {
-                        await checkAuth();
-                    }, 2000);
+                    setTimeout(async () => await checkAuth(), 2000);
                 } else {
                     console.log("Authentication failed");
+                    setWentWrong(true);
                 }
             } else {
                 console.log("Login validation failed: conditions check");
             }
         } catch (error) {
             console.log("Error during login: ", error);
+            setWentWrong(true);
         } finally {
-            setTimeout(() => {
-                setIsDisabled(false);
-            }, 2000);
+            setTimeout(() => setIsDisabled(false), 2000);
         }
     };
 
@@ -153,12 +153,14 @@ const LoginForm: React.FC = () => {
             <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} hasEye={true} whichForm={"login"}/>
             <SubmitButton label={"Sign in"} onClick={handleLogin} disabled={isDisabled}/>
-            {isLoggedIn ? <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/> : null}
-            {wrongPassword ? <AnimatedBanner text={"Wrong password"} onAnimationEnd={() => setWrongPassword(false)}
-                                             delay={2000} color={"bg-coolRed"} z={"z-40"}/> : null}
-            {isAccountDeleted ?
+            {isLoggedIn && <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/>}
+            {wrongPassword && <AnimatedBanner text={"Wrong password!"} onAnimationEnd={() => setWrongPassword(false)}
+                                             delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
+            {isAccountDeleted &&
                 <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
-                                delay={4000} color={"bg-coolYellow"} z={"z-40"}/> : null}
+                                delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
+            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+                                         delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

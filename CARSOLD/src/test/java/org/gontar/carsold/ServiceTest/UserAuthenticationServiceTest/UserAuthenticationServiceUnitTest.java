@@ -71,18 +71,15 @@ public class UserAuthenticationServiceUnitTest {
     public void testActivateAccount_failure_userIsActive() {
         String testUsername = "testUsername";
         String testToken = "validToken";
-
-        when(jwtService.extractUsername(testToken)).thenReturn(testUsername);
-
         User mockUser = new User();
         mockUser.setUsername(testUsername);
         mockUser.setActive(true);
-        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
+        when(jwtService.extractUserFromToken(testToken)).thenReturn(mockUser);
 
         boolean result = service.activateAccount(testToken, response);
 
         assertTrue(result, "Should return true, but user is not updated");
-        verify(repo).findByUsername(testUsername);
+        verify(jwtService).extractUserFromToken(testToken);
         verify(repo, never()).save(mockUser);
     }
 
@@ -90,18 +87,16 @@ public class UserAuthenticationServiceUnitTest {
     public void testActivateAccount_success() {
         String testUsername = "testUsername";
         String testToken = "validToken";
-
-        when(jwtService.extractUsername(testToken)).thenReturn(testUsername);
-
         User mockUser = new User();
         mockUser.setUsername(testUsername);
         mockUser.setActive(false);
-        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
+        when(jwtService.extractUserFromToken(testToken)).thenReturn(mockUser);
 
         boolean result = service.activateAccount(testToken, response);
 
         assertTrue(result, "Should return true, account activated");
-        verify(repo).findByUsername(testUsername);
+        assertTrue(mockUser.getActive(), "User should be marked as active after activation");
+        verify(jwtService).extractUserFromToken(testToken);
         verify(repo).save(mockUser);
     }
 

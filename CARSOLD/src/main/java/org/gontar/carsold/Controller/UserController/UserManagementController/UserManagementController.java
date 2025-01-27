@@ -28,13 +28,12 @@ public class UserManagementController {
 
     //changes password
     @PutMapping("/auth/password-recovery-change")
-    public ResponseEntity<Map<String, Boolean>> updatePasswordRecovery(
+    public ResponseEntity<Boolean> updatePasswordRecovery(
             @RequestBody Map<String, String> payload, HttpServletResponse response) {
         String token = payload.get("token");
         String password = payload.get("password");
-        Map<String, Boolean> responseMap = new HashMap<>();
-        responseMap.put("success", service.recoveryChangePassword(token, password, response));
-        return ResponseEntity.ok(responseMap);
+        boolean result = service.recoveryChangePassword(token, password, response);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/auth/password-change")

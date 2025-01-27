@@ -141,18 +141,15 @@ public class JwtService {
             if (username == null) throw new InvalidUsernameException("Username not found in token");
 
             return username;
-        } catch (InvalidTokenException e) {
-            return errorHandler.logString("Problem with token extraction: " + e.getMessage());
-        } catch (InvalidUsernameException e) {
-            return errorHandler.logString("Problem with username extraction: " + e.getMessage());
+        } catch (InvalidTokenException | InvalidUsernameException | UserNotFoundException e) {
+            return errorHandler.logObject("Problem with request: " + e.getMessage());
         } catch (Exception e) {
-            return errorHandler.logString("Unexpected error: " + e.getMessage());
+            return errorHandler.logString("Error extracting username from request: " + e.getMessage());
         }
     }
 
     //extracts user from request
     public User extractUserFromRequest(HttpServletRequest request) throws UserNotFoundException{
-
         try {
             String username = extractUsernameFromRequest(request);
             User user = repository.findByUsername(username);
@@ -162,7 +159,24 @@ public class JwtService {
         } catch (InvalidTokenException | InvalidUsernameException | UserNotFoundException e) {
             return errorHandler.logObject("Problem with request: " + e.getMessage());
         } catch (Exception e) {
-            return errorHandler.logObject("Unexpected error: " + e.getMessage());
+            return errorHandler.logObject("Error extracting user from request: " + e.getMessage());
+        }
+    }
+
+    //extracts user from token
+    public User extractUserFromToken(String token) throws InvalidUsernameException, UserNotFoundException {
+        try {
+            String username = extractUsername(token);
+            if (username == null) throw new InvalidUsernameException("Username not found in token");
+
+            User user = repository.findByUsername(username);
+            if (user == null) throw new UserNotFoundException("User not found");
+
+            return user;
+        } catch (InvalidUsernameException | UserNotFoundException e) {
+            return errorHandler.logObject("Problem with token: " + e.getMessage());
+        } catch (Exception e) {
+            return errorHandler.logObject("Error extracting user from token: " + e.getMessage());
         }
     }
 
@@ -182,7 +196,7 @@ public class JwtService {
         } catch (InvalidTokenException | InvalidUsernameException e) {
             return errorHandler.logBoolean("Problem with token: " + e.getMessage());
         } catch (Exception e) {
-            return errorHandler.logBoolean("Unexpected error: " + e.getMessage());
+            return errorHandler.logBoolean("Error extracting and validating token: " + e.getMessage());
         }
     }
 }

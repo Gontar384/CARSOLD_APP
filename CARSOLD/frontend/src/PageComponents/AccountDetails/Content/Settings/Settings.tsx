@@ -41,9 +41,9 @@ const Settings: React.FC = () => {
                 {!googleLogged && <PasswordChange setIsChanged={setIsChanged}/>}
                 <DeleteAccountButton setPopup={setPopup}/>
             </div>
-            {isChanged ? <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
-                                         onAnimationEnd={() => setIsChanged(false)} delay={3000}/> : null}
-            {popup ? <Popup setPopup={setPopup} googleLogged={googleLogged}/> : null}
+            {isChanged && <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
+                                         onAnimationEnd={() => setIsChanged(false)} delay={3000}/>}
+            {popup && <Popup setPopup={setPopup} googleLogged={googleLogged}/>}
         </div>
     )
 }

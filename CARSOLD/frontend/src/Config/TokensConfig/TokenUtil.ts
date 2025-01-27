@@ -28,7 +28,9 @@ export const useRefreshJwt = () => {
 
     useEffect(() => {
         const refreshInterval: number = setInterval(async () => {
+
             if (!isAuthenticated) return;
+
             try {
                 await api.get(`api/auth/refresh`);
             } catch (error) {
@@ -48,8 +50,10 @@ export const useTrackUserActivity = () => {
     useEffect(() => {
         const events: string[] = ['click', 'mousemove', 'keydown', 'scroll'];
         const activityHandler = () => {
+
             if (isDisabled) return;
             setIsDisabled(true);
+
             try {
                 api.get(`api/auth/keep-alive`).then();
             } catch (error) {

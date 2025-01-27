@@ -1,7 +1,6 @@
 package org.gontar.carsold.Service.UserService.UserManagementService;
 
 import com.google.cloud.storage.*;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
@@ -14,8 +13,6 @@ import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.UserEmailNotificationService.UserEmailNotificationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,20 +29,18 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final BCryptPasswordEncoder encoder;
     private final Mapper<User, UserDto> mapper;
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
     private final UserEmailNotificationService userEmailNotificationService;
     private final CookieService cookieService;
     private final ErrorHandler errorHandler;
 
     public UserManagementServiceImpl(UserRepository repository, BCryptPasswordEncoder encoder,
                                      Mapper<User, UserDto> mapper, JwtService jwtService,
-                                     UserDetailsService userDetailsService, UserEmailNotificationService userEmailNotificationService,
+                                     UserEmailNotificationService userEmailNotificationService,
                                      CookieService cookieService, ErrorHandler errorHandler) {
         this.repository = repository;
         this.encoder = encoder;
         this.mapper = mapper;
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
         this.userEmailNotificationService = userEmailNotificationService;
         this.cookieService = cookieService;
         this.errorHandler = errorHandler;
@@ -56,22 +51,19 @@ public class UserManagementServiceImpl implements UserManagementService {
     public boolean registerUser(UserDto userDto) {
 
         try {
+            if (userDto == null) return false;
 
-            if (userDto != null) {
-                User user = findOrCreateUser(userDto);
+            User user = findOrCreateUser(userDto);
+            if (user == null) return false;
 
-                if (user == null) return false;
-                updateUserDetails(user, userDto);
+            updateUserDetails(user, userDto);
 
-                boolean emailSendingResult = sendActivationEmail(user);
-                if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
+            boolean emailSendingResult = sendActivationEmail(user);
+            if (!emailSendingResult) return errorHandler.logBoolean("Email sending failed");
 
-                repository.save(user);
+            repository.save(user);
 
-                return true;
-            }
-
-            return false;
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error registering user: " + e.getMessage());
         }
@@ -107,14 +99,12 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     private boolean sendActivationEmail(User user) {
 
-        if (user != null) {
-            String token = jwtService.generateToken(user.getUsername(), 30);
-            String link = frontendUrl + "activate?token=" + token;
+        if (user == null) return false;
 
-            return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
-        }
+        String token = jwtService.generateToken(user.getUsername(), 30);
+        String link = frontendUrl + "activate?token=" + token;
 
-        return false;
+        return userEmailNotificationService.sendVerificationEmail(user.getEmail(), user.getUsername(), link);
     }
 
     //changes password when recovery
@@ -122,29 +112,21 @@ public class UserManagementServiceImpl implements UserManagementService {
     public boolean recoveryChangePassword(String token, String password, HttpServletResponse response) {
 
         try {
-            if (token != null) {
-                Claims claims = jwtService.extractAllClaims(token);
-                if (claims == null) return errorHandler.logBoolean("Token is invalid");
+            if (token == null) return false;
 
-                String username = claims.getSubject();
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (!jwtService.validateToken(token, userDetails)) return errorHandler.logBoolean("Token has expired");
+            User user = jwtService.extractUserFromToken(token);
+            if (user == null) return false;
 
-                User user = repository.findByUsername(username);
-                if (user == null) return errorHandler.logBoolean("User not found");
-                user.setPassword(encoder.encode(password));
-                repository.save(user);
+            user.setPassword(encoder.encode(password));
+            repository.save(user);
 
-                String newToken = jwtService.generateToken(username, 600);
-                ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
-                response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+            String newToken = jwtService.generateToken(user.getUsername(), 600);
+            ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
+            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
 
-                return true;
-            }
-
-            return false;
+            return true;
         } catch (Exception e) {
-            return errorHandler.logBoolean("Error recovery changing password");
+            return errorHandler.logBoolean("Error recovery changing password: " + e.getMessage());
         }
     }
 
@@ -153,18 +135,15 @@ public class UserManagementServiceImpl implements UserManagementService {
     public boolean changePassword(String password, HttpServletRequest request) {
 
         try {
-            if (password != null) {
-                User user = jwtService.extractUserFromRequest(request);
+            if (password == null) return false;
 
-                if (user != null){
-                    user.setPassword(encoder.encode(password));
-                    repository.save(user);
+            User user = jwtService.extractUserFromRequest(request);
+            if (user == null) return false;
 
-                    return true;
-                }
-            }
+            user.setPassword(encoder.encode(password));
+            repository.save(user);
 
-            return false;
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error changing password: " + e.getMessage());
         }
@@ -182,14 +161,13 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         try {
             User user = jwtService.extractUserFromRequest(request);
+            if (user == null) return false;
 
-            if (user != null) {
-                boolean result = deleteUserInCloud(user.getUsername());
-                if (result) {
-                    repository.delete(user);
+            boolean result = deleteUserInCloud(user.getUsername());
+            if (result) {
+                repository.delete(user);
 
-                    return true;
-                }
+                return true;
             }
 
             return false;

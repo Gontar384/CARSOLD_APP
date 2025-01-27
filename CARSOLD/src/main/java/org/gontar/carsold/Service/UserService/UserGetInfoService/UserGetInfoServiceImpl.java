@@ -1,7 +1,6 @@
 package org.gontar.carsold.Service.UserService.UserGetInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -26,15 +25,12 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     private final UserRepository repository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder encoder;
-    private final ErrorHandler errorHandler;
 
     public UserGetInfoServiceImpl(UserRepository repository,
-                                  JwtService jwtService, BCryptPasswordEncoder encoder,
-                                  ErrorHandler errorHandler) {
+                                  JwtService jwtService, BCryptPasswordEncoder encoder) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.encoder = encoder;
-        this.errorHandler = errorHandler;
     }
 
     //checks if email exists
@@ -105,14 +101,9 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     //helper method to find user by email or username
     private User manageLogin(String login) {
 
-        if (login != null) {
-            User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
-            if (user == null) return errorHandler.logObject("User not found");
+        if (login == null) return null;
 
-            return user;
-        }
-
-        return null;
+        return login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
     }
 
     //checks if account is active

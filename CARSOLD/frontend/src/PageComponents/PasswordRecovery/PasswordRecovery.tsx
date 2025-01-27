@@ -106,9 +106,9 @@ const PasswordRecovery: React.FC = () => {
                     <SubmitButton label={"Send"} disabled={isDisabled} onClick={handleSendEmail}/>
                 </div>
             </div>
-            {isEmailSent ?
+            {isEmailSent &&
                 <AnimatedBanner text={"Email with link has been sent!"} onAnimationEnd={() => setIsEmailSent(false)}
-                                delay={5000} color={"bg-lowLime"} z={"z-50"}/> : null}
+                                delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
         </LayOut>
     )
 }

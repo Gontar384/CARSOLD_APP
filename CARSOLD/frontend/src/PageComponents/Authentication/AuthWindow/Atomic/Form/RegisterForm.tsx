@@ -38,6 +38,7 @@ const RegisterForm: React.FC = () => {
     const [mark, setMark] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);  //prevents from spamming button
     const [isRegistered, setIsRegistered] = useState<boolean>(false);   //displays banner
+    const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     const validateEmail = (email: string): boolean => {
 
@@ -88,7 +89,7 @@ const RegisterForm: React.FC = () => {
                 console.error("Error checking email: ", error);
                 if (isMounted) {
                     setEmailIcon(faCircleExclamation);
-                    setEmailInfo("Error checking email.");
+                    setEmailInfo("Error with email.");
                     setEmailActive(true);
                 }
             }
@@ -150,7 +151,7 @@ const RegisterForm: React.FC = () => {
                 console.error("Error checking username: ", error);
                 if (isMounted) {
                     setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Error checking username.");
+                    setUsernameInfo("Error with username.");
                     setUsernameActive(true);
                 }
             }
@@ -196,7 +197,7 @@ const RegisterForm: React.FC = () => {
 
     useEffect(() => {
 
-        if (user.password == "" && passwordRep == "") {
+        if (user.password == "" || passwordRep == "") {
             setPasswordRepIcon(null);
             return;
         }
@@ -211,9 +212,7 @@ const RegisterForm: React.FC = () => {
     }, [checkPassword, passwordRep, user.password]);   //checks if repeated password equals password
 
     useEffect(() => {
-
         if (termsCheck) setMark(false);
-
     }, [termsCheck]);   //checks checkbox mark
 
     const handleRegister = async () => {
@@ -275,13 +274,14 @@ const RegisterForm: React.FC = () => {
                 setTermsCheck(false);
                 setEmailIcon(null);
                 setUsernameIcon(null);
+            } else {
+                setWentWrong(true);
             }
         } catch (error) {
             console.log("Error during register:", error);
+            setWentWrong(true);
         } finally {
-            setTimeout(() => {
-                setIsDisabled(false);
-            }, 3000);
+            setTimeout(() => setIsDisabled(false), 2000);
         }
     };
 
@@ -298,9 +298,11 @@ const RegisterForm: React.FC = () => {
                    setValue={setPasswordRep} hasEye={true} whichForm={"register"} termsCheck={termsCheck}
                    setTermsCheck={setTermsCheck} icon={passwordRepIcon} mark={mark}/>
             <SubmitButton label={"Register"} onClick={handleRegister} disabled={isDisabled}/>
-            {isRegistered ? <AnimatedBanner
+            {isRegistered && <AnimatedBanner
                 text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
-                onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/> : null}
+                onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
+            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+                                          delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

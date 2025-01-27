@@ -17,7 +17,6 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
     const navigate = useNavigate();
 
     const toggleInput = () => {
-
         setInputType?.((prev) => prev === "password" ? "text" : "password");
         setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
     }   //changes password input

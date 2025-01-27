@@ -48,32 +48,27 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     public boolean activateAccount(String token, HttpServletResponse response) {
 
         try {
-            if (token != null) {
-                String username = jwtService.extractUsername(token);
-                if (username == null) return false;
+            if (token == null) return false;
 
-                User user = repository.findByUsername(username);
-                if (user == null) return errorHandler.logBoolean("User not found");
+            User user = jwtService.extractUserFromToken(token);
 
-                if (!user.getActive()) {  //can't return false here, because react strict mode performs it twice and breaks logic
-                    user.setActive(true);
-                    repository.save(user);
-                }
-
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("USER"))
-                );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                addCookieWithNewTokenToResponse(username, response);
-
-                return true;
+            if (!user.getActive()) {  //can't return false here, because react strict mode performs it twice and breaks logic
+                user.setActive(true);
+                repository.save(user);
             }
-            return false;
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    null,
+                    Collections.singletonList(new SimpleGrantedAuthority("USER"))
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            addCookieWithNewTokenToResponse(user.getUsername(), response);
+
+            return true;
         } catch (Exception e) {
-            return errorHandler.logBoolean("Failed to activate account: " + e.getMessage());
+            return errorHandler.logBoolean("Failed to activate account : " + e.getMessage());
         }
     }
 
@@ -82,15 +77,15 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     public boolean authenticate(String login, String password, HttpServletResponse response) {
 
         try {
-            if (login != null) {
-                User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
-                if (user == null) return errorHandler.logBoolean("User not found");
+            if (login == null) return false;
 
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
-                addCookieWithNewTokenToResponse(user.getUsername(), response);
-                return true;
-            }
-            return false;
+            User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+            if (user == null) return errorHandler.logBoolean("User not found");
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
+            addCookieWithNewTokenToResponse(user.getUsername(), response);
+
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Authentication failed: " + e.getMessage());
         }

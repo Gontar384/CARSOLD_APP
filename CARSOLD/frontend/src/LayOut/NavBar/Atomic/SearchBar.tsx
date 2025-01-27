@@ -12,7 +12,7 @@ const SearchBar: React.FC = () => {
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null)
     const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
     const [isInitial, setIsInitial] = useState<boolean>(false);
-    const {mobileWidth} = useUtil();
+    const {mobileWidth, isMobile} = useUtil();
 
     const handleClick = () => {
 
@@ -28,6 +28,7 @@ const SearchBar: React.FC = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+
             if (isClicked && componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setMagnifierAnimation("animate-disappearRev");
                 setTimeout(() => {
@@ -80,12 +81,12 @@ const SearchBar: React.FC = () => {
             focus:outline-none focus:border-opacity-0 focus:ring-2 m:focus:ring-2 focus:ring-blue-500/30 focus:shadow-blue-500/50 
             ${isClicked ? 'bg-white rounded-sm' : 'bg-lime rounded-full'}`}
                    onClick={handleClick} value={search} onChange={e => setSearch(e.target.value)}/>
-            <button
-                className={`h-7 m:h-8 absolute top-0 right-0 px-1 m:px-2 text-lg m:text-xl bg-lime border border-black z-10 
+            {!isMobile &&
+                <button className={`h-7 m:h-8 absolute top-0 right-0 px-1 m:px-2 text-lg m:text-xl bg-lime border border-black z-10 
                 ${buttonAnimation} ${isClicked ? 'rounded-sm border-t-0' : 'rounded-r-full z-30'}
                 ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}>
-                Search
-            </button>
+                    Search
+                </button>}
         </div>
     )
 }

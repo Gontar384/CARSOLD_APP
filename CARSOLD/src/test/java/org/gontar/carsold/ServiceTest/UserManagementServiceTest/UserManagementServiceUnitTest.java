@@ -1,6 +1,5 @@
 package org.gontar.carsold.ServiceTest.UserManagementServiceTest;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
@@ -20,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -157,12 +155,13 @@ public class UserManagementServiceUnitTest {
     public void recoveryChangePassword_failure_invalidToken() {
         String newPassword = "newPassword";
         String testToken = "testToken";
-        when(jwtService.extractAllClaims(testToken)).thenReturn(null);
+        when(jwtService.extractUserFromToken(testToken))
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.recoveryChangePassword(testToken, newPassword, response);
 
         assertFalse(result, "Should return false, token has wrong format");
-        verify(jwtService).extractAllClaims(testToken);
+        verify(jwtService).extractUserFromToken(testToken);
         verify(repo, never()).save(any(User.class));
         verifyNoMoreInteractions(jwtService);
     }
@@ -171,22 +170,15 @@ public class UserManagementServiceUnitTest {
     public void recoveryChangePassword_failure_tokenHasExpired() {
         String newPassword = "newPassword";
         String expiredToken = "testToken";
-        String testUsername = "extractedUsername";
-        UserDetails userDetails = mock(UserDetails.class);
-        Claims mockClaims = mock(Claims.class);
-        when(jwtService.extractAllClaims(expiredToken)).thenReturn(mockClaims);
-        when(mockClaims.getSubject()).thenReturn(testUsername);
-        when(userDetailsService.loadUserByUsername(testUsername)).thenReturn(userDetails);
-        when(jwtService.validateToken(expiredToken, userDetails)).thenReturn(false);
+        when(jwtService.extractUserFromToken(expiredToken))
+                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
 
         boolean result = service.recoveryChangePassword(expiredToken, newPassword, response);
 
         assertFalse(result, "Should return false, token has expired");
-        verify(jwtService).extractAllClaims(expiredToken);
-        verify(userDetailsService).loadUserByUsername(testUsername);
-        verify(jwtService).validateToken(expiredToken, userDetails);
+        verify(jwtService).extractUserFromToken(expiredToken);
         verify(repo, never()).save(any(User.class));
-        verifyNoMoreInteractions(jwtService, userDetailsService);
+        verifyNoMoreInteractions(jwtService);
     }
 
     @Test
@@ -194,15 +186,10 @@ public class UserManagementServiceUnitTest {
         String newPassword = "newPassword";
         String testToken = "testToken";
         String testUsername = "extractedUsername";
-        UserDetails userDetails = mock(UserDetails.class);
-        Claims mockClaims = mock(Claims.class);
         User mockUser = new User();
+        mockUser.setUsername(testUsername);
         ResponseCookie mockCookie = mock(ResponseCookie.class);
-        when(jwtService.extractAllClaims(testToken)).thenReturn(mockClaims);
-        when(mockClaims.getSubject()).thenReturn(testUsername);
-        when(userDetailsService.loadUserByUsername(testUsername)).thenReturn(userDetails);
-        when(jwtService.validateToken(testToken, userDetails)).thenReturn(true);
-        when(repo.findByUsername(testUsername)).thenReturn(mockUser);
+        when(jwtService.extractUserFromToken(testToken)).thenReturn(mockUser);
         when(encoder.encode(newPassword)).thenReturn("encodedPassword");
         when(jwtService.generateToken(anyString(), anyLong())).thenReturn(testToken);
         when(cookieService.createCookie(anyString(), anyLong())).thenReturn(mockCookie);
@@ -210,16 +197,12 @@ public class UserManagementServiceUnitTest {
         boolean result = service.recoveryChangePassword(testToken, newPassword, response);
 
         assertTrue(result, "Should return true, password changed successfully");
-        verify(jwtService).extractAllClaims(testToken);
-        verify(userDetailsService).loadUserByUsername(testUsername);
-        verify(jwtService).validateToken(testToken, userDetails);
-        verify(repo).findByUsername(testUsername);
         verify(encoder).encode(newPassword);
         verify(repo).save(any(User.class));
         verify(jwtService).generateToken(anyString(), anyLong());
         verify(cookieService).createCookie(anyString(), anyLong());
-        verify(response).addHeader(HttpHeaders.SET_COOKIE, mockCookie.toString()); // Verify cookie added to response
-        verifyNoMoreInteractions(jwtService, userDetailsService, repo, encoder, cookieService);
+        verify(response).addHeader(HttpHeaders.SET_COOKIE, mockCookie.toString());
+        verifyNoMoreInteractions(jwtService, repo, encoder, cookieService);
     }
 
     @Test

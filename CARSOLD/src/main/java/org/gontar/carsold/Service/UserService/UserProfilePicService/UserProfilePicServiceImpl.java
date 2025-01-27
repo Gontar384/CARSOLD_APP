@@ -44,21 +44,21 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
         try {
             if (!isValidImage(file)) return errorHandler.logBoolean("Could not upload, this is not an image");
-            if (file.getSize() > 3 * 1024 * 1024) return errorHandler.logBoolean("Could not upload, image is too large");
-            if (isImageSensitive(file)) return errorHandler.logBoolean("Could not upload, image contains sensitive content");
+            if (file.getSize() > 3 * 1024 * 1024)
+                return errorHandler.logBoolean("Could not upload, image is too large");
+            if (isImageSensitive(file))
+                return errorHandler.logBoolean("Could not upload, image contains sensitive content");
 
             User user = jwtService.extractUserFromRequest(request);
+            if (user == null) return false;
 
-            if (user != null) {
-                String profilePicLink = uploadProfilePic(file, user.getUsername());
-                if (profilePicLink == null) return errorHandler.logBoolean("Could not upload image to the cloud");
-                user.setProfilePic(profilePicLink);
-                repository.save(user);
+            String profilePicLink = uploadProfilePic(file, user.getUsername());
+            if (profilePicLink == null) return false;
 
-                return true;
-            }
+            user.setProfilePic(profilePicLink);
+            repository.save(user);
 
-            return false;
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error uploading profile picture: " + e.getMessage());
         }
@@ -148,21 +148,19 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
         try {
             User user = jwtService.extractUserFromRequest(request);
+            if (user == null) return false;
 
-            if (user != null) {
-                String fileName = user.getUsername() + "/" + user.getUsername() + ".profilePic";
-                Storage storage = StorageOptions.getDefaultInstance().getService();
-                BlobId blobId = BlobId.of(bucketName, fileName);
-                boolean deleteResult = storage.delete(blobId);
+            String fileName = user.getUsername() + "/" + user.getUsername() + ".profilePic";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            BlobId blobId = BlobId.of(bucketName, fileName);
+            boolean deleteResult = storage.delete(blobId);
 
-                if (!deleteResult) return errorHandler.logBoolean("Couldn't delete pic from cloud");
-                user.setProfilePic(null);
-                repository.save(user);
+            if (!deleteResult) return errorHandler.logBoolean("Couldn't delete pic from cloud");
 
-                return true;
-            }
+            user.setProfilePic(null);
+            repository.save(user);
 
-            return false;
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Error deleting profile picture: " + e.getMessage());
         }

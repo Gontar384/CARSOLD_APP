@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
 import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import ContactInputLoader from "../../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
-import {AxiosResponse} from "axios";
 import SuggestionsBar from "./Atomic/SuggestionsBar.tsx";
 import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
 
@@ -119,7 +118,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
         if (isDisabled) return;
 
-        if (value.length < 3) {
+        if (value.length < 3 && value.length !== 0) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too short.");
             return;
@@ -135,7 +134,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         setAdditionalInfo(null);
 
         try {
-            const response: AxiosResponse = await api.put(`api/contact-set-${valueType}`, {
+            const response = await api.put(`api/contact-set-${valueType}`, {
                 [valueType]: value
             });
             if (response.data) {
@@ -147,6 +146,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 setButtonAnimation(null);
                 setInvalidInput(false);
                 setCitySuggestions(null);
+                handleEnd();
             } else {
                 setInvalidInput(true);
             }
@@ -185,7 +185,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
         const fetchCitySuggestions = async () => {
             try {
-                const response: AxiosResponse = await api.get('api/get-city-suggestions', {
+                const response = await api.get('api/get-city-suggestions', {
                     params: {value}
                 });
                 if (response.data) {
@@ -210,44 +210,46 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             <label className="text-lg m:text-xl">
                 {label}
             </label>
-            <div className="w-[280px] m:w-[350px] text-xl m:text-2xl cursor-pointer relative"
-                 onMouseEnter={!isMobile && buttonLabel === "Edit" ? handleActivateButton : undefined}
-                 onMouseLeave={!isMobile && buttonLabel === "Edit" ? handleDeactivateButton : undefined}
-                 onTouchEnd={isMobile && buttonLabel === "Edit" ? toggleButton : undefined}
-                 ref={componentRef}>
-                <div className="w-[220px] m:w-[280px] h-9 m:h-10 bg-lowLime z-20 relative">
-                    {!isLoading ?
-                        <div className={`flex items-center w-full h-full px-1 m:px-[6px] rounded-sm overflow-hidden whitespace-nowrap
+            <div className="w-[280px] m:w-[350px] text-xl m:text-2xl relative">
+                <div className="w-[220px] m:w-[280px] h-9 m:h-10 cursor-pointer"
+                     onMouseEnter={!isMobile && buttonLabel === "Edit" ? handleActivateButton : undefined}
+                     onMouseLeave={!isMobile && buttonLabel === "Edit" ? handleDeactivateButton : undefined}
+                     onTouchEnd={isMobile && buttonLabel === "Edit" ? toggleButton : undefined}
+                     ref={componentRef}>
+                    <div className="w-full h-full bg-lowLime z-20 relative">
+                        {!isLoading ?
+                            <div className={`flex items-center w-full h-full px-1 m:px-[6px] rounded-sm overflow-hidden whitespace-nowrap
                         ${!inputActive ? "border border-black border-opacity-10" : ""}`} title={value}>
-                            {value}
-                        </div> : <ContactInputLoader/>}
-                    {inputActive &&
-                        <input className={`absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
-                               ref={inputRef}
-                               type={valueType === "phone" ? "tel" : "text"} value={value}
-                               onChange={valueType === "phone" ?
-                                   (e) => setValue(formatPhoneNumber(e.target.value))
-                                   : valueType === "name" ? (e) => setValue(e.target.value.trim())
-                                       : (e) => setValue(e.target.value)}/>}
-                    {inputActive && invalidInput || additionalInfo !== "" ?
-                        <p className="text-sm m:text-base absolute left-[3px] m:left-[5px] top-10 m:top-11 whitespace-nowrap">
-                            {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
-                    {isCityInput && inputActive &&
-                        <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
-                                        setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
-                </div>
-                {buttonActive &&
-                    <button className={`w-14 m:w-16 h-9 m:h-10 absolute top-0 right-0 
+                                {value}
+                            </div> : <ContactInputLoader/>}
+                        {inputActive &&
+                            <input className={`absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
+                                   ref={inputRef}
+                                   type={valueType === "phone" ? "tel" : "text"} value={value}
+                                   onChange={valueType === "phone" ?
+                                       (e) => setValue(formatPhoneNumber(e.target.value))
+                                       : valueType === "name" ? (e) => setValue(e.target.value.trim())
+                                           : (e) => setValue(e.target.value)}/>}
+                        {inputActive && invalidInput || additionalInfo !== "" ?
+                            <p className="text-sm m:text-base absolute left-[3px] m:left-[5px] top-10 m:top-11 whitespace-nowrap">
+                                {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
+                        {isCityInput && inputActive &&
+                            <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
+                                            setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
+                    </div>
+                    {buttonActive &&
+                        <button className={`w-14 m:w-16 h-9 m:h-10 absolute top-0 right-0 
                     border border-black border-opacity-40 bg-lime rounded-sm z-10
                     ${buttonAnimation} ${buttonColor ? "text-white" : ""}`}
-                            onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
-                            onMouseEnter={!isMobile ? handleStart : undefined}
-                            onMouseLeave={!isMobile ? handleEnd : undefined}
-                            onTouchStart={isMobile ? handleStart : undefined}
-                            onTouchEnd={isMobile ? handleEnd : undefined}>
-                        {buttonLabel}
-                    </button>
-                }
+                                onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
+                                onMouseEnter={!isMobile ? handleStart : undefined}
+                                onMouseLeave={!isMobile ? handleEnd : undefined}
+                                onTouchStart={isMobile ? handleStart : undefined}
+                                onTouchEnd={isMobile ? handleEnd : undefined}>
+                            {buttonLabel}
+                        </button>
+                    }
+                </div>
             </div>
         </div>
     )

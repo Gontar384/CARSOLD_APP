@@ -33,6 +33,8 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     public void sendEmail(String email, String subject, String content) {
 
         try {
+            if (email == null || subject == null || content == null) return;
+
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
@@ -51,6 +53,8 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     public boolean sendVerificationEmail(String email, String username, String link) {
 
         try {
+            if (email == null || username == null || link == null) return false;
+
             String subject = "CAR$OLD Account Activation";
             String content = "<p style='font-size: 25px;'>Thank you for registering " + username +
                     "! To activate your account, please click here:</p>" +
@@ -74,28 +78,26 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     public boolean sendPasswordRecoveryEmail(String email) {
 
         try {
-            if (email != null) {
-                User user = repository.findByEmail(email);
-                if (user == null) return errorHandler.logBoolean("User not found");
+            if (email == null) return false;
 
-                String token = jwtService.generateToken(user.getUsername(), 10);
-                String link = frontendUrl + "very3secret8password4change?token=" + token;
+            User user = repository.findByEmail(email);
+            if (user == null) return errorHandler.logBoolean("User not found");
 
-                String subject = "CAR$OLD Password Recovery";
-                String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
-                        "! To change your password, please click the following link:</p>" +
-                        "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
-                        "Change password" +
-                        "</a>" +
-                        "</div><hr>" +
-                        "<p>This message was sent automatically. Do not reply.</p>";
-                sendEmail(email, subject, content);
+            String token = jwtService.generateToken(user.getUsername(), 10);
+            String link = frontendUrl + "very3secret8password4change?token=" + token;
 
-                return true;
-            }
+            String subject = "CAR$OLD Password Recovery";
+            String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
+                    "! To change your password, please click the following link:</p>" +
+                    "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
+                    "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                    "Change password" +
+                    "</a>" +
+                    "</div><hr>" +
+                    "<p>This message was sent automatically. Do not reply.</p>";
+            sendEmail(email, subject, content);
 
-            return false;
+            return true;
         } catch (Exception e) {
             return errorHandler.logBoolean("Failed to send email: " + e.getMessage());
         }

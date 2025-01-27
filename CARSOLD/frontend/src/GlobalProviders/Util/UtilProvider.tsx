@@ -16,8 +16,11 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
     const toggleDarkMode = () => {
+
         setDarkMode((prev) => {
+
             const newMode = !prev;
+
             if (newMode) {
                 document.body.style.transition = 'background-color 0.7s ease-in-out'; //enables transition
                 document.body.style.backgroundColor = '#191a18';
@@ -27,14 +30,18 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
                 document.body.style.backgroundColor = 'white';
                 localStorage.setItem('theme', 'light');
             }
+
             return newMode;
         });
     };  //manages dark mode on click
 
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
+
             if (event.key === 'theme') {
+
                 const newMode: string | null = event.newValue;
+
                 if (newMode === 'dark') {
                     setDarkMode(true);
                     document.body.style.backgroundColor = '#191a18';
@@ -60,6 +67,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     useEffect(() => {
         const handleResize = () => {
+
             const width = window.innerWidth;
 
             setMobileWidth(width < 450);
@@ -78,6 +86,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
     const CreateDebouncedValue = <T, >(value: T, delay: number): T => {
+
         const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
         useEffect(() => {
