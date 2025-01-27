@@ -17,9 +17,7 @@ export const useUserDetails = () => {
     const {checkAuth, isAuthenticated} = useAuth();
 
     const handleUsernameFetch = async () => {
-
         if (!isAuthenticated) return;
-
         try {
             const response = await api.get('api/get-username');
             if (response.data.username) {
@@ -33,9 +31,7 @@ export const useUserDetails = () => {
     } //fetches username
 
     const handleProfilePicFetch = async () => {
-
         if (!isAuthenticated) return;
-
         try {
             const response = await api.get('api/get-profilePic');
             if (response.data.profilePic) {

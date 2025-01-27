@@ -7,7 +7,6 @@ function LoadingPicAnimation(): ReactElement {
 
     //makes cycle every 16 millis to maintain its smooth flow
     useEffect(() => {
-
         const interval = setInterval(() => {
             setRotationDegrees(prev => prev + 2);
         }, 16);  //for 60FPS

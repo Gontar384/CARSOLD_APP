@@ -22,7 +22,6 @@ const PasswordRecovery: React.FC = () => {
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
 
     useEffect(() => {
-
         let isMounted = true;
 
         if (email.length < 5) {
@@ -63,7 +62,6 @@ const PasswordRecovery: React.FC = () => {
     }, [debouncedEmail, email]);  //checks provided email
 
     const handleSendEmail = async () => {
-
         if (isDisabled || email.length < 5 || email.length > 30) return;
 
         const [emailResponse, activeResponse, isOauth2Response] = await Promise.all([
@@ -73,7 +71,6 @@ const PasswordRecovery: React.FC = () => {
         ]);
 
         if (emailResponse.data.exists && activeResponse.data.checks && !isOauth2Response.data.checks) {
-
             setIsDisabled(true);
 
             try {

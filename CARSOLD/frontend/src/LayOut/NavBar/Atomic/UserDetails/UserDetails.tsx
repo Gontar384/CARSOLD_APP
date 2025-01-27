@@ -28,7 +28,6 @@ const UserDetails: React.FC = () => {
     }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
-
         setBarActive(true);
         setBarHovered(true);
 
@@ -43,7 +42,6 @@ const UserDetails: React.FC = () => {
     }   //deactivates on mouse
 
     useEffect(() => {
-
         if (!debouncedHover && !barHovered) {
             setBarActive(false);
             setAnimationActive(false);
@@ -57,7 +55,6 @@ const UserDetails: React.FC = () => {
     };   //for mobile and keyboard
 
     useEffect(() => {
-
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setBarActive(false);

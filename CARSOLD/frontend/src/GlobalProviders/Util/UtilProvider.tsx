@@ -16,9 +16,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
     const toggleDarkMode = () => {
-
         setDarkMode((prev) => {
-
             const newMode = !prev;
 
             if (newMode) {
@@ -37,7 +35,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
-
             if (event.key === 'theme') {
 
                 const newMode: string | null = event.newValue;
@@ -67,7 +64,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     useEffect(() => {
         const handleResize = () => {
-
             const width = window.innerWidth;
 
             setMobileWidth(width < 450);
@@ -86,7 +82,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
     const CreateDebouncedValue = <T, >(value: T, delay: number): T => {
-
         const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
         useEffect(() => {

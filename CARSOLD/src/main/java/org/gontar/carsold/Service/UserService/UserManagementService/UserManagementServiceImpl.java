@@ -49,7 +49,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     // sends account activating token link via email
     @Override
     public boolean registerUser(UserDto userDto) {
-
         try {
             if (userDto == null) return false;
 
@@ -70,7 +69,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private User findOrCreateUser(UserDto userDto) {
-
         User existingEmail = repository.findByEmail(userDto.getEmail());
         if (existingEmail != null) {
             if (!existingEmail.getActive()) return existingEmail;
@@ -87,7 +85,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private void updateUserDetails(User user, UserDto userDto) {
-
         if (user == null || userDto == null) return;
 
         user.setEmail(userDto.getEmail());
@@ -98,7 +95,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean sendActivationEmail(User user) {
-
         if (user == null) return false;
 
         String token = jwtService.generateToken(user.getUsername(), 30);
@@ -110,7 +106,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     //changes password when recovery
     @Override
     public boolean recoveryChangePassword(String token, String password, HttpServletResponse response) {
-
         try {
             if (token == null) return false;
 
@@ -133,7 +128,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     //changes password
     @Override
     public boolean changePassword(String password, HttpServletRequest request) {
-
         try {
             if (password == null) return false;
 
@@ -158,7 +152,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     //deletes user, also his cloud storage
     @Override
     public boolean deleteUserAccount(HttpServletRequest request) {
-
         try {
             User user = jwtService.extractUserFromRequest(request);
             if (user == null) return false;
@@ -177,7 +170,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean deleteUserInCloud(String username) {
-
         try {
             String folderPrefix = username + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();

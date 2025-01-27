@@ -4,33 +4,34 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
-
     const {isAuthenticated} = useAuth();
 
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
                 const response = await api.get(`api/auth/csrf`);
-                api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;    //sets default axios header with csrf token
+                api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;
             } catch (error) {
                 console.log("Error fetching csrf: ", error)
+                delete api.defaults.headers['X-CSRF-TOKEN'];
             }
         };
 
-        fetchCsrf().then();
+        if (isAuthenticated) {
+            fetchCsrf();
+        } else {
+            delete api.defaults.headers['X-CSRF-TOKEN'];
+        }
     }, [isAuthenticated])
 }
 
 //refreshes and changes JWT token every 2 minutes
 export const useRefreshJwt = () => {
-
-    const {isAuthenticated} = useAuth();  //checks if user is authenticated
+    const {isAuthenticated} = useAuth();
 
     useEffect(() => {
-        const refreshInterval: number = setInterval(async () => {
-
+        const refreshInterval = setInterval(async () => {
             if (!isAuthenticated) return;
-
             try {
                 await api.get(`api/auth/refresh`);
             } catch (error) {
@@ -44,13 +45,11 @@ export const useRefreshJwt = () => {
 
 //tracks user activity and send keep-alive requests to server, one request on every minute
 export const useTrackUserActivity = () => {
-
     const [isDisabled, setIsDisabled] = useState(false);
 
     useEffect(() => {
         const events: string[] = ['click', 'mousemove', 'keydown', 'scroll'];
         const activityHandler = () => {
-
             if (isDisabled) return;
             setIsDisabled(true);
 

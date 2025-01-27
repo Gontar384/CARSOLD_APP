@@ -55,6 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
             //clears JWT cookie and returns an error status in case of token or authentication issues
             clearJwtCookie(response);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
             return;
         }
 
@@ -63,7 +64,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     //deletes jwt cookie
     private void clearJwtCookie(HttpServletResponse response) {
-
         response.addHeader(HttpHeaders.SET_COOKIE,
                 "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");
     }

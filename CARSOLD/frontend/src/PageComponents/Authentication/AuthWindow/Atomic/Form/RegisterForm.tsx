@@ -41,13 +41,11 @@ const RegisterForm: React.FC = () => {
     const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     const validateEmail = (email: string): boolean => {
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };  //checks correct email format
 
     useEffect(() => {
-
         let isMounted = true;
 
         if (user.email.length < 5) {
@@ -103,7 +101,6 @@ const RegisterForm: React.FC = () => {
     }, [debouncedEmail]);  //checks if email is valid
 
     useEffect(() => {
-
         let isMounted = true;
 
         if (user.username === "") {
@@ -165,7 +162,6 @@ const RegisterForm: React.FC = () => {
     }, [debouncedUsername]); //checks if username is valid
 
     useEffect(() => {
-
         if (user.password == "") {
             setPasswordIcon(null);
             setPasswordInfo("");
@@ -196,7 +192,6 @@ const RegisterForm: React.FC = () => {
     }, [user.password]);  //checks if password is strong enough
 
     useEffect(() => {
-
         if (user.password == "" || passwordRep == "") {
             setPasswordRepIcon(null);
             return;
@@ -216,11 +211,8 @@ const RegisterForm: React.FC = () => {
     }, [termsCheck]);   //checks checkbox mark
 
     const handleRegister = async () => {
-
         if (isDisabled) return;
-
         if (!user.email || !user.username || !user.password || !passwordRep) return;
-
         setIsDisabled(true);
 
         try {

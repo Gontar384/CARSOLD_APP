@@ -14,7 +14,6 @@ const Settings: React.FC = () => {
     const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
 
     useEffect(() => {
-
         const fetchGoogleAuthStatus = async () => {
             try {
                 const response = await checkGoogleAuth();

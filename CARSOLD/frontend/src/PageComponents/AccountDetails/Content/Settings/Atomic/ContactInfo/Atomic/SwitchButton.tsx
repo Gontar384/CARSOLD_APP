@@ -13,9 +13,7 @@ const SwitchButton: React.FC = () => {
 
     //changes contactPublic in DB and fetches its value, sets animations to button
     const handleSwitchButton = async () => {
-
         if (isDisabled) return;
-
         setIsDisabled(true);
 
         try {
@@ -43,7 +41,6 @@ const SwitchButton: React.FC = () => {
 
     //sets isPublic and initialLoad only on initial load
     useEffect(() => {
-
         setIsFetching(true);
 
         const fetchContactInfoPublic = async () => {

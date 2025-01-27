@@ -15,7 +15,6 @@ const AccountActivation: React.FC = () => {
     const {checkAuth} = useAuth();
 
     useEffect(() => {
-
         const urlParams = new URLSearchParams(window.location.search);
         const token: string | null = urlParams.get('token');
 
@@ -42,8 +41,7 @@ const AccountActivation: React.FC = () => {
     }, [checkAuth, navigate]);   //gets token from url and activates account
 
     useEffect(() => {
-
-        const interval: number = setInterval((): void => {
+        const interval = setInterval((): void => {
             setCount(c => {
                 if (c > 0) return c - 1;
                 clearInterval(interval)

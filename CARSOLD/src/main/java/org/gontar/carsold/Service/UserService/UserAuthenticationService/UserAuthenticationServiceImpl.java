@@ -46,7 +46,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //activates account
     @Override
     public boolean activateAccount(String token, HttpServletResponse response) {
-
         try {
             if (token == null) return false;
 
@@ -75,7 +74,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //auth user using email or username
     @Override
     public boolean authenticate(String login, String password, HttpServletResponse response) {
-
         try {
             if (login == null) return false;
 
@@ -100,7 +98,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //logs user out (deletes jwt and delete OAuth2 session if needed)
     @Override
     public boolean logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-
         try {
             if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
                 OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
@@ -145,7 +142,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     //refreshes JWT, validates previous one and sends new
     @Override
     public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
-
         boolean result = jwtService.extractAndValidateTokenFromRequest(request);
 
         if (result) {
@@ -158,7 +154,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
     //helper method to add cookie with Jwt to response
     private void addCookieWithNewTokenToResponse(String username, HttpServletResponse response) {
-
         String newToken = jwtService.generateToken(username, 600);
         if (newToken == null) errorHandler.logVoid("Failed to generate token");
 

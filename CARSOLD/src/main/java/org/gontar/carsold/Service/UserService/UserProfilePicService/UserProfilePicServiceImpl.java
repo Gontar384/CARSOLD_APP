@@ -41,7 +41,6 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
     //checks for profilePic sensitive content and then uploads profilePic to cloud
     @Override
     public boolean uploadProfilePicWithSafeSearch(MultipartFile file, HttpServletRequest request) {
-
         try {
             if (!isValidImage(file)) return errorHandler.logBoolean("Could not upload, this is not an image");
             if (file.getSize() > 3 * 1024 * 1024)
@@ -66,7 +65,6 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //checks if file is an image based on its magic number (signature)
     private boolean isValidImage(MultipartFile file) {
-
         try {
             byte[] fileBytes = file.getBytes();
 
@@ -97,7 +95,6 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //uploads image to Google Cloud
     private String uploadProfilePic(MultipartFile file, String username) {
-
         try {
             String fileName = username + "/" + username + ".profilePic";
 
@@ -114,7 +111,6 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
 
     //checks if image contains sensitive content
     private boolean isImageSensitive(MultipartFile file) {
-
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
             ByteString imgBytes = ByteString.copyFrom(file.getBytes());
             Image img = Image.newBuilder().setContent(imgBytes).build();
@@ -145,7 +141,6 @@ public class UserProfilePicServiceImpl implements UserProfilePicService {
     //deletes profile pic in cloud and repository
     @Override
     public boolean deleteProfilePic(HttpServletRequest request) {
-
         try {
             User user = jwtService.extractUserFromRequest(request);
             if (user == null) return false;

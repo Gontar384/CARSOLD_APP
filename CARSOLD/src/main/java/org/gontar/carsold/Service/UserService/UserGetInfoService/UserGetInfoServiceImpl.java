@@ -48,13 +48,11 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     //checks if username is appropriate
     @Override
     public boolean checkIfUsernameSafe(String username) {
-
         if (!isUsernameFreeOfInappropriateWords(username)) return false;
         return isUsernameNonToxic(username);
     }
 
     private boolean isUsernameFreeOfInappropriateWords(String username) {
-
         String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn", "hitler"};
         for (String word : inappropriateWords) {
             if (username.toLowerCase().contains(word)) return false;
@@ -64,7 +62,6 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
     }
 
     private boolean isUsernameNonToxic(String username) {
-
         try {
             String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
             List<String> languages = List.of("en", "pl");
@@ -100,9 +97,7 @@ public class UserGetInfoServiceImpl implements UserGetInfoService {
 
     //helper method to find user by email or username
     private User manageLogin(String login) {
-
         if (login == null) return null;
-
         return login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
     }
 

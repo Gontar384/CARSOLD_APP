@@ -15,7 +15,6 @@ const AnimatedBanner: React.FC<AnimatedBannerProps> = ({ text, onAnimationEnd, d
     const { lowerBar, mobileWidth } = useUtil();
 
     useEffect(() => {
-
         if (delay && onAnimationEnd) {
             const hideTimer = setTimeout(() => {     //banner hides
                 onAnimationEnd();

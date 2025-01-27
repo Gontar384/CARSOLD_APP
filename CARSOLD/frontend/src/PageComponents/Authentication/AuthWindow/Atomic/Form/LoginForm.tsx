@@ -29,7 +29,6 @@ const LoginForm: React.FC = () => {
 
     //checks and validates login, displays info for user
     useEffect(() => {
-
         let isMounted = true;
 
         if (login.length < 5) {
@@ -91,9 +90,7 @@ const LoginForm: React.FC = () => {
     }
 
     const handleLogin = async () => {
-
         if (isDisabled) return;
-
         if (!login || !password) return;
 
         setIsDisabled(true);
@@ -139,7 +136,6 @@ const LoginForm: React.FC = () => {
     };
 
     useEffect(() => {
-
         if (sessionStorage.getItem("isAccountDeleted") === "true") {
             setIsAccountDeleted(true);
             sessionStorage.removeItem("isAccountDeleted");

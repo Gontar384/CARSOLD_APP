@@ -12,7 +12,7 @@ import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-i
 import {useNavigate} from "react-router-dom";
 
 interface MidBarProps {
-    excludedButtonRef: React.RefObject<HTMLButtonElement>;
+    excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
     setIconAnimation: React.Dispatch<SetStateAction<"animate-flip" | "animate-flipRev" | null>>;
 }
 
@@ -28,7 +28,6 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
     useEffect(() => {
-
         if (midBar) {
             setMidBarActive(true);
             setBarAnimation("animate-slideShow")
@@ -49,13 +48,10 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
 
     useEffect(() => {
-
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
-
             if (excludedButtonRef.current && excludedButtonRef.current.contains(event.target as Node)) {
                 return;
             }
-
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setBarAnimation("animate-slideHide")
                 setIconAnimation("animate-flipRev");

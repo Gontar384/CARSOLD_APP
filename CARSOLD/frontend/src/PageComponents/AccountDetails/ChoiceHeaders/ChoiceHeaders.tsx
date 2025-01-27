@@ -16,7 +16,6 @@ const ChoiceHeaders: React.FC = () => {
     const buttonState: boolean[] = validSections.map((_, index) => index === choice);
 
     useEffect(() => {
-
         if (section && validSections.includes(section as never)) {
             const choiceIndex = validSections.indexOf(section as "myOffers" | "followed" | "messages" | "settings" | "info");
             setChoice(choiceIndex);

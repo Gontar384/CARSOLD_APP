@@ -12,9 +12,7 @@ const ContactInfo: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-
         const fetchName = async () => {
-
             setIsLoading(true)
 
             try {

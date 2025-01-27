@@ -50,12 +50,10 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     }
 
     useEffect(() => {
-
         if (elementHovered && debouncedHover) {
             setButtonActive(true);
             setButtonAnimation("animate-slideRight");
         }
-
         if (!elementHovered && !debouncedHover) {
             setButtonAnimation("animate-slideLeft");
             setTimeout(() => {
@@ -67,10 +65,8 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //focus input when clicked on button and deactivates when clicked away
     useEffect(() => {
-
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
-
                 if (buttonLabel === "Save") {
                     setFetch(prev => !prev);
                 }
@@ -93,7 +89,6 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             document.addEventListener("mousedown", handleClickOutside);
             document.addEventListener("touchstart", handleClickOutside);
         }
-
         if (inputActive && inputRef.current) {
             inputRef.current.focus();
         }
@@ -115,9 +110,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //saves values to db
     const handleSaveButtonClick = async () => {
-
         if (isDisabled) return;
-
         if (value.length < 3 && value.length !== 0) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too short.");
@@ -161,7 +154,6 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //for phone only, let put country code and '+' at the beginning
     const formatPhoneNumber = (phoneNumber: string): string => {
-
         let cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");
 
         if (cleanedNumber.startsWith("+")) {
@@ -175,9 +167,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //fetches cities suggestions based on input
     useEffect(() => {
-
         if (!debouncedValue || !inputActive) return;
-
         if (value === clickedSuggestion) return;
 
         setInvalidInput(false);

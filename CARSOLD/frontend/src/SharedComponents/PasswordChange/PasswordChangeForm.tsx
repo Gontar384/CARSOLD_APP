@@ -35,14 +35,12 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const {checkAuth, isAuthenticated} = useAuth();
 
     useEffect(() => {
-
         let isMounted = true;
 
         if (oldPassword === "") {
             setOldPasswordIcon(null);
             return;
         }
-
         if (oldPassword.length < 7 || oldPassword.length > 25) {
             setOldPasswordIcon(faCircleExclamation);
             return;
@@ -135,7 +133,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }, [loggedIn, oldPassword, oldPasswordIcon, heldValue, password, passwordRep]);
 
     const handleRecoveryPasswordChange = async () => {
-
         if (isDisabled || !password || !passwordRep) return;
         if (!checkPassword(password)) return;
         if (password !== passwordRep) return;
@@ -165,7 +162,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     };   //changes password - recovery
 
     const handlePasswordChange = async () => {
-
         if (isDisabled || !oldPassword || !password || !passwordRep) return;
         if (!checkPassword(password)) return;
         if (password === oldPassword) return;

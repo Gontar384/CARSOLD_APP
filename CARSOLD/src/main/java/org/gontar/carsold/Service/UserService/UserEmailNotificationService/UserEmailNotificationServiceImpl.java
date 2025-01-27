@@ -31,7 +31,6 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email message
     @Override
     public void sendEmail(String email, String subject, String content) {
-
         try {
             if (email == null || subject == null || content == null) return;
 
@@ -51,7 +50,6 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email to activate account
     @Override
     public boolean sendVerificationEmail(String email, String username, String link) {
-
         try {
             if (email == null || username == null || link == null) return false;
 
@@ -76,7 +74,6 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     //sends email message with link to change password
     @Override
     public boolean sendPasswordRecoveryEmail(String email) {
-
         try {
             if (email == null) return false;
 

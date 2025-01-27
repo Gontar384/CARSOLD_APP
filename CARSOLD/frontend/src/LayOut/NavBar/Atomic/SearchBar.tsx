@@ -15,7 +15,6 @@ const SearchBar: React.FC = () => {
     const {mobileWidth, isMobile} = useUtil();
 
     const handleClick = () => {
-
         setMagnifierAnimation("animate-disappear");
 
         setTimeout(() => {
@@ -53,7 +52,6 @@ const SearchBar: React.FC = () => {
     }, [isClicked])   //adds event listener to off input backlight
 
     useEffect(() => {
-
         searchRef.current = search;
 
         if (search && isInitial) {

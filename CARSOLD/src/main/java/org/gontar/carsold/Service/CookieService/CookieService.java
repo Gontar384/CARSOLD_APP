@@ -10,7 +10,6 @@ public class CookieService {
 
     //creates cookie
     public ResponseCookie createCookie(String token, long time) {
-
         return ResponseCookie.from("JWT", token)
                 .httpOnly(true)
                 .secure(false)                                  //enabled only for production

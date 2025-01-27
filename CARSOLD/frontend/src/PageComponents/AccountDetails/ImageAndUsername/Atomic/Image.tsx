@@ -42,9 +42,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }   //deactivates on mouse
 
     useEffect(() => {
-
         if (!debouncedHover && !inputHovered) setInputActive(false);
-
     }, [debouncedHover, inputHovered]);   //delays deactivation
 
     const handleToggleInput = () => {
@@ -59,14 +57,12 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }    //makes "clickable" delayed
 
     useEffect(() => {
-
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setInputActive(false);
                 setInputClickable(false);
             }
         };
-
         if (inputActive) {
             document.addEventListener("touchstart", handleClickOutside);
         }
@@ -77,7 +73,6 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }, [inputActive, inputClickable]);  //adds event listener to deactivate button
 
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
-
         const file = event.target.files?.[0];
 
         if (file) {
@@ -111,7 +106,6 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }   //uploads pic
 
     const handleDeletePic = async () => {
-
         setPicUploaded(false);
         setInputActive(false);
 

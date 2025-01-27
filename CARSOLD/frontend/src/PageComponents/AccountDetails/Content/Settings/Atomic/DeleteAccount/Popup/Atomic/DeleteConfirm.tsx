@@ -26,9 +26,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     const [confirmation, setConfirmation] = useState<string>("");
 
     useEffect(() => {
-
         const checkPassword = async () => {
-
             if (password.length < 7 || password.length > 25) {
                 setIcon(null);
                 return;
@@ -46,9 +44,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     }, [debouncedPassword]);
 
     const handleDeleteAccount = async () => {
-
         if (password.length < 7 || password.length > 25) return;
-
         setIsDisabled(true);
 
         try {
@@ -70,9 +66,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     };
 
     const handleDeleteGoogleAccount = async () => {
-
         if (confirmation !== "delete_account") return;
-
         setIsDisabled(true);
 
         try {

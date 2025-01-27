@@ -14,7 +14,6 @@ const AuthWindow: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-
         const validSections: Array<"login" | "register"> = [
             "login", "register"];
 

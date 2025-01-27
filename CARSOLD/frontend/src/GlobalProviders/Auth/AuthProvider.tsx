@@ -12,9 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     //checks authentication
     const checkAuth = async () => {
-
         setLoadingAuth(true);
-
         try {
             const response: AxiosResponse = await api.get(`api/auth/check-authentication`);
             const authState = response.data['isAuth'];

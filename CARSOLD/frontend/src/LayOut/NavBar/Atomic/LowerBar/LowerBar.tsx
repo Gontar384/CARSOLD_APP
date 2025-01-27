@@ -27,7 +27,6 @@ const LowerBar: React.FC = () => {
     const {logout} = useUserDetails();
 
     useEffect(() => {
-
         if (lowerBar) {
             setLowerBarActive(true);
             setBarAnimation("animate-slideUp")
