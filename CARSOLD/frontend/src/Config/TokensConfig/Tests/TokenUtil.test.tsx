@@ -26,17 +26,21 @@ afterEach(() => {
 });
 
 describe('useFetchCsrf', () => {
+    const renderTestComponent = () => {
+        const TestComponent = () => {
+            useFetchCsrf();
+            return null;
+        };
+        return render(<TestComponent />);
+    }
+
     it('fetches CSRF token if authenticated and sets it in api.defaults.headers', async () => {
         const mockToken = 'test-csrf-token';
 
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loadingAuth: false });
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { token: mockToken } });
 
-        const TestComponent = () => {
-            useFetchCsrf();
-            return null;
-        };
-        render(<TestComponent />);
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith('api/auth/csrf');
@@ -47,11 +51,7 @@ describe('useFetchCsrf', () => {
     it('does not fetch CSRF token if not authenticated', async () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, loadingAuth: false });
 
-        const TestComponent = () => {
-            useFetchCsrf();
-            return null;
-        };
-        render(<TestComponent />);
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).not.toHaveBeenCalled();
@@ -63,11 +63,7 @@ describe('useFetchCsrf', () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loadingAuth: false });
         (api.get as jest.Mock).mockRejectedValueOnce(new Error('Error fetching CSRF'));
 
-        const TestComponent = () => {
-            useFetchCsrf();
-            return null;
-        };
-        render(<TestComponent />);
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalled();
@@ -77,15 +73,19 @@ describe('useFetchCsrf', () => {
 });
 
 describe('useRefreshJwt', () => {
-    it('refreshes JWT token if authenticated', async () => {
-        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
-        (api.get as jest.Mock).mockResolvedValueOnce({ data: {} });
-
+    const renderTestComponent = () => {
         const TestComponent = () => {
             useRefreshJwt();
             return null;
         };
-        render(<TestComponent />);
+        return render(<TestComponent />);
+    }
+
+    it('refreshes JWT token if authenticated', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
+        (api.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
@@ -95,11 +95,7 @@ describe('useRefreshJwt', () => {
     it('does not refresh JWT token if not authenticated', async () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false });
 
-        const TestComponent = () => {
-            useRefreshJwt();
-            return null;
-        };
-        render(<TestComponent />);
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).not.toHaveBeenCalled();
@@ -110,11 +106,7 @@ describe('useRefreshJwt', () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
         (api.get as jest.Mock).mockRejectedValueOnce(new Error('Error refreshing JWT'));
 
-        const TestComponent = () => {
-            useRefreshJwt();
-            return null;
-        };
-        render(<TestComponent />);
+        renderTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
@@ -124,7 +116,7 @@ describe('useRefreshJwt', () => {
 });
 
 describe('useTrackUserActivity', () => {
-    const simulateUserActivityAndAdvanceTime = (activityCount = 1, timeToAdvance = 0) => {
+    const renderTestComponentAndSimulate = (activityCount = 1, timeToAdvance = 0) => {
         const TestComponent = () => {
             useTrackUserActivity();
             return null;
@@ -141,7 +133,7 @@ describe('useTrackUserActivity', () => {
     it('sends keep-alive request on user activity if not disabled', () => {
         jest.useFakeTimers();
 
-        simulateUserActivityAndAdvanceTime(1);
+        renderTestComponentAndSimulate(1);
 
         expect(api.get).toHaveBeenCalledWith('api/auth/keep-alive');
     });
@@ -149,10 +141,10 @@ describe('useTrackUserActivity', () => {
     it('does not send request if disabled', () => {
         jest.useFakeTimers();
 
-        simulateUserActivityAndAdvanceTime(1);
+        renderTestComponentAndSimulate(1);
         jest.advanceTimersByTime(30000);
 
-        simulateUserActivityAndAdvanceTime(1);
+        renderTestComponentAndSimulate(1);
 
         expect(api.get).toHaveBeenCalledTimes(2);   //called twice because of strict mode
     });
@@ -160,10 +152,10 @@ describe('useTrackUserActivity', () => {
     it('sets isDisabled to false after 1 minute and sends request again', () => {
         jest.useFakeTimers();
 
-        simulateUserActivityAndAdvanceTime(1);
+        renderTestComponentAndSimulate(1);
         jest.advanceTimersByTime(61000);
 
-        simulateUserActivityAndAdvanceTime(1);
+        renderTestComponentAndSimulate(1);
 
         expect(api.get).toHaveBeenCalledTimes(3);
     });

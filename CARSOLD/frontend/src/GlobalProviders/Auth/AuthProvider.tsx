@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {AxiosResponse} from "axios";
-import { AuthContext } from './useAuth.ts';
-
+import {AuthContext} from './useAuth.ts';
 
 //manages authentication and adds loading screen
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {

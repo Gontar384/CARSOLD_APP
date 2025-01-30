@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
 import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {AxiosResponse} from "axios";
 import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
@@ -110,7 +109,7 @@ const LoginForm: React.FC = () => {
             const isOauth2User = isOauth2Response.data.checks;
 
             if (isExistingUser && isPasswordValid && !isOauth2User && isAccountActive) {
-                const validateResponse: AxiosResponse = await validateUser(login, password);
+                const validateResponse = await validateUser(login, password);
                 if (!validateResponse.data.isValid) {
                     setWrongPassword(true);
                     return;

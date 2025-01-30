@@ -29,11 +29,7 @@ afterEach(() => {
 });
 
 describe('useUserDetails', () => {
-    it('fetches username correctly when authenticated', async () => {
-        const mockUsername = 'testUser';
-        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: jest.fn() });
-        (api.get as jest.Mock).mockResolvedValueOnce({ data: { username: mockUsername } });
-
+    const renderUsernameFetchTestComponent = () => {
         const TestComponent = () => {
             const { handleUsernameFetch, userDetails } = useUserDetails();
             React.useEffect(() => {
@@ -43,7 +39,15 @@ describe('useUserDetails', () => {
             return <div>{userDetails}</div>;
         };
 
-        render(<TestComponent />);
+        return render(<TestComponent />);
+    }
+
+    it('fetches username correctly when authenticated', async () => {
+        const mockUsername = 'testUser';
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: jest.fn() });
+        (api.get as jest.Mock).mockResolvedValueOnce({ data: { username: mockUsername } });
+
+        renderUsernameFetchTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith('api/get-username');
@@ -56,16 +60,7 @@ describe('useUserDetails', () => {
     it('does not fetch username if not authenticated', async () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, checkAuth: jest.fn() });
 
-        const TestComponent = () => {
-            const { handleUsernameFetch, userDetails } = useUserDetails();
-            React.useEffect(() => {
-                handleUsernameFetch();
-            }, []);
-
-            return <div>{userDetails}</div>;
-        };
-
-        render(<TestComponent />);
+        renderUsernameFetchTestComponent();
 
         await waitFor(() => {
             expect(api.get).not.toHaveBeenCalled();
@@ -74,13 +69,7 @@ describe('useUserDetails', () => {
         expect(document.querySelector('div')?.textContent).toBe('');
     });
 
-    it('fetches profile picture correctly when authenticated', async () => {
-        const mockProfilePic = 'https://example.com/profile.jpg';
-        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: jest.fn() });
-        (api.get as jest.Mock).mockResolvedValueOnce({ data: { profilePic: mockProfilePic } });
-
-        (useItems as jest.Mock).mockReturnValue({ setProfilePicChange: jest.fn() });
-
+    const renderPicFetchTestComponent = () => {
         const TestComponent = () => {
             const { handleProfilePicFetch, profilePic } = useUserDetails();
             React.useEffect(() => {
@@ -90,7 +79,17 @@ describe('useUserDetails', () => {
             return <div>{profilePic}</div>;
         };
 
-        render(<TestComponent />);
+        return render(<TestComponent />);
+    }
+
+    it('fetches profile picture correctly when authenticated', async () => {
+        const mockProfilePic = 'https://example.com/profile.jpg';
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: jest.fn() });
+        (api.get as jest.Mock).mockResolvedValueOnce({ data: { profilePic: mockProfilePic } });
+
+        (useItems as jest.Mock).mockReturnValue({ setProfilePicChange: jest.fn() });
+
+        renderPicFetchTestComponent();
 
         await waitFor(() => {
             expect(api.get).toHaveBeenCalledWith('api/get-profilePic');
@@ -103,16 +102,7 @@ describe('useUserDetails', () => {
     it('does not fetch profile picture if not authenticated', async () => {
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, checkAuth: jest.fn() });
 
-        const TestComponent = () => {
-            const { handleProfilePicFetch, profilePic } = useUserDetails();
-            React.useEffect(() => {
-                handleProfilePicFetch();
-            }, []);
-
-            return <div>{profilePic}</div>;
-        };
-
-        render(<TestComponent />);
+        renderPicFetchTestComponent();
 
         await waitFor(() => {
             expect(api.get).not.toHaveBeenCalled();
@@ -121,13 +111,7 @@ describe('useUserDetails', () => {
         expect(document.querySelector('div')?.textContent).toBe('');
     });
 
-    it('handles logout correctly with setTimeout', async () => {
-        jest.useFakeTimers();
-        const mockLogoutResponse = { data: {} };
-        const mockCheckAuth = jest.fn();
-        (api.get as jest.Mock).mockResolvedValueOnce(mockLogoutResponse);
-        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: mockCheckAuth });
-
+    const renderLogoutTestComponent = () => {
         const TestComponent = () => {
             const { logout } = useUserDetails();
             React.useEffect(() => {
@@ -137,7 +121,17 @@ describe('useUserDetails', () => {
             return null;
         };
 
-        render(<TestComponent />);
+        return render(<TestComponent />);
+    }
+
+    it('handles logout correctly with setTimeout', async () => {
+        jest.useFakeTimers();
+        const mockLogoutResponse = { data: {} };
+        const mockCheckAuth = jest.fn();
+        (api.get as jest.Mock).mockResolvedValueOnce(mockLogoutResponse);
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: mockCheckAuth });
+
+        renderLogoutTestComponent();
 
         jest.advanceTimersByTime(1000);
 
@@ -156,16 +150,7 @@ describe('useUserDetails', () => {
         (api.get as jest.Mock).mockRejectedValueOnce(mockError);
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, checkAuth: mockCheckAuth });
 
-        const TestComponent = () => {
-            const { logout } = useUserDetails();
-            React.useEffect(() => {
-                logout();
-            }, []);
-
-            return null;
-        };
-
-        render(<TestComponent />);
+        renderLogoutTestComponent();
 
         jest.advanceTimersByTime(1000);
 

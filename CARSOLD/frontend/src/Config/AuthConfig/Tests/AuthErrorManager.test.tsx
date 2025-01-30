@@ -1,7 +1,7 @@
-import {render, screen, waitFor} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import AuthErrorManager from "../AuthErrorManager";
-import {api} from "../../AxiosConfig/AxiosConfig";
-import {act} from "react";
+import { api } from "../../AxiosConfig/AxiosConfig";
+import { act } from "react";
 
 jest.mock('../../AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -20,30 +20,38 @@ jest.mock("../../../SharedComponents/Additional/Banners/SessionExpiredBanner.tsx
 beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {});
-});  //clears console logs
+});
 
 afterEach(() => {
     jest.restoreAllMocks();
 });
 
-describe('AuthErrorManager', () => {
-    it('shows session expired banner on authentication error (401)', async () => {
-        let onRejected: (error: unknown) => unknown;
+const setupInterceptorMock = (status: number) => {
+    let onRejected: (error: unknown) => unknown;
 
-        jest.spyOn(api.interceptors.response, 'use').mockImplementationOnce((_onFulfilled, errorHandler) => {
-            onRejected = errorHandler!;
-            return 1;
-        });
+    jest.spyOn(api.interceptors.response, 'use').mockImplementationOnce((_onFulfilled, errorHandler) => {
+        onRejected = errorHandler!;
+        return 1;
+    });
 
-        render(<AuthErrorManager />);
+    render(<AuthErrorManager />);
 
+    return async () => {
         await act(async () => {
             try {
-                await onRejected({ response: { status: 401 } });
+                await onRejected({ response: { status } });
             } catch {
                 //prevents from treating this as unhandled error
             }
         });
+    };
+};
+
+describe('AuthErrorManager', () => {
+    it('shows session expired banner on authentication error (401)', async () => {
+        const triggerError = setupInterceptorMock(401);
+
+        await triggerError();
 
         await waitFor(() => {
             expect(screen.getByText('Session Expired Banner')).toBeInTheDocument();
@@ -51,22 +59,9 @@ describe('AuthErrorManager', () => {
     });
 
     it('does not show the banner on non-authentication error', async () => {
-        let onRejected: (error: unknown) => unknown;
+        const triggerError = setupInterceptorMock(500);
 
-        jest.spyOn(api.interceptors.response, 'use').mockImplementationOnce((_onFulfilled, errorHandler) => {
-            onRejected = errorHandler!;
-            return 1;
-        });
-
-        render(<AuthErrorManager />);
-
-        await act(async () => {
-            try {
-                await onRejected({ response: { status: 500 } });
-            } catch {
-                //prevents from treating this as unhandled error
-            }
-        });
+        await triggerError();
 
         await waitFor(() => {
             expect(screen.queryByText('Session Expired Banner')).not.toBeInTheDocument();

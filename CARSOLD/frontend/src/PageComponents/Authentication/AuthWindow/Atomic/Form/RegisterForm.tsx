@@ -210,7 +210,7 @@ const RegisterForm: React.FC = () => {
         if (termsCheck) setMark(false);
     }, [termsCheck]);   //checks checkbox mark
 
-    const handleRegister = async () => {
+    const handleRegister = async () =>  {
         if (isDisabled) return;
         if (!user.email || !user.username || !user.password || !passwordRep) return;
         setIsDisabled(true);
@@ -225,14 +225,26 @@ const RegisterForm: React.FC = () => {
             if (!checkPassword(user.password) || user.password !== passwordRep) {
                 return;
             }
-            const emailResponse = await emailExists(user.email);
-            const isActiveResponse = await isActive(user.email);
-            if (emailResponse.data.exists && isActiveResponse.data.checks) {
-                return;
-            }
 
-            const usernameResponse = await usernameExists(user.username);
-            if (usernameResponse.data.exists && isActiveResponse.data.checks) {
+            const [emailResponse, usernameResponse, isActiveResponse] = await Promise.all([
+                emailExists(user.email),
+                usernameExists(user.username),
+                isActive(user.email),
+            ]);
+
+            const isExistingUser = emailResponse.data.exists || usernameResponse.data.exists;
+            const isAccountActive = isActiveResponse.data.checks;
+
+            if (isExistingUser && isAccountActive) return;
+
+            const usernameCheck = await api.get('api/auth/register/is-username-safe', {
+                params: { username: user.username },
+            });
+
+            if (!usernameCheck.data.isSafe) {
+                setUsernameIcon(faCircleExclamation);
+                setUsernameInfo("Username is inappropriate!");
+                setUsernameActive(true);
                 return;
             }
 
@@ -241,17 +253,6 @@ const RegisterForm: React.FC = () => {
                 return;
             } else {
                 setMark(false);
-            }
-
-            const gateResponse = await api.get('api/auth/register/is-username-safe', {
-                params: { username: user.username },
-            });
-
-            if (!gateResponse.data.isSafe) {
-                setUsernameIcon(faCircleExclamation);
-                setUsernameInfo("Username is inappropriate!");
-                setUsernameActive(true);
-                return;
             }
 
             const response = await api.post('api/auth/register', user);
@@ -270,7 +271,7 @@ const RegisterForm: React.FC = () => {
                 setWentWrong(true);
             }
         } catch (error) {
-            console.log("Error during register:", error);
+            console.error("Error during register:", error);
             setWentWrong(true);
         } finally {
             setTimeout(() => setIsDisabled(false), 2000);
@@ -294,7 +295,7 @@ const RegisterForm: React.FC = () => {
                 text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
                 onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
-                                          delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
+                                          delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

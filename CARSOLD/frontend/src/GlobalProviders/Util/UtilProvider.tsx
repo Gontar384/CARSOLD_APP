@@ -75,9 +75,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         handleResize();
 
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
+        return () => window.removeEventListener("resize", handleResize);
     }, []); //manages width states
 
     //function which can set debounced value for useEffects to avoid too much requests be sent
@@ -89,9 +87,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
                 setDebouncedValue(value);
             }, delay);
 
-            return () => {
-                clearTimeout(handler);
-            };
+            return () => clearTimeout(handler);
         }, [value, delay]);
 
         return debouncedValue;
