@@ -14,8 +14,8 @@ const ExitButton: React.FC<ExitButtonProps> = ({onClick}) => {
     const {isMobile} = useUtil();
 
     return (
-        <button className="absolute top-0 right-1"
-        onClick={onClick}
+        <button className="flex justify-center items-center absolute top-0 right-1"
+                onClick={onClick}
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}
                 onTouchStart={isMobile ? handleStart : undefined}

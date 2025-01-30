@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
-import {useNavigate} from "react-router-dom";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
 import {AxiosResponse} from "axios";
@@ -13,7 +12,6 @@ export const useUserDetails = () => {
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
     const {setProfilePicChange} = useItems();
-    const navigate = useNavigate();
     const {checkAuth, isAuthenticated} = useAuth();
 
     const handleUsernameFetch = async () => {
@@ -24,7 +22,7 @@ export const useUserDetails = () => {
                 setUserDetails(response.data.username);
             }
         } catch (error) {
-            console.log("Error fetching username: ", error);
+            console.error("Error fetching username: ", error);
         } finally {
             setUsernameFetched(true);
         }
@@ -40,27 +38,24 @@ export const useUserDetails = () => {
                 setProfilePic("");
             }
         } catch (error) {
-            console.log("Error fetching profilePic: ", error);
+            console.error("Error fetching profilePic: ", error);
         } finally {
             setProfilePicFetched(true);
             setProfilePicChange(false);
         }
     } //fetches profile pic
 
-    const logout = async () => {
-        try {
-            setTimeout( async () => {
+    const logout= () => {
+        setTimeout(async () => {
+            try {
                 const response: AxiosResponse = await api.get(`api/auth/logout`);
                 if (response.data) {
-                    navigate("/authenticate/login");
                     await checkAuth();
-                } else {
-                    console.log("Logout failed")
                 }
-            }, 1000)
-        } catch (error) {
-            console.log("Error during logout: ", error);
-        }
+            } catch (error) {
+                console.error("Error during logout: ", error);
+            }
+        }, 1000);
     }  //logout
 
     return {userDetails, usernameFetched, handleUsernameFetch, logout, profilePic, profilePicFetched, handleProfilePicFetch}

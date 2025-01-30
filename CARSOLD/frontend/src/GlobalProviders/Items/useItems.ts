@@ -15,7 +15,7 @@ export const useItems = (): ItemsContextType => {
 
     const context = useContext(ItemsContext);
 
-    if (context === undefined) throw new Error("useNotifications must be used within an ItemsProvider");
+    if (context === undefined) throw new Error("useItems must be used within an ItemsProvider");
 
     return context;
 }

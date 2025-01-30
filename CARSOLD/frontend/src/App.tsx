@@ -20,8 +20,8 @@ const App: React.FC = () => {
 
     return (
         <UtilProvider> {/*provides util*/}
-            <AuthProvider> {/*manages Auth state*/}
-                <ItemsProvider> {/*provides items globally*/}
+            <AuthProvider> {/*manages authentication*/}
+                <ItemsProvider> {/*provides items*/}
                     <BrowserRouter> {/*manages routes*/}
                         <Routes>
                             <Route element={<PublicRoutes/>}>
@@ -40,8 +40,8 @@ const App: React.FC = () => {
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>
-                        <TokenManager/> {/*manages tokens in the background*/}
-                        <CookieBanner/> {/*displays cookie banner globally*/}
+                        <TokenManager/> {/*manages tokens*/}
+                        <CookieBanner/> {/*displays cookie banner*/}
                         <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
                     </BrowserRouter>
                 </ItemsProvider>

@@ -51,7 +51,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
             User user = jwtService.extractUserFromToken(token);
 
-            if (!user.getActive()) {  //can't return false here, because react strict mode performs it twice and breaks logic
+            if (!user.getActive()) {  //this can be changed to return false in production (now doesn't go well with React strict mode)
                 user.setActive(true);
                 repository.save(user);
             }

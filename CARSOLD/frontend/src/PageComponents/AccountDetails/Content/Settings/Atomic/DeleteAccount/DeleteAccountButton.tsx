@@ -17,26 +17,22 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => 
     }
 
     const handleDismissAnimation = () => {
-        setTimeout(() => {
-            setButtonAnimation(null);
-        }, 700)
+        setTimeout(() => setButtonAnimation(null), 700);
     }
 
     return (
-        <div className="flex flex-col items-center justify-center mt-36 mb-[72px] m:mt-40 m:mb-20">
-            <button className="flex"
-                    onClick={() => setPopup(true)}
-                    onTouchStart={isMobile ? handleActivateAnimation : undefined}
-                    onTouchEnd={isMobile ? handleDismissAnimation : undefined}
-                    onMouseEnter={!isMobile ? handleActivateAnimation : undefined}
-                    onMouseLeave={!isMobile ? () => setButtonAnimation(null) : undefined}>
-                <FontAwesomeIcon icon={faDeleteLeft}
-                                 className={`text-3xl m:text-4xl ${buttonAnimation}`}
-                                 style={{color: "red", transform: "rotate(-180deg)"}}/>
-            </button>
+        <button className="flex flex-col items-center justify-center mt-36 mb-[72px] m:mt-40 m:mb-20"
+                onClick={() => setPopup(true)}
+                onTouchStart={isMobile ? handleActivateAnimation : undefined}
+                onTouchEnd={isMobile ? handleDismissAnimation : undefined}
+                onMouseEnter={!isMobile ? handleActivateAnimation : undefined}
+                onMouseLeave={!isMobile ? () => setButtonAnimation(null) : undefined}>
+            <FontAwesomeIcon icon={faDeleteLeft} className={`text-3xl m:text-4xl ${buttonAnimation}`}
+                             style={{color: "red", transform: "rotate(-180deg)"}}/>
             <p className="text-lg m:text-xl whitespace-nowrap">
-                Delete Account</p>
-        </div>
+                Delete Account
+            </p>
+        </button>
     )
 }
 

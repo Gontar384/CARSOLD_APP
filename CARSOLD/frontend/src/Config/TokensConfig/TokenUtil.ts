@@ -12,16 +12,14 @@ export const useFetchCsrf = () => {
                 const response = await api.get(`api/auth/csrf`);
                 api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;
             } catch (error) {
-                console.log("Error fetching csrf: ", error)
+                console.error("Error fetching csrf: ", error)
                 delete api.defaults.headers['X-CSRF-TOKEN'];
             }
         };
 
-        if (isAuthenticated) {
-            fetchCsrf();
-        } else {
-            delete api.defaults.headers['X-CSRF-TOKEN'];
-        }
+        if (isAuthenticated) fetchCsrf();
+        else delete api.defaults.headers['X-CSRF-TOKEN'];
+
     }, [isAuthenticated])
 }
 
@@ -30,16 +28,26 @@ export const useRefreshJwt = () => {
     const {isAuthenticated} = useAuth();
 
     useEffect(() => {
-        const refreshInterval = setInterval(async () => {
-            if (!isAuthenticated) return;
-            try {
-                await api.get(`api/auth/refresh`);
-            } catch (error) {
-                console.error("Error refreshing JWT token:", error);
+        const refreshJwt = async () => {
+            if (isAuthenticated) {
+                try {
+                    await api.get('api/auth/refresh');
+                } catch (error) {
+                    console.error("Error refreshing JWT token: ", error);
+                }
             }
-        }, 2 * 60 * 1000);
+        };
 
-        return () => clearInterval(refreshInterval);
+        let interval: NodeJS.Timeout | null = null;
+
+        if (isAuthenticated) {
+            refreshJwt();
+            interval = setInterval(refreshJwt, 2 * 60 * 1000);
+        }
+
+        return () => {
+            if (interval) clearInterval(interval)
+        };
     }, [isAuthenticated]);
 };
 
@@ -58,9 +66,7 @@ export const useTrackUserActivity = () => {
             } catch (error) {
                 console.error('Error refreshing session:', error);
             }
-            setTimeout(() => {
-                setIsDisabled(false);
-            }, 60000);
+            setTimeout(() => setIsDisabled(false), 60000);
         };
         events.forEach(event => window.addEventListener(event, activityHandler));
 

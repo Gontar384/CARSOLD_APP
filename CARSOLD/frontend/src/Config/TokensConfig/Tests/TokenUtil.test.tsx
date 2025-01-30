@@ -1,79 +1,170 @@
-import React from 'react';
-import { render, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
-import { useAuth } from '../../../GlobalProviders/Auth/useAuth'; // Adjust the import path if needed
-import { api } from '../../AxiosConfig/AxiosConfig'; // Adjust the import path if needed
-import { useFetchCsrf } from '../TokenUtil'; // Adjust the import path if needed
+import {render, waitFor} from '@testing-library/react';
+import {useAuth} from "../../../GlobalProviders/Auth/useAuth";
+import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "../TokenUtil";
+import {api} from "../../AxiosConfig/AxiosConfig";
 
-// Mock the useAuth hook to control the authentication state
-vi.mock('../../../GlobalProviders/Auth/useAuth', () => ({
-    useAuth: vi.fn(),
+jest.mock("../../../GlobalProviders/Auth/useAuth", () => ({
+    useAuth: jest.fn(),
 }));
 
-// Mock the api get method
-vi.mock('../../AxiosConfig/AxiosConfig', () => ({
+jest.mock("../../AxiosConfig/AxiosConfig", () => ({
     api: {
-        get: vi.fn(),
+        get: jest.fn(),
         defaults: {
             headers: {},
         },
     },
 }));
 
-// Component to use the hook for testing
-const TestComponent: React.FC = () => {
-    useFetchCsrf();
-    return <div>Test Component</div>;
-};
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+});  //clears console logs
+
+afterEach(() => {
+    jest.restoreAllMocks();
+});
 
 describe('useFetchCsrf', () => {
-    it('sets the X-CSRF-TOKEN header when authenticated', async () => {
-        api.get = vi.fn().mockResolvedValueOnce({ data: { token: 'mock-csrf-token' } });
+    it('fetches CSRF token if authenticated and sets it in api.defaults.headers', async () => {
+        const mockToken = 'test-csrf-token';
 
-        vi.mocked(useAuth).mockReturnValue({
-            isAuthenticated: true,
-            checkAuth: vi.fn(),
-            loadingAuth: false,
-        });
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loadingAuth: false });
+        (api.get as jest.Mock).mockResolvedValueOnce({ data: { token: mockToken } });
 
+        const TestComponent = () => {
+            useFetchCsrf();
+            return null;
+        };
         render(<TestComponent />);
 
         await waitFor(() => {
-            // Assert that the CSRF token is set in the headers
-            expect(api.defaults.headers['X-CSRF-TOKEN']).toBe('mock-csrf-token');
+            expect(api.get).toHaveBeenCalledWith('api/auth/csrf');
+            expect(api.defaults.headers['X-CSRF-TOKEN']).toBe(mockToken);
         });
     });
 
-    it('does not set CSRF token header when not authenticated', async () => {
-        vi.mocked(useAuth).mockReturnValue({
-            isAuthenticated: false,
-            checkAuth: vi.fn(),
-            loadingAuth: false,
-        });
+    it('does not fetch CSRF token if not authenticated', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, loadingAuth: false });
 
+        const TestComponent = () => {
+            useFetchCsrf();
+            return null;
+        };
         render(<TestComponent />);
 
         await waitFor(() => {
-            // Assert that the CSRF token is not set in the headers
+            expect(api.get).not.toHaveBeenCalled();
             expect(api.defaults.headers['X-CSRF-TOKEN']).toBeUndefined();
         });
     });
 
-    it('handles errors gracefully when fetching CSRF token', async () => {
-        // Mock API failure
-        api.get = vi.fn().mockRejectedValueOnce(new Error('Error fetching CSRF token'));
+    it('deletes X-CSRF-TOKEN from headers if there is an error fetching CSRF', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loadingAuth: false });
+        (api.get as jest.Mock).mockRejectedValueOnce(new Error('Error fetching CSRF'));
 
-        vi.mocked(useAuth).mockReturnValue({
-            isAuthenticated: true,
-            checkAuth: vi.fn(),
-            loadingAuth: false,
-        });
-
+        const TestComponent = () => {
+            useFetchCsrf();
+            return null;
+        };
         render(<TestComponent />);
 
         await waitFor(() => {
-            // Assert that CSRF token is not set in headers after an error occurs
+            expect(api.get).toHaveBeenCalled();
             expect(api.defaults.headers['X-CSRF-TOKEN']).toBeUndefined();
         });
+    });
+});
+
+describe('useRefreshJwt', () => {
+    it('refreshes JWT token if authenticated', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
+        (api.get as jest.Mock).mockResolvedValueOnce({ data: {} });
+
+        const TestComponent = () => {
+            useRefreshJwt();
+            return null;
+        };
+        render(<TestComponent />);
+
+        await waitFor(() => {
+            expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
+        });
+    });
+
+    it('does not refresh JWT token if not authenticated', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false });
+
+        const TestComponent = () => {
+            useRefreshJwt();
+            return null;
+        };
+        render(<TestComponent />);
+
+        await waitFor(() => {
+            expect(api.get).not.toHaveBeenCalled();
+        });
+    });
+
+    it('logs error if refreshing JWT fails', async () => {
+        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
+        (api.get as jest.Mock).mockRejectedValueOnce(new Error('Error refreshing JWT'));
+
+        const TestComponent = () => {
+            useRefreshJwt();
+            return null;
+        };
+        render(<TestComponent />);
+
+        await waitFor(() => {
+            expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
+            expect(console.error).toHaveBeenCalledWith("Error refreshing JWT token: ", expect.any(Error));
+        });
+    });
+});
+
+describe('useTrackUserActivity', () => {
+    const simulateUserActivityAndAdvanceTime = (activityCount = 1, timeToAdvance = 0) => {
+        const TestComponent = () => {
+            useTrackUserActivity();
+            return null;
+        };
+        render(<TestComponent />);
+
+        for (let i = 0; i < activityCount; i++) {
+            window.dispatchEvent(new MouseEvent('click'));
+        }
+
+        jest.advanceTimersByTime(timeToAdvance);
+    };
+
+    it('sends keep-alive request on user activity if not disabled', () => {
+        jest.useFakeTimers();
+
+        simulateUserActivityAndAdvanceTime(1);
+
+        expect(api.get).toHaveBeenCalledWith('api/auth/keep-alive');
+    });
+
+    it('does not send request if disabled', () => {
+        jest.useFakeTimers();
+
+        simulateUserActivityAndAdvanceTime(1);
+        jest.advanceTimersByTime(30000);
+
+        simulateUserActivityAndAdvanceTime(1);
+
+        expect(api.get).toHaveBeenCalledTimes(2);   //called twice because of strict mode
+    });
+
+    it('sets isDisabled to false after 1 minute and sends request again', () => {
+        jest.useFakeTimers();
+
+        simulateUserActivityAndAdvanceTime(1);
+        jest.advanceTimersByTime(61000);
+
+        simulateUserActivityAndAdvanceTime(1);
+
+        expect(api.get).toHaveBeenCalledTimes(3);
     });
 });
