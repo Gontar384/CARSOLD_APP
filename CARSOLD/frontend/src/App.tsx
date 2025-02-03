@@ -48,6 +48,6 @@ const App: React.FC = () => {
             </AuthProvider>
         </UtilProvider>
     )
-}
+};
 
 export default App

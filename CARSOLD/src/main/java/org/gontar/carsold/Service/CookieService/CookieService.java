@@ -1,5 +1,10 @@
 package org.gontar.carsold.Service.CookieService;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.gontar.carsold.Exceptions.CustomExceptions.CookieCreationException;
+import org.gontar.carsold.Service.JwtService.JwtService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
@@ -8,14 +13,32 @@ import java.time.Duration;
 @Service
 public class CookieService {
 
-    //creates cookie
-    public ResponseCookie createCookie(String token, long time) {
-        return ResponseCookie.from("JWT", token)
-                .httpOnly(true)
-                .secure(false)                                  //enabled only for production
-                .path("/")
-                .sameSite("Lax")                                //restricts cookies sending via cross-site requests
-                .maxAge(Duration.ofHours(time))
-                .build();
+    @Value("${SESSION_TIME:24}")
+    private int sessionTime;
+
+    private final JwtService jwtService;
+
+    public CookieService(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    public ResponseCookie createCookie(String token, int timeInHours) {
+        try {
+            return ResponseCookie.from("JWT", token)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .sameSite("Lax")
+                    .maxAge(Duration.ofHours(timeInHours))
+                    .build();
+        }  catch (IllegalArgumentException | IllegalStateException e) {
+            throw new CookieCreationException("Cookie creation failed");
+        }
+    }
+
+    public void addCookieWithNewTokenToResponse(String username, HttpServletResponse response) {
+        String newToken = jwtService.generateToken(username, sessionTime * 60);
+        ResponseCookie jwtCookie = createCookie(newToken, sessionTime);
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
     }
 }

@@ -7,6 +7,8 @@ import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/A
 import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {getAuthentication} from "../../../../../ApiCalls/Service/UserService.ts";
+import {BadRequestError, NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 const LoginForm: React.FC = () => {
 
@@ -114,15 +116,22 @@ const LoginForm: React.FC = () => {
                     setWrongPassword(true);
                     return;
                 }
-                const response = await api.get(`api/auth/login`,
-                    { params: { login, password } });
-                if (response.data) {
+
+                try {
+                    await getAuthentication(login, password);
                     setIsLoggedIn(true);
                     setTimeout(async () => await checkAuth(), 2000);
-                } else {
-                    console.log("Authentication failed");
+                } catch (error: unknown) {
                     setWentWrong(true);
+                    if (error instanceof BadRequestError) {
+                        console.log("Authentication failed - bad credentials: ", error);
+                    } else if (error instanceof NotFoundError) {
+                        console.log("Authentication failed - user not found: ", error);
+                    } else {
+                        console.log("Unexpected error during authentication: ", error);
+                    }
                 }
+
             } else {
                 console.log("Login validation failed: conditions check");
             }
@@ -150,12 +159,12 @@ const LoginForm: React.FC = () => {
             <SubmitButton label={"Sign in"} onClick={handleLogin} disabled={isDisabled}/>
             {isLoggedIn && <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/>}
             {wrongPassword && <AnimatedBanner text={"Wrong password!"} onAnimationEnd={() => setWrongPassword(false)}
-                                             delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
+                                              delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
             {isAccountDeleted &&
                 <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
                                 delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
-                                         delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
+                                          delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

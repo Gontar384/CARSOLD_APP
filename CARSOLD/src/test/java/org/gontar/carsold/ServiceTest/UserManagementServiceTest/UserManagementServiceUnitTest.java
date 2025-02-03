@@ -3,8 +3,8 @@ package org.gontar.carsold.ServiceTest.UserManagementServiceTest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
-import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
+import org.gontar.carsold.Exceptions.ErrorHandler;
+import org.gontar.carsold.Exceptions.CustomExceptions.InvalidJwtException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
@@ -156,7 +156,7 @@ public class UserManagementServiceUnitTest {
         String newPassword = "newPassword";
         String testToken = "testToken";
         when(jwtService.extractUserFromToken(testToken))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.recoveryChangePassword(testToken, newPassword, response);
 
@@ -171,7 +171,7 @@ public class UserManagementServiceUnitTest {
         String newPassword = "newPassword";
         String expiredToken = "testToken";
         when(jwtService.extractUserFromToken(expiredToken))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.recoveryChangePassword(expiredToken, newPassword, response);
 
@@ -209,7 +209,7 @@ public class UserManagementServiceUnitTest {
     public void changePassword_failure_problemWithRequest() {
         String newPassword = "newPassword";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.changePassword(newPassword, request);
 

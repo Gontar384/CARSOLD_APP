@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api")
 public class UserAuthenticationController {
@@ -24,53 +21,44 @@ public class UserAuthenticationController {
         this.service = service;
     }
 
-    //activates account
-    @GetMapping("/auth/activate")
-    public ResponseEntity<Boolean> getUserActivated(@RequestParam("token") String token, HttpServletResponse response) {
-        boolean result = service.activateAccount(token, response);
-        return ResponseEntity.ok(result);
-    }
-
-    //gets csrf token when app mounts
     @GetMapping("/auth/csrf")
     public CsrfToken getCsrfToken(CsrfToken token) {
         return token;
     }
 
-    //login, authenticate and authorize user
-    @GetMapping("/auth/login")
-    public ResponseEntity<Boolean> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
-    String password, HttpServletResponse response) {
-        boolean result = service.authenticate(login, password, response);
-        return ResponseEntity.ok(result);
-    }
-
-    //checks user authentication
     @GetMapping("/auth/check-authentication")
-    public ResponseEntity<Map<String, Boolean>> getAuthenticationCheck(HttpServletRequest request) {
-        Map<String, Boolean> response = new HashMap<>();
-        boolean isAuth = service.checkAuthentication(request);
-        response.put("isAuth", isAuth);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> getAuthCheck(HttpServletRequest request) {
+        if (service.checkAuthentication(request)) return ResponseEntity.ok().build();
+        else return ResponseEntity.noContent().build();
     }
 
-    //logs out, deletes JWT
-    @GetMapping("/auth/logout")
-    public ResponseEntity<Boolean> getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        boolean result = service.logout(request, response, authentication);
-        return ResponseEntity.ok(result);
-    }
-
-    //refreshes JWT, sends new one with new expiration date
     @GetMapping("/auth/refresh")
-    public ResponseEntity<String> getRefreshedToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> getJwtRefreshed(HttpServletRequest request, HttpServletResponse response) {
         service.refreshJwt(request, response);
-        return ResponseEntity.ok("JWT refreshed");
+        return ResponseEntity.ok().build();
     }
 
-    //simple request to keep session alive
     @GetMapping("/auth/keep-alive")
-    public ResponseEntity<Void> getSessionActive() {
+    public ResponseEntity<?> getSessionActive() {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/auth/activate")
+    public ResponseEntity<?> getAccountActive(@RequestParam("token") String token, HttpServletResponse response) {
+        service.activateAccount(token, response);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/auth/login")
+    public ResponseEntity<?> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
+    String password, HttpServletResponse response) {
+        service.authenticate(login, password, response);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/auth/logout")
+    public ResponseEntity<?> getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        service.logout(request, response, authentication);
         return ResponseEntity.ok().build();
     }
 }

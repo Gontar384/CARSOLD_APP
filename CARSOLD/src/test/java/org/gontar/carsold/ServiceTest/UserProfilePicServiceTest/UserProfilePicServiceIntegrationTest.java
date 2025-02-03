@@ -3,7 +3,7 @@ package org.gontar.carsold.ServiceTest.UserProfilePicServiceTest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
+import org.gontar.carsold.Exceptions.CustomExceptions.InvalidJwtException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -114,7 +114,7 @@ public class UserProfilePicServiceIntegrationTest {
                 fileBytes
         );
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
 
@@ -124,7 +124,7 @@ public class UserProfilePicServiceIntegrationTest {
     @Test
     public void testDeleteProfilePic_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.deleteProfilePic(request);
 

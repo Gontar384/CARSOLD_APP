@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import {AuthContext, useAuth} from "../useAuth.ts";
+import {AuthContext, useAuth} from "../useAuth";
 
 beforeEach(() => {
     jest.clearAllMocks();

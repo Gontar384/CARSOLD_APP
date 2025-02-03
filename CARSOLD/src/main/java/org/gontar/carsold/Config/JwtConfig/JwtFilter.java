@@ -5,28 +5,29 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import org.gontar.carsold.Exceptions.CustomExceptions.InvalidUsernameException;
+import org.gontar.carsold.Exceptions.CustomExceptions.JwtExpirationException;
+import org.gontar.carsold.Exceptions.CustomExceptions.JwtExtractionException;
+import org.gontar.carsold.Exceptions.CustomExceptions.NoJwtInCookieException;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.MyUserDetailsService.MyUserDetailsService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.Optional;
 
-//validates token, extracts username, loads UserPrincipal via MyUserDetailsService
-//and sets it in SecurityContextHolder
 @Configuration
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    ApplicationContext context;
+    private final ApplicationContext context;
 
     public JwtFilter(JwtService jwtService, ApplicationContext context) {
         this.jwtService = jwtService;
@@ -51,18 +52,16 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (Exception e) {
-            //clears JWT cookie and returns an error status in case of token or authentication issues
+        } catch (NoJwtInCookieException | JwtExtractionException | UsernameNotFoundException
+                 | InvalidUsernameException | JwtExpirationException e) {
             clearJwtCookie(response);
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-            return;
+            SecurityContextHolder.clearContext();
+            throw e;
         }
 
         filterChain.doFilter(request, response);
     }
 
-    //deletes jwt cookie
     private void clearJwtCookie(HttpServletResponse response) {
         response.addHeader(HttpHeaders.SET_COOKIE,
                 "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");

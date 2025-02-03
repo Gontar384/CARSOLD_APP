@@ -1,9 +1,9 @@
     import { render, waitFor, act } from '@testing-library/react';
-    import {api} from "../../../Config/AxiosConfig/AxiosConfig.ts";
-    import {useAuth} from "../useAuth.ts";
-    import {AuthProvider} from "../AuthProvider.tsx";
+    import {api} from "../../../Config/AxiosConfig/AxiosConfig";
+    import {useAuth} from "../useAuth";
+    import {AuthProvider} from "../AuthProvider";
 
-    jest.mock('../../../Config/AxiosConfig/AxiosConfig.ts', () => ({
+    jest.mock('../../../Config/AxiosConfig/AxiosConfig', () => ({
         api: {
             get: jest.fn(),
         },

@@ -1,7 +1,8 @@
 package org.gontar.carsold.Config.SecurityConfig;
 
 import org.gontar.carsold.Config.JwtConfig.JwtFilter;
-import org.gontar.carsold.Config.OAuth2Config.CustomAuthenticationSuccessHandler;
+import org.gontar.carsold.Config.OAuth2Config.CustomOAuth2FailureHandler;
+import org.gontar.carsold.Config.OAuth2Config.CustomOAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,49 +29,39 @@ public class SecurityConfig {
     private String frontendUrl;
 
     private final JwtFilter jwtFilter;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
 
-    public SecurityConfig(JwtFilter jwtFilter, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
-
+    public SecurityConfig(JwtFilter jwtFilter, CustomOAuth2SuccessHandler customOAuth2SuccessHandler, CustomOAuth2FailureHandler customOAuth2FailureHandler) {
         this.jwtFilter = jwtFilter;
-        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+        this.customOAuth2SuccessHandler = customOAuth2SuccessHandler;
+        this.customOAuth2FailureHandler = customOAuth2FailureHandler;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {   //configures security filter chain
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(                              //paths available for authenticated users
-                                "/api/auth/csrf",
-                                "/api/auth/check-authentication",
-                                "/api/auth/register/check-email",
-                                "/api/auth/register/check-username",
-                                "/api/auth/register/is-username-safe",
-                                "/api/auth/register",
-                                "/api/auth/activate",
-                                "/api/auth/check-active",
-                                "/api/auth/check-oauth2",
-                                "/api/auth/login",
-                                "/api/auth/logout", //this one has to be there to clear JWT if user isn't authenticated or any error occurs
-                                "/api/auth/keep-alive",
-                                "/api/auth/validate-user",
-                                "/api/auth/password-recovery",
-                                "/api/auth/password-recovery-change"
-                        ).permitAll()
-                        .anyRequest().authenticated())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //configures CORS (Cross-Origin Resource Sharing)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  //adds jwtFilter before UsernamePasswordAuthenticationFilter, allows it to process JWTs before standard authentication
-                .oauth2Login(oath2 -> {
-                    oath2.successHandler(customAuthenticationSuccessHandler);  //custom handler for oauth2 auth
-                })
+                        .requestMatchers(
+                                "/api/auth/csrf", "/api/auth/check-authentication", "/api/auth/register/check-email",
+                                "/api/auth/register/check-username", "/api/auth/register/is-username-safe",
+                                "/api/auth/register", "/api/auth/activate", "/api/auth/check-active", "/api/auth/check-oauth2",
+                                "/api/auth/login", "/api/auth/logout", "/api/auth/keep-alive", "/api/auth/validate-user",
+                                "/api/auth/password-recovery", "/api/auth/password-recovery-change"
+                        ).permitAll().anyRequest().authenticated())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oath2 -> oath2
+                        .successHandler(customOAuth2SuccessHandler)
+                        .failureHandler(customOAuth2FailureHandler)
+                )
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS) //always creates new session
+                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .build();
     }
 
-    //cors settings configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -83,13 +74,11 @@ public class SecurityConfig {
         return source;
     }
 
-    //handle requests authentication
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    //password encoder
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

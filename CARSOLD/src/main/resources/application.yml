@@ -49,7 +49,7 @@ server:
     session:
       cookie:
         name: CSRF
-      timeout: 600m
+      timeout: PT${SESSION_TIME:24}H
 
 # Off DB Logs (broken ones)
 logging:

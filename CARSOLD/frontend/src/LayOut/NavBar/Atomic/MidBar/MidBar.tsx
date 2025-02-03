@@ -22,8 +22,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const navigate = useNavigate();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
-    const {isAuthenticated} = useAuth();
-    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch, logout} = useUserDetails();
+    const {isAuthenticated, logout} = useAuth();
+    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
     const {profilePicChange, messages, followed} = useItems();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 

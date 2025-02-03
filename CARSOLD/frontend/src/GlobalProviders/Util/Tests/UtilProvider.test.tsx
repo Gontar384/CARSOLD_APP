@@ -1,6 +1,6 @@
 import {render, waitFor, act, fireEvent} from '@testing-library/react';
-import {useUtil} from "../useUtil.ts";
-import {UtilProvider} from "../UtilProvider.tsx";
+import {useUtil} from "../useUtil";
+import {UtilProvider} from "../UtilProvider";
 import React from "react";
 
 beforeEach(() => {

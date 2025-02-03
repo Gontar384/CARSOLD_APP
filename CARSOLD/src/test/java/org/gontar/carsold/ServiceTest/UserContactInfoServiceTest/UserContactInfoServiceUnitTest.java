@@ -1,8 +1,8 @@
 package org.gontar.carsold.ServiceTest.UserContactInfoServiceTest;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
-import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
+import org.gontar.carsold.Exceptions.ErrorHandler;
+import org.gontar.carsold.Exceptions.CustomExceptions.InvalidJwtException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -40,7 +40,7 @@ public class UserContactInfoServiceUnitTest {
     @Test
     public void testChangeContactInfoPublic_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         boolean result = service.changeContactInfoPublic(request, true);
 
@@ -115,7 +115,7 @@ public class UserContactInfoServiceUnitTest {
     @Test
     public void testFetchInfo_failure_problemWithRequest() {
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidTokenException("JWT is missing in the cookie"));
+                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
 
         Map<String, String> result = service.fetchInfo(request);
 

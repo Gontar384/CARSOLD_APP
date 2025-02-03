@@ -1,16 +1,8 @@
 import React, {useEffect, useState} from "react";
 import MobileButton from "./Atomic/MobileButton.tsx";
-import {
-    faAddressCard,
-    faHeart,
-    faMessage,
-    faRightFromBracket,
-    faSquarePlus,
-    faUser
-} from "@fortawesome/free-solid-svg-icons";
+import {faAddressCard, faHeart, faMessage, faRightFromBracket, faSquarePlus, faUser} from "@fortawesome/free-solid-svg-icons";
 import DarkModeButton from "./Atomic/DarkModeButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
@@ -21,10 +13,9 @@ const LowerBar: React.FC = () => {
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
     const {lowerBar, mobileWidth} = useUtil();
-    const {isAuthenticated} = useAuth();
+    const {isAuthenticated, logout} = useAuth();
     const navigate = useNavigate();
     const {followed, messages} = useItems();
-    const {logout} = useUserDetails();
 
     useEffect(() => {
         if (lowerBar) {

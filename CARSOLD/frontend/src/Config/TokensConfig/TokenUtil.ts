@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {api} from "../AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
+import {getCsrfToken, getJwtRefreshed, getSessionActive} from "../../ApiCalls/Service/UserService.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
@@ -9,7 +10,7 @@ export const useFetchCsrf = () => {
     useEffect(() => {
         const fetchCsrf = async () => {
             try {
-                const response = await api.get(`api/auth/csrf`);
+                const response = await getCsrfToken();
                 api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;
             } catch (error) {
                 console.error("Error fetching csrf: ", error)
@@ -17,9 +18,7 @@ export const useFetchCsrf = () => {
             }
         };
 
-        if (isAuthenticated) fetchCsrf();
-        else delete api.defaults.headers['X-CSRF-TOKEN'];
-
+        fetchCsrf();
     }, [isAuthenticated])
 }
 
@@ -31,7 +30,7 @@ export const useRefreshJwt = () => {
         const refreshJwt = async () => {
             if (isAuthenticated) {
                 try {
-                    await api.get('api/auth/refresh');
+                    await getJwtRefreshed();
                 } catch (error) {
                     console.error("Error refreshing JWT token: ", error);
                 }
@@ -57,12 +56,11 @@ export const useTrackUserActivity = () => {
 
     useEffect(() => {
         const events: string[] = ['click', 'mousemove', 'keydown', 'scroll'];
-        const activityHandler = () => {
+        const activityHandler = async () => {
             if (isDisabled) return;
             setIsDisabled(true);
-
             try {
-                api.get(`api/auth/keep-alive`).then();
+                await getSessionActive();
             } catch (error) {
                 console.error('Error refreshing session:', error);
             }

@@ -2,7 +2,6 @@ import {useState} from "react";
 import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
-import {AxiosResponse} from "axios";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {
@@ -12,7 +11,7 @@ export const useUserDetails = () => {
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
     const {setProfilePicChange} = useItems();
-    const {checkAuth, isAuthenticated} = useAuth();
+    const {isAuthenticated} = useAuth();
 
     const handleUsernameFetch = async () => {
         if (!isAuthenticated) return;
@@ -45,18 +44,5 @@ export const useUserDetails = () => {
         }
     } //fetches profile pic
 
-    const logout= () => {
-        setTimeout(async () => {
-            try {
-                const response: AxiosResponse = await api.get(`api/auth/logout`);
-                if (response.data) {
-                    await checkAuth();
-                }
-            } catch (error) {
-                console.error("Error during logout: ", error);
-            }
-        }, 1000);
-    }  //logout
-
-    return {userDetails, usernameFetched, handleUsernameFetch, logout, profilePic, profilePicFetched, handleProfilePicFetch}
+    return {userDetails, usernameFetched, handleUsernameFetch, profilePic, profilePicFetched, handleProfilePicFetch}
 }

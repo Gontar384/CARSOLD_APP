@@ -7,7 +7,7 @@ import {useUserCheck} from "../../../../../../../../CustomHooks/useUserCheck.ts"
 import {AxiosResponse} from "axios";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
-import {useUserDetails} from "../../../../../../../../CustomHooks/useUserDetails.ts";
+import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -22,7 +22,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     const debouncedPassword = CreateDebouncedValue(password, 300);
     const {checkOldPassword} = useUserCheck();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const {logout} = useUserDetails();
+    const {logout} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
 
     useEffect(() => {

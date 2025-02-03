@@ -1,20 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
-import {AxiosResponse} from "axios";
 import {AuthContext} from './useAuth.ts';
+import {getAuthCheck, getLogout} from "../../ApiCalls/Service/UserService.ts";
+import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
-//manages authentication and adds loading screen
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
-    //checks authentication
     const checkAuth = async () => {
         setLoadingAuth(true);
         try {
-            const response: AxiosResponse = await api.get(`api/auth/check-authentication`);
-            const authState = response.data['isAuth'];
+            const response = await getAuthCheck();
+            const authState = response.status === 200;
             localStorage.setItem('Authenticated', authState ? 'true' : 'false');
             setIsAuthenticated(authState);
         } catch (error) {
@@ -43,8 +41,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         };
     }, []);
 
+    const logout = async () => {
+        try {
+            await getLogout();
+            await checkAuth();
+        } catch (error: unknown) {
+            if (error instanceof InternalServerError) {
+                console.log("Error with logout: ", error);
+            } else {
+                console.error("Unexpected error during logout: ", error);
+            }
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, checkAuth, loadingAuth }}>
+        <AuthContext.Provider value={{isAuthenticated, checkAuth, loadingAuth, logout}}>
             {children}
         </AuthContext.Provider>
     );

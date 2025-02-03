@@ -1,4 +1,4 @@
-package org.gontar.carsold.ErrorsAndExceptions;
+package org.gontar.carsold.Exceptions;
 
 import org.springframework.stereotype.Component;
 

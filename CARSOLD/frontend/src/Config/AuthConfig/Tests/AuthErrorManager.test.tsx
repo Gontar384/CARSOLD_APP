@@ -15,7 +15,7 @@ jest.mock('../../AxiosConfig/AxiosConfig', () => ({
     },
 }));
 
-jest.mock("../../../SharedComponents/Additional/Banners/SessionExpiredBanner.tsx", () => () => <div>Session Expired Banner</div>);
+jest.mock("../../../SharedComponents/Additional/Banners/SessionExpiredBanner", () => () => <div>Session Expired Banner</div>);
 
 beforeEach(() => {
     jest.clearAllMocks();

@@ -1,23 +1,23 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { api } from '../../../../../../Config/AxiosConfig/AxiosConfig.ts';
+import { api } from '../../../../../../Config/AxiosConfig/AxiosConfig';
 import RegisterForm from '../RegisterForm';
 import { MemoryRouter } from 'react-router-dom';
-import { useUserCheck } from '../../../../../../CustomHooks/useUserCheck.ts';
+import { useUserCheck } from '../../../../../../CustomHooks/useUserCheck';
 
-jest.mock('../../../../../../Config/AxiosConfig/AxiosConfig.ts', () => ({
+jest.mock('../../../../../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
         get: jest.fn(),
         post: jest.fn(),
     },
 }));
 
-jest.mock('../../../../../../GlobalProviders/Util/useUtil.ts', () => ({
+jest.mock('../../../../../../GlobalProviders/Util/useUtil', () => ({
     useUtil: () => ({
         CreateDebouncedValue: jest.fn((value) => value),
     }),
 }));
 
-jest.mock('../../../../../../CustomHooks/useUserCheck.ts', () => ({
+jest.mock('../../../../../../CustomHooks/useUserCheck', () => ({
     useUserCheck: jest.fn(),
 }));
 

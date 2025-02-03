@@ -1,7 +1,7 @@
 package org.gontar.carsold.Service.UserService.UserEmailNotificationService;
 
 import jakarta.mail.internet.MimeMessage;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
+import org.gontar.carsold.Exceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;

@@ -4,7 +4,7 @@ import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
+import org.gontar.carsold.Exceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Model.UserDto;
 import org.gontar.carsold.Repository.UserRepository;
@@ -115,9 +115,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             user.setPassword(encoder.encode(password));
             repository.save(user);
 
-            String newToken = jwtService.generateToken(user.getUsername(), 600);
-            ResponseCookie authCookie = cookieService.createCookie(newToken, 10);
-            response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
 
             return true;
         } catch (Exception e) {
@@ -146,7 +144,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     //sends username
     @Override
     public String fetchUsername(HttpServletRequest request) {
-        return jwtService.extractUsernameFromRequest(request);
+        User user = jwtService.extractUserFromRequest(request);
+        if (user == null) return null;
+
+        return user.getUsername();
     }
 
     //deletes user, also his cloud storage

@@ -3,6 +3,7 @@ import {createContext, useContext} from "react";
 interface AuthContextType {
     isAuthenticated: boolean;
     checkAuth: () => Promise<void>;
+    logout: () => Promise<void>;
     loadingAuth: boolean;
 }
 

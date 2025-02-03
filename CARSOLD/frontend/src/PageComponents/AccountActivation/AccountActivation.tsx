@@ -1,42 +1,49 @@
 import React, {useEffect, useState} from "react";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
+import {getAccountActive} from "../../ApiCalls/Service/UserService.ts";
+import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const AccountActivation: React.FC = () => {
 
     document.title = "CARSOLD | Account Activation";
-
     const [count, setCount] = useState<number>(3);
-    const [activationMessage, setActivationMessage] = useState<string>("Account activation success.");
-    const [color, setColor] = useState<"bg-lime" | "bg-coolYellow">("bg-lime");
+    const [activationMessage, setActivationMessage] = useState<string | null>(null);
+    const [color, setColor] = useState<"bg-lime" | "bg-coolYellow" | null>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
     const navigate = useNavigate();
     const {checkAuth} = useAuth();
+
+    const handleErrorResult = (message: string) => {
+        setActivationMessage(message);
+        setColor("bg-coolYellow");
+        setLoaded(true);
+        setTimeout(() => navigate("/authenticate/register"), 3500);
+    };
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const token: string | null = urlParams.get('token');
 
-        const activateAccount = async (token: string) => {
+        const handleAccountActivation = async (token: string | null) => { // Rename for clarity
             try {
-                const response = await api.get(`api/auth/activate`,
-                    { params: { token } });
-                if (!response.data) {
-                    setColor("bg-coolYellow");
-                    setActivationMessage("Link has expired, register again please.");
-                    setTimeout(() => navigate("/authenticate/register"), 3500);
-                }
+                await getAccountActive(token);
+                setActivationMessage("Account activation success.");
+                setColor("bg-lime");
                 setLoaded(true);
-            } catch (error) {
-                console.error("Error activating account: ", error);
+                setTimeout(async () => await checkAuth(), 3500);
+            } catch (error: unknown) {
+                if (error instanceof BadRequestError) {
+                    console.error("Token is invalid or has expired: ", error.message, error.response);
+                    handleErrorResult("Token is invalid or has expired.");
+                } else { 
+                    console.error("Unexpected error during account activation:", error);
+                    handleErrorResult("An unexpected error occurred.");
+                }
             }
         };
 
-        if (token) {
-            activateAccount(token);
-            setTimeout(() => checkAuth(), 3500);
-        }
+        handleAccountActivation(token);
 
     }, [checkAuth, navigate]);   //gets token from url and activates account
 

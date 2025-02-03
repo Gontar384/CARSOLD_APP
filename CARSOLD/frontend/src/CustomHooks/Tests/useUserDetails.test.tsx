@@ -3,7 +3,7 @@ import React from "react";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth";
 import {api} from "../../Config/AxiosConfig/AxiosConfig";
 import {useUserDetails} from "../useUserDetails";
-import {useItems} from "../../GlobalProviders/Items/useItems.ts";
+import {useItems} from "../../GlobalProviders/Items/useItems";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {

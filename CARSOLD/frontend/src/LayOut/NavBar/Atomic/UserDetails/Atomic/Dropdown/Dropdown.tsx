@@ -1,9 +1,9 @@
 import React from "react";
 import DropdownButton from "./Atomic/DropdownButton.tsx";
 import {useNavigate} from "react-router-dom";
-import {useUserDetails} from "../../../../../../CustomHooks/useUserDetails.ts";
 import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
+import {useAuth} from "../../../../../../GlobalProviders/Auth/useAuth.ts";
 
 
 interface DropdownProps {
@@ -15,7 +15,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
     const {followed, messages} = useItems();
     const navigate = useNavigate();
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
-    const {logout} = useUserDetails();
+    const {logout} = useAuth();
 
     const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation();

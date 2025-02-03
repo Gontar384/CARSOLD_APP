@@ -1,117 +1,98 @@
 package org.gontar.carsold.Service.JwtService;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.ErrorsAndExceptions.ErrorHandler;
-import org.gontar.carsold.ErrorsAndExceptions.InvalidTokenException;
-import org.gontar.carsold.ErrorsAndExceptions.InvalidUsernameException;
-import org.gontar.carsold.ErrorsAndExceptions.UserNotFoundException;
+import org.gontar.carsold.Exceptions.CustomExceptions.*;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
 
-
 @Service
 public class JwtService {
 
     private final UserRepository repository;
-    private final ErrorHandler errorHandler;
     private final String secretKey;
-    private final UserDetailsService userDetailsService;
 
-    public JwtService(UserRepository repository, ErrorHandler errorHandler, UserDetailsService userDetailsService) {
+    public JwtService(UserRepository repository) throws NoSuchAlgorithmException {
         this.repository = repository;
-        this.errorHandler = errorHandler;
-        this.userDetailsService = userDetailsService;
-        try{
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGen.generateKey();                                     //generates HMAC SHA-256 key
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());         //encodes it to Base64 string
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+        SecretKey sk = keyGen.generateKey();
+        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);       //decodes from Base64 string to byte array
-        return Keys.hmacShaKeyFor(keyBytes);                       //generates secret key for JWT signing
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //creates token for username
-    public String generateToken(String username, long minutesToExpire){
+    public String generateToken(String username, int timeInMinutes) {
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            long expirationTime = System.currentTimeMillis() + (1000L * 60 * (long) timeInMinutes);
 
-        Map<String, Object> claims = new HashMap<>();
-        long expirationTime = System.currentTimeMillis() + (1000 * 60 * minutesToExpire);
-
-        return Jwts.builder()
-                .claims()               //statements about entity and additional metadata
-                .add(claims)
-                .subject(username)  //includes username in token
-                .issuedAt(new Date(System.currentTimeMillis()))   //creation time
-                .expiration(new Date(expirationTime))   //expiration time
-                .and()
-                .signWith(getKey())   //signed with secret key
-                .compact();           //returned as string
-    }
-
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);                     //extracts username from token
-    }
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);                                //extracts claims
-        return claimsResolver.apply(claims);
+            return Jwts.builder()
+                    .claims()
+                    .add(claims)
+                    .subject(username)
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(expirationTime))
+                    .and()
+                    .signWith(getKey())
+                    .compact();
+        } catch (JwtException e) {
+            throw new JwtGenerationException("Error generating JWT");
+        }
     }
 
     public Claims extractAllClaims(String token) {
         try {
-            return Jwts.parser()                                       //parses entire JWT and extracts all claims
-                    .verifyWith(getKey())                              //verifies token using secret key
+            return Jwts.parser()
+                    .verifyWith(getKey())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (Exception e) {
-            errorHandler.logVoid("Error parsing JWT: " + e.getMessage());
-            return null;
+        } catch (JwtException e) {
+            throw new JwtExtractionException("Invalid JWT");
         }
     }
 
-    public boolean validateToken(String token, UserDetails userDetails){
-        try {
-            final String username = extractUsername(token);                                     //validates token, extracts username and checks if it matches
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));      //provided UserDetails username, ensures token didn't expire
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error validating JWT: " + e.getMessage());
-        }
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
-    private boolean isTokenExpired(String token) {
-        try {
-            return extractExpiration(token).before(new Date());                        //checks if token expired
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error checking JWT expiration: " + e.getMessage());
-        }
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);                   //extract expiration date
+        return extractClaim(token, Claims::getExpiration);
     }
 
-    //extracts token from cookie
-    public Optional<String> extractTokenFromCookie(HttpServletRequest request) throws InvalidTokenException {
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
 
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        if (!username.equals(userDetails.getUsername())) throw new InvalidUsernameException("Extracted username does not match expected one");
+        if (isTokenExpired(token)) throw new JwtExpirationException("JWT has expired");
+
+        return !isTokenExpired(token);
+    }
+
+    public Optional<String> extractTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) return Optional.empty();
 
@@ -122,76 +103,37 @@ public class JwtService {
         if (jwtCookie.isEmpty()) return Optional.empty();
 
         String jwt = jwtCookie.get().getValue();
-        if (jwt == null || jwt.isBlank()) throw new InvalidTokenException("JWT is missing in the cookie");
+        if (jwt == null || jwt.isBlank()) throw new NoJwtInCookieException("JWT is missing in the cookie");
 
         return Optional.of(jwt);
     }
 
-    //extracts username from request
-    public String extractUsernameFromRequest(HttpServletRequest request) throws InvalidUsernameException{
-        try {
-            Optional<String> jwtOptional = extractTokenFromCookie(request);
-            if (jwtOptional.isEmpty()) return null;
-            String jwt = jwtOptional.get();
-            String username = extractUsername(jwt);
-            if (username == null) throw new InvalidUsernameException("Username not found in token");
+    public User extractUserFromRequest(HttpServletRequest request) {
+        Optional<String> jwtOptional = extractTokenFromCookie(request);
+        if (jwtOptional.isEmpty()) return null;
 
-            return username;
-        } catch (InvalidTokenException | InvalidUsernameException | UserNotFoundException e) {
-            return errorHandler.logObject("Problem with request: " + e.getMessage());
-        } catch (Exception e) {
-            return errorHandler.logString("Error extracting username from request: " + e.getMessage());
-        }
+        String jwt = jwtOptional.get();
+        String username = extractUsername(jwt);
+        if (username == null) return null;
+
+        User user = repository.findByUsername(username);
+        if (user == null) throw new UserNotFoundInRequestException("User not found in request");
+
+        return user;
     }
 
-    //extracts user from request
-    public User extractUserFromRequest(HttpServletRequest request) throws UserNotFoundException{
+    public User extractUserFromToken(String token) {
         try {
-            String username = extractUsernameFromRequest(request);
-            User user = repository.findByUsername(username);
-            if (user == null) throw new UserNotFoundException("User not found");
+            if (token == null) throw new InvalidJwtException("JWT is missing");
+            if (isTokenExpired(token)) throw new JwtExpirationException("JWT has expired");
 
-            return user;
-        } catch (InvalidTokenException | InvalidUsernameException | UserNotFoundException e) {
-            return errorHandler.logObject("Problem with request: " + e.getMessage());
-        } catch (Exception e) {
-            return errorHandler.logObject("Error extracting user from request: " + e.getMessage());
-        }
-    }
-
-    //extracts user from token
-    public User extractUserFromToken(String token) throws InvalidUsernameException, UserNotFoundException {
-        try {
             String username = extractUsername(token);
-            if (username == null) throw new InvalidUsernameException("Username not found in token");
-
             User user = repository.findByUsername(username);
             if (user == null) throw new UserNotFoundException("User not found");
 
             return user;
-        } catch (InvalidUsernameException | UserNotFoundException e) {
-            return errorHandler.logObject("Problem with token: " + e.getMessage());
-        } catch (Exception e) {
-            return errorHandler.logObject("Error extracting user from token: " + e.getMessage());
-        }
-    }
-
-    //extracts and validates token
-    public boolean extractAndValidateTokenFromRequest(HttpServletRequest request) {
-        try {
-            Optional<String> jwtOptional = extractTokenFromCookie(request);
-
-            if (jwtOptional.isEmpty()) return false;
-
-            String jwt = jwtOptional.get();
-            String username = extractUsername(jwt);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            return userDetails != null && validateToken(jwt, userDetails);
-        } catch (InvalidTokenException | InvalidUsernameException e) {
-            return errorHandler.logBoolean("Problem with token: " + e.getMessage());
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error extracting and validating token: " + e.getMessage());
+        } catch (InvalidJwtException | JwtExtractionException | JwtExpirationException | UserNotFoundException e) {
+            throw new InvalidJwtException("Invalid JWT");
         }
     }
 }
