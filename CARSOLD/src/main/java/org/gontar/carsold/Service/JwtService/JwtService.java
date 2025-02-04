@@ -1,10 +1,12 @@
 package org.gontar.carsold.Service.JwtService;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Exceptions.CustomExceptions.*;
@@ -12,9 +14,8 @@ import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import javax.crypto.KeyGenerator;
+
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -22,18 +23,29 @@ import java.util.function.Function;
 public class JwtService {
 
     private final UserRepository repository;
-    private final String secretKey;
+    private SecretKey secretKey;
 
-    public JwtService(UserRepository repository) throws NoSuchAlgorithmException {
+    public JwtService(UserRepository repository) {
         this.repository = repository;
-        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-        SecretKey sk = keyGen.generateKey();
-        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+    }
+
+    @PostConstruct
+    public void init() {
+        Dotenv dotenv = Dotenv.configure().load();
+        String jwtSecretKey = dotenv.get("JWT_SECRET_KEY");
+        if (jwtSecretKey == null || jwtSecretKey.isEmpty()) {
+            throw new IllegalStateException("JWT_SECRET_KEY env is not set");
+        }
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
+            secretKey = Keys.hmacShaKeyFor(keyBytes);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Invalid JWT_SECRET_KEY: " + e.getMessage(), e);
+        }
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return secretKey;
     }
 
     public String generateToken(String username, int timeInMinutes) {
@@ -51,7 +63,7 @@ public class JwtService {
                     .signWith(getKey())
                     .compact();
         } catch (JwtException e) {
-            throw new JwtGenerationException("Error generating JWT");
+            throw new JwtServiceException("JWT generation failed: " + e.getMessage());
         }
     }
 
@@ -63,7 +75,7 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException e) {
-            throw new JwtExtractionException("Invalid JWT");
+            throw new JwtServiceException("Error during claims extraction: " + e.getMessage());
         }
     }
 
@@ -76,20 +88,9 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        if (!username.equals(userDetails.getUsername())) throw new InvalidUsernameException("Extracted username does not match expected one");
-        if (isTokenExpired(token)) throw new JwtExpirationException("JWT has expired");
-
-        return !isTokenExpired(token);
+        Claims claims = extractAllClaims(token);
+        return claims.getSubject().equals(userDetails.getUsername());
     }
 
     public Optional<String> extractTokenFromCookie(HttpServletRequest request) {
@@ -103,37 +104,31 @@ public class JwtService {
         if (jwtCookie.isEmpty()) return Optional.empty();
 
         String jwt = jwtCookie.get().getValue();
-        if (jwt == null || jwt.isBlank()) throw new NoJwtInCookieException("JWT is missing in the cookie");
+        if (jwt == null || jwt.isBlank()) throw new JwtServiceException("Token is missing in cookie");
 
         return Optional.of(jwt);
     }
 
     public User extractUserFromRequest(HttpServletRequest request) {
         Optional<String> jwtOptional = extractTokenFromCookie(request);
-        if (jwtOptional.isEmpty()) return null;
+        if (jwtOptional.isEmpty()) throw new JwtServiceException("Token is missing in request");
 
         String jwt = jwtOptional.get();
         String username = extractUsername(jwt);
-        if (username == null) return null;
+        if (username == null) throw new JwtServiceException("Problem with username extraction (fallback)");
 
         User user = repository.findByUsername(username);
-        if (user == null) throw new UserNotFoundInRequestException("User not found in request");
+        if (user == null) throw new JwtServiceException("User not found");
 
         return user;
     }
 
-    public User extractUserFromToken(String token) {
-        try {
-            if (token == null) throw new InvalidJwtException("JWT is missing");
-            if (isTokenExpired(token)) throw new JwtExpirationException("JWT has expired");
+    public User extractUserFromToken(String token) throws IllegalArgumentException {
+        String username = extractUsername(token);
+        if (username == null) throw new JwtServiceException("Problem with username extraction (fallback)");
+        User user = repository.findByUsername(username);
+        if (user == null) throw new JwtServiceException("User not found");
 
-            String username = extractUsername(token);
-            User user = repository.findByUsername(username);
-            if (user == null) throw new UserNotFoundException("User not found");
-
-            return user;
-        } catch (InvalidJwtException | JwtExtractionException | JwtExpirationException | UserNotFoundException e) {
-            throw new InvalidJwtException("Invalid JWT");
-        }
+        return user;
     }
 }

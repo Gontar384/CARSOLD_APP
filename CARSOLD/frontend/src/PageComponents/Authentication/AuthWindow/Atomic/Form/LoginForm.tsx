@@ -8,7 +8,7 @@ import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {getAuthentication} from "../../../../../ApiCalls/Service/UserService.ts";
-import {BadRequestError, NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {BadRequestError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 const LoginForm: React.FC = () => {
 
@@ -125,8 +125,6 @@ const LoginForm: React.FC = () => {
                     setWentWrong(true);
                     if (error instanceof BadRequestError) {
                         console.log("Authentication failed - bad credentials: ", error);
-                    } else if (error instanceof NotFoundError) {
-                        console.log("Authentication failed - user not found: ", error);
                     } else {
                         console.log("Unexpected error during authentication: ", error);
                     }

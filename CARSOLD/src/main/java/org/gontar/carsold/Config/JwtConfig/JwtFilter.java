@@ -5,19 +5,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import org.gontar.carsold.Exceptions.CustomExceptions.InvalidUsernameException;
-import org.gontar.carsold.Exceptions.CustomExceptions.JwtExpirationException;
-import org.gontar.carsold.Exceptions.CustomExceptions.JwtExtractionException;
-import org.gontar.carsold.Exceptions.CustomExceptions.NoJwtInCookieException;
+import org.gontar.carsold.Exceptions.CustomExceptions.JwtServiceException;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.MyUserDetailsService.MyUserDetailsService;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -27,11 +23,11 @@ import java.util.Optional;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final ApplicationContext context;
+    private final MyUserDetailsService myUserDetailsService;
 
-    public JwtFilter(JwtService jwtService, ApplicationContext context) {
+    public JwtFilter(JwtService jwtService, MyUserDetailsService myUserDetailsService) {
         this.jwtService = jwtService;
-        this.context = context;
+        this.myUserDetailsService = myUserDetailsService;
     }
 
     @Override
@@ -44,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (token.isPresent()) username = jwtService.extractUsername(token.get());
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+                UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
                 if (jwtService.validateToken(token.get(), userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -52,11 +48,10 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (NoJwtInCookieException | JwtExtractionException | UsernameNotFoundException
-                 | InvalidUsernameException | JwtExpirationException e) {
+        } catch (JwtServiceException | AuthenticationException e) {
             clearJwtCookie(response);
             SecurityContextHolder.clearContext();
-            throw e;
+            throw new JwtServiceException("Problem in JWT filter: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

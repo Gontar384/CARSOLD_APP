@@ -8,9 +8,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,103 +24,73 @@ public class GlobalExceptionHandler {
 
     //---Authentication---
 
-    @ExceptionHandler(NoJwtInCookieException.class)
-    public ResponseEntity<?> handleNoJwtInCookieException(NoJwtInCookieException ex) {
-        log.error("No JWT in cookie: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
     @ExceptionHandler
-    public ResponseEntity<?> handleInvalidJwtException(InvalidJwtException ex) {
-        log.error("Invalid JWT: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JWT");
+    public ResponseEntity<?> handleJwtServiceException(JwtServiceException ex) {
+        log.error("JWT Service Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT Service Error");
     }
 
-    @ExceptionHandler(JwtExtractionException.class)
-    public ResponseEntity<?> handleJwtExtractionException(JwtExtractionException ex) {
-        log.error("JWT extraction error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT extraction error");
+    @ExceptionHandler(CookieServiceException.class)
+    public ResponseEntity<?> handleCookieServiceException(CookieServiceException ex) {
+        log.error("Cookie Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cookie Error");
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        log.error("Username not found: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username not found");
-    }
-
-    @ExceptionHandler(InvalidUsernameException.class)
-    public ResponseEntity<?> handleInvalidUsernameException(InvalidUsernameException ex) {
-        log.error("Invalid username: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username");
-    }
-
-    @ExceptionHandler(JwtExpirationException.class)
-    public ResponseEntity<?> handleJwtExpirationException(JwtExpirationException ex) {
-        log.error("JWT has expired: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT has expired");
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex) {
-        log.error("User not found: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-    }
-
-    @ExceptionHandler(UserNotFoundInRequestException.class)
-    public ResponseEntity<?> handleUserNotFoundInRequestException(UserNotFoundInRequestException ex) {
-        log.error("User not found in request: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found in request");
+        log.error("Username Not Found: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username Not Found");
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> handleJwtGenerationException(JwtGenerationException ex) {
-        log.error("JWT generation error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT generation error");
-    }
-
-    @ExceptionHandler(CookieCreationException.class)
-    public ResponseEntity<?> handleCookieCreationException(CookieCreationException ex) {
-        log.error("Cookie creation failed: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cookie creation failed");
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex) {
-        log.error("Bad credentials: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad credentials");
+    public ResponseEntity<?> handleAccountActivationException(AccountActivationException ex) {
+        log.error("Account Activation Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account Activation Error");
     }
 
     @ExceptionHandler(AuthFailedException.class)
     public ResponseEntity<?> handleAuthFailedException(AuthFailedException ex) {
-        log.error("Authentication failed: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Authentication failed");
+        log.error("Authentication Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Authentication Error");
     }
 
     @ExceptionHandler(LogoutFailedException.class)
     public ResponseEntity<?> handleLogoutFailedException(LogoutFailedException ex) {
-        log.error("Logout failed: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
+        log.error("Logout Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Logout Error");
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
-        log.error("Authentication error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication error");
+        log.error("Authentication General Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication General error");
+    }
+
+    @ExceptionHandler(OAuth2AuthenticationException.class)
+    public ResponseEntity<?> handleOAuth2AuthenticationException(OAuth2AuthenticationException ex) {
+        log.error("OAuth2 Authentication Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("OAuth2 Authentication Error");
     }
 
     @ExceptionHandler
     public ResponseEntity<?> handleJwtException(JwtException ex) {
-        log.error("JWT error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT error");
+        log.error("JWT General Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT General Error");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
-        log.error("Access denied: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+        log.error("Access Denied: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
     }
 
     //---Others---
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex) {
+        log.error("User Not Found: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+    }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException ex) {

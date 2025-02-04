@@ -24,7 +24,7 @@ const AuthErrorManager: React.FC = () => {
                         } catch (error) {
                             console.error("AuthErrorManager failed: ", error);
                         }
-                    }, 2500);
+                    }, 2000);
                 }
 
                 return Promise.reject(error);
@@ -33,7 +33,7 @@ const AuthErrorManager: React.FC = () => {
 
         return () => api.interceptors.response.eject(interceptor);
 
-    }, []);  //sets interceptors and handles authentication errors
+    }, []);  //sets interceptors and handles auth errors
 
     return (
         <>

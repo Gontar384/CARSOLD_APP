@@ -1,7 +1,8 @@
 package org.gontar.carsold.Service.CookieService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.gontar.carsold.Exceptions.CustomExceptions.CookieCreationException;
+import org.gontar.carsold.Exceptions.CustomExceptions.CookieServiceException;
+import org.gontar.carsold.Exceptions.CustomExceptions.JwtServiceException;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -32,13 +33,17 @@ public class CookieService {
                     .maxAge(Duration.ofHours(timeInHours))
                     .build();
         }  catch (IllegalArgumentException | IllegalStateException e) {
-            throw new CookieCreationException("Cookie creation failed");
+            throw new CookieServiceException("Cookie creation failed: " + e.getMessage());
         }
     }
 
     public void addCookieWithNewTokenToResponse(String username, HttpServletResponse response) {
-        String newToken = jwtService.generateToken(username, sessionTime * 60);
-        ResponseCookie jwtCookie = createCookie(newToken, sessionTime);
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        try {
+            String newToken = jwtService.generateToken(username, sessionTime * 60);
+            ResponseCookie jwtCookie = createCookie(newToken, sessionTime);
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        }  catch (CookieServiceException | JwtServiceException e) {
+            throw new CookieServiceException("Response not sent: " + e.getMessage());
+        }
     }
 }

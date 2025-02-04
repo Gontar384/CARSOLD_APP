@@ -3,7 +3,7 @@ package org.gontar.carsold.ServiceTest.UserContactInfoServiceTest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.Exceptions.CustomExceptions.InvalidJwtException;
+import org.gontar.carsold.Exceptions.CustomExceptions.AccountActivationException;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -50,7 +50,7 @@ public class UserContactInfoServiceIntegrationTest {
     public void testChangeName_failure_problemWithRequest() {
         String testName = "Kuba";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
+                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
 
         boolean result = service.changeName(testName, request);
 
@@ -136,7 +136,7 @@ public class UserContactInfoServiceIntegrationTest {
     public void testChangePhone_failure_problemWithRequest() {
         String testPhone = "721721721";
         when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new InvalidJwtException("JWT is missing in the cookie"));
+                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
 
         boolean result = service.changePhone(testPhone, request);
 

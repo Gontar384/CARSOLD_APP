@@ -3,9 +3,7 @@ package org.gontar.carsold.Service.UserService.UserAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.gontar.carsold.Exceptions.CustomExceptions.AuthFailedException;
-import org.gontar.carsold.Exceptions.CustomExceptions.LogoutFailedException;
-import org.gontar.carsold.Exceptions.CustomExceptions.UserNotFoundException;
+import org.gontar.carsold.Exceptions.CustomExceptions.*;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
@@ -29,6 +27,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -61,26 +60,32 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
         User user = jwtService.extractUserFromRequest(request);
+        if (user == null) throw new JwtServiceException("User not found (fallback)");
         cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
     }
 
     @Override
     public void activateAccount(String token, HttpServletResponse response) {
-        User user = jwtService.extractUserFromToken(token);
+        try {
+            User user = jwtService.extractUserFromToken(token);
+            if (user == null) throw new JwtServiceException("User not found (fallback)");
 
-        if (!user.getActive()) {
-            user.setActive(true);
-            repository.save(user);
+            if (!user.getActive()) {
+                user.setActive(true);
+                repository.save(user);
+            }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    null,
+                    Collections.singletonList(new SimpleGrantedAuthority("USER")));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+        } catch (JwtServiceException | IllegalArgumentException | AuthenticationException e) {
+            throw new AccountActivationException("Process failed: " + e.getMessage());
         }
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getUsername(),
-                null,
-                Collections.singletonList(new SimpleGrantedAuthority("USER"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
     }
 
     @Override
@@ -92,9 +97,10 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
             if (user == null) throw new UserNotFoundException("User not found");
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
+
             cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
-        } catch (AuthenticationException e) {
-            throw new AuthFailedException("Authentication failed");
+        } catch (UserNotFoundException | AuthenticationException e) {
+            throw new AuthFailedException("Process failed: " + e.getMessage());
         }
     }
 
@@ -125,7 +131,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
             ResponseCookie deleteCookie = cookieService.createCookie("", 0);
             response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
         } catch (Exception e) {
-            throw new LogoutFailedException("Logout failed");
+            throw new LogoutFailedException("Process failed: " + e.getMessage());
         }
     }
 

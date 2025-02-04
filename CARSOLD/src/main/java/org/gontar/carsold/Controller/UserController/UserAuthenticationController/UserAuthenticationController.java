@@ -26,30 +26,30 @@ public class UserAuthenticationController {
         return token;
     }
 
-    @GetMapping("/auth/check-authentication")
+    @GetMapping("/auth/checkAuth")
     public ResponseEntity<?> getAuthCheck(HttpServletRequest request) {
         if (service.checkAuthentication(request)) return ResponseEntity.ok().build();
         else return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/auth/refresh")
+    @GetMapping("/auth/refreshJwt")
     public ResponseEntity<?> getJwtRefreshed(HttpServletRequest request, HttpServletResponse response) {
         service.refreshJwt(request, response);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/keep-alive")
+    @GetMapping("/auth/keepSessionAlive")
     public ResponseEntity<?> getSessionActive() {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/activate")
+    @GetMapping("/auth/activateAccount")
     public ResponseEntity<?> getAccountActive(@RequestParam("token") String token, HttpServletResponse response) {
         service.activateAccount(token, response);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/auth/authenticate")
     public ResponseEntity<?> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
     String password, HttpServletResponse response) {
         service.authenticate(login, password, response);

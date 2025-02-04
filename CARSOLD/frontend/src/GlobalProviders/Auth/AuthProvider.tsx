@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {AuthContext} from './useAuth.ts';
 import {getAuthCheck, getLogout} from "../../ApiCalls/Service/UserService.ts";
-import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
@@ -46,8 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
             await getLogout();
             await checkAuth();
         } catch (error: unknown) {
-            if (error instanceof InternalServerError) {
-                console.log("Error with logout: ", error);
+            if (error instanceof BadRequestError) {
+                console.log("Error during logout: ", error);
             } else {
                 console.error("Unexpected error during logout: ", error);
             }
