@@ -13,7 +13,7 @@ const LowerBar: React.FC = () => {
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
     const {lowerBar, mobileWidth} = useUtil();
-    const {isAuthenticated, logout} = useAuth();
+    const {isAuthenticated, handleLogout} = useAuth();
     const navigate = useNavigate();
     const {followed, messages} = useItems();
 
@@ -43,7 +43,7 @@ const LowerBar: React.FC = () => {
                 {isAuthenticated ? (
                     <>
                         <DarkModeButton/>
-                        <MobileButton onClick={logout} icon={faRightFromBracket} label="Logout"/>
+                        <MobileButton onClick={handleLogout} icon={faRightFromBracket} label="Logout"/>
                     </>
                 ) : (
                     <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login"/>

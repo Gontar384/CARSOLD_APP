@@ -26,7 +26,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
     const {setProfilePicChange} = useItems();
-    const {profilePic, profilePicFetched, handleProfilePicFetch} = useUserDetails();
+    const {profilePic, profilePicFetched, fetchProfilePic} = useUserDetails();
     const {isAuthenticated} = useAuth();
 
     const handleActivateInput = () => {
@@ -122,8 +122,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }
 
     useEffect(() => {
-        handleProfilePicFetch();
-    }, [handleProfilePicFetch, isAuthenticated, picUploaded]);  //fetches pic
+        fetchProfilePic();
+    }, [fetchProfilePic, isAuthenticated, picUploaded]);  //fetches pic
 
     return (
         <div className="absolute left-0 scale-125 rounded-full" ref={componentRef}

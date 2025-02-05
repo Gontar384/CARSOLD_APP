@@ -2,32 +2,33 @@ import {useState} from "react";
 import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
+import {fetchUsername} from "../ApiCalls/Service/UserService.ts";
 
 //manages username fetch and logout function
 export const useUserDetails = () => {
 
-    const [userDetails, setUserDetails] = useState<string>("");   //username fetched
+    const [username, setUsername] = useState<string>("");   //username fetched
     const [usernameFetched, setUsernameFetched] = useState<boolean>(false);
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
     const {setProfilePicChange} = useItems();
     const {isAuthenticated} = useAuth();
 
-    const handleUsernameFetch = async () => {
+    const handleFetchUsername = async () => {
         if (!isAuthenticated) return;
         try {
-            const response = await api.get('api/get-username');
+            const response = await fetchUsername();
             if (response.data.username) {
-                setUserDetails(response.data.username);
+                setUsername(response.data.username);
             }
         } catch (error) {
             console.error("Error fetching username: ", error);
         } finally {
             setUsernameFetched(true);
         }
-    } //fetches username
+    }
 
-    const handleProfilePicFetch = async () => {
+    const fetchProfilePic = async () => {
         if (!isAuthenticated) return;
         try {
             const response = await api.get('api/get-profilePic');
@@ -44,5 +45,5 @@ export const useUserDetails = () => {
         }
     } //fetches profile pic
 
-    return {userDetails, usernameFetched, handleUsernameFetch, profilePic, profilePicFetched, handleProfilePicFetch}
+    return {username, usernameFetched, handleFetchUsername, profilePic, profilePicFetched, fetchProfilePic}
 }

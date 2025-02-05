@@ -44,11 +44,12 @@ public class SecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                "/api/auth/csrf", "/api/auth/checkAuth", "/api/auth/keepSessionAlive",
+                                "/api/auth/getCsrfToken", "/api/auth/checkAuth", "/api/auth/keepSessionAlive",
                                 "/api/auth/activateAccount", "/api/auth/authenticate", "/api/auth/logout",
+                                "/api/registerUser","/api/changePasswordRecovery",
                                 "/api/auth/register/check-email","/api/auth/register/check-username",
-                                "/api/auth/register/is-username-safe", "/api/auth/register", "/api/auth/check-active",
-                                "/api/auth/check-oauth2", "/api/auth/validate-user", "/api/auth/password-recovery", "/api/auth/password-recovery-change"
+                                "/api/auth/register/is-username-safe", "/api/auth/check-active",
+                                "/api/auth/check-oauth2", "/api/auth/password-recovery"
                         ).permitAll().anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 
 public interface UserAuthenticationService {
-    boolean checkAuthentication(HttpServletRequest request);
+    boolean checkAuth(HttpServletRequest request);
     void refreshJwt(HttpServletRequest request, HttpServletResponse response);
     void activateAccount(String token, HttpServletResponse response);
     void authenticate(String login, String password, HttpServletResponse response);

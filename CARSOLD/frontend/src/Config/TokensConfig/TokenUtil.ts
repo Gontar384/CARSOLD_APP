@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
 import {api} from "../AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
-import {getCsrfToken, getJwtRefreshed, getSessionActive} from "../../ApiCalls/Service/UserService.ts";
+import {getCsrfToken, refreshJwt, keepSessionAlive} from "../../ApiCalls/Service/UserService.ts";
 
 //fetches Csrf Token when app mounts
 export const useFetchCsrf = () => {
     const {isAuthenticated} = useAuth();
 
     useEffect(() => {
-        const fetchCsrf = async () => {
+        const handleGetCsrfToken = async () => {
             try {
                 const response = await getCsrfToken();
                 api.defaults.headers['X-CSRF-TOKEN'] = response.data.token;
@@ -18,7 +18,7 @@ export const useFetchCsrf = () => {
             }
         };
 
-        fetchCsrf();
+        handleGetCsrfToken();
     }, [isAuthenticated])
 }
 
@@ -27,10 +27,10 @@ export const useRefreshJwt = () => {
     const {isAuthenticated} = useAuth();
 
     useEffect(() => {
-        const refreshJwt = async () => {
+        const handleRefreshJwt = async () => {
             if (isAuthenticated) {
                 try {
-                    await getJwtRefreshed();
+                    await refreshJwt();
                 } catch (error) {
                     console.error("Error refreshing JWT token: ", error);
                 }
@@ -40,8 +40,8 @@ export const useRefreshJwt = () => {
         let interval: NodeJS.Timeout | null = null;
 
         if (isAuthenticated) {
-            refreshJwt();
-            interval = setInterval(refreshJwt, 2 * 60 * 1000);
+            handleRefreshJwt();
+            interval = setInterval(handleRefreshJwt, 2 * 60 * 1000);
         }
 
         return () => {
@@ -56,20 +56,20 @@ export const useTrackUserActivity = () => {
 
     useEffect(() => {
         const events: string[] = ['click', 'mousemove', 'keydown', 'scroll'];
-        const activityHandler = async () => {
+        const handleKeepSessionAlive = async () => {
             if (isDisabled) return;
             setIsDisabled(true);
             try {
-                await getSessionActive();
+                await keepSessionAlive();
             } catch (error) {
                 console.error('Error refreshing session:', error);
             }
             setTimeout(() => setIsDisabled(false), 60000);
         };
-        events.forEach(event => window.addEventListener(event, activityHandler));
+        events.forEach(event => window.addEventListener(event, handleKeepSessionAlive));
 
         return () => {
-            events.forEach(event => window.removeEventListener(event, activityHandler));
+            events.forEach(event => window.removeEventListener(event, handleKeepSessionAlive));
         };
     }, [isDisabled]);
 };

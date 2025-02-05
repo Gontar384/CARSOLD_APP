@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {AuthContext} from './useAuth.ts';
-import {getAuthCheck, getLogout} from "../../ApiCalls/Service/UserService.ts";
-import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {checkAuth, logout} from "../../ApiCalls/Service/UserService.ts";
+import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
-    const checkAuth = async () => {
+    const handleCheckAuth = async () => {
         setLoadingAuth(true);
         try {
-            const response = await getAuthCheck();
+            const response = await checkAuth();
             const authState = response.status === 200;
             localStorage.setItem('Authenticated', authState ? 'true' : 'false');
             setIsAuthenticated(authState);
@@ -34,19 +34,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         window.addEventListener('storage', handleStorageChange);
 
-        checkAuth();
+        handleCheckAuth();
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
 
-    const logout = async () => {
+    const handleLogout = async () => {
         try {
-            await getLogout();
-            await checkAuth();
+            await logout();
+            await handleCheckAuth();
         } catch (error: unknown) {
-            if (error instanceof BadRequestError) {
+            if (error instanceof InternalServerError) {
                 console.log("Error during logout: ", error);
             } else {
                 console.error("Unexpected error during logout: ", error);
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     };
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, checkAuth, loadingAuth, logout}}>
+        <AuthContext.Provider value={{isAuthenticated, handleCheckAuth, loadingAuth, handleLogout}}>
             {children}
         </AuthContext.Provider>
     );

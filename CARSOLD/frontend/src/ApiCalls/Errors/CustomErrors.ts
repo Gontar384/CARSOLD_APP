@@ -17,7 +17,7 @@ export class BadRequestError extends ApiException {
     }
 }
 
-//401 fallback if AuthErrorManager doesn't work
+//401
 export class UnauthorizedError extends ApiException {
     constructor(message: string, response: AxiosResponse | undefined) {
         super(message, response);

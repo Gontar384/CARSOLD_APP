@@ -11,7 +11,7 @@ import Details from "./Atomic/Details.tsx";
 const UserDetails: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
-    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
+    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserDetails();
     const {profilePicChange} = useItems();
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
     const [animationActive, setAnimationActive] = useState<boolean>(false);   //prevents too many animations
@@ -23,9 +23,9 @@ const UserDetails: React.FC = () => {
 
     //fetches username and profile pic
     useEffect(() => {
-        handleUsernameFetch();
-        handleProfilePicFetch();
-    }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
+        handleFetchUsername();
+        fetchProfilePic();
+    }, [fetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
         setBarActive(true);
@@ -87,7 +87,7 @@ const UserDetails: React.FC = () => {
                          onKeyDown={(event) => {
                              if (event.key === "Enter") handleToggleBar()
                          }}>
-                        <Details userIconAnimation={userIconAnimation} userDetails={userDetails} profilePic={profilePic}/>
+                        <Details userIconAnimation={userIconAnimation} userDetails={username} profilePic={profilePic}/>
                         <Dropdown barActive={barActive}/>
                     </div>
                 ) : (

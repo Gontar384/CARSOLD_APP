@@ -15,7 +15,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
     const {followed, messages} = useItems();
     const navigate = useNavigate();
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
-    const {logout} = useAuth();
+    const {handleLogout} = useAuth();
 
     const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -33,7 +33,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive }) => {
                     <DropdownButton label="Messages" onClick={() => navigate('/details/messages')} count={messages}/>
                     <DropdownButton label="Settings" onClick={() => navigate('/details/settings')}/>
                     <DropdownButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode}/>
-                    <DropdownButton label="Logout" onClick={logout}/>
+                    <DropdownButton label="Logout" onClick={handleLogout}/>
                 </div>}
         </>
     )

@@ -22,8 +22,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const navigate = useNavigate();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
-    const {isAuthenticated, logout} = useAuth();
-    const {userDetails, usernameFetched, handleUsernameFetch, profilePic, handleProfilePicFetch} = useUserDetails();
+    const {isAuthenticated, handleLogout} = useAuth();
+    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserDetails();
     const {profilePicChange, messages, followed} = useItems();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
@@ -43,9 +43,9 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     //fetches username and profile pic
     useEffect(() => {
-        handleUsernameFetch();
-        handleProfilePicFetch();
-    }, [handleProfilePicFetch, handleUsernameFetch, isAuthenticated, profilePicChange]);
+        handleFetchUsername();
+        fetchProfilePic();
+    }, [fetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
@@ -82,7 +82,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
                         usernameFetched ? (
-                            <Details userDetails={userDetails} profilePic={profilePic}/>
+                            <Details userDetails={username} profilePic={profilePic}/>
                         ) : (
                             <UserDetailsLoader/>
                         )
@@ -99,7 +99,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     {isAuthenticated &&
                         <>
                             <BarButton onClick={toggleDarkMode} icon={darkMode ? faLightbulb : faLightBulbRegular} label={`${!darkMode ? "Dark" : "Light"} mode`}/>
-                            <BarButton onClick={logout} icon={faArrowRightFromBracket} label="Logout"/>
+                            <BarButton onClick={handleLogout} icon={faArrowRightFromBracket} label="Logout"/>
                         </>}
                 </div>
             </div>

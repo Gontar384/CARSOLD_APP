@@ -4,10 +4,10 @@ import SubmitButton from "../FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
 import {useNavigate} from "react-router-dom";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {changePassword, changePasswordRecovery} from "../../ApiCalls/Service/UserService.ts";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +32,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const [inputType, setInputType] = useState<"password" | "text">("password")
     const navigate = useNavigate();
     const {checkPassword, checkOldPassword} = useUserCheck();
-    const {checkAuth, isAuthenticated} = useAuth();
+    const {handleCheckAuth, isAuthenticated} = useAuth();
 
     useEffect(() => {
         let isMounted = true;
@@ -143,21 +143,17 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         setIsDisabled(true);
 
         try {
-            const response = await api.put('api/auth/password-recovery-change',
-                { token: token, password: password });
-            if (response.data) {
-                setIsChanged?.(true);
-                setPassword("");
-                setPasswordRep("");
-                setTimeout(async () => await checkAuth(), 2500);
-            } else {
-                setWentWrong?.(true);
-                setTimeout(() => navigate("/authenticate/login"), 2500);
-            }
+            await changePasswordRecovery(token, password);
+            setIsChanged?.(true);
+            setPassword("");
+            setPasswordRep("");
+            setTimeout(async () => await handleCheckAuth(), 2500);
         } catch (error) {
-            console.error("Error changing password during recovery: ", error);
+            setWentWrong?.(true);
+            setTimeout(() => navigate("/authenticate/login"), 2500);
+            console.error("Error during recovery password change: ", error);
         } finally {
-            setTimeout(() => setIsDisabled(false), 2500);
+            setIsDisabled(false);
         }
     };   //changes password - recovery
 
@@ -171,15 +167,18 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             const oldPasswordResponse = await checkOldPassword(oldPassword);
             if (!oldPasswordResponse.data.checks) return;
             setIsDisabled(true);
-            const response = await api.put("api/auth/password-change",
-                { password: password });
-            if (response.data.success) {
+
+            try {
+                await changePassword(password);
                 setIsChanged?.(true);
                 setOldPassword("");
                 setPassword("");
                 setPasswordRep("");
                 setOldPasswordIcon(null);
+            } catch (error) {
+                console.error("Error during password change: ", error);
             }
+
         } catch (error) {
             console.error("Error changing password: ", error);
         } finally {

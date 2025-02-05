@@ -2,13 +2,12 @@ import React, {useEffect, useState} from "react";
 import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
 import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
-import {getAuthentication} from "../../../../../ApiCalls/Service/UserService.ts";
-import {BadRequestError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {authenticate} from "../../../../../ApiCalls/Service/UserService.ts";
+import {AxiosError} from "axios";
 
 const LoginForm: React.FC = () => {
 
@@ -18,17 +17,17 @@ const LoginForm: React.FC = () => {
     const [loginInfo, setLoginInfo] = useState<string>("");
     const [loginActive, setLoginActive] = useState<boolean>(false);
     const [inputType, setInputType] = useState<"text" | "password">("password");
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);  //prevents from spamming button
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);        //displays banner
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [wrongPassword, setWrongPassword] = useState<boolean>(false);
     const [isAccountDeleted, setIsAccountDeleted] = useState<boolean>(false);
     const {CreateDebouncedValue} = useUtil();
     const debouncedLogin: string = CreateDebouncedValue(login, 300);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {emailExists, usernameExists, isActive, isOauth2} = useUserCheck();
-    const {checkAuth} = useAuth();
+    const {handleCheckAuth} = useAuth();
 
-    //checks and validates login, displays info for user
+    //checks login, displays info for user
     useEffect(() => {
         let isMounted = true;
 
@@ -47,21 +46,23 @@ const LoginForm: React.FC = () => {
                 ]);
                 if (!isMounted) return;
                 if (emailResponse.data.exists || usernameResponse.data.exists) {
-                    setLoginIcon(faCircleCheck);
                     const [isActiveResponse, isOauth2Response] = await Promise.all([
                         isActive(login),
                         isOauth2(login),
                     ]);
                     if (!isMounted) return;
                     if (isActiveResponse.data.checks) {
+                        setLoginIcon(faCircleCheck);
                         setLoginInfo("");
                         setLoginActive(false);
                         if (isOauth2Response.data.checks) {
                             setLoginInfo("Please authenticate using Google.");
+                            setLoginIcon(faCircleExclamation);
                             setLoginActive(true);
                         }
                     } else {
                         setLoginInfo("Please confirm your account via email.");
+                        setLoginIcon(faCircleExclamation);
                         setLoginActive(true);
                     }
                 } else {
@@ -84,58 +85,28 @@ const LoginForm: React.FC = () => {
         };
     }, [debouncedLogin]);
 
-    const validateUser = async (login: string, password: string) => {
-        return await api.get('api/auth/validate-user', {
-            params: {login: login, password: password},
-        });
-    }
-
-    const handleLogin = async () => {
+    const handleAuthenticate = async () => {
         if (isDisabled) return;
-        if (!login || !password) return;
-
+        if (!login || password.length < 7) return;
         setIsDisabled(true);
         setWrongPassword(false);
 
         try {
-            const [emailResponse, usernameResponse, isActiveResponse, isOauth2Response] = await Promise.all([
-                emailExists(login),
-                usernameExists(login),
-                isActive(login),
-                isOauth2(login),
-            ]);
-
-            const isExistingUser = emailResponse.data.exists || usernameResponse.data.exists;
-            const isPasswordValid = password.length >= 7;
-            const isAccountActive = isActiveResponse.data.checks;
-            const isOauth2User = isOauth2Response.data.checks;
-
-            if (isExistingUser && isPasswordValid && !isOauth2User && isAccountActive) {
-                const validateResponse = await validateUser(login, password);
-                if (!validateResponse.data.isValid) {
+            await authenticate(login, password);
+            setIsLoggedIn(true);
+            setTimeout(async () => await handleCheckAuth(), 2000);
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 401) {
                     setWrongPassword(true);
-                    return;
-                }
-
-                try {
-                    await getAuthentication(login, password);
-                    setIsLoggedIn(true);
-                    setTimeout(async () => await checkAuth(), 2000);
-                } catch (error: unknown) {
+                } else if (error.response.status === 404) {
+                    setLoginInfo("Wrong username.");
+                    setLoginActive(true);
+                } else if (error.response.status !== 400) {
                     setWentWrong(true);
-                    if (error instanceof BadRequestError) {
-                        console.log("Authentication failed - bad credentials: ", error);
-                    } else {
-                        console.log("Unexpected error during authentication: ", error);
-                    }
+                    console.error("Unexpected error during authentication: ", error);
                 }
-
-            } else {
-                console.log("Login validation failed: conditions check");
             }
-        } catch (error) {
-            console.log("Error during login: ", error);
-            setWentWrong(true);
         } finally {
             setTimeout(() => setIsDisabled(false), 2000);
         }
@@ -154,15 +125,14 @@ const LoginForm: React.FC = () => {
                    icon={loginIcon} info={loginInfo} isActive={loginActive}/>
             <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} hasEye={true} whichForm={"login"}/>
-            <SubmitButton label={"Sign in"} onClick={handleLogin} disabled={isDisabled}/>
+            <SubmitButton label={"Sign in"} onClick={handleAuthenticate} disabled={isDisabled}/>
             {isLoggedIn && <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/>}
             {wrongPassword && <AnimatedBanner text={"Wrong password!"} onAnimationEnd={() => setWrongPassword(false)}
                                               delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
-            {isAccountDeleted &&
-                <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
-                                delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
                                           delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
+            {isAccountDeleted && <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
+                                delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

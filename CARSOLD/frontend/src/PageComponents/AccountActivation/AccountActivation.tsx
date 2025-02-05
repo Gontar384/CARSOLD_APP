@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
-import {getAccountActive} from "../../ApiCalls/Service/UserService.ts";
+import {activateAccount} from "../../ApiCalls/Service/UserService.ts";
 import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const AccountActivation: React.FC = () => {
@@ -12,7 +12,7 @@ const AccountActivation: React.FC = () => {
     const [color, setColor] = useState<"bg-lime" | "bg-coolYellow" | null>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
     const navigate = useNavigate();
-    const {checkAuth} = useAuth();
+    const {handleCheckAuth} = useAuth();
 
     const handleErrorResult = (message: string) => {
         setActivationMessage(message);
@@ -25,13 +25,13 @@ const AccountActivation: React.FC = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const token: string | null = urlParams.get('token');
 
-        const handleAccountActivation = async (token: string | null) => { // Rename for clarity
+        const handleActivateAccount = async (token: string | null) => { // Rename for clarity
             try {
-                await getAccountActive(token);
+                await activateAccount(token);
                 setActivationMessage("Account activation success.");
                 setColor("bg-lime");
                 setLoaded(true);
-                setTimeout(async () => await checkAuth(), 3500);
+                setTimeout(async () => await handleCheckAuth(), 3500);
             } catch (error: unknown) {
                 if (error instanceof BadRequestError) {
                     console.error("Token is invalid or has expired: ", error.message, error.response);
@@ -43,9 +43,9 @@ const AccountActivation: React.FC = () => {
             }
         };
 
-        handleAccountActivation(token);
+        handleActivateAccount(token);
 
-    }, [checkAuth, navigate]);   //gets token from url and activates account
+    }, [handleCheckAuth, navigate]);   //gets token from url and activates account
 
     useEffect(() => {
         const interval = setInterval((): void => {

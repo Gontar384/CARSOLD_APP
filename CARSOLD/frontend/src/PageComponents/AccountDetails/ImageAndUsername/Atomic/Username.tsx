@@ -6,16 +6,15 @@ import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 const Username: React.FC = () => {
 
     const {isAuthenticated} = useAuth();
-    const {userDetails, usernameFetched, handleUsernameFetch} = useUserDetails();
+    const {username, usernameFetched, handleFetchUsername} = useUserDetails();
 
     useEffect(() => {
-        handleUsernameFetch();
-    }, [handleUsernameFetch, isAuthenticated]);  //fetches username
+        handleFetchUsername();
+    }, [handleFetchUsername, isAuthenticated]);  //fetches username
 
     return (
         <div className="flex justify-center text-2xl m:text-[28px] text-white font-bold w-full text-center ml-[65px] m:ml-[50px]">
-            {usernameFetched ? userDetails :
-            <UsernameLoader/>}
+            {usernameFetched ? username : <UsernameLoader/>}
         </div>
     )
 }

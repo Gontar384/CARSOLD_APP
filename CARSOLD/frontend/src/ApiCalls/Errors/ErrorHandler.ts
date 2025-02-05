@@ -12,7 +12,7 @@ export const handleError = (error: unknown): void => {
                 throw new BadRequestError(message, error.response);
             case 401:
                 console.error("Unauthorized:", message, error);
-                throw new UnauthorizedError(message, error.response);   //fallback if AuthErrorManager doesn't work
+                throw new UnauthorizedError(message, error.response);
             case 403:
                 console.error("Forbidden:", message, error);
                 throw new ForbiddenError(message, error.response);

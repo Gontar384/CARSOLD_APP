@@ -1,6 +1,8 @@
 package org.gontar.carsold.Service.UserService.UserEmailNotificationService;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.gontar.carsold.Exceptions.CustomExceptions.EmailSendingException;
 import org.gontar.carsold.Exceptions.ErrorHandler;
 import org.gontar.carsold.Model.User;
 import org.gontar.carsold.Repository.UserRepository;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class UserEmailNotificationServiceImpl implements UserEmailNotificationService {
@@ -28,31 +32,26 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
         this.errorHandler = errorHandler;
     }
 
-    //sends email message
     @Override
-    public void sendEmail(String email, String subject, String content) {
-        try {
-            if (email == null || subject == null || content == null) return;
+    public void sendEmail(String email, String subject, String content) throws MessagingException {
+        Objects.requireNonNull(email, "Email cannot be null");
 
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setTo(email);
-            helper.setSubject(subject);
-            helper.setText(content, true);
+        helper.setTo(email);
+        helper.setSubject(subject);
+        helper.setText(content, true);
 
-            emailSender.send(message);
-        } catch (Exception e) {
-            errorHandler.logVoid("Failed to send email: " + e.getMessage());
-        }
+        emailSender.send(message);
     }
 
-    //sends email to activate account
     @Override
-    public boolean sendVerificationEmail(String email, String username, String link) {
+    public void sendAccountActivationEmail(String email, String username, String link) {
+        Objects.requireNonNull(email, "Email cannot be null");
+        Objects.requireNonNull(username, "Username cannot be null");
+        Objects.requireNonNull(link, "Link cannot be null");
         try {
-            if (email == null || username == null || link == null) return false;
-
             String subject = "CAR$OLD Account Activation";
             String content = "<p style='font-size: 25px;'>Thank you for registering " + username +
                     "! To activate your account, please click here:</p>" +
@@ -63,11 +62,10 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
                     "</div>" +
                     "<p>If link expired - register again.<br><br><hr>" +
                     "<p>This message was sent automatically. Do not reply.</p>";
-            sendEmail(email, subject, content);
 
-            return true;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Failed to send email: " + e.getMessage());
+            sendEmail(email, subject, content);
+        } catch (MessagingException e) {
+            throw new EmailSendingException("Account activation email sending failed: " + e.getMessage());
         }
     }
 

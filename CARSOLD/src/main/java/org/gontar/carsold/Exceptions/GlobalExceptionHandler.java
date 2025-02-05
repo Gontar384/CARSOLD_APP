@@ -51,13 +51,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthFailedException.class)
     public ResponseEntity<?> handleAuthFailedException(AuthFailedException ex) {
         log.error("Authentication Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Authentication Error");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication Error");
+    }
+
+    @ExceptionHandler(UserDataException.class)
+    public ResponseEntity<?> handleUserDataException(UserDataException ex) {
+        log.error("User Data Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Data Error");
     }
 
     @ExceptionHandler(LogoutFailedException.class)
     public ResponseEntity<?> handleLogoutFailedException(LogoutFailedException ex) {
         log.error("Logout Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Logout Error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout Error");
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -85,6 +91,24 @@ public class GlobalExceptionHandler {
     }
 
     //---Others---
+
+    @ExceptionHandler(RegisterUserException.class)
+    public ResponseEntity<?> handleRegisterUserException(RegisterUserException ex) {
+        log.error("Register User Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Register User Error");
+    }
+
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<?> handleEmailSendingException(EmailSendingException ex) {
+        log.error("Email Sending Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Sending Error");
+    }
+
+    @ExceptionHandler(DeleteException.class)
+    public ResponseEntity<?> handleDeleteException(DeleteException ex) {
+        log.error("Delete Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Delete Error");
+    }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex) {

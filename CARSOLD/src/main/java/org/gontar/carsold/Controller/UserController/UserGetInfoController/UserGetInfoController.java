@@ -81,14 +81,4 @@ public class UserGetInfoController {
         response.put("checks", checks);
         return ResponseEntity.ok(response);
     }
-
-    //checks if login and password matches, used before proper auth
-    @GetMapping("/auth/validate-user")
-    public ResponseEntity<Map<String, Boolean>> getUserValidation(@RequestParam("login") String login,
-                                                                  @RequestParam("password") String password) {
-        Map<String, Boolean> response = new HashMap<>();
-        boolean isValid = service.validateUser(login, password);
-        response.put("isValid", isValid);
-        return ResponseEntity.ok(response);
-    }
 }

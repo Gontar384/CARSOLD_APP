@@ -6,8 +6,9 @@ import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
 import {useUserCheck} from "../../../../../../../../CustomHooks/useUserCheck.ts";
 import {AxiosResponse} from "axios";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
+import {deleteUser} from "../../../../../../../../ApiCalls/Service/UserService.ts";
+import {BadRequestError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -22,7 +23,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
     const debouncedPassword = CreateDebouncedValue(password, 300);
     const {checkOldPassword} = useUserCheck();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const {logout} = useAuth();
+    const {handleLogout} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
 
     useEffect(() => {
@@ -50,13 +51,19 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
         try {
             const passwordResponse: AxiosResponse = await checkOldPassword(password);
             if (passwordResponse.data.checks) {
-                const response: AxiosResponse = await api.delete('api/delete-user');
-                if (response.data) {
-                    await logout();
+
+                try {
+                    await deleteUser();
+                    await handleLogout();
                     sessionStorage.setItem("isAccountDeleted", "true");
+                } catch (error: unknown) {
+                    if (error instanceof BadRequestError) {
+                        console.error("Error deleting account, problem with Google Cloud: ", error);
+                    } else {
+                        console.error("Unexpected error: ", error);
+                    }
                 }
-            } else {
-                console.error("Old password verification failed.");
+
             }
         } catch (error) {
             console.error("Error deleting account: ", error);
@@ -70,13 +77,15 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
         setIsDisabled(true);
 
         try {
-            const response: AxiosResponse = await api.delete('api/delete-user');
-            if (response.data) {
-                await logout();
-                sessionStorage.setItem("isAccountDeleted", "true");
+            await deleteUser();
+            await handleLogout();
+            sessionStorage.setItem("isAccountDeleted", "true");
+        } catch (error: unknown) {
+            if (error instanceof BadRequestError) {
+                console.error("Error deleting account, problem with Google Cloud: ", error);
+            } else {
+                console.error("Unexpected error: ", error);
             }
-        } catch (error) {
-            console.error("Error deleting Google account: ", error);
         } finally {
             setIsDisabled(false);
         }

@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -30,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserAuthenticationServiceImpl implements UserAuthenticationService {
@@ -39,20 +41,22 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     private final AuthenticationManager authenticationManager;
     private final OAuth2AuthorizedClientService authorizedClientService;
     private final CookieService cookieService;
+    private final BCryptPasswordEncoder encoder;
 
     public UserAuthenticationServiceImpl(UserRepository repository, JwtService jwtService,
                                          AuthenticationManager authenticationManager,
                                          OAuth2AuthorizedClientService authorizedClientService,
-                                         CookieService cookieService) {
+                                         CookieService cookieService, BCryptPasswordEncoder encoder) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authorizedClientService = authorizedClientService;
         this.cookieService = cookieService;
+        this.encoder = encoder;
     }
 
     @Override
-    public boolean checkAuthentication(HttpServletRequest request) {
+    public boolean checkAuth(HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
     }
@@ -60,15 +64,15 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public void refreshJwt(HttpServletRequest request, HttpServletResponse response) {
         User user = jwtService.extractUserFromRequest(request);
-        if (user == null) throw new JwtServiceException("User not found (fallback)");
         cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
     }
 
     @Override
     public void activateAccount(String token, HttpServletResponse response) {
+        Objects.requireNonNull(token, "JWT cannot be null");
         try {
             User user = jwtService.extractUserFromToken(token);
-            if (user == null) throw new JwtServiceException("User not found (fallback)");
+            Objects.requireNonNull(user, "User cannot be null");
 
             if (!user.getActive()) {
                 user.setActive(true);
@@ -83,24 +87,27 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
-        } catch (JwtServiceException | IllegalArgumentException | AuthenticationException e) {
-            throw new AccountActivationException("Process failed: " + e.getMessage());
+        } catch (JwtServiceException | AuthenticationException e) {
+            throw new AccountActivationException("Account activation process failed: " + e.getMessage());
         }
     }
 
     @Override
     public void authenticate(String login, String password, HttpServletResponse response) {
+        Objects.requireNonNull(login, "Login cannot be null");
+        Objects.requireNonNull(password, "Password cannot be null");
         try {
-            if (login == null || password == null) throw new BadCredentialsException("Credentials are empty");
-
             User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
-            if (user == null) throw new UserNotFoundException("User not found");
+            if (user == null) throw new UserNotFoundException("User not found for login: " + login);
+            if (!user.getActive()) throw new UserDataException("User " + login + " is not active" );
+            if (user.getOauth2User()) throw new UserDataException("User " + login + " is an oauth2 user");
+            if (!encoder.matches(password, user.getPassword())) throw new BadCredentialsException("Bad credentials");
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
 
             cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
-        } catch (UserNotFoundException | AuthenticationException e) {
-            throw new AuthFailedException("Process failed: " + e.getMessage());
+        } catch (AuthenticationException e) {
+            throw new AuthFailedException("Authentication process failed: " + e.getMessage());
         }
     }
 
@@ -131,7 +138,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
             ResponseCookie deleteCookie = cookieService.createCookie("", 0);
             response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
         } catch (Exception e) {
-            throw new LogoutFailedException("Process failed: " + e.getMessage());
+            throw new LogoutFailedException("Logout process failed: " + e.getMessage());
         }
     }
 

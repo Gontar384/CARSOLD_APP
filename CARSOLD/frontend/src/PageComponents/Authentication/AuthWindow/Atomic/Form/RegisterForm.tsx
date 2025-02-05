@@ -7,6 +7,8 @@ import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {registerUser} from "../../../../../ApiCalls/Service/UserService.ts";
+import {AxiosError} from "axios";
 
 const RegisterForm: React.FC = () => {
 
@@ -34,10 +36,10 @@ const RegisterForm: React.FC = () => {
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [inputType, setInputType] = useState<"text" | "password">("password");
     const {emailExists, usernameExists, isActive, checkPassword} = useUserCheck();
-    const [termsCheck, setTermsCheck] = useState<boolean>(false);   //manages terms of use
+    const [termsCheck, setTermsCheck] = useState<boolean>(false);
     const [mark, setMark] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);  //prevents from spamming button
-    const [isRegistered, setIsRegistered] = useState<boolean>(false);   //displays banner
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [isRegistered, setIsRegistered] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     const validateEmail = (email: string): boolean => {
@@ -210,7 +212,7 @@ const RegisterForm: React.FC = () => {
         if (termsCheck) setMark(false);
     }, [termsCheck]);   //checks checkbox mark
 
-    const handleRegister = async () =>  {
+    const handleRegisterUser = async () =>  {
         if (isDisabled) return;
         if (!user.email || !user.username || !user.password || !passwordRep) return;
         setIsDisabled(true);
@@ -226,16 +228,6 @@ const RegisterForm: React.FC = () => {
                 return;
             }
 
-            const [emailResponse, usernameResponse, isActiveResponse] = await Promise.all([
-                emailExists(user.email),
-                usernameExists(user.username),
-                isActive(user.email),
-            ]);
-
-            const isExistingUser = emailResponse.data.exists || usernameResponse.data.exists;
-            const isAccountActive = isActiveResponse.data.checks;
-
-            if (isExistingUser && isAccountActive) return;
 
             const usernameCheck = await api.get('api/auth/register/is-username-safe', {
                 params: { username: user.username },
@@ -255,21 +247,23 @@ const RegisterForm: React.FC = () => {
                 setMark(false);
             }
 
-            const response = await api.post('api/auth/register', user);
-            if (response.data) {
+            try {
+                await registerUser(user);
                 setIsRegistered(true);
-                setUser({
-                    email: '',
-                    username: '',
-                    password: '',
-                });
+                setUser({email: '', username: '', password: '',});
                 setPasswordRep('');
                 setTermsCheck(false);
                 setEmailIcon(null);
                 setUsernameIcon(null);
-            } else {
-                setWentWrong(true);
+            } catch (error: unknown) {
+                if (error instanceof AxiosError && error.response) {
+                    if (error.response.status !== 400) {
+                        setWentWrong(true);
+                        console.error("Unexpected error during registration: ", error);
+                    }
+                }
             }
+
         } catch (error) {
             console.error("Error during register:", error);
             setWentWrong(true);
@@ -290,7 +284,7 @@ const RegisterForm: React.FC = () => {
             <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} hasEye={true} whichForm={"register"} termsCheck={termsCheck}
                    setTermsCheck={setTermsCheck} icon={passwordRepIcon} mark={mark}/>
-            <SubmitButton label={"Register"} onClick={handleRegister} disabled={isDisabled}/>
+            <SubmitButton label={"Register"} onClick={handleRegisterUser} disabled={isDisabled}/>
             {isRegistered && <AnimatedBanner
                 text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
                 onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/>}

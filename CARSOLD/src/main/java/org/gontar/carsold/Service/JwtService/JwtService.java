@@ -49,6 +49,7 @@ public class JwtService {
     }
 
     public String generateToken(String username, int timeInMinutes) {
+        Objects.requireNonNull(username, "Username cannot be null");
         try {
             Map<String, Object> claims = new HashMap<>();
             long expirationTime = System.currentTimeMillis() + (1000L * 60 * (long) timeInMinutes);
@@ -68,6 +69,7 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
+        Objects.requireNonNull(token, "Token cannot be null");
         try {
             return Jwts.parser()
                     .verifyWith(getKey())
@@ -114,20 +116,18 @@ public class JwtService {
         if (jwtOptional.isEmpty()) throw new JwtServiceException("Token is missing in request");
 
         String jwt = jwtOptional.get();
-        String username = extractUsername(jwt);
-        if (username == null) throw new JwtServiceException("Problem with username extraction (fallback)");
+        String username = Objects.requireNonNull(extractUsername(jwt));
 
         User user = repository.findByUsername(username);
-        if (user == null) throw new JwtServiceException("User not found");
+        if (user == null) throw new JwtServiceException("User not found for username: " + username);
 
         return user;
     }
 
-    public User extractUserFromToken(String token) throws IllegalArgumentException {
+    public User extractUserFromToken(String token) {
         String username = extractUsername(token);
-        if (username == null) throw new JwtServiceException("Problem with username extraction (fallback)");
         User user = repository.findByUsername(username);
-        if (user == null) throw new JwtServiceException("User not found");
+        if (user == null) throw new JwtServiceException("User not found for username " + username);
 
         return user;
     }

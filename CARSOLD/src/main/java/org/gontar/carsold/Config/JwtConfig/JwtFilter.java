@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -33,25 +34,27 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        try {
-            Optional<String> token = jwtService.extractTokenFromCookie(request);
-            String username = null;
 
-            if (token.isPresent()) username = jwtService.extractUsername(token.get());
+        Optional<String> token = jwtService.extractTokenFromCookie(request);
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
-                if (jwtService.validateToken(token.get(), userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (token.isPresent()) {
+            try {
+                String username = jwtService.extractUsername(token.get());
+
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
+                    if (jwtService.validateToken(token.get(), userDetails)) {
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
                 }
+            } catch (JwtServiceException | AuthenticationException e) {
+                clearJwtCookie(response);
+                SecurityContextHolder.clearContext();
+                throw new JwtServiceException("Problem in JWT filter: " + e.getMessage());
             }
-        } catch (JwtServiceException | AuthenticationException e) {
-            clearJwtCookie(response);
-            SecurityContextHolder.clearContext();
-            throw new JwtServiceException("Problem in JWT filter: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

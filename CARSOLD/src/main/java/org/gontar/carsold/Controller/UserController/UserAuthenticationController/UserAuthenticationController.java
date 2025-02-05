@@ -21,43 +21,43 @@ public class UserAuthenticationController {
         this.service = service;
     }
 
-    @GetMapping("/auth/csrf")
+    @GetMapping("/auth/getCsrfToken")
     public CsrfToken getCsrfToken(CsrfToken token) {
         return token;
     }
 
     @GetMapping("/auth/checkAuth")
-    public ResponseEntity<?> getAuthCheck(HttpServletRequest request) {
-        if (service.checkAuthentication(request)) return ResponseEntity.ok().build();
+    public ResponseEntity<?> checkAuth(HttpServletRequest request) {
+        if (service.checkAuth(request)) return ResponseEntity.ok().build();
         else return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/auth/refreshJwt")
-    public ResponseEntity<?> getJwtRefreshed(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> refreshJwt(HttpServletRequest request, HttpServletResponse response) {
         service.refreshJwt(request, response);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/auth/keepSessionAlive")
-    public ResponseEntity<?> getSessionActive() {
+    public ResponseEntity<?> keepSessionAlive() {
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/auth/activateAccount")
-    public ResponseEntity<?> getAccountActive(@RequestParam("token") String token, HttpServletResponse response) {
+    public ResponseEntity<?> activateAccount(@RequestParam("token") String token, HttpServletResponse response) {
         service.activateAccount(token, response);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/auth/authenticate")
-    public ResponseEntity<?> getAuthentication(@RequestParam("login") String login, @RequestParam("password")
+    public ResponseEntity<?> authenticate(@RequestParam("login") String login, @RequestParam("password")
     String password, HttpServletResponse response) {
         service.authenticate(login, password, response);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/auth/logout")
-    public ResponseEntity<?> getLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         service.logout(request, response, authentication);
         return ResponseEntity.ok().build();
     }
