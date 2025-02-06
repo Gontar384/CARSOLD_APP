@@ -6,7 +6,6 @@ import PasswordChangeForm from "../../SharedComponents/PasswordChange/PasswordCh
 const PasswordRecChange: React.FC = () => {
 
     document.title = "CARSOLD | Password Recovery";
-
     const [isChanged, setIsChanged] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
 

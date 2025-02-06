@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Service.CookieService.CookieService;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -52,7 +52,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 }
 
                 user.setActive(true);
-                user.setOauth2User(true);
+                user.setOauth2(true);
                 repository.save(user);
 
                 cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);

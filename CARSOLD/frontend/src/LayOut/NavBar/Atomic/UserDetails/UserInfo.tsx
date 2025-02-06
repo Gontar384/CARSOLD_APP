@@ -1,17 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
-import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
+import UserInfoLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "./Atomic/LoginButton.tsx";
 import Dropdown from "./Atomic/Dropdown/Dropdown.tsx";
-import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import Details from "./Atomic/Details.tsx";
 
-const UserDetails: React.FC = () => {
+const UserInfo: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserDetails();
+    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserUtil();
     const {profilePicChange} = useItems();
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
     const [animationActive, setAnimationActive] = useState<boolean>(false);   //prevents too many animations
@@ -71,7 +71,7 @@ const UserDetails: React.FC = () => {
     }, [barActive]); //adds event listener for faster button deactivation
 
     if (loadingAuth) {
-        return <UserDetailsLoader/>
+        return <UserInfoLoader/>
     }
 
     return (
@@ -91,7 +91,7 @@ const UserDetails: React.FC = () => {
                         <Dropdown barActive={barActive}/>
                     </div>
                 ) : (
-                    <UserDetailsLoader/>
+                    <UserInfoLoader/>
                 )
             ) : (
                 <LoginButton/>
@@ -100,4 +100,4 @@ const UserDetails: React.FC = () => {
     )
 }
 
-export default UserDetails
+export default UserInfo

@@ -49,6 +49,14 @@ export class UnsupportedMediaTypeError extends ApiException {
     }
 }
 
+//422
+export class UnprocessableEntityError extends ApiException {
+    constructor(message: string, response: AxiosResponse | undefined) {
+        super(message, response);
+        this.name = "UnprocessableEntityError";
+    }
+}
+
 //500
 export class InternalServerError extends ApiException {
     constructor(message: string, response: AxiosResponse | undefined) {

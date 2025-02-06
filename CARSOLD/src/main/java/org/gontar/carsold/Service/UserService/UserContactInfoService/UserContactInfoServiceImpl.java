@@ -4,7 +4,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Exceptions.ErrorHandler;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.json.JSONArray;

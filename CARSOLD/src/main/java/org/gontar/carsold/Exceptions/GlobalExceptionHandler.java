@@ -98,6 +98,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Register User Error");
     }
 
+    @ExceptionHandler(InappropriateValueException.class)
+    public ResponseEntity<?> handleInappropriateValueException(InappropriateValueException ex) {
+        log.error("Inappropriate Value: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Inappropriate Value");
+    }
+
+    @ExceptionHandler(ValueExternalCheckException.class)
+    public ResponseEntity<?> handleValueExternalCheckException(ValueExternalCheckException ex) {
+        log.error("Value External Check Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Value External Check Error");
+    }
+
     @ExceptionHandler(EmailSendingException.class)
     public ResponseEntity<?> handleEmailSendingException(EmailSendingException ex) {
         log.error("Email Sending Error: {}", ex.getMessage(), ex);
@@ -108,6 +120,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDeleteException(DeleteException ex) {
         log.error("Delete Error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Delete Error");
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<?> handleInvalidPasswordException(InvalidPasswordException ex) {
+        log.error("Invalid Password: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid Password");
     }
 
     @ExceptionHandler(UserNotFoundException.class)

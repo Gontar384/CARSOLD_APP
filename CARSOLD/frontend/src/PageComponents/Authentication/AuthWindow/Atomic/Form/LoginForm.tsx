@@ -3,7 +3,7 @@ import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
 import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
-import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
+import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {authenticate} from "../../../../../ApiCalls/Service/UserService.ts";
@@ -15,7 +15,6 @@ const LoginForm: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);
     const [loginInfo, setLoginInfo] = useState<string>("");
-    const [loginActive, setLoginActive] = useState<boolean>(false);
     const [inputType, setInputType] = useState<"text" | "password">("password");
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -24,91 +23,67 @@ const LoginForm: React.FC = () => {
     const {CreateDebouncedValue} = useUtil();
     const debouncedLogin: string = CreateDebouncedValue(login, 300);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
-    const {emailExists, usernameExists, isActive, isOauth2} = useUserCheck();
+    const {handleCheckLogin, handleCheckInfo} = useUserInfo();
     const {handleCheckAuth} = useAuth();
 
-    //checks login, displays info for user
     useEffect(() => {
-        let isMounted = true;
-
-        if (login.length < 5) {
+        if (login.length < 3) {
             setLoginIcon(null);
             setLoginInfo("");
-            setLoginActive(false);
             return;
         }
 
         const checkLogin = async () => {
-            try {
-                const [emailResponse, usernameResponse] = await Promise.all([
-                    emailExists(login),
-                    usernameExists(login),
-                ]);
-                if (!isMounted) return;
-                if (emailResponse.data.exists || usernameResponse.data.exists) {
-                    const [isActiveResponse, isOauth2Response] = await Promise.all([
-                        isActive(login),
-                        isOauth2(login),
-                    ]);
-                    if (!isMounted) return;
-                    if (isActiveResponse.data.checks) {
-                        setLoginIcon(faCircleCheck);
-                        setLoginInfo("");
-                        setLoginActive(false);
-                        if (isOauth2Response.data.checks) {
-                            setLoginInfo("Please authenticate using Google.");
-                            setLoginIcon(faCircleExclamation);
-                            setLoginActive(true);
-                        }
-                    } else {
-                        setLoginInfo("Please confirm your account via email.");
-                        setLoginIcon(faCircleExclamation);
-                        setLoginActive(true);
-                    }
-                } else {
+            const present = await handleCheckLogin(login);
+            if (present) {
+                const account = await handleCheckInfo(login);
+                if (!account.active) {
+                    setLoginInfo("Please confirm your account via email.");
                     setLoginIcon(faCircleExclamation);
-                    setLoginInfo("");
-                    setLoginActive(false);
+                    return;
+                } else if (account.oauth2) {
+                    setLoginInfo("Please authenticate using Google.");
+                    setLoginIcon(faCircleExclamation);
+                    return;
                 }
-            } catch (error) {
-                console.error("Error checking login: ", error);
+                setLoginIcon(faCircleCheck);
+                setLoginInfo("");
+            } else {
                 setLoginIcon(faCircleExclamation);
-                setLoginInfo("An error occurred, please try again.");
-                setLoginActive(true);
+                setLoginInfo("");
             }
         };
 
         checkLogin();
 
-        return () => {
-            isMounted = false;
-        };
-    }, [debouncedLogin]);
+    }, [debouncedLogin]);      //checks login, displays info for user
 
     const handleAuthenticate = async () => {
         if (isDisabled) return;
-        if (!login || password.length < 7) return;
-        setIsDisabled(true);
-        setWrongPassword(false);
+        if (!login || password.length < 8) return;
 
+        setWrongPassword(false);
+        let authSuccess = false;
+        setIsDisabled(true);
         try {
             await authenticate(login, password);
             setIsLoggedIn(true);
             setTimeout(async () => await handleCheckAuth(), 2000);
+            authSuccess = true;
         } catch (error: unknown) {
             if (error instanceof AxiosError && error.response) {
                 if (error.response.status === 401) {
                     setWrongPassword(true);
                 } else if (error.response.status === 404) {
                     setLoginInfo("Wrong username.");
-                    setLoginActive(true);
                 } else if (error.response.status !== 400) {
                     setWentWrong(true);
                     console.error("Unexpected error during authentication: ", error);
                 }
             }
-        } finally {
-            setTimeout(() => setIsDisabled(false), 2000);
+        }
+        if (!authSuccess) {
+            setTimeout(() => setIsDisabled(false), 1000);
         }
     };
 
@@ -117,12 +92,12 @@ const LoginForm: React.FC = () => {
             setIsAccountDeleted(true);
             sessionStorage.removeItem("isAccountDeleted");
         }
-    }, []);     //detects if account was deleted and displays banner
+    }, []);   //detects if account was deleted and displays banner
 
     return (
         <div className="flex flex-col items-center w-11/12 py-10 mt-3 rounded-sm shadow-2xl ">
             <Input placeholder={"E-mail or username"} inputType={"text"} value={login} setValue={setLogin}
-                   icon={loginIcon} info={loginInfo} isActive={loginActive}/>
+                   icon={loginIcon} info={loginInfo}/>
             <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} hasEye={true} whichForm={"login"}/>
             <SubmitButton label={"Sign in"} onClick={handleAuthenticate} disabled={isDisabled}/>

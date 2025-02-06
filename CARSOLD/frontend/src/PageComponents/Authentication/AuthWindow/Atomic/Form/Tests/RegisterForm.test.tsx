@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { api } from '../../../../../../Config/AxiosConfig/AxiosConfig';
 import RegisterForm from '../RegisterForm';
 import { MemoryRouter } from 'react-router-dom';
-import { useUserCheck } from '../../../../../../CustomHooks/useUserCheck';
+import { useUserInfo } from '../../../../../../CustomHooks/useUserInfo.ts';
 
 jest.mock('../../../../../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -17,7 +17,7 @@ jest.mock('../../../../../../GlobalProviders/Util/useUtil', () => ({
     }),
 }));
 
-jest.mock('../../../../../../CustomHooks/useUserCheck', () => ({
+jest.mock('../../../../../../CustomHooks/useUserInfo.ts', () => ({
     useUserCheck: jest.fn(),
 }));
 
@@ -40,7 +40,7 @@ const renderComponent = () => {
 
 describe('RegisterForm', () => {
     const mockUserCheck = (overrides = {}) => {
-        (useUserCheck as jest.Mock).mockReturnValue({
+        (useUserInfo as jest.Mock).mockReturnValue({
             emailExists: jest.fn(() => Promise.resolve({ data: { exists: false } })),
             usernameExists: jest.fn(() => Promise.resolve({ data: { exists: false } })),
             isActive: jest.fn(() => Promise.resolve({ data: { checks: false } })),

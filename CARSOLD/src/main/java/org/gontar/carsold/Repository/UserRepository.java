@@ -1,6 +1,6 @@
 package org.gontar.carsold.Repository;
 
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

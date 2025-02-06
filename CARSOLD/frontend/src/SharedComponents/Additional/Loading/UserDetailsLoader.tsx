@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserDetailsLoader: React.FC = () => {
+const UserInfoLoader: React.FC = () => {
 
     return (
         <div className="w-[220px] h-11 bg-black opacity-10 animate-pulse rounded-sm">
@@ -8,4 +8,4 @@ const UserDetailsLoader: React.FC = () => {
     )
 }
 
-export default UserDetailsLoader
+export default UserInfoLoader

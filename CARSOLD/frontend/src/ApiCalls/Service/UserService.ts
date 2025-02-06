@@ -73,9 +73,9 @@ export const fetchUsername = async (): Promise<AxiosResponse> => {
     }
 };
 
-export const changePassword = async (password: string | null): Promise<void> => {
+export const changePassword = async (oldPassword: string | null, newPassword: string | null): Promise<void> => {
     try {
-        await api.put("api/changePassword", {password: password});
+        await api.put("api/changePassword", {oldPassword: oldPassword, newPassword: newPassword});
     } catch (error) {
         handleError(error);
     }
@@ -89,10 +89,58 @@ export const changePasswordRecovery = async (token: string | null, password: str
     }
 };
 
-export const deleteUser = async () => {
+export const deleteUser = async (password: string | null): Promise<void> => {
     try {
-        await api.delete('api/deleteUser');
+        await api.delete('api/deleteUser', { params: { password: password}});
     } catch (error) {
         handleError(error);
+    }
+}
+
+//---EmailNotification---
+
+export const sendPasswordRecoveryEmail = async (email: string | null): Promise<void> => {
+    try {
+        await api.get('api/sendPasswordRecoveryEmail', { params: { email: email }});
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+//---Info---
+
+export const checkLogin = async (login: string | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/checkLogin', { params : { login: login }});
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
+export const checkInfo = async (login: string | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/checkInfo', { params: { login: login }});
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
+export const checkGoogleAuth = async (): Promise<AxiosResponse> => {
+    try{
+        return await api.get('api/checkGoogleAuth');
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+}
+
+export const checkOldPassword = async (password: string | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/checkOldPassword', { params: { password: password }});
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
     }
 }

@@ -1,12 +1,12 @@
 import React, {useEffect} from "react";
-import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import UsernameLoader from "../../../../SharedComponents/Additional/Loading/UsernameLoader.tsx";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 
 const Username: React.FC = () => {
 
     const {isAuthenticated} = useAuth();
-    const {username, usernameFetched, handleFetchUsername} = useUserDetails();
+    const {username, usernameFetched, handleFetchUsername} = useUserUtil();
 
     useEffect(() => {
         handleFetchUsername();

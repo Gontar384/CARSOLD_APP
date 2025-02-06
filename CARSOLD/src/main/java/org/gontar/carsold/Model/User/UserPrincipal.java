@@ -1,4 +1,4 @@
-package org.gontar.carsold.Model;
+package org.gontar.carsold.Model.User;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-//uses user info and adapt it to UserDetails, to make it compatible with Spring Security
 public class UserPrincipal implements UserDetails {
 
     private final User user;
@@ -18,7 +17,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));    //returns user role
+        return Collections.singleton(new SimpleGrantedAuthority("USER"));
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.gontar.carsold.Config.MapperConfig.UserMapper;
 
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.Model.User;
-import org.gontar.carsold.Model.UserDto;
+import org.gontar.carsold.Model.User.User;
+import org.gontar.carsold.Model.User.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +18,10 @@ public class UserMapperImpl implements Mapper<User, UserDto> {
     @Override
     public User mapToEntity(UserDto userDto) {
         return mapper.map(userDto, User.class);
+    }
+
+    @Override
+    public UserDto mapToDto(User user) {
+        return mapper.map(user, UserDto.class);
     }
 }

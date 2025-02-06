@@ -11,10 +11,12 @@ const AuthErrorManager: React.FC = () => {
 
     const isAuthenticationRequest = (url: string | undefined): boolean => {
         if (!url) return false;
-        return url.toLowerCase().includes('api/auth/authenticate');
+        const paths = ['api/auth/authenticate', 'api/deleteUser', 'api/changePassword'];
+
+        return paths.includes(url);
     };
 
-    const handleError = () => {
+    const handleAuthError = () => {
         setShowSessionExpired(true);
 
         setTimeout(async () => {
@@ -36,18 +38,19 @@ const AuthErrorManager: React.FC = () => {
                 if (isAuthenticationRequest(requestUrl)) return Promise.reject(error);
 
                 if (status === 401) {
-                    handleError();
+                    handleAuthError();
                     console.error("Unauthorized, problem with request, cookie or JWT: ", error);
                 } else if (status === 403) {
-                    handleError();
+                    handleAuthError();
                     console.error("Forbidden, probably CSRF token expired (session expired): ", error);
-                } else if (error.message.includes('Network Error') || error.message.includes('CORS')) {
-                    handleError();
-                    console.error("Network or CORS problem: ", error);
+                } else if (error.message.includes('CORS')) {
+                    handleAuthError();
+                    console.error("CORS problem: ", error);
                 }
             }
             return Promise.reject(error);
         });
+
         return () => api.interceptors.response.eject(interceptor);
     }, []);  //sets interceptors and handles auth errors
 

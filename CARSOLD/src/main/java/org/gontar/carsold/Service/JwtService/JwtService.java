@@ -10,7 +10,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Exceptions.CustomExceptions.*;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

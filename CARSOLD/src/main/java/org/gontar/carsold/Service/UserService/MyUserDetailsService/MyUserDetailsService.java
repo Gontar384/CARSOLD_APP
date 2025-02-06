@@ -1,14 +1,14 @@
 package org.gontar.carsold.Service.UserService.MyUserDetailsService;
 
-import org.gontar.carsold.Model.User;
-import org.gontar.carsold.Model.UserPrincipal;
+import org.gontar.carsold.Model.User.User;
+import org.gontar.carsold.Model.User.UserPrincipal;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-//converts user data to UserDetails object, used in authentication and authorization
+//converts user data to UserInfo object, used in authentication and authorization
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 

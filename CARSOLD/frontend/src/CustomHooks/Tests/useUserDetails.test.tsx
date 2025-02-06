@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import React from "react";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth";
 import {api} from "../../Config/AxiosConfig/AxiosConfig";
-import {useUserDetails} from "../useUserDetails";
+import {useUserUtil} from "../useUserUtil.ts";
 import {useItems} from "../../GlobalProviders/Items/useItems";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
@@ -31,7 +31,7 @@ afterEach(() => {
 describe('useUserDetails', () => {
     const renderUsernameFetchTestComponent = () => {
         const TestComponent = () => {
-            const { handleUsernameFetch, userDetails } = useUserDetails();
+            const { handleUsernameFetch, userDetails } = useUserUtil();
             React.useEffect(() => {
                 handleUsernameFetch();
             }, []);
@@ -71,7 +71,7 @@ describe('useUserDetails', () => {
 
     const renderPicFetchTestComponent = () => {
         const TestComponent = () => {
-            const { handleProfilePicFetch, profilePic } = useUserDetails();
+            const { handleProfilePicFetch, profilePic } = useUserUtil();
             React.useEffect(() => {
                 handleProfilePicFetch();
             }, []);
@@ -113,7 +113,7 @@ describe('useUserDetails', () => {
 
     const renderLogoutTestComponent = () => {
         const TestComponent = () => {
-            const { logout } = useUserDetails();
+            const { logout } = useUserUtil();
             React.useEffect(() => {
                 logout();
             }, []);

@@ -2,10 +2,9 @@ import React, {useEffect, useState} from "react";
 import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
 import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {api} from "../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
-import {useUserCheck} from "../../../../../CustomHooks/useUserCheck.ts";
+import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {registerUser} from "../../../../../ApiCalls/Service/UserService.ts";
 import {AxiosError} from "axios";
@@ -17,6 +16,7 @@ const RegisterForm: React.FC = () => {
         username: string,
         password: string
     }
+
     const [user, setUser] = useState<User>({
         email: "", username: "", password: ""
     })
@@ -26,170 +26,121 @@ const RegisterForm: React.FC = () => {
     const debouncedUsername: string = CreateDebouncedValue(user.username, 300);
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
     const [emailInfo, setEmailInfo] = useState<string>("");
-    const [emailActive, setEmailActive] = useState<boolean>(false);
     const [usernameIcon, setUsernameIcon] = useState<IconProp | null>(null);
     const [usernameInfo, setUsernameInfo] = useState<string>("");
-    const [usernameActive, setUsernameActive] = useState<boolean>(false);
     const [passwordIcon, setPasswordIcon] = useState<IconProp | null>(null)
     const [passwordInfo, setPasswordInfo] = useState<string>("");
-    const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [inputType, setInputType] = useState<"text" | "password">("password");
-    const {emailExists, usernameExists, isActive, checkPassword} = useUserCheck();
+    const {handleCheckLogin, handleCheckInfo, handleCheckPassword} = useUserInfo();
     const [termsCheck, setTermsCheck] = useState<boolean>(false);
     const [mark, setMark] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isRegistered, setIsRegistered] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
 
-    const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };  //checks correct email format
-
     useEffect(() => {
-        let isMounted = true;
-
         if (user.email.length < 5) {
             setEmailIcon(null);
             setEmailInfo("");
-            setEmailActive(false);
             return;
         }
-        if (user.email.length > 30) {
+        if (user.email.length > 50) {
             setEmailIcon(faCircleExclamation);
             setEmailInfo("Email is too long.");
-            setEmailActive(true);
             return;
         }
-        if (!validateEmail(user.email)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
             setEmailIcon(faCircleExclamation);
             setEmailInfo("It doesn't look like an email...");
-            setEmailActive(true);
             return;
         }
 
         const checkEmail = async () => {
-            try {
-                const [response, isActiveResponse] = await Promise.all([
-                    emailExists(user.email),
-                    isActive(user.email)
-                ]);
-                if (!isMounted) return;
-                if (response.data.exists && isActiveResponse.data.checks) {
+            const taken = await handleCheckLogin(user.email);
+            if (taken) {
+                const account = await handleCheckInfo(user.email);
+                if (account.active) {
                     setEmailIcon(faCircleExclamation);
                     setEmailInfo("Email is already taken.");
-                    setEmailActive(true);
                 } else {
                     setEmailIcon(faCircleCheck);
                     setEmailInfo("");
-                    setEmailActive(false);
                 }
-            } catch (error) {
-                console.error("Error checking email: ", error);
-                if (isMounted) {
-                    setEmailIcon(faCircleExclamation);
-                    setEmailInfo("Error with email.");
-                    setEmailActive(true);
-                }
+            } else {
+                setEmailIcon(faCircleCheck);
+                setEmailInfo("");
             }
         };
 
         checkEmail();
-
-        return () => {
-            isMounted = false;
-        };
     }, [debouncedEmail]);  //checks if email is valid
 
     useEffect(() => {
-        let isMounted = true;
-
         if (user.username === "") {
             setUsernameIcon(null);
             setUsernameInfo("");
-            setUsernameActive(false);
             return;
         }
         if (!/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username)) {
             setUsernameIcon(faCircleExclamation);
             setUsernameInfo("Username has not allowed characters.");
-            setUsernameActive(true);
             return;
         }
         if (user.username.length < 3) {
             setUsernameIcon(faCircleExclamation);
             setUsernameInfo("Username is too short.");
-            setUsernameActive(true);
             return;
         }
         if (user.username.length > 15) {
             setUsernameIcon(faCircleExclamation);
             setUsernameInfo("Username is too long.");
-            setUsernameActive(true);
             return;
         }
 
         const checkUsername = async () => {
-            try {
-                const [response, isActiveResponse] = await Promise.all([
-                    usernameExists(user.username),
-                    isActive(user.username)
-                ]);
-                if (!isMounted) return;
-                if (response.data.exists && isActiveResponse.data.checks) {
+            const taken = await handleCheckLogin(user.username);
+            if (taken) {
+                const account = await handleCheckInfo(user.username);
+                if (account.active) {
                     setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Username already exists.");
-                    setUsernameActive(true);
+                    setUsernameInfo("Username is already taken.");
                 } else {
                     setUsernameIcon(faCircleCheck);
                     setUsernameInfo("");
-                    setUsernameActive(false);
                 }
-            } catch (error) {
-                console.error("Error checking username: ", error);
-                if (isMounted) {
-                    setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Error with username.");
-                    setUsernameActive(true);
-                }
+            } else {
+                setUsernameIcon(faCircleCheck);
+                setUsernameInfo("");
             }
         };
 
         checkUsername();
 
-        return () => {
-            isMounted = false;
-        };
     }, [debouncedUsername]); //checks if username is valid
 
     useEffect(() => {
         if (user.password == "") {
             setPasswordIcon(null);
             setPasswordInfo("");
-            setPasswordActive(false);
             return;
         }
-        if (user.password.length < 7) {
+        if (user.password.length < 8) {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Password is too short.");
-            setPasswordActive(true);
             return;
         }
-        if (user.password.length > 25) {
+        if (user.password.length > 50) {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Password is too long.");
-            setPasswordActive(true);
             return;
         }
         if (/[A-Z]/.test(user.password) && /[a-z]/.test(user.password) && /\d/.test(user.password)) {
             setPasswordIcon(faCircleCheck);
             setPasswordInfo("");
-            setPasswordActive(false);
         } else {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Must include lowercase, uppercase and number.");
-            setPasswordActive(true);
         }
     }, [user.password]);  //checks if password is strong enough
 
@@ -198,7 +149,7 @@ const RegisterForm: React.FC = () => {
             setPasswordRepIcon(null);
             return;
         }
-        if (!checkPassword(user.password)) {
+        if (!handleCheckPassword(user.password)) {
             setPasswordRepIcon(null);
             return;
         }
@@ -206,81 +157,63 @@ const RegisterForm: React.FC = () => {
         if (passwordRep === user.password) setPasswordRepIcon(faCircleCheck);
         else setPasswordRepIcon(faCircleExclamation);
 
-    }, [checkPassword, passwordRep, user.password]);   //checks if repeated password equals password
+    }, [handleCheckPassword, passwordRep, user.password]);   //checks if repeated password equals password
 
     useEffect(() => {
         if (termsCheck) setMark(false);
     }, [termsCheck]);   //checks checkbox mark
 
-    const handleRegisterUser = async () =>  {
+    const handleRegisterUser = async () => {
         if (isDisabled) return;
         if (!user.email || !user.username || !user.password || !passwordRep) return;
+        if (user.email.length > 30 || (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email))) {
+            return;
+        }
+        if (user.username.length < 3 || user.username.length > 15 || (!/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username))) {
+            return;
+        }
+        if (!handleCheckPassword(user.password) || user.password !== passwordRep) {
+            return;
+        }
+        if (!termsCheck) {
+            setMark(true);
+            return;
+        } else {
+            setMark(false);
+        }
         setIsDisabled(true);
-
         try {
-            if (user.email.length > 30 || !validateEmail(user.email)) {
-                return;
-            }
-            if (user.username.length < 3 || user.username.length > 15 || !/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username)) {
-                return;
-            }
-            if (!checkPassword(user.password) || user.password !== passwordRep) {
-                return;
-            }
-
-
-            const usernameCheck = await api.get('api/auth/register/is-username-safe', {
-                params: { username: user.username },
-            });
-
-            if (!usernameCheck.data.isSafe) {
-                setUsernameIcon(faCircleExclamation);
-                setUsernameInfo("Username is inappropriate!");
-                setUsernameActive(true);
-                return;
-            }
-
-            if (!termsCheck) {
-                setMark(true);
-                return;
-            } else {
-                setMark(false);
-            }
-
-            try {
-                await registerUser(user);
+            const response = await registerUser(user);
+            if (response.status === 201) {
                 setIsRegistered(true);
                 setUser({email: '', username: '', password: '',});
                 setPasswordRep('');
-                setTermsCheck(false);
                 setEmailIcon(null);
                 setUsernameIcon(null);
-            } catch (error: unknown) {
-                if (error instanceof AxiosError && error.response) {
-                    if (error.response.status !== 400) {
-                        setWentWrong(true);
-                        console.error("Unexpected error during registration: ", error);
-                    }
+                setTermsCheck(false);
+            }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 422) {
+                    setUsernameIcon(faCircleExclamation);
+                    setUsernameInfo("Username is inappropriate!");
+                } else if (error.response.status !== 400) {
+                    setWentWrong(true);
+                    console.error("Unexpected error during registration: ", error);
                 }
             }
-
-        } catch (error) {
-            console.error("Error during register:", error);
-            setWentWrong(true);
-        } finally {
-            setTimeout(() => setIsDisabled(false), 2000);
         }
+        setTimeout(() => setIsDisabled(false), 1000);
     };
 
     return (
         <div className="flex flex-col items-center w-11/12 py-8 mt-3 rounded-sm shadow-2xl">
             <Input placeholder={"E-mail"} inputType={"text"} value={user.email} field={"email"} setValue={setUser}
-                   icon={emailIcon} info={emailInfo} isActive={emailActive}/>
+                   icon={emailIcon} info={emailInfo}/>
             <Input placeholder={"Username"} inputType={"text"} value={user.username} field={"username"}
-                   setValue={setUser} icon={usernameIcon} info={usernameInfo} isActive={usernameActive}/>
+                   setValue={setUser} icon={usernameIcon} info={usernameInfo}/>
             <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={user.password}
-                   field={"password"} setValue={setUser} icon={passwordIcon} info={passwordInfo}
-                   isActive={passwordActive}/>
+                   field={"password"} setValue={setUser} icon={passwordIcon} info={passwordInfo}/>
             <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} hasEye={true} whichForm={"register"} termsCheck={termsCheck}
                    setTermsCheck={setTermsCheck} icon={passwordRepIcon} mark={mark}/>

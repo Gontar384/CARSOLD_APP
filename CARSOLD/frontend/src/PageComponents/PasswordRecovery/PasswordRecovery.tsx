@@ -2,28 +2,28 @@ import Input from "../../SharedComponents/FormUtil/Input.tsx";
 import React, {useEffect, useState} from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
+import {useUserInfo} from "../../CustomHooks/useUserInfo.ts";
 import SubmitButton from "../../SharedComponents/FormUtil/SubmitButton.tsx";
-import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {sendPasswordRecoveryEmail} from "../../ApiCalls/Service/UserService.ts";
+import {BadRequestError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const PasswordRecovery: React.FC = () => {
 
     document.title = "CARSOLD | Password Recovery";
-
     const [email, setEmail] = useState<string>("");
+    const [emailInfo, setEmailInfo] = useState<string>("");
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
     const {CreateDebouncedValue} = useUtil();
     const debouncedEmail: string = CreateDebouncedValue(email, 300);
-    const {emailExists, isActive, isOauth2} = useUserCheck();
+    const {handleCheckLogin, handleCheckInfo} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
 
     useEffect(() => {
-        let isMounted = true;
-
+        setEmailInfo("");
         if (email.length < 5) {
             setEmailIcon(null);
             return;
@@ -34,59 +34,44 @@ const PasswordRecovery: React.FC = () => {
         }
 
         const checkEmail = async () => {
-            try {
-                const [emailResponse, isActiveResponse, isOauth2Response] = await Promise.all([
-                    emailExists(email),
-                    isActive(email),
-                    isOauth2(email)
-                ]);
-                if (!isMounted) return;
-                if (emailResponse.data.exists && isActiveResponse.data.checks && !isOauth2Response.data.checks) {
-                    setEmailIcon(faCircleCheck);
+            const present = await handleCheckLogin(email);
+            if (present) {
+                const account = await handleCheckInfo(email);
+                if (account.active) {
+                    if (account.oauth2) {
+                        setEmailIcon(faCircleExclamation);
+                    } else {
+                        setEmailIcon(faCircleCheck);
+                    }
                 } else {
                     setEmailIcon(faCircleExclamation);
                 }
-            } catch (error) {
-                console.error("Error checking email: ", error);
-                if (isMounted) {
-                    setEmailIcon(faCircleExclamation);
-                }
+            } else {
+                setEmailIcon(faCircleExclamation);
             }
         };
 
         checkEmail();
 
-        return () => {
-            isMounted = false;
-        };
-    }, [debouncedEmail, email]);  //checks provided email
+    }, [debouncedEmail]);  //checks provided email
 
-    const handleSendEmail = async () => {
+    const handleSendPasswordRecoveryEmail = async () => {
         if (isDisabled || email.length < 5 || email.length > 30) return;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
 
-        const [emailResponse, activeResponse, isOauth2Response] = await Promise.all([
-            emailExists(email),
-            isActive(email),
-            isOauth2(email)
-        ]);
-
-        if (emailResponse.data.exists && activeResponse.data.checks && !isOauth2Response.data.checks) {
-            setIsDisabled(true);
-
-            try {
-                const response = await api.get('api/auth/password-recovery', {
-                    params: { email }
-                });
-                if (response.data) {
-                    setIsEmailSent(true);
-                }
-            } catch (error) {
-                console.log("Error sending email: ", error);
-            } finally {
-                setTimeout(() => {
-                    setIsDisabled(false);
-                }, 2000);
+        setIsDisabled(true);
+        try {
+            await sendPasswordRecoveryEmail(email);
+            setEmail("");
+            setIsEmailSent(true);
+        } catch (error: unknown) {
+            if (error instanceof NotFoundError) {
+                setEmailInfo("Email address not found.")
+            } else if (error instanceof BadRequestError) {
+                setEmailInfo("Couldn't send email.")
             }
+        } finally {
+            setTimeout(() => setIsDisabled(false), 2000);
         }
     };
 
@@ -99,13 +84,13 @@ const PasswordRecovery: React.FC = () => {
                         Enter your email, so we will send you link for password change.
                     </p>
                     <Input placeholder={"E-mail"} inputType={"text"} value={email} setValue={setEmail}
-                           icon={emailIcon}/>
-                    <SubmitButton label={"Send"} disabled={isDisabled} onClick={handleSendEmail}/>
+                           icon={emailIcon} info={emailInfo}/>
+                    <SubmitButton label={"Send"} disabled={isDisabled} onClick={handleSendPasswordRecoveryEmail}/>
                 </div>
             </div>
             {isEmailSent &&
                 <AnimatedBanner text={"Email with link has been sent!"} onAnimationEnd={() => setIsEmailSent(false)}
-                                delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
+                                delay={4000} color={"bg-lowLime"} z={"z-50"}/>}
         </LayOut>
     )
 }

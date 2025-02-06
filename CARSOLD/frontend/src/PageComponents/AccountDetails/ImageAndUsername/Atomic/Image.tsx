@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {faCirclePlus, faCircleUser, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import ProfilePicLoader from "../../../../SharedComponents/Additional/Loading/ProfilePicLoader.tsx";
 import {api} from "../../../../Config/AxiosConfig/AxiosConfig.ts";
 import LoadingPicAnimation from "../../../../SharedComponents/Additional/Loading/LoadingPicAnimation.tsx";
@@ -26,7 +26,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
     const {setProfilePicChange} = useItems();
-    const {profilePic, profilePicFetched, fetchProfilePic} = useUserDetails();
+    const {profilePic, profilePicFetched, fetchProfilePic} = useUserUtil();
     const {isAuthenticated} = useAuth();
 
     const handleActivateInput = () => {

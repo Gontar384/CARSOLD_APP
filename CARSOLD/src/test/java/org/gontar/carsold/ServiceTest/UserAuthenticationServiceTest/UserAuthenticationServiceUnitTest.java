@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.gontar.carsold.Exceptions.ErrorHandler;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;

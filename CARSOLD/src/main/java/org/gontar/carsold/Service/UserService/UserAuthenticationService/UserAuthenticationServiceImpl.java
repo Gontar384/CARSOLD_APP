@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.gontar.carsold.Exceptions.CustomExceptions.*;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -100,7 +100,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
             User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
             if (user == null) throw new UserNotFoundException("User not found for login: " + login);
             if (!user.getActive()) throw new UserDataException("User " + login + " is not active" );
-            if (user.getOauth2User()) throw new UserDataException("User " + login + " is an oauth2 user");
+            if (user.getOauth2()) throw new UserDataException("User " + login + " is an oauth2 user");
             if (!encoder.matches(password, user.getPassword())) throw new BadCredentialsException("Bad credentials");
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));

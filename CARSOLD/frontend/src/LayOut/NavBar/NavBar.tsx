@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import Logo from "./Atomic/Logo.tsx";
 import SearchBar from "./Atomic/SearchBar.tsx";
 import AddButton from "./Atomic/AddButton.tsx";
-import UserDetails from "./Atomic/UserDetails/UserDetails.tsx";
+import UserInfo from "./Atomic/UserDetails/UserInfo.tsx";
 import OptionsButton from "./Atomic/OptionsButton.tsx";
 import LowerBar from "./Atomic/LowerBar/LowerBar.tsx";
 import LoadingNavBarLine from "../../SharedComponents/Additional/Loading/LoadingNavBarLine.tsx";
@@ -34,7 +34,7 @@ const NavBar: React.FC = () => {
                 {bigWidth &&
                     <>
                         <AddButton/>
-                        <UserDetails/>
+                        <UserInfo/>
                     </>}
             </div>
             {mobileWidth && <LowerBar/>}

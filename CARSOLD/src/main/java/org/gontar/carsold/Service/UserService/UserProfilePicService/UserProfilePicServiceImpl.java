@@ -8,7 +8,7 @@ import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Exceptions.ErrorHandler;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.springframework.beans.factory.annotation.Value;

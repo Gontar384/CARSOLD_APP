@@ -1,6 +1,6 @@
 import {render, waitFor} from '@testing-library/react';
 import {api} from "../../Config/AxiosConfig/AxiosConfig";
-import {useUserCheck} from "../useUserCheck";
+import {useUserInfo} from "../useUserInfo.ts";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -18,7 +18,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { exists: true } });
 
         const TestComponent = () => {
-            const { emailExists } = useUserCheck();
+            const { emailExists } = useUserInfo();
             emailExists(mockEmail);
             return null;
         };
@@ -37,7 +37,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { exists: true } });
 
         const TestComponent = () => {
-            const { usernameExists } = useUserCheck();
+            const { usernameExists } = useUserInfo();
             usernameExists(mockUsername);
             return null;
         };
@@ -56,7 +56,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { active: true } });
 
         const TestComponent = () => {
-            const { isActive } = useUserCheck();
+            const { isActive } = useUserInfo();
             isActive(mockLogin);
             return null;
         };
@@ -75,7 +75,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { oauth2: true } });
 
         const TestComponent = () => {
-            const { isOauth2 } = useUserCheck();
+            const { isOauth2 } = useUserInfo();
             isOauth2(mockLogin);
             return null;
         };
@@ -90,7 +90,7 @@ describe('useUserCheck', () => {
     });
 
     it('checks if password meets the strength criteria', () => {
-        const {checkPassword} = useUserCheck();
+        const {checkPassword} = useUserInfo();
 
         expect(checkPassword('Test1234')).toBe(true);   //valid password
         expect(checkPassword('test')).toBe(false);      //invalid password (too short and no upper case)
@@ -104,7 +104,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { valid: true } });
 
         const TestComponent = () => {
-            const { checkOldPassword } = useUserCheck();
+            const { checkOldPassword } = useUserInfo();
             checkOldPassword(mockPassword);
             return null;
         };
@@ -122,7 +122,7 @@ describe('useUserCheck', () => {
         (api.get as jest.Mock).mockResolvedValueOnce({ data: { valid: true } });
 
         const TestComponent = () => {
-            const { checkGoogleAuth } = useUserCheck();
+            const { checkGoogleAuth } = useUserInfo();
             checkGoogleAuth();
             return null;
         };

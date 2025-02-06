@@ -46,10 +46,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/getCsrfToken", "/api/auth/checkAuth", "/api/auth/keepSessionAlive",
                                 "/api/auth/activateAccount", "/api/auth/authenticate", "/api/auth/logout",
-                                "/api/registerUser","/api/changePasswordRecovery",
-                                "/api/auth/register/check-email","/api/auth/register/check-username",
-                                "/api/auth/register/is-username-safe", "/api/auth/check-active",
-                                "/api/auth/check-oauth2", "/api/auth/password-recovery"
+                                "/api/registerUser","/api/sendPasswordRecoveryEmail","/api/changePasswordRecovery",
+                                "/api/checkLogin", "/api/checkInfo"
                         ).permitAll().anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

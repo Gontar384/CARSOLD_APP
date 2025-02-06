@@ -1,5 +1,14 @@
 import {AxiosError} from "axios";
-import {ApiException, BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError, UnsupportedMediaTypeError} from "./CustomErrors.ts";
+import {
+    ApiException,
+    BadRequestError,
+    ForbiddenError,
+    InternalServerError,
+    NotFoundError,
+    UnauthorizedError,
+    UnprocessableEntityError,
+    UnsupportedMediaTypeError
+} from "./CustomErrors.ts";
 
 export const handleError = (error: unknown): void => {
     if (error instanceof AxiosError) {
@@ -22,6 +31,9 @@ export const handleError = (error: unknown): void => {
             case 415:
                 console.error("Unsupported Media Type:", message, error);
                 throw new UnsupportedMediaTypeError(message, error.response);
+            case 422:
+                console.error("Unprocessable Entity:", message, error);
+                throw new UnprocessableEntityError(message, error.response);
             case 500:
                 console.error("Internal Server Error:", message, error);
                 throw new InternalServerError(message, error.response);

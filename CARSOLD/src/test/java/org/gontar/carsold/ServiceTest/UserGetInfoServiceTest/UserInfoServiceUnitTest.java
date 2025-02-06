@@ -2,10 +2,10 @@ package org.gontar.carsold.ServiceTest.UserGetInfoServiceTest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Exceptions.ErrorHandler;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
-import org.gontar.carsold.Service.UserService.UserGetInfoService.UserGetInfoServiceImpl;
+import org.gontar.carsold.Service.UserService.UserGetInfoService.UserInfoServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserGetInfoServiceUnitTest {
+public class UserInfoServiceUnitTest {
 
     @Mock
     private UserRepository repo;
@@ -36,7 +36,7 @@ public class UserGetInfoServiceUnitTest {
     private ErrorHandler errorHandler;
 
     @InjectMocks
-    private UserGetInfoServiceImpl service;
+    private UserInfoServiceImpl service;
 
     @Test
     public void testFindEmail_exists() {

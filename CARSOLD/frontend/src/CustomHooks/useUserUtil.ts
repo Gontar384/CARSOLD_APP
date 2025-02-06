@@ -5,7 +5,7 @@ import {useItems} from "../GlobalProviders/Items/useItems.ts";
 import {fetchUsername} from "../ApiCalls/Service/UserService.ts";
 
 //manages username fetch and logout function
-export const useUserDetails = () => {
+export const useUserUtil = () => {
 
     const [username, setUsername] = useState<string>("");   //username fetched
     const [usernameFetched, setUsernameFetched] = useState<boolean>(false);

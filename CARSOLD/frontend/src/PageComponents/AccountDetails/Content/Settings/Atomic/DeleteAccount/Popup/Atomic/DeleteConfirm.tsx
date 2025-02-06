@@ -3,12 +3,11 @@ import Input from "../../../../../../../../SharedComponents/FormUtil/Input.tsx";
 import ConfirmButton from "./Atomic/ConfirmButton.tsx";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
-import {useUserCheck} from "../../../../../../../../CustomHooks/useUserCheck.ts";
-import {AxiosResponse} from "axios";
+import {useUserInfo} from "../../../../../../../../CustomHooks/useUserInfo.ts";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import {deleteUser} from "../../../../../../../../ApiCalls/Service/UserService.ts";
-import {BadRequestError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {BadRequestError, ForbiddenError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -19,76 +18,55 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
 
     const [password, setPassword] = useState<string>("");
     const [icon, setIcon] = useState<IconProp | null>(null);
+    const [info, setInfo] = useState<string>("");
     const {CreateDebouncedValue} = useUtil();
     const debouncedPassword = CreateDebouncedValue(password, 300);
-    const {checkOldPassword} = useUserCheck();
+    const {handleCheckOldPassword} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const {handleLogout} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
 
     useEffect(() => {
         const checkPassword = async () => {
-            if (password.length < 7 || password.length > 25) {
+            setInfo("");
+            if (password.length < 8 || password.length > 50) {
                 setIcon(null);
                 return;
             }
-
-            try {
-                const response: AxiosResponse = await checkOldPassword(password);
-                setIcon(response.data.checks ? faCircleCheck : faCircleExclamation);
-            } catch (error) {
-                console.error("Error checking password: ", error);
-            }
+            const matches = await handleCheckOldPassword(password);
+            setIcon(matches ? faCircleCheck : faCircleExclamation);
         };
 
         checkPassword();
     }, [debouncedPassword]);
 
-    const handleDeleteAccount = async () => {
-        if (password.length < 7 || password.length > 25) return;
+    const deleteAccount = async () => {
         setIsDisabled(true);
-
         try {
-            const passwordResponse: AxiosResponse = await checkOldPassword(password);
-            if (passwordResponse.data.checks) {
-
-                try {
-                    await deleteUser();
-                    await handleLogout();
-                    sessionStorage.setItem("isAccountDeleted", "true");
-                } catch (error: unknown) {
-                    if (error instanceof BadRequestError) {
-                        console.error("Error deleting account, problem with Google Cloud: ", error);
-                    } else {
-                        console.error("Unexpected error: ", error);
-                    }
-                }
-
-            }
-        } catch (error) {
-            console.error("Error deleting account: ", error);
-        } finally {
-            setIsDisabled(false);
-        }
-    };
-
-    const handleDeleteGoogleAccount = async () => {
-        if (confirmation !== "delete_account") return;
-        setIsDisabled(true);
-
-        try {
-            await deleteUser();
+            await deleteUser(password);
             await handleLogout();
             sessionStorage.setItem("isAccountDeleted", "true");
         } catch (error: unknown) {
-            if (error instanceof BadRequestError) {
+            if (error instanceof ForbiddenError) {
+                setInfo("Wrong password.")
+            } else if (error instanceof BadRequestError) {
                 console.error("Error deleting account, problem with Google Cloud: ", error);
             } else {
                 console.error("Unexpected error: ", error);
             }
         } finally {
-            setIsDisabled(false);
+            setTimeout(() => setIsDisabled(false), 1000);
         }
+    }
+
+    const handleDeleteAccount = async () => {
+        if (password.length < 8 || password.length > 50) return;
+        await deleteAccount();
+    };
+
+    const handleDeleteGoogleAccount = async () => {
+        if (confirmation !== "delete_account") return;
+        await deleteAccount();
     };
 
     return (
@@ -98,7 +76,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
             <div className="flex w-full justify-center mt-5 m:mt-7 mb-2 m:mb-3">
                 {!googleLogged ? (
                     <Input placeholder="Password" inputType="password" value={password} setValue={setPassword}
-                           icon={icon}/>
+                           icon={icon} info={info}/>
                 ) : (
                     <Input placeholder="" inputType="text" value={confirmation} setValue={setConfirmation}/>
                 )

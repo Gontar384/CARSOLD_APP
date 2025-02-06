@@ -1,7 +1,7 @@
 package org.gontar.carsold.ServiceTest.UserGetInfoServiceTest;
 
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.Service.UserService.UserGetInfoService.UserGetInfoServiceImpl;
+import org.gontar.carsold.Service.UserService.UserGetInfoService.UserInfoServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarsoldApplication.class)
-public class UserGetInfoServiceIntegrationTest {
+public class UserInfoServiceIntegrationTest {
 
     @Autowired
-    private UserGetInfoServiceImpl service;
+    private UserInfoServiceImpl service;
 
     @BeforeAll
     public static void init() {

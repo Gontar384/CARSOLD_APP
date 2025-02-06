@@ -1,7 +1,7 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import Details from "../UserDetails/Atomic/Details.tsx";
-import {useUserDetails} from "../../../../CustomHooks/useUserDetails.ts";
+import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
@@ -23,7 +23,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const navigate = useNavigate();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserDetails();
+    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserUtil();
     const {profilePicChange, messages, followed} = useItems();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 

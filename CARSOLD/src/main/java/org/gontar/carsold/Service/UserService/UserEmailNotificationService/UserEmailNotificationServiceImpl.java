@@ -3,8 +3,9 @@ package org.gontar.carsold.Service.UserService.UserEmailNotificationService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.gontar.carsold.Exceptions.CustomExceptions.EmailSendingException;
-import org.gontar.carsold.Exceptions.ErrorHandler;
-import org.gontar.carsold.Model.User;
+import org.gontar.carsold.Exceptions.CustomExceptions.UserDataException;
+import org.gontar.carsold.Exceptions.CustomExceptions.UserNotFoundException;
+import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,17 +24,14 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
     private final UserRepository repository;
     private final JwtService jwtService;
     private final JavaMailSender emailSender;
-    private final ErrorHandler errorHandler;
 
-    public UserEmailNotificationServiceImpl(UserRepository repository, JwtService jwtService, JavaMailSender emailSender, ErrorHandler errorHandler) {
+    public UserEmailNotificationServiceImpl(UserRepository repository, JwtService jwtService, JavaMailSender emailSender) {
         this.repository = repository;
         this.jwtService = jwtService;
         this.emailSender = emailSender;
-        this.errorHandler = errorHandler;
     }
 
-    @Override
-    public void sendEmail(String email, String subject, String content) throws MessagingException {
+    private void sendEmail(String email, String subject, String content) throws MessagingException {
         Objects.requireNonNull(email, "Email cannot be null");
 
         MimeMessage message = emailSender.createMimeMessage();
@@ -69,18 +67,19 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
         }
     }
 
-    //sends email message with link to change password
     @Override
-    public boolean sendPasswordRecoveryEmail(String email) {
+    public void sendPasswordRecoveryEmail(String email) {
+        Objects.requireNonNull(email, "Email cannot be null");
+
+        User user = repository.findByEmail(email);
+        if (user == null) throw new UserNotFoundException("User not found with email: " + email);
+
+        if (!user.getActive()) throw new UserDataException("Account \"" + user.getUsername() + "\" is not active");
+        if (user.getOauth2()) throw new UserDataException("Account \"" + user.getUsername() + "\" is OAuth2 account");
+
+        String token = jwtService.generateToken(user.getUsername(), 10);
+        String link = frontendUrl + "very3secret8password4change?token=" + token;
         try {
-            if (email == null) return false;
-
-            User user = repository.findByEmail(email);
-            if (user == null) return errorHandler.logBoolean("User not found");
-
-            String token = jwtService.generateToken(user.getUsername(), 10);
-            String link = frontendUrl + "very3secret8password4change?token=" + token;
-
             String subject = "CAR$OLD Password Recovery";
             String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
                     "! To change your password, please click the following link:</p>" +
@@ -91,10 +90,8 @@ public class UserEmailNotificationServiceImpl implements UserEmailNotificationSe
                     "</div><hr>" +
                     "<p>This message was sent automatically. Do not reply.</p>";
             sendEmail(email, subject, content);
-
-            return true;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Failed to send email: " + e.getMessage());
+        } catch (MessagingException e) {
+            throw new EmailSendingException("Password recovery email sending failed: " + e.getMessage());
         }
     }
 }

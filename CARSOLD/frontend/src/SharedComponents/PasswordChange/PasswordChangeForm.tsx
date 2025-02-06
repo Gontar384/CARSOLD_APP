@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react";
 import Input from "../FormUtil/Input.tsx";
 import SubmitButton from "../FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserCheck} from "../../CustomHooks/useUserCheck.ts";
+import {useUserInfo} from "../../CustomHooks/useUserInfo.ts";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {changePassword, changePasswordRecovery} from "../../ApiCalls/Service/UserService.ts";
+import {ForbiddenError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,78 +25,63 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const debouncedOldPassword: string = CreateDebouncedValue(oldPassword, 300);
     const [passwordIcon, setPasswordIcon] = useState<IconProp | null>(null);
     const [passwordInfo, setPasswordInfo] = useState<string>("");
-    const [passwordActive, setPasswordActive] = useState<boolean>(false);
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [oldPasswordIcon, setOldPasswordIcon] = useState<IconProp | null>(null);
+    const [oldPasswordInfo, setOldPasswordInfo] = useState<string>("");
     const [heldValue, setHeldValue] = useState<string>("");   //holds previous 'oldPassword' value, prevents display bug
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [inputType, setInputType] = useState<"password" | "text">("password")
     const navigate = useNavigate();
-    const {checkPassword, checkOldPassword} = useUserCheck();
+    const {handleCheckPassword, handleCheckOldPassword} = useUserInfo();
     const {handleCheckAuth, isAuthenticated} = useAuth();
 
     useEffect(() => {
-        let isMounted = true;
-
+        setOldPasswordInfo("");
         if (oldPassword === "") {
             setOldPasswordIcon(null);
             return;
         }
-        if (oldPassword.length < 7 || oldPassword.length > 25) {
+        if (oldPassword.length < 8 || oldPassword.length > 50) {
             setOldPasswordIcon(faCircleExclamation);
             return;
         }
 
-        const validatePassword = async () => {
-            try {
-                const response = await checkOldPassword(oldPassword);
-                if (isMounted) {
-                    if (response.data.checks) {
-                        setOldPasswordIcon(faCircleCheck);
-                        setHeldValue(oldPassword);
-                    } else {
-                        setOldPasswordIcon(faCircleExclamation);
-                    }
-                }
-            } catch (error) {
-                console.error("Error checking old password: ", error);
+        const checkOldPasswordMatch = async () => {
+            const matches = await handleCheckOldPassword(oldPassword);
+            if (matches) {
+                setOldPasswordIcon(faCircleCheck);
+                setHeldValue(oldPassword);
+            } else {
+                setOldPasswordIcon(faCircleExclamation);
             }
         };
 
-        validatePassword();
+        checkOldPasswordMatch();
 
-        return () => {
-            isMounted = false;
-        };
     }, [debouncedOldPassword]);  //for auth user, compares provided password with oldPassword
 
     useEffect(() => {
-        //reset when conditions are not met
         if (password === "") {
             setPasswordIcon(null);
             setPasswordInfo("");
-            setPasswordActive(false);
             setPasswordRepIcon(null);
             return;
         }
-        if (password.length < 7) {
+        if (password.length < 8) {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Password is too short.");
-            setPasswordActive(true);
             setPasswordRepIcon(null);
             return;
         }
-        if (password.length > 25) {
+        if (password.length > 50) {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Password is too long.");
-            setPasswordActive(true);
             setPasswordRepIcon(null);
             return;
         }
         if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
             setPasswordIcon(faCircleExclamation);
             setPasswordInfo("Must include lowercase, uppercase, and number.");
-            setPasswordActive(true);
             setPasswordRepIcon(null);
             return;
         }
@@ -104,14 +90,12 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             if (oldPassword === "" || oldPasswordIcon !== faCircleCheck || oldPassword !== heldValue) {
                 setPasswordIcon(null);
                 setPasswordInfo("");
-                setPasswordActive(false);
                 setPasswordRepIcon(null);
                 return;
             }
             if (password === oldPassword) {
                 setPasswordIcon(faCircleExclamation);
                 setPasswordInfo("New password cannot be the same!");
-                setPasswordActive(true);
                 setPasswordRepIcon(null);
                 return;
             }
@@ -119,9 +103,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
 
         setPasswordIcon(faCircleCheck);
         setPasswordInfo("");
-        setPasswordActive(false);
 
-        //checks repeated password validity
         if (passwordRep === "") {
             setPasswordRepIcon(null);
         } else if (passwordRep !== password) {
@@ -133,15 +115,14 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }, [loggedIn, oldPassword, oldPasswordIcon, heldValue, password, passwordRep]);
 
     const handleRecoveryPasswordChange = async () => {
-        if (isDisabled || !password || !passwordRep) return;
-        if (!checkPassword(password)) return;
+        if (isDisabled || !(password.length > 7) || !(passwordRep.length > 7)) return;
+        if (!handleCheckPassword(password)) return;
         if (password !== passwordRep) return;
 
         const token = new URLSearchParams(window.location.search).get('token');
         if (!token) return;
 
         setIsDisabled(true);
-
         try {
             await changePasswordRecovery(token, password);
             setIsChanged?.(true);
@@ -151,47 +132,43 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         } catch (error) {
             setWentWrong?.(true);
             setTimeout(() => navigate("/authenticate/login"), 2500);
-            console.error("Error during recovery password change: ", error);
+            console.error("Unexpected error during recovery password change: ", error);
         } finally {
             setIsDisabled(false);
         }
     };   //changes password - recovery
 
     const handlePasswordChange = async () => {
-        if (isDisabled || !oldPassword || !password || !passwordRep) return;
-        if (!checkPassword(password)) return;
+        if (isDisabled || !(oldPassword.length > 7) || !(password.length > 7) || !(passwordRep.length > 7)) return;
+        if (!handleCheckPassword(password)) return;
         if (password === oldPassword) return;
         if (password !== passwordRep) return;
 
+        setIsDisabled(true);
         try {
-            const oldPasswordResponse = await checkOldPassword(oldPassword);
-            if (!oldPasswordResponse.data.checks) return;
-            setIsDisabled(true);
-
-            try {
-                await changePassword(password);
-                setIsChanged?.(true);
-                setOldPassword("");
-                setPassword("");
-                setPasswordRep("");
-                setOldPasswordIcon(null);
-            } catch (error) {
-                console.error("Error during password change: ", error);
+            await changePassword(oldPassword, password);
+            setIsChanged?.(true);
+            setOldPassword("");
+            setPassword("");
+            setPasswordRep("");
+            setOldPasswordIcon(null);
+        } catch (error: unknown) {
+            if (error instanceof ForbiddenError) {
+                setOldPasswordInfo("Wrong password.");
+            } else {
+                console.error("Unexpected error during password change: ", error);
             }
-
-        } catch (error) {
-            console.error("Error changing password: ", error);
         } finally {
-            setIsDisabled(false);
+            setTimeout(() => setIsDisabled(false), 1000);
         }
     };   //changes password - auth user
 
     return (
         <div className={`flex flex-col items-center w-full`}>
             {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
-                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon}/>}
+                                value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} info={oldPasswordInfo}/>}
             <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType} value={password}
-                   setValue={setPassword} icon={passwordIcon} info={passwordInfo} isActive={passwordActive}/>
+                   setValue={setPassword} icon={passwordIcon} info={passwordInfo}/>
             <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true} whichForm={"none"}/>
             <SubmitButton label={"Change"} disabled={isDisabled}
