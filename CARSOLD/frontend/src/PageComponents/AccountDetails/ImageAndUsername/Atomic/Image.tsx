@@ -3,12 +3,12 @@ import {faCirclePlus, faCircleUser, faTrash} from "@fortawesome/free-solid-svg-i
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import ProfilePicLoader from "../../../../SharedComponents/Additional/Loading/ProfilePicLoader.tsx";
-import {api} from "../../../../Config/AxiosConfig/AxiosConfig.ts";
 import LoadingPicAnimation from "../../../../SharedComponents/Additional/Loading/LoadingPicAnimation.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
-import {AxiosResponse} from "axios";
+import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Service/UserService.ts";
+import {InternalServerError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ImageProps {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -25,8 +25,9 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const {setProfilePicChange} = useItems();
-    const {profilePic, profilePicFetched, fetchProfilePic} = useUserUtil();
+    const {profilePic, profilePicFetched, handleFetchProfilePic} = useUserUtil();
     const {isAuthenticated} = useAuth();
 
     const handleActivateInput = () => {
@@ -73,57 +74,70 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     }, [inputActive, inputClickable]);  //adds event listener to deactivate button
 
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (isDisabled) return;
+
         const file = event.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            setMessage("This is not an image!");
+            return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+            setMessage("Couldn't upload, image is too large.");
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
 
-        if (file) {
-            if (!file.type.startsWith('image/')) {
-                setMessage("This is not an image!");
-                return;
+        setPicUploaded(false);
+        setIsDisabled(true);
+        try {
+            await uploadProfilePic(formData);
+            setProfilePicChange(true);
+        } catch (error: unknown) {
+            if (error instanceof UnsupportedMediaTypeError) {
+                setMessage("Provided image is not supported.")  //fallback check
+            } else if (error instanceof UnprocessableEntityError) {
+                setMessage("Couldn't upload, image is inappropriate.");
+            } else if (error instanceof InternalServerError) {
+                setMessage("Couldn't upload image.")
+            } else {
+                console.error("Unexpected error during image upload occurred: ", error);
             }
-            if (file.size > 3 * 1024 * 1024) {
-                setMessage("Couldn't upload, image is too large.");
-                return;
-            }
-
-            setMessage("");
-            setPicUploaded(false);
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response: AxiosResponse = await api.put('api/storage-upload-profilePic', formData);
-                if (response.data) {
-                    setPicUploaded(true);
-                    setInputActive(false);
-                    setProfilePicChange(true);
-                    setInputClickable(false)
-                    if (!response.data.info) setMessage("Couldn't upload, image is inappropriate.");
-                }
-            } catch (error) {
-                console.log('Error uploading pic: ', error);
-            }
+        } finally {
+            setPicUploaded(true);
+            setInputActive(false);
+            setInputClickable(false)
+            setIsDisabled(false);
         }
     }   //uploads pic
 
     const handleDeletePic = async () => {
-        setPicUploaded(false);
-        setInputActive(false);
+        if (isDisabled) return;
 
+        setPicUploaded(false);
+        setIsDisabled(true);
         try {
-            const response: AxiosResponse = await api.delete('api/storage-delete-profilePic');
-            if (response.data) {
-                setPicUploaded(true);
-                setProfilePicChange(true);
-                setInputClickable(false);
+            await deleteProfilePic();
+            setProfilePicChange(true);
+        } catch (error: unknown) {
+            setMessage("Couldn't delete image.")
+            if (error instanceof InternalServerError) {
+                console.error("Problem with external cloud: ", error);
+            } else {
+                console.error("Unexpected error deleting profile pic");
             }
-        } catch (error) {
-            console.error("Error deleting profilePic: ", error);
+        } finally {
+            setPicUploaded(true);
+            setInputActive(false);
+            setInputClickable(false);
+            setIsDisabled(false);
         }
     }
 
     useEffect(() => {
-        fetchProfilePic();
-    }, [fetchProfilePic, isAuthenticated, picUploaded]);  //fetches pic
+        handleFetchProfilePic();
+    }, [handleFetchProfilePic, isAuthenticated, picUploaded]);  //fetches pic
 
     return (
         <div className="absolute left-0 scale-125 rounded-full" ref={componentRef}
@@ -131,8 +145,9 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
              onTouchStart={isMobile ? handleToggleInput : undefined}
              onTouchEnd={isMobile ? handleClickable : undefined}>
-            <div className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
-                 style={{clipPath: 'circle(50%)'}}>
+            <div
+                className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
+                style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
                     <div className="relative w-full h-full rounded-full">
                         {profilePic !== "" && !imageError ? (
@@ -149,7 +164,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                                     <input type="file" accept="image/*" title=""
                                            className="file-input absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
                                            onChange={handleUploadPic} onClick={() => setHideButton(true)}/>}
-                                {!hideButton && <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
+                                {!hideButton &&
+                                    <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
                             </div>
                         )}
                         {!picUploaded && <LoadingPicAnimation/>}

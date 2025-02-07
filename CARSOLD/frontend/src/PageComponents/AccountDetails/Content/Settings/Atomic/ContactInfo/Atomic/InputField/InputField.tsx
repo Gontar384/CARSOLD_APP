@@ -1,9 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
-import {api} from "../../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import ContactInputLoader from "../../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
 import SuggestionsBar from "./Atomic/SuggestionsBar.tsx";
 import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
+import {fetchCitySuggestions, updateCity, updateName, updatePhone} from "../../../../../../../../ApiCalls/Service/UserService.ts";
+import {AxiosError} from "axios";
+import {InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface InputFieldProps {
     label: string,
@@ -36,44 +38,49 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         setButtonLabel("Save");
     }
 
-    //saves values to db
     const handleSaveButtonClick = async () => {
         if (isDisabled) return;
+
+        setAdditionalInfo(null);
+        setCitySuggestions(null);
         if (value.length < 3 && value.length !== 0) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too short.");
             return;
         }
-        if (value.length > 20 || valueType === "city" && value.length > 40) {
+        if (value.length > 50 || valueType !== "city" && value.length > 20) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too long.");
             return;
         }
 
-        setCitySuggestions(null);
         setIsDisabled(true);
-        setAdditionalInfo(null);
-
         try {
-            const response = await api.put(`api/contact-set-${valueType}`, {
-                [valueType]: value
-            });
-            if (response.data) {
-                setFetch(prev => !prev);
-                setInputActive(false);
-                setButtonLabel("Edit");
-                setInvalidInput(false);
-                setCitySuggestions(null);
-                handleEnd();
-            } else {
-                setInvalidInput(true);
+            if (valueType === "name") await updateName(value);
+            else if (valueType === "phone") await updatePhone(value);
+            else if (valueType === "city") await updateCity(value);
+
+            setFetch(prev => !prev);
+            setInputActive(false);
+            setButtonLabel("Edit");
+            setInvalidInput(false);
+            setCitySuggestions(null);
+            handleEnd();
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 422) {
+                    setInvalidInput(true);
+                    console.error("Invalid value provided: ", error);
+                } else if (error.response.status === 500) {
+                    console.error("Problem with checking value by external api: ", error);
+                } else {
+                    console.error("Unexpected error during updating value: ", error);
+                }
             }
-        } catch (error) {
-            console.error("Error changing value: ", error);
         } finally {
-            setIsDisabled(false);
+            setTimeout(() => setIsDisabled(false), 1000);
         }
-    }
+    };
 
     //focus input when edit button is clicked and deactivates when clicked away
     useEffect(() => {
@@ -95,7 +102,6 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             }
         };
 
-        //adds event listener to deactivate button
         if (inputActive) {
             document.addEventListener("mousedown", handleClickOutside);
             document.addEventListener("touchstart", handleClickOutside);
@@ -107,7 +113,6 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         };
     }, [inputActive, setFetch, buttonLabel]);
 
-    //for phone only, let put country code and '+' at the beginning
     const formatPhoneNumber = (phoneNumber: string): string => {
         let cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");
 
@@ -120,32 +125,33 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         return cleanedNumber;
     };
 
-    //fetches cities suggestions based on input
+    //fetches cities suggestions
     useEffect(() => {
         if (!debouncedValue || !inputActive) {
             setCitySuggestions(null);
             return;
         }
-
         if (value === clickedSuggestion) return;
 
         setInvalidInput(false);
         setAdditionalInfo(null);
 
-        const fetchCitySuggestions = async () => {
+        const handleFetchCitySuggestions = async () => {
             try {
-                const response = await api.get('api/get-city-suggestions', {
-                    params: {value}
-                });
-                if (response.data) {
-                    setCitySuggestions(response.data);
+                const fetched = await fetchCitySuggestions(value);
+                if (fetched.data.citySuggestions) {
+                    setCitySuggestions(fetched.data.citySuggestions);
                 }
-            } catch (error) {
-                console.error("Error fetching city suggestions: ", error);
+            } catch (error: unknown) {
+                if (error instanceof InternalServerError) {
+                    console.error("Problem with external api: ", error);
+                } else {
+                    console.error("Unexpected error during suggestions fetching: ", error);
+                }
             }
-        }
+        };
 
-        fetchCitySuggestions();
+        handleFetchCitySuggestions();
 
     }, [debouncedValue]);
 
@@ -163,13 +169,14 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                             {value}
                         </div> : <ContactInputLoader/>}
                     {inputActive &&
-                        <input className={`w-full h-full absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
+                        <input
+                            className={`w-full h-full absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
                             ref={inputRef} type={valueType === "phone" ? "tel" : "text"}
-                               value={value} onChange={valueType === "phone" ?
-                                (e) => setValue(formatPhoneNumber(e.target.value))
-                                : valueType === "name" ? (e) => setValue(e.target.value.trim())
-                                    : (e) => setValue(e.target.value)}/>}
-                    {inputActive && invalidInput || additionalInfo !== "" ?
+                            value={value}
+                            onChange={valueType === "name" ? (e) => setValue(e.target.value.trim())
+                                : valueType === "phone" ? (e) => setValue(formatPhoneNumber(e.target.value))
+                                    : (e) => setValue(e.target.value.replace(/^\s+/, ""))}/>}
+                    {inputActive && (invalidInput || additionalInfo !== "") ?
                         <p className="text-sm m:text-base absolute left-[3px] m:left-[5px] top-10 m:top-11 whitespace-nowrap">
                             {inputActive && invalidInput && errorInfo} {additionalInfo !== "" ? additionalInfo : null}</p> : null}
                     {isCityInput && inputActive &&

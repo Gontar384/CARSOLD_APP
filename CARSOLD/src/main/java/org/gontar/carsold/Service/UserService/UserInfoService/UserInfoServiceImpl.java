@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service.UserService.UserGetInfoService;
+package org.gontar.carsold.Service.UserService.UserInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Model.Dto.UserInfoDto;

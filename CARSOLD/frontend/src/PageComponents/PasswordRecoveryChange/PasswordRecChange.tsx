@@ -20,7 +20,7 @@ const PasswordRecChange: React.FC = () => {
                 </div>
             </div>
             {isChanged && <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}/>}
-            {wentWrong && <AnimatedBanner text={"Your link has expired..."} color={"bg-coolYellow"} z={"z-50"}/>}
+            {wentWrong && <AnimatedBanner text={"Your link in invalid or has expired."} color={"bg-coolYellow"} z={"z-50"}/>}
         </LayOut>
     )
 }

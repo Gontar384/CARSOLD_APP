@@ -23,7 +23,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const navigate = useNavigate();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserUtil();
+    const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
     const {profilePicChange, messages, followed} = useItems();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
@@ -44,8 +44,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     //fetches username and profile pic
     useEffect(() => {
         handleFetchUsername();
-        fetchProfilePic();
-    }, [fetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
+        handleFetchProfilePic();
+    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {

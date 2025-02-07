@@ -11,7 +11,7 @@ import Details from "./Atomic/Details.tsx";
 const UserInfo: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, fetchProfilePic} = useUserUtil();
+    const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
     const {profilePicChange} = useItems();
     const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
     const [animationActive, setAnimationActive] = useState<boolean>(false);   //prevents too many animations
@@ -24,8 +24,8 @@ const UserInfo: React.FC = () => {
     //fetches username and profile pic
     useEffect(() => {
         handleFetchUsername();
-        fetchProfilePic();
-    }, [fetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
+        handleFetchProfilePic();
+    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     const handleActivateBar = () => {
         setBarActive(true);

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {api} from "../../../../../../../Config/AxiosConfig/AxiosConfig.ts";
-import {AxiosResponse} from "axios";
 import ContactPublicLoader from "../../../../../../../SharedComponents/Additional/Loading/ContactPublicLoader.tsx";
+import {updateAndFetchContactPublic} from "../../../../../../../ApiCalls/Service/UserService.ts";
 
 const SwitchButton: React.FC = () => {
 
@@ -11,53 +10,48 @@ const SwitchButton: React.FC = () => {
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-    //changes contactPublic in DB and fetches its value, sets animations to button
     const handleSwitchButton = async () => {
         if (isDisabled) return;
+
         setIsDisabled(true);
-
         try {
-            const response: AxiosResponse = await api.put('api/change-contactInfoPublic', {
-                isPublic: !isPublic,
-            });
-
-            if (response.data) {
-                setIsPublic(response.data.changedValue);
+            const changed = await updateAndFetchContactPublic(!isPublic);
+            if (changed.data) {
+                setIsPublic(changed.data.value);
 
                 const animationClass = initialLoad
-                    ? response.data.changedValue ? "animate-slideOn2" : "animate-slideOff2"
-                    : response.data.changedValue ? "animate-slideOn1" : "animate-slideOff1";
-
+                    ? changed.data.value ? "animate-slideOn2" : "animate-slideOff2"
+                    : changed.data.value ? "animate-slideOn1" : "animate-slideOff1";
                 setButtonAnimation(animationClass);
             }
         } catch (error) {
-            console.error("Error changing contactInfoPublic value: ", error);
+            console.error("Error updating and fetching contact public: ", error);
         } finally {
-            setTimeout(() => {
-                setIsDisabled(false);
-            }, 500);
+            setTimeout(() => setIsDisabled(false), 500);
         }
     };
 
-    //sets isPublic and initialLoad only on initial load
+    //sets isPublic and initialLoad on initial
     useEffect(() => {
         setIsFetching(true);
 
-        const fetchContactInfoPublic = async () => {
+        const handleFetchContactPublic = async () => {
             try {
-                const response: AxiosResponse = await api.get('api/fetch-contactInfoPublic');
-                if (response.data) {
-                    setIsPublic(response.data.isPublic);
-                    setInitialLoad(response.data.isPublic);
+                const isPublic = await updateAndFetchContactPublic(null);
+                if (isPublic.data) {
+                    setIsPublic(isPublic.data.value);
+                    setInitialLoad(isPublic.data.value);
                 }
             } catch (error) {
-                console.error("Error fetching contactInfoPublic: ", error);
+                setIsPublic(false);
+                setInitialLoad(false);
+                console.error("Error fetching contact public: ", error);
             } finally {
                 setIsFetching(false);
             }
-        }
+        };
 
-        fetchContactInfoPublic();
+        handleFetchContactPublic();
 
     }, []);
 
@@ -68,7 +62,8 @@ const SwitchButton: React.FC = () => {
             </p>
             {!isFetching ? (
                 <button className={`flex items-center justify-center w-[54px] h-[30px] m:scale-110 border border-black border-opacity-40
-                rounded-full transition-all duration-300 ${isPublic ? "bg-lime" : "bg-gray-300"} `} onClick={handleSwitchButton}>
+                rounded-full transition-all duration-300 ${isPublic ? "bg-lime" : "bg-gray-300"} `}
+                        onClick={handleSwitchButton}>
                     <div className={`w-[calc(100%-6px)] h-[calc(100%-6px)] flex ${initialLoad ? "justify-end" : "justify-start"} rounded-full`}>
                         <div className={`h-full aspect-square bg-white border border-black 
                         border-opacity-5 rounded-full ${buttonAnimation}`}></div>

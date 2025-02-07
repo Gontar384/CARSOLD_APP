@@ -2,7 +2,7 @@ package org.gontar.carsold.Config.MapperConfig.UserMapper;
 
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Model.User.User;
-import org.gontar.carsold.Model.User.UserDto;
+import org.gontar.carsold.Model.Dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

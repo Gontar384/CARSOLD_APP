@@ -1,10 +1,8 @@
 import {useState} from "react";
-import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
-import {fetchUsername} from "../ApiCalls/Service/UserService.ts";
+import {fetchProfilePic, fetchUsername} from "../ApiCalls/Service/UserService.ts";
 
-//manages username fetch and logout function
 export const useUserUtil = () => {
 
     const [username, setUsername] = useState<string>("");   //username fetched
@@ -18,32 +16,36 @@ export const useUserUtil = () => {
         if (!isAuthenticated) return;
         try {
             const response = await fetchUsername();
-            if (response.data.username) {
-                setUsername(response.data.username);
+            if (response.data.value) {
+                setUsername(response.data.value);
+            } else {
+                setUsername("");
             }
         } catch (error) {
+            setUsername("");
             console.error("Error fetching username: ", error);
         } finally {
             setUsernameFetched(true);
         }
     }
 
-    const fetchProfilePic = async () => {
+    const handleFetchProfilePic = async () => {
         if (!isAuthenticated) return;
         try {
-            const response = await api.get('api/get-profilePic');
-            if (response.data.profilePic) {
-                setProfilePic(response.data.profilePic);
+            const response = await fetchProfilePic();
+            if (response.data.value) {
+                setProfilePic(response.data.value);
             } else {
                 setProfilePic("");
             }
         } catch (error) {
+            setProfilePic("");
             console.error("Error fetching profilePic: ", error);
         } finally {
             setProfilePicFetched(true);
             setProfilePicChange(false);
         }
-    } //fetches profile pic
+    }
 
-    return {username, usernameFetched, handleFetchUsername, profilePic, profilePicFetched, fetchProfilePic}
+    return {username, usernameFetched, handleFetchUsername, profilePic, profilePicFetched, handleFetchProfilePic}
 }

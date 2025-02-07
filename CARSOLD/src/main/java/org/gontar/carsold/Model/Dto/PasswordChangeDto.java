@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDto {
-    private Boolean active;
-    private Boolean oauth2;
+public class PasswordChangeDto {
+    private String oldPassword;
+    private String newPassword;
 }

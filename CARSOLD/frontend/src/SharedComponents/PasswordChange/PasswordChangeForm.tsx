@@ -8,7 +8,7 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {changePassword, changePasswordRecovery} from "../../ApiCalls/Service/UserService.ts";
-import {ForbiddenError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {BadRequestError, ForbiddenError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -120,7 +120,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         if (password !== passwordRep) return;
 
         const token = new URLSearchParams(window.location.search).get('token');
-        if (!token) return;
 
         setIsDisabled(true);
         try {
@@ -129,10 +128,14 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             setPassword("");
             setPasswordRep("");
             setTimeout(async () => await handleCheckAuth(), 2500);
-        } catch (error) {
+        } catch (error: unknown) {
             setWentWrong?.(true);
             setTimeout(() => navigate("/authenticate/login"), 2500);
-            console.error("Unexpected error during recovery password change: ", error);
+            if (error instanceof BadRequestError) {
+                console.error("Token is invalid or has expired", error);
+            } else {
+                console.error("Unexpected error during password recovery change: ", error);
+            }
         } finally {
             setIsDisabled(false);
         }

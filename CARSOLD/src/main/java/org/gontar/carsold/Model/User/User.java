@@ -14,8 +14,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "\"user\"")
 public class User {
+
     @Id
-    @GeneratedValue (strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name = "my_seq", sequenceName = "my_sequence", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -42,15 +44,15 @@ public class User {
     private String profilePic;
 
     @Column(length = 20)
-    @Size(min = 3, max = 20, message = "Name must be between 3 and 20 characters")
+    @Size(max = 20, message = "Name must be under 20 characters")
     private String name;
 
     @Column(length = 20)
-    @Size(max = 20, message = "Phone number cannot exceed 20 characters")
+    @Size(max = 20, message = "Phone number must be under 20 characters")
     private String phone;
 
-    @Column(length = 40)
-    @Size(min = 3, max = 40, message = "City must be between 3 and 40 characters")
+    @Column(length = 50)
+    @Size(max = 50, message = "City must be under 50 characters")
     private String city;
 
     @Column(nullable = false)

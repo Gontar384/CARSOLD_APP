@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDto {
-    private Boolean active;
-    private Boolean oauth2;
+public class CitySuggestionsDto {
+    private List<String> citySuggestions;
 }

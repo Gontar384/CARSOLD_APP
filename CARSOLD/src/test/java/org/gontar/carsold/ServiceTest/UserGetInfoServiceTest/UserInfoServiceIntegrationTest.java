@@ -1,7 +1,7 @@
 package org.gontar.carsold.ServiceTest.UserGetInfoServiceTest;
 
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.Service.UserService.UserGetInfoService.UserInfoServiceImpl;
+import org.gontar.carsold.Service.UserService.UserInfoService.UserInfoServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

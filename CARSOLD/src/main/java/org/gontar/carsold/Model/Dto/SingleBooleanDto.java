@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SingleBooleanDto {
-    Boolean value;
+    private Boolean value;
 }

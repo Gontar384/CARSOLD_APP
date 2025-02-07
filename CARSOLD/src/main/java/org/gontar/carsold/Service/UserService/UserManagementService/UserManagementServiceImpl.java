@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -54,10 +55,10 @@ public class UserManagementServiceImpl implements UserManagementService {
         Objects.requireNonNull(user.getPassword(), "password cannot be null");
         try {
             if (!user.getUsername().matches("^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")) {
-                throw new InappropriateValueException("Username contains wrong characters: " + user.getUsername());
+                throw new InvalidValueException("Username contains wrong characters: " + user.getUsername());
             }
             boolean result = checkIfUsernameSafe(user.getUsername());
-            if (!result) throw new InappropriateValueException("Username is inappropriate");
+            if (!result) throw new InvalidValueException("Username is inappropriate");
 
             User processedUser = findOrCreateUser(user);
 
@@ -78,7 +79,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private boolean isUsernameFreeOfInappropriateWords(String username) {
-        String[] inappropriateWords = {"cwel", "frajer", "chuj", "murzyn", "hitler"};
+        String[] inappropriateWords = {"frajer", "murzyn", "debil"};
         for (String word : inappropriateWords) {
             if (username.toLowerCase().contains(word)) return false;
         }
@@ -115,7 +116,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
             return toxicityScore < 0.5;
         } catch (Exception e) {
-            throw new ValueExternalCheckException("Perspective API failed to check username  " + username + ": " + e.getMessage());
+            throw new ExternalCheckException("Perspective API failed to check username  " + username + ": " + e.getMessage());
         }
     }
 
@@ -179,12 +180,16 @@ public class UserManagementServiceImpl implements UserManagementService {
     public void changePasswordRecovery(String token, String password, HttpServletResponse response) {
         Objects.requireNonNull(token, "token cannot be null");
         Objects.requireNonNull(password, "password cannot be null");
-        User user = jwtService.extractUserFromToken(token);
+        try {
+            User user = jwtService.extractUserFromToken(token);
 
-        user.setPassword(encoder.encode(password));
-        repository.save(user);
+            user.setPassword(encoder.encode(password));
+            repository.save(user);
 
-        cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+        } catch (JwtServiceException | AuthenticationException e) {
+            throw new PasswordRecoveryChangeException("Error changing password: " + e.getMessage());
+        }
     }
 
     @Override
@@ -198,11 +203,11 @@ public class UserManagementServiceImpl implements UserManagementService {
             deleteUserInCloud(user.getUsername());
             repository.delete(user);
         } catch (StorageException e) {
-            throw new DeleteException("Failed to delete user: " + e.getMessage());
+            throw new ExternalDeleteException("Failed to delete user in Google Cloud: " + e.getMessage());
         }
     }
 
-    private void deleteUserInCloud(String username) {
+    private void deleteUserInCloud(String username) throws StorageException {
         String folderPrefix = username + "/";
         Storage storage = StorageOptions.getDefaultInstance().getService();
         storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))

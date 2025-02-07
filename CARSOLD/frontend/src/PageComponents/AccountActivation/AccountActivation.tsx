@@ -22,8 +22,7 @@ const AccountActivation: React.FC = () => {
     };
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token: string | null = urlParams.get('token');
+        const token = new URLSearchParams(window.location.search).get('token');
 
         const handleActivateAccount = async (token: string | null) => { // Rename for clarity
             try {
@@ -35,7 +34,7 @@ const AccountActivation: React.FC = () => {
             } catch (error: unknown) {
                 if (error instanceof BadRequestError) {
                     console.error("Token is invalid or has expired: ", error.message, error.response);
-                    handleErrorResult("Token is invalid or has expired.");
+                    handleErrorResult("Your link is invalid or has expired.");
                 } else { 
                     console.error("Unexpected error during account activation:", error);
                     handleErrorResult("An unexpected error occurred.");

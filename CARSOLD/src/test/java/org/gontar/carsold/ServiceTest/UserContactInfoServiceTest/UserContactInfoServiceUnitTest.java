@@ -1,7 +1,6 @@
 package org.gontar.carsold.ServiceTest.UserContactInfoServiceTest;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.Exceptions.ErrorHandler;
 import org.gontar.carsold.Exceptions.CustomExceptions.AccountActivationException;
 import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;

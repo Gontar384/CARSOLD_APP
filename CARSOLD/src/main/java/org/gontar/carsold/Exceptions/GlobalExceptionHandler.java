@@ -54,16 +54,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication Error");
     }
 
-    @ExceptionHandler(UserDataException.class)
-    public ResponseEntity<?> handleUserDataException(UserDataException ex) {
-        log.error("User Data Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Data Error");
-    }
-
     @ExceptionHandler(LogoutFailedException.class)
     public ResponseEntity<?> handleLogoutFailedException(LogoutFailedException ex) {
         log.error("Logout Error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout Error");
+    }
+
+    @ExceptionHandler(UserDataException.class)
+    public ResponseEntity<?> handleUserDataException(UserDataException ex) {
+        log.error("User Data Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Data Error");
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -98,16 +98,40 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Register User Error");
     }
 
-    @ExceptionHandler(InappropriateValueException.class)
-    public ResponseEntity<?> handleInappropriateValueException(InappropriateValueException ex) {
-        log.error("Inappropriate Value: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Inappropriate Value");
+    @ExceptionHandler(InvalidValueException.class)
+    public ResponseEntity<?> handleInvalidValueException(InvalidValueException ex) {
+        log.error("Invalid Value: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Invalid Value");
     }
 
-    @ExceptionHandler(ValueExternalCheckException.class)
-    public ResponseEntity<?> handleValueExternalCheckException(ValueExternalCheckException ex) {
-        log.error("Value External Check Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Value External Check Error");
+    @ExceptionHandler(ExternalCheckException.class)
+    public ResponseEntity<?> handleExternalCheckException(ExternalCheckException ex) {
+        log.error("External Check Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("External Check Error");
+    }
+
+    @ExceptionHandler(ExternalDeleteException.class)
+    public ResponseEntity<?> handleExternalDeleteException(ExternalDeleteException ex) {
+        log.error("External Delete Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("External Delete Error");
+    }
+
+    @ExceptionHandler(ImageUploadException.class)
+    public ResponseEntity<?> handleImageUploadException(ImageUploadException ex) {
+        log.error("Image Upload Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image Upload Error");
+    }
+
+    @ExceptionHandler(MediaNotSupportedException.class)
+    public ResponseEntity<?> handleMediaNotSupportedException(MediaNotSupportedException ex) {
+        log.error("Media Not Supported: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Media Not Supported");
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        log.error("Unsupported Media Type: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported media type");
     }
 
     @ExceptionHandler(EmailSendingException.class)
@@ -116,10 +140,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Sending Error");
     }
 
-    @ExceptionHandler(DeleteException.class)
-    public ResponseEntity<?> handleDeleteException(DeleteException ex) {
-        log.error("Delete Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Delete Error");
+    @ExceptionHandler(PasswordRecoveryChangeException.class)
+    public ResponseEntity<?> handlePasswordRecoveryChangeException(PasswordRecoveryChangeException ex) {
+        log.error("Password Recovery Change Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password Recovery Change Error");
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
@@ -158,16 +182,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
-        log.error("Media type not supported: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported media type");
-    }
-
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<?> handleDataAccessException(DataAccessException ex) {
-        log.error("Database error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A database error occurred");
+        log.error("Database Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database Error");
     }
 
     @ExceptionHandler(ServletException.class)
@@ -178,13 +196,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error("Validation error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation error");
+        log.error("Validation Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation Error");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
-        log.error("Unexpected error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        log.error("Unexpected Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error");
     }
 }

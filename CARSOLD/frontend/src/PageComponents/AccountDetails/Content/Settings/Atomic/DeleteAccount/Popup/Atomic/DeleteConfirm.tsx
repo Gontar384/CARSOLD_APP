@@ -7,7 +7,7 @@ import {useUserInfo} from "../../../../../../../../CustomHooks/useUserInfo.ts";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import {deleteUser} from "../../../../../../../../ApiCalls/Service/UserService.ts";
-import {BadRequestError, ForbiddenError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {ForbiddenError, InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -49,7 +49,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
         } catch (error: unknown) {
             if (error instanceof ForbiddenError) {
                 setInfo("Wrong password.")
-            } else if (error instanceof BadRequestError) {
+            } else if (error instanceof InternalServerError) {
                 console.error("Error deleting account, problem with Google Cloud: ", error);
             } else {
                 console.error("Unexpected error: ", error);

@@ -1,9 +1,13 @@
 package org.gontar.carsold.Service.UserService.UserContactInfoService;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.Exceptions.ErrorHandler;
+import org.gontar.carsold.Exceptions.CustomExceptions.ExternalCheckException;
+import org.gontar.carsold.Exceptions.CustomExceptions.InvalidValueException;
+import org.gontar.carsold.Model.Dto.CitySuggestionsDto;
+import org.gontar.carsold.Model.Dto.ContactInfoDto;
 import org.gontar.carsold.Model.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -31,35 +35,23 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
     private final UserRepository repository;
     private final JwtService jwtService;
-    private final ErrorHandler errorHandler;
 
-    public UserContactInfoServiceImpl(UserRepository repository, JwtService jwtService, ErrorHandler errorHandler) {
+    public UserContactInfoServiceImpl(UserRepository repository, JwtService jwtService) {
         this.repository = repository;
         this.jwtService = jwtService;
-        this.errorHandler = errorHandler;
     }
 
-    //updates contact name, checks if name is proper name
     @Override
-    public boolean changeName(String name, HttpServletRequest request) {
-        try {
-            User user = jwtService.extractUserFromRequest(request);
-            if (user == null) return false;
-
-            if (Objects.equals(name, "") || isPolishName(name) || isValidName(name)) {
-                user.setName(name);
-                repository.save(user);
-
-                return true;
-            }
-
-            return false;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error changing name: " + e.getMessage());
+    public void updateName(String name, HttpServletRequest request) {
+        User user = jwtService.extractUserFromRequest(request);
+        if (name == null || name.isBlank() || isPolishName(name) || isValidName(name)) {
+            user.setName(name);
+            repository.save(user);
+        } else {
+            throw new InvalidValueException("Invalid name");
         }
     }
 
-    //checks if name contains polish name
     private boolean isPolishName(String name) {
         List<String> polishSpecificNames = Arrays.asList(
                 //male
@@ -78,16 +70,13 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 "Tereska", "Barbara", "Weronika", "Krystyna", "Malwina", "Elżbieta", "Wiesława", "Dagmara",
                 "Joanna", "Zuzanna", "Honorata", "Beata", "Marta", "Liliana", "Monika", "Małgorzata", "Anita"
         );
-
         return polishSpecificNames.contains(name);
     }
 
-    //checks if name is proper by sending to api
     private boolean isValidName(String name) {
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
 
-            //creates payload
             JSONObject document = new JSONObject();
             document.put("content", name);
             document.put("type", "PLAIN_TEXT");
@@ -95,85 +84,62 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
             JSONObject requestPayload = new JSONObject();
             requestPayload.put("document", document);
 
-            //crates headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            //sets up and sends request
             HttpEntity<String> requestEntity = new HttpEntity<>(requestPayload.toString(), headers);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
-            //parses response
             JSONObject responseJson = new JSONObject(Objects.requireNonNull(responseEntity.getBody()));
             for (Object entityObj : responseJson.getJSONArray("entities")) {
                 JSONObject entity = (JSONObject) entityObj;
                 String entityType = entity.getString("type");
                 if ("PERSON".equals(entityType)) return true;
             }
-
             return false;
         } catch (Exception e) {
-            return errorHandler.logBoolean("Error checking name validity: " + e.getMessage());
+            throw new ExternalCheckException("Error checking name by Natural Language API: " + e.getMessage());
         }
     }
 
-    //updates contact phone, checks if number is proper
     @Override
-    public boolean changePhone(String phone, HttpServletRequest request) {
+    public void updatePhone(String phone, HttpServletRequest request) {
+        User user = jwtService.extractUserFromRequest(request);
         try {
-            User user = jwtService.extractUserFromRequest(request);
-            if (user == null) return false;
-
-            if (Objects.equals(phone, "")) {
+            if (phone == null || phone.isBlank()) {
                 user.setPhone(phone);
                 repository.save(user);
+            } else {
+                if (!phone.startsWith("+")) phone = "+48" + phone;
 
-                return true;
-            }
+                PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, "");
 
-            if (!phone.startsWith("+")) phone = "+48" + phone;
+                if (!phoneNumberUtil.isValidNumber(phoneNumber))
+                    throw new InvalidValueException("Invalid phone number");
 
-            PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, "");
+                String formattedPhoneNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
 
-            //checks if valid
-            if (!phoneNumberUtil.isValidNumber(phoneNumber)) return false;
-
-            //formats phone
-            String formattedPhoneNumber = phoneNumberUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
-
-            user.setPhone(formattedPhoneNumber);
-            repository.save(user);
-
-            return true;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error changing phone number: " + e.getMessage());
-        }
-    }
-
-    //updates contact city
-    @Override
-    public boolean changeCity(String city, HttpServletRequest request) {
-        try {
-            User user = jwtService.extractUserFromRequest(request);
-
-            if (user == null) return false;
-
-            if (Objects.equals(city, "") || isCityValid(city)) {
-                user.setCity(city);
+                user.setPhone(formattedPhoneNumber);
                 repository.save(user);
-
-                return true;
             }
-
-            return false;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error changing city: " + e.getMessage());
+        } catch (NumberParseException e) {
+            throw new IllegalStateException("Problem with parsing phone number: " + e.getMessage());
         }
     }
 
-    //checks if city is valid by comparing it against suggestions
+    @Override
+    public void updateCity(String city, HttpServletRequest request) {
+        User user = jwtService.extractUserFromRequest(request);
+        if (city == null || city.isBlank() || isCityValid(city)) {
+            user.setCity(city);
+            repository.save(user);
+        } else {
+            throw new InvalidValueException("Invalid city");
+        }
+    }
+
     private boolean isCityValid(String city) {
         JSONArray predictions = fetchCitySuggestionsFromApi(city);
 
@@ -185,25 +151,9 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                 return true;
             }
         }
-
         return false;
     }
 
-    //fetches city suggestions from Places API
-    @Override
-    public List<String> fetchCitySuggestions(String value) {
-        JSONArray predictions = fetchCitySuggestionsFromApi(value);
-
-        List<String> cityNames = new ArrayList<>();
-        for (int i = 0; i < predictions.length(); i++) {
-            JSONObject prediction = predictions.getJSONObject(i);
-            cityNames.add(prediction.getString("description"));
-        }
-
-        return cityNames;
-    }
-
-    //helper method to fetch city suggestions from Places API
     private JSONArray fetchCitySuggestionsFromApi(String input) {
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -212,7 +162,7 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
                     .queryParam("key", placesApiKey)
                     .queryParam("types", "(cities)")
                     .queryParam("location", "52.13,19.39")
-                    .queryParam("radius", "500000")
+                    .queryParam("radius", "1000000")
                     .queryParam("strictbounds", "false")
                     .build()
                     .toString();
@@ -223,60 +173,43 @@ public class UserContactInfoServiceImpl implements UserContactInfoService {
 
             return jsonResponse.getJSONArray("predictions");
         } catch (Exception e) {
-            errorHandler.logVoid("Error fetching city suggestions: " + e.getMessage());
-            return new JSONArray();
+            throw new ExternalCheckException("Error fetching city suggestions with Places API: " + e.getMessage());
         }
     }
 
-    //updates contactPublic
     @Override
-    public boolean changeContactInfoPublic(HttpServletRequest request, boolean isPublic) {
-        try {
-            User user = jwtService.extractUserFromRequest(request);
-            if (user == null) return false;
+    public CitySuggestionsDto fetchCitySuggestions(String value) {
+        JSONArray predictions = fetchCitySuggestionsFromApi(value);
 
+        List<String> cityNames = new ArrayList<>();
+        for (int i = 0; i < predictions.length(); i++) {
+            JSONObject prediction = predictions.getJSONObject(i);
+            cityNames.add(prediction.getString("description"));
+        }
+
+        return new CitySuggestionsDto(cityNames);
+    }
+
+    @Override
+    public boolean updateAndFetchContactPublic(Boolean isPublic, HttpServletRequest request) {
+        User user = jwtService.extractUserFromRequest(request);
+        if (isPublic != null) {
             user.setContactPublic(isPublic);
             repository.save(user);
-
-            return user.getContactPublic();
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error changing contact info: " + e.getMessage());
         }
+
+        return user.getContactPublic();
     }
 
-    //returns contactPublic
     @Override
-    public boolean fetchContactInfoPublic(HttpServletRequest request) {
-        try {
-            User user = jwtService.extractUserFromRequest(request);
+    public ContactInfoDto fetchContactInfo(HttpServletRequest request) {
+        User user = jwtService.extractUserFromRequest(request);
+        ContactInfoDto contactInfoDto = new ContactInfoDto();
 
-            if (user != null && user.getContactPublic() != null) return user.getContactPublic();
+        contactInfoDto.setName(user.getName());
+        contactInfoDto.setPhone(user.getPhone());
+        contactInfoDto.setCity(user.getCity());
 
-            return false;
-        } catch (Exception e) {
-            return errorHandler.logBoolean("Error fetching contact info: " + e.getMessage());
-        }
-    }
-
-    //returns contact info using map
-    @Override
-    public Map<String, String> fetchInfo(HttpServletRequest request) {
-        try {
-            User user = jwtService.extractUserFromRequest(request);
-
-            if (user != null) {
-                HashMap<String, String> info = new HashMap<>();
-                info.put("name", user.getName());
-                info.put("phone", user.getPhone());
-                info.put("city", user.getCity());
-
-                return info;
-            }
-
-            return Collections.emptyMap();
-        } catch (Exception e) {
-            errorHandler.logVoid("Error fetching info: " + e.getMessage());
-            return Collections.emptyMap();
-        }
+        return contactInfoDto;
     }
 }

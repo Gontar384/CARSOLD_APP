@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import InputField from "./Atomic/InputField/InputField.tsx";
-import {api} from "../../../../../../Config/AxiosConfig/AxiosConfig.ts";
 import SwitchButton from "./Atomic/SwitchButton.tsx";
+import {fetchContactInfo} from "../../../../../../ApiCalls/Service/UserService.ts";
 
 const ContactInfo: React.FC = () => {
 
@@ -13,27 +13,17 @@ const ContactInfo: React.FC = () => {
 
     useEffect(() => {
         const fetchName = async () => {
-            setIsLoading(true)
 
+            setIsLoading(true)
             try {
-                const response = await api.get("api/fetch-contact-info");
-                if (response.data.name) {
-                    setName(response.data.name);
-                } else {
-                    setName("");
-                }
-                if (response.data.phone) {
-                    setPhone(response.data.phone);
-                } else {
-                    setPhone("");
-                }
-                if (response.data.city) {
-                    setCity(response.data.city);
-                } else {
-                    setCity("");
+                const info = await fetchContactInfo();
+                if (info.data) {
+                    setName(info.data.name)
+                    setPhone(info.data.phone);
+                    setCity(info.data.city);
                 }
             } catch (error) {
-                console.error("Error fetching info: ", error);
+                console.error("Error fetching contact info: ", error);
             } finally {
                 setIsLoading(false);
             }

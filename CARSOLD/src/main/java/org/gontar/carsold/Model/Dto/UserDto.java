@@ -1,4 +1,4 @@
-package org.gontar.carsold.Model.User;
+package org.gontar.carsold.Model.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

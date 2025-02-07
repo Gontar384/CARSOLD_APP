@@ -1,13 +1,13 @@
 package org.gontar.carsold.Controller.UserController.UserContactInfoController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.gontar.carsold.Model.Dto.CitySuggestionsDto;
+import org.gontar.carsold.Model.Dto.ContactInfoDto;
+import org.gontar.carsold.Model.Dto.SingleBooleanDto;
+import org.gontar.carsold.Model.Dto.SingleStringDto;
 import org.gontar.carsold.Service.UserService.UserContactInfoService.UserContactInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -19,56 +19,44 @@ public class UserContactInfoController {
         this.service = service;
     }
 
-    //updates contact name
-    @PutMapping("/contact-set-name")
-    public ResponseEntity<Boolean> updateName(@RequestBody Map<String, String> payload, HttpServletRequest request) {
-        String name = payload.get("name");
-        return ResponseEntity.ok(service.changeName(name, request));
+    @PutMapping("/updateName")
+    public ResponseEntity<?> updateName(@RequestBody SingleStringDto singleStringDto, HttpServletRequest request) {
+        String name = singleStringDto.getValue();
+        service.updateName(name, request);
+        return ResponseEntity.ok().build();
     }
 
-    //updates contact phone
-    @PutMapping("/contact-set-phone")
-    public ResponseEntity<Boolean> updatePhone(@RequestBody Map<String, String> payload, HttpServletRequest request) {
-        String phone = payload.get("phone");
-        return ResponseEntity.ok(service.changePhone(phone, request));
+    @PutMapping("/updatePhone")
+    public ResponseEntity<?> updatePhone(@RequestBody SingleStringDto singleStringDto, HttpServletRequest request) {
+        String phone = singleStringDto.getValue();
+        service.updatePhone(phone, request);
+        return ResponseEntity.ok().build();
     }
 
-    //updates contact city
-    @PutMapping("/contact-set-city")
-    public ResponseEntity<Boolean> updateCity(@RequestBody Map<String, String> payload, HttpServletRequest request) {
-        String city = payload.get("city");
-        return ResponseEntity.ok(service.changeCity(city, request));
+    @PutMapping("/updateCity")
+    public ResponseEntity<?> updateCity(@RequestBody SingleStringDto singleStringDto, HttpServletRequest request) {
+        String city = singleStringDto.getValue();
+        service.updateCity(city, request);
+        return ResponseEntity.ok().build();
     }
 
-    //returns city suggestions
-    @GetMapping("/get-city-suggestions")
-    public ResponseEntity<List<String>> getCitySuggestions(@RequestParam String value) {
-        return ResponseEntity.ok(service.fetchCitySuggestions(value));
-    }
-
-    //updates contactPublic, then returns its value
-    @PutMapping("/change-contactInfoPublic")
-    public ResponseEntity<Map<String, Boolean>> updateContactInfoPublic(HttpServletRequest request, @RequestBody Map<String, Boolean> payload) {
-        Boolean isPublic = payload.get("isPublic");
-        boolean changedValue = service.changeContactInfoPublic(request, isPublic);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("changedValue", changedValue);
+    @GetMapping("/fetchCitySuggestions")
+    public ResponseEntity<CitySuggestionsDto> fetchCitySuggestions(@RequestParam("value") String value) {
+        CitySuggestionsDto response = service.fetchCitySuggestions(value);
         return ResponseEntity.ok(response);
     }
 
-    //returns contactPublic
-    @GetMapping("/fetch-contactInfoPublic")
-    public ResponseEntity<Map<String, Boolean>> getContactInfoPublic(HttpServletRequest request) {
-        Map<String, Boolean> response = new HashMap<>();
-        boolean isPublic = service.fetchContactInfoPublic(request);
-        response.put("isPublic", isPublic);
+    @PutMapping("/updateAndFetchContactPublic")
+    public ResponseEntity<SingleBooleanDto> updateAndFetchContactPublic(@RequestBody SingleBooleanDto singleBooleanDto, HttpServletRequest request) {
+        Boolean isPublic = singleBooleanDto.getValue();
+        boolean changedValue = service.updateAndFetchContactPublic(isPublic, request);
+        SingleBooleanDto response = new SingleBooleanDto(changedValue);
         return ResponseEntity.ok(response);
     }
 
-    //returns contact info
-    @GetMapping("/fetch-contact-info")
-    public ResponseEntity<Map<String, String>> getContactInfo(HttpServletRequest request) {
-        Map<String, String> response = service.fetchInfo(request);
+    @GetMapping("/fetchContactInfo")
+    public ResponseEntity<ContactInfoDto> fetchContactInfo(HttpServletRequest request) {
+        ContactInfoDto response = service.fetchContactInfo(request);
         return ResponseEntity.ok(response);
     }
 }

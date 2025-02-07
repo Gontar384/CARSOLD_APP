@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDto {
-    private Boolean active;
-    private Boolean oauth2;
+public class ContactInfoDto {
+    private String name;
+    private String phone;
+    private String city;
 }

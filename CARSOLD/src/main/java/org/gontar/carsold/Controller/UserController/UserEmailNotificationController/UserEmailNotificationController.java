@@ -18,7 +18,7 @@ public class UserEmailNotificationController {
     }
 
     @GetMapping("/sendPasswordRecoveryEmail")
-    public ResponseEntity<String> sendPasswordRecoveryEmail(@RequestParam("email") String email) {
+    public ResponseEntity<?> sendPasswordRecoveryEmail(@RequestParam("email") String email) {
         service.sendPasswordRecoveryEmail(email);
         return ResponseEntity.ok().build();
     }

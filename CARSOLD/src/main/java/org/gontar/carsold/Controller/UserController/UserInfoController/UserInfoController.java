@@ -1,18 +1,15 @@
-package org.gontar.carsold.Controller.UserController.UserGetInfoController;
+package org.gontar.carsold.Controller.UserController.UserInfoController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.gontar.carsold.Model.Dto.SingleBooleanDto;
 import org.gontar.carsold.Model.Dto.UserInfoDto;
-import org.gontar.carsold.Service.UserService.UserGetInfoService.UserInfoService;
+import org.gontar.carsold.Service.UserService.UserInfoService.UserInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @Validated
