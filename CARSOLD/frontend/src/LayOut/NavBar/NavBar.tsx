@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import Logo from "./Atomic/Logo.tsx";
 import SearchBar from "./Atomic/SearchBar.tsx";
 import AddButton from "./Atomic/AddButton.tsx";
-import UserInfo from "./Atomic/UserDetails/UserInfo.tsx";
+import UserInfo from "./Atomic/UserInfo/UserInfo.tsx";
 import OptionsButton from "./Atomic/OptionsButton.tsx";
 import LowerBar from "./Atomic/LowerBar/LowerBar.tsx";
 import LoadingNavBarLine from "../../SharedComponents/Additional/Loading/LoadingNavBarLine.tsx";
@@ -27,8 +27,9 @@ const NavBar: React.FC = () => {
         <>
             <div className="flex flex-row items-center justify-evenly fixed left-0 top-0 right-0 gap-2
             w-full h-12 m:h-14 shadow-bottom bg-lime z-50">
-                {(mobileWidth || midWidth) && <OptionsButton excludedButtonRef={excludedButtonRef}
-                                                             iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
+                {(mobileWidth || midWidth) &&
+                    <OptionsButton excludedButtonRef={excludedButtonRef}
+                                   iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
                 <Logo/>
                 <SearchBar/>
                 {bigWidth &&

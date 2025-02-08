@@ -41,6 +41,14 @@ export class NotFoundError extends ApiException {
     }
 }
 
+//405
+export class MethodNotAllowedError extends ApiException {
+    constructor(message: string, response: AxiosResponse | undefined) {
+        super(message, response);
+        this.name = "MethodNotAllowedError";
+    }
+}
+
 //415
 export class UnsupportedMediaTypeError extends ApiException {
     constructor(message: string, response: AxiosResponse | undefined) {

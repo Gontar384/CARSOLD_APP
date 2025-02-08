@@ -81,7 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     user.getUsername(),
                     null,
-                    Collections.singletonList(new SimpleGrantedAuthority("USER")));
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

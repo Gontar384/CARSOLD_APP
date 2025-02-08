@@ -61,6 +61,22 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     }, [debouncedOldPassword]);  //for auth user, compares provided password with oldPassword
 
     useEffect(() => {
+        //for auth user
+        if (loggedIn) {
+            if (oldPassword === "" || oldPassword !== heldValue || oldPasswordIcon !== faCircleCheck) {
+                setPasswordIcon(null);
+                setPasswordInfo("");
+                setPasswordRepIcon(null);
+                return;
+            }
+            if (password === oldPassword) {
+                setPasswordIcon(faCircleExclamation);
+                setPasswordInfo("New password cannot be the same!");
+                setPasswordRepIcon(null);
+                return;
+            }
+        }
+
         if (password === "") {
             setPasswordIcon(null);
             setPasswordInfo("");
@@ -85,21 +101,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             setPasswordRepIcon(null);
             return;
         }
-        //for auth user
-        if (loggedIn) {
-            if (oldPassword === "" || oldPasswordIcon !== faCircleCheck || oldPassword !== heldValue) {
-                setPasswordIcon(null);
-                setPasswordInfo("");
-                setPasswordRepIcon(null);
-                return;
-            }
-            if (password === oldPassword) {
-                setPasswordIcon(faCircleExclamation);
-                setPasswordInfo("New password cannot be the same!");
-                setPasswordRepIcon(null);
-                return;
-            }
-        }
 
         setPasswordIcon(faCircleCheck);
         setPasswordInfo("");
@@ -112,7 +113,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             setPasswordRepIcon(faCircleCheck);
         }
 
-    }, [loggedIn, oldPassword, oldPasswordIcon, heldValue, password, passwordRep]);
+    }, [heldValue, loggedIn, oldPassword, oldPasswordIcon, password, passwordRep]);
 
     const handleRecoveryPasswordChange = async () => {
         if (isDisabled || !(password.length > 7) || !(passwordRep.length > 7)) return;

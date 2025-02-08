@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -93,7 +94,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
         log.error("Access Denied: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Access Denied");
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        log.error("Authorization Denied: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Authorization Denied");
     }
 
     //---Others---
@@ -108,6 +115,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleInvalidValueException(InvalidValueException ex) {
         log.error("Invalid Value: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Invalid Value");
+    }
+
+    @ExceptionHandler(InappropriateContentException.class)
+    public ResponseEntity<?> handleInappropriateContentException(InappropriateContentException ex) {
+        log.error("Inappropriate Content: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Inappropriate Content");
     }
 
     @ExceptionHandler(ExternalCheckException.class)

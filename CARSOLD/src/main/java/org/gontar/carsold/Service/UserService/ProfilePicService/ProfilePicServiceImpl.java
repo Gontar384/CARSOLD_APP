@@ -38,7 +38,7 @@ public class ProfilePicServiceImpl implements ProfilePicService {
         try {
             if (!isValidImage(file)) throw new MediaNotSupportedException("This is not an acceptable image");
             if (file.getSize() > 3 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
-            if (isImageSensitive(file)) throw new InvalidValueException("Image contains sensitive content");
+            if (isImageSensitive(file)) throw new InappropriateContentException("Image contains sensitive content");
 
             User user = userDetailsService.loadUser();
 

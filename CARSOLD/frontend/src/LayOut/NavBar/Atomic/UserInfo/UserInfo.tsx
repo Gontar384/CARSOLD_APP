@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import UserInfoLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginButton from "./Atomic/LoginButton.tsx";
-import Dropdown from "./Atomic/Dropdown/Dropdown.tsx";
+import Dropdown from "./Atomic/DropDown/Dropdown.tsx";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";

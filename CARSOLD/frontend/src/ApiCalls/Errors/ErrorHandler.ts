@@ -3,7 +3,7 @@ import {
     ApiException,
     BadRequestError,
     ForbiddenError,
-    InternalServerError,
+    InternalServerError, MethodNotAllowedError,
     NotFoundError,
     UnauthorizedError,
     UnprocessableEntityError,
@@ -28,6 +28,9 @@ export const handleError = (error: unknown): void => {
             case 404:
                 console.error("Not Found:", message, error);
                 throw new NotFoundError(message, error.response);
+            case 405:
+                console.error("Method Not Allowed: ", message, error);
+                throw new MethodNotAllowedError(message, error.response);
             case 415:
                 console.error("Unsupported Media Type:", message, error);
                 throw new UnsupportedMediaTypeError(message, error.response);

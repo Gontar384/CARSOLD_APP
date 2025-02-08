@@ -43,7 +43,10 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     @Override
     public void updateName(String name) {
         User user = userDetailsService.loadUser();
-        if (name == null || name.isBlank() || isPolishName(name) || isValidName(name)) {
+        if (name == null || name.isBlank()) {
+            user.setName(null);
+            repository.save(user);
+        } else if (isPolishName(name) || isValidName(name)) {
             user.setName(name);
             repository.save(user);
         } else {
@@ -107,7 +110,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         User user = userDetailsService.loadUser();
         try {
             if (phone == null || phone.isBlank()) {
-                user.setPhone(phone);
+                user.setPhone(null);
                 repository.save(user);
             } else {
                 if (!phone.startsWith("+")) phone = "+48" + phone;
@@ -131,7 +134,10 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     @Override
     public void updateCity(String city) {
         User user = userDetailsService.loadUser();
-        if (city == null || city.isBlank() || isCityValid(city)) {
+        if (city == null || city.isBlank()) {
+            user.setCity(null);
+            repository.save(user);
+        } else if (isCityValid(city)) {
             user.setCity(city);
             repository.save(user);
         } else {

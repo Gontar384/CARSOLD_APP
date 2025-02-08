@@ -1,4 +1,4 @@
-import {checkGoogleAuth, checkInfo, checkLogin, checkOldPassword} from "../ApiCalls/Services/UserService.ts";
+import {checkAdmin, checkGoogleAuth, checkInfo, checkLogin, checkOldPassword} from "../ApiCalls/Services/UserService.ts";
 
 export const useUserInfo = () => {
 
@@ -46,12 +46,23 @@ export const useUserInfo = () => {
         }
     };
 
+    const handleCheckAdmin = async () => {
+        try {
+            const response = await checkAdmin();
+            if (response.data) {
+                return response.data.value;
+            }
+        } catch (error) {
+            console.error("Unexpected error during password check: ", error);
+        }
+    }
+
     const handleCheckPassword = (password: string): boolean => {
         if (password.trim().length < 8 || password.trim().length > 50) {
             return false;
         }
         return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
-    }
+    };
 
-    return {handleCheckLogin, handleCheckInfo, handleCheckGoogleAuth, handleCheckOldPassword, handleCheckPassword}
+    return {handleCheckLogin, handleCheckInfo, handleCheckGoogleAuth, handleCheckOldPassword, handleCheckAdmin, handleCheckPassword}
 }

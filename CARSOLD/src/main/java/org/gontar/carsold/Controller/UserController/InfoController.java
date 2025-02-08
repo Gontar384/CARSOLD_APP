@@ -46,4 +46,11 @@ public class InfoController {
         SingleBooleanDto response = new SingleBooleanDto(passwordMatches);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/checkAdmin")
+    public ResponseEntity<SingleBooleanDto> checkAdmin() {
+        boolean isAdmin = service.checkAdmin();
+        SingleBooleanDto response = new SingleBooleanDto(isAdmin);
+        return ResponseEntity.ok(response);
+    }
 }

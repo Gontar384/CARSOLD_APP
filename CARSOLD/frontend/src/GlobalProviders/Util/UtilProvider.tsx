@@ -20,7 +20,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
             const newMode = !prev;
 
             if (newMode) {
-                document.body.style.transition = 'background-color 0.7s ease-in-out'; //enables transition
+                document.body.style.transition = 'background-color 0.7s ease-in-out';
                 document.body.style.backgroundColor = '#191a18';
                 localStorage.setItem('theme', 'dark');
             } else {

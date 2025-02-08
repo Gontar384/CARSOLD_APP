@@ -7,4 +7,5 @@ public interface InfoService {
     UserInfoDto checkInfo(String login);
     boolean checkGoogleAuth();
     boolean checkOldPassword(String password);
+    boolean checkAdmin();
 }

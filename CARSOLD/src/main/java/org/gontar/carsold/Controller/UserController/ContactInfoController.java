@@ -6,6 +6,7 @@ import org.gontar.carsold.Domain.Model.SingleBooleanDto;
 import org.gontar.carsold.Domain.Model.SingleStringDto;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -30,14 +30,14 @@ public class ManagementController {
     @PostMapping("/registerUser")
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
         User user = mapper.mapToEntity(userDto);
-        User updatedUser = service.registerUser(user);
+        User createdUser = service.registerUser(user);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(updatedUser.getId())
+                .buildAndExpand(createdUser.getId())
                 .toUri();
-        UserDto updatedUserDto = mapper.mapToDto(updatedUser);
-        return ResponseEntity.created(location).body(updatedUserDto);
+        UserDto createdUserDto = mapper.mapToDto(createdUser);
+        return ResponseEntity.created(location).body(createdUserDto);
     }
 
     @GetMapping("/fetchUsername")

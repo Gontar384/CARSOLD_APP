@@ -1,11 +1,11 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import Details from "../UserDetails/Atomic/Details.tsx";
+import Details from "../UserInfo/Atomic/Details.tsx";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
-import LoginButton from "../UserDetails/Atomic/LoginButton.tsx";
+import LoginButton from "../UserInfo/Atomic/LoginButton.tsx";
 import BarButton from "./Atomic/BarButton.tsx";
 import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverWrench, faLightbulb, faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-icons";

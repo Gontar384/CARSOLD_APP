@@ -57,4 +57,8 @@ public class User {
 
     @Column(nullable = false)
     private Boolean contactPublic = false;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 }

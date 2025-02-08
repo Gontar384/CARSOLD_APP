@@ -51,4 +51,10 @@ public class InfoServiceImpl implements InfoService {
         User user = userDetailsService.loadUser();
         return user != null && encoder.matches(password, user.getPassword());
     }
+
+    @Override
+    public boolean checkAdmin() {
+        User user = userDetailsService.loadUser();
+        return user != null && user.getRole().name().equals("ADMIN");
+    }
 }

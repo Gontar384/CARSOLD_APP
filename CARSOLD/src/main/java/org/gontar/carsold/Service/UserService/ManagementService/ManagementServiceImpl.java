@@ -66,7 +66,7 @@ public class ManagementServiceImpl implements ManagementService {
                 throw new InvalidValueException("Username contains wrong characters: " + user.getUsername());
             }
             boolean result = checkIfUsernameSafe(user.getUsername());
-            if (!result) throw new InvalidValueException("Username is inappropriate");
+            if (!result) throw new InappropriateContentException("Username is inappropriate");
 
             User processedUser = findOrCreateUser(user);
 
@@ -196,7 +196,7 @@ public class ManagementServiceImpl implements ManagementService {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     user.getUsername(),
                     null,
-                    Collections.singletonList(new SimpleGrantedAuthority("USER")));
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

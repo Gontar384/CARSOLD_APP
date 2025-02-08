@@ -145,6 +145,15 @@ export const checkOldPassword = async (password: string | null): Promise<AxiosRe
     }
 }
 
+export const checkAdmin = async (): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/checkAdmin');
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+}
+
 //---ProfilePic---
 
 export const fetchProfilePic = async (): Promise<AxiosResponse> => {

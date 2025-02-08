@@ -16,11 +16,8 @@ export const useUserUtil = () => {
         if (!isAuthenticated) return;
         try {
             const response = await fetchUsername();
-            if (response.data.value) {
-                setUsername(response.data.value);
-            } else {
-                setUsername("");
-            }
+            if (response.data.value) setUsername(response.data.value);
+            else setUsername("");
         } catch (error) {
             setUsername("");
             console.error("Error fetching username: ", error);
@@ -33,11 +30,8 @@ export const useUserUtil = () => {
         if (!isAuthenticated) return;
         try {
             const response = await fetchProfilePic();
-            if (response.data.value) {
-                setProfilePic(response.data.value);
-            } else {
-                setProfilePic("");
-            }
+            if (response.data.value) setProfilePic(response.data.value);
+            else setProfilePic("");
         } catch (error) {
             setProfilePic("");
             console.error("Error fetching profilePic: ", error);

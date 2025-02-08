@@ -14,16 +14,12 @@ const Settings: React.FC = () => {
     const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
 
     useEffect(() => {
-        let isMounted = true;
         const checkGoogleAuthentication = async () => {
             const isGoogleUser = await handleCheckGoogleAuth();
-            if (isMounted) setGoogleAuth(isGoogleUser);
+            setGoogleAuth(isGoogleUser);
         }
         checkGoogleAuthentication();
 
-        return () => {
-            isMounted = false;
-        }
     }, []);
 
     if (googleAuth === null) return null;

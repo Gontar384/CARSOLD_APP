@@ -12,16 +12,17 @@ const ContactInfo: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const fetchName = async () => {
+        const handleFetchContactInfo = async () => {
 
             setIsLoading(true)
             try {
                 const info = await fetchContactInfo();
-                if (info.data) {
-                    setName(info.data.name)
-                    setPhone(info.data.phone);
-                    setCity(info.data.city);
-                }
+                if (info.data.name) setName(info.data.name);    //to prevent setting null to inputs
+                else setName("");
+                if (info.data.phone) setPhone(info.data.phone);
+                else setPhone("");
+                if (info.data.city) setCity(info.data.city);
+                else setCity("");
             } catch (error) {
                 console.error("Error fetching contact info: ", error);
             } finally {
@@ -29,7 +30,7 @@ const ContactInfo: React.FC = () => {
             }
         }
 
-        fetchName();
+        handleFetchContactInfo();
 
     }, [fetch]);
 
