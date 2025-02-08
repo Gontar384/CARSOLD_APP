@@ -9,15 +9,13 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.Exceptions.CustomExceptions.*;
-import org.gontar.carsold.Model.User.User;
+import org.gontar.carsold.Exception.CustomException.*;
+import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
 import java.util.*;
-import java.util.function.Function;
 
 @Service
 public class JwtService {
@@ -79,18 +77,13 @@ public class JwtService {
         } catch (JwtException e) {
             throw new JwtServiceException("Error during claims extraction: " + e.getMessage());
         }
-    }
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
+    }  //checks validity (e.g. expiration time)
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractAllClaims(token).getSubject();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails userDetails) { //checks if user with this username exists
         Claims claims = extractAllClaims(token);
         return claims.getSubject().equals(userDetails.getUsername());
     }
@@ -109,19 +102,6 @@ public class JwtService {
         if (jwt == null || jwt.isBlank()) throw new JwtServiceException("Token is missing in cookie");
 
         return Optional.of(jwt);
-    }
-
-    public User extractUserFromRequest(HttpServletRequest request) {
-        Optional<String> jwtOptional = extractTokenFromCookie(request);
-        if (jwtOptional.isEmpty()) throw new JwtServiceException("Token is missing in request");
-
-        String jwt = jwtOptional.get();
-        String username = Objects.requireNonNull(extractUsername(jwt));
-
-        User user = repository.findByUsername(username);
-        if (user == null) throw new JwtServiceException("User not found for username: " + username);
-
-        return user;
     }
 
     public User extractUserFromToken(String token) {

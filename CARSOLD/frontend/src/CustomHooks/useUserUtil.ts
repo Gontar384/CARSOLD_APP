@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../GlobalProviders/Items/useItems.ts";
-import {fetchProfilePic, fetchUsername} from "../ApiCalls/Service/UserService.ts";
+import {fetchProfilePic, fetchUsername} from "../ApiCalls/Services/UserService.ts";
 
 export const useUserUtil = () => {
 

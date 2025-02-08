@@ -2,7 +2,6 @@ import {Navigate, Outlet} from "react-router-dom";
 import React from "react";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
-//redirects
 const PublicRoutes: React.FC = () => {
     const { isAuthenticated, loadingAuth } = useAuth();
 

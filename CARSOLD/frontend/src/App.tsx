@@ -14,7 +14,7 @@ import PasswordRecChange from "./PageComponents/PasswordRecoveryChange/PasswordR
 import CookieBanner from "./SharedComponents/Additional/Banners/CookieBanner.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
-import TokenManager from "./Config/TokensConfig/TokenManager.ts";
+import TokensManager from "./Config/TokensConfig/TokensManager.ts";
 
 const App: React.FC = () => {
 
@@ -40,7 +40,7 @@ const App: React.FC = () => {
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
                         </Routes>
-                        <TokenManager/> {/*manages tokens*/}
+                        <TokensManager/> {/*manages tokens*/}
                         <CookieBanner/> {/*displays cookie banner*/}
                         <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
                     </BrowserRouter>

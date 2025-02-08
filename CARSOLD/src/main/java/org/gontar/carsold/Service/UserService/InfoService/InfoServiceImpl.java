@@ -1,0 +1,54 @@
+package org.gontar.carsold.Service.UserService.InfoService;
+
+import org.gontar.carsold.Domain.Model.UserInfoDto;
+import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Repository.UserRepository;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class InfoServiceImpl implements InfoService {
+
+    private final UserRepository repository;
+    private final MyUserDetailsService userDetailsService;
+    private final BCryptPasswordEncoder encoder;
+
+    public InfoServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder) {
+        this.repository = repository;
+        this.userDetailsService = userDetailsService;
+        this.encoder = encoder;
+    }
+
+    @Override
+    public boolean checkLogin(String login) {
+        return login != null && (login.contains("@") ? repository.existsByEmail(login) : repository.existsByUsername(login));
+    }
+
+    @Override
+    public UserInfoDto checkInfo(String login) {
+        UserInfoDto userInfoDto = new UserInfoDto();
+        if (login == null) {
+            userInfoDto.setActive(false);
+            userInfoDto.setOauth2(false);
+            return userInfoDto;
+        }
+        User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+        userInfoDto.setActive(user != null ? user.getActive() : false);
+        userInfoDto.setOauth2(user != null ? user.getOauth2() : false);
+
+        return userInfoDto;
+    }
+
+    @Override
+    public boolean checkGoogleAuth() {
+        User user = userDetailsService.loadUser();
+        return user != null && user.getOauth2();
+    }
+
+    @Override
+    public boolean checkOldPassword(String password) {
+        User user = userDetailsService.loadUser();
+        return user != null && encoder.matches(password, user.getPassword());
+    }
+}

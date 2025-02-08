@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
-import {activateAccount} from "../../ApiCalls/Service/UserService.ts";
+import {activateAccount} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const AccountActivation: React.FC = () => {

@@ -4,10 +4,10 @@ import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
-import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
-import {authenticate} from "../../../../../ApiCalls/Service/UserService.ts";
+import {authenticate} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
+import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 
 const LoginForm: React.FC = () => {
 
@@ -17,7 +17,6 @@ const LoginForm: React.FC = () => {
     const [loginInfo, setLoginInfo] = useState<string>("");
     const [inputType, setInputType] = useState<"text" | "password">("password");
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [wrongPassword, setWrongPassword] = useState<boolean>(false);
     const [isAccountDeleted, setIsAccountDeleted] = useState<boolean>(false);
     const {CreateDebouncedValue} = useUtil();
@@ -63,13 +62,10 @@ const LoginForm: React.FC = () => {
         if (!login || password.length < 8) return;
 
         setWrongPassword(false);
-        let authSuccess = false;
         setIsDisabled(true);
         try {
             await authenticate(login, password);
-            setIsLoggedIn(true);
-            setTimeout(async () => await handleCheckAuth(), 2000);
-            authSuccess = true;
+            await handleCheckAuth();
         } catch (error: unknown) {
             if (error instanceof AxiosError && error.response) {
                 if (error.response.status === 401) {
@@ -81,8 +77,7 @@ const LoginForm: React.FC = () => {
                     console.error("Unexpected error during authentication: ", error);
                 }
             }
-        }
-        if (!authSuccess) {
+        } finally {
             setTimeout(() => setIsDisabled(false), 1000);
         }
     };
@@ -101,7 +96,6 @@ const LoginForm: React.FC = () => {
             <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} hasEye={true} whichForm={"login"}/>
             <SubmitButton label={"Sign in"} onClick={handleAuthenticate} disabled={isDisabled}/>
-            {isLoggedIn && <AnimatedBanner text={"Logged in successfully!"} color={"bg-lowLime"} z={"z-50"}/>}
             {wrongPassword && <AnimatedBanner text={"Wrong password!"} onAnimationEnd={() => setWrongPassword(false)}
                                               delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import InputField from "./Atomic/InputField/InputField.tsx";
 import SwitchButton from "./Atomic/SwitchButton.tsx";
-import {fetchContactInfo} from "../../../../../../ApiCalls/Service/UserService.ts";
+import {fetchContactInfo} from "../../../../../../ApiCalls/Services/UserService.ts";
 
 const ContactInfo: React.FC = () => {
 

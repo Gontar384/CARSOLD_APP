@@ -6,7 +6,7 @@ import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
-import {registerUser} from "../../../../../ApiCalls/Service/UserService.ts";
+import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 
 const RegisterForm: React.FC = () => {

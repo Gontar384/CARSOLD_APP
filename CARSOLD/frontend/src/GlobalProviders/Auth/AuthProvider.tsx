@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {AuthContext} from './useAuth.ts';
-import {checkAuth, logout} from "../../ApiCalls/Service/UserService.ts";
 import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {checkAuth, logout} from "../../ApiCalls/Services/UserService.ts";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
 

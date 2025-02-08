@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
-import {changePassword, changePasswordRecovery} from "../../ApiCalls/Service/UserService.ts";
+import {changePassword, changePasswordRecovery} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError, ForbiddenError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 interface PasswordChangeFormProps {

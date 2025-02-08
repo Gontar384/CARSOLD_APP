@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 "/api/auth/getCsrfToken", "/api/auth/checkAuth", "/api/auth/keepSessionAlive",
                                 "/api/auth/activateAccount", "/api/auth/authenticate", "/api/auth/logout",
                                 "/api/registerUser","/api/sendPasswordRecoveryEmail","/api/changePasswordRecovery",
-                                "/api/checkLogin", "/api/checkInfo"
+                                "/api/checkLogin", "/api/checkInfo", "/ws/**"
                         ).permitAll().anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -65,7 +65,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of(frontendUrl));
-        corsConfiguration.setAllowedMethods(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

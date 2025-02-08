@@ -6,7 +6,7 @@ import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
 import {useUserInfo} from "../../../../../../../../CustomHooks/useUserInfo.ts";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
-import {deleteUser} from "../../../../../../../../ApiCalls/Service/UserService.ts";
+import {deleteUser} from "../../../../../../../../ApiCalls/Services/UserService.ts";
 import {ForbiddenError, InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ConfirmProps {

@@ -7,7 +7,7 @@ import LoadingPicAnimation from "../../../../SharedComponents/Additional/Loading
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
-import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Service/UserService.ts";
+import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Services/UserService.ts";
 import {InternalServerError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ImageProps {

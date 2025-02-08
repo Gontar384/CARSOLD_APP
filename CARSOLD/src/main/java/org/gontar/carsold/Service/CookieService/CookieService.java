@@ -1,8 +1,8 @@
 package org.gontar.carsold.Service.CookieService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.gontar.carsold.Exceptions.CustomExceptions.CookieServiceException;
-import org.gontar.carsold.Exceptions.CustomExceptions.JwtServiceException;
+import org.gontar.carsold.Exception.CustomException.CookieServiceException;
+import org.gontar.carsold.Exception.CustomException.JwtServiceException;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;

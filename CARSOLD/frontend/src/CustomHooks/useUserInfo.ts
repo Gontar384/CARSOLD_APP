@@ -1,4 +1,4 @@
-import {checkGoogleAuth, checkInfo, checkLogin, checkOldPassword} from "../ApiCalls/Service/UserService.ts";
+import {checkGoogleAuth, checkInfo, checkLogin, checkOldPassword} from "../ApiCalls/Services/UserService.ts";
 
 export const useUserInfo = () => {
 

@@ -5,11 +5,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import org.gontar.carsold.Exceptions.CustomExceptions.JwtServiceException;
+import org.gontar.carsold.Exception.CustomException.JwtServiceException;
+import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
-import org.gontar.carsold.Service.UserService.MyUserDetailsService.MyUserDetailsService;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,10 +27,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MyUserDetailsService myUserDetailsService;
+    private final CookieService cookieService;
 
-    public JwtFilter(JwtService jwtService, MyUserDetailsService myUserDetailsService) {
+    public JwtFilter(JwtService jwtService, MyUserDetailsService myUserDetailsService, CookieService cookieService) {
         this.jwtService = jwtService;
         this.myUserDetailsService = myUserDetailsService;
+        this.cookieService = cookieService;
     }
 
     @Override
@@ -51,17 +55,13 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (JwtServiceException | AuthenticationException e) {
-                clearJwtCookie(response);
                 SecurityContextHolder.clearContext();
+                ResponseCookie deleteCookie = cookieService.createCookie("", 0);
+                response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
                 throw new JwtServiceException("Problem in JWT filter: " + e.getMessage());
             }
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private void clearJwtCookie(HttpServletResponse response) {
-        response.addHeader(HttpHeaders.SET_COOKIE,
-                "JWT=; Max-Age=0; path=/; HttpOnly; SameSite=Lax; Secure=false");
     }
 }

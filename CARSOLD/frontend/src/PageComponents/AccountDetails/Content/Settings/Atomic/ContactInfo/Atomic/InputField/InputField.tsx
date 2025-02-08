@@ -3,7 +3,7 @@ import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
 import ContactInputLoader from "../../../../../../../../SharedComponents/Additional/Loading/ContactInputLoader.tsx";
 import SuggestionsBar from "./Atomic/SuggestionsBar.tsx";
 import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
-import {fetchCitySuggestions, updateCity, updateName, updatePhone} from "../../../../../../../../ApiCalls/Service/UserService.ts";
+import {fetchCitySuggestions, updateCity, updateName, updatePhone} from "../../../../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 

@@ -7,7 +7,7 @@ import SubmitButton from "../../SharedComponents/FormUtil/SubmitButton.tsx";
 import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
-import {sendPasswordRecoveryEmail} from "../../ApiCalls/Service/UserService.ts";
+import {sendPasswordRecoveryEmail} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const PasswordRecovery: React.FC = () => {
