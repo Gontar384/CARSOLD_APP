@@ -98,7 +98,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
             if (user == null) throw new UserNotFoundException("User not found for login: " + login);
-            if (!user.getActive()) throw new UserDataException("User " + login + " is not active" );
+            if (!user.getActive()) throw new UserDataException("User " + login + " is not active");
             if (user.getOauth2()) throw new UserDataException("User " + login + " is an oauth2 user");
             if (!encoder.matches(password, user.getPassword())) throw new BadCredentialsException("Bad credentials");
 
@@ -112,30 +112,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        try {
-            if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
-                try {
-                    OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
+        if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+            try {
+                OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
+                        oauth2Token.getAuthorizedClientRegistrationId(),
+                        oauth2Token.getName());
+                if (client != null) {
+                    String tokenValue = client.getAccessToken().getTokenValue();
+                    revokeGoogleToken(tokenValue);
+                    authorizedClientService.removeAuthorizedClient(
                             oauth2Token.getAuthorizedClientRegistrationId(),
                             oauth2Token.getName());
-                    if (client != null) {
-                        String tokenValue = client.getAccessToken().getTokenValue();
-                        revokeGoogleToken(tokenValue);
-                        authorizedClientService.removeAuthorizedClient(
-                                oauth2Token.getAuthorizedClientRegistrationId(),
-                                oauth2Token.getName());
-                    }
-                } catch (OAuth2AuthenticationException e) {
-                    throw new OAuth2AuthenticationException("OAuth2 logout failed: " + e.getMessage());
                 }
+            } catch (OAuth2AuthenticationException e) {
+                throw new LogoutFailedException("OAuth2 logout failed: " + e.getMessage());
             }
+        }
+        try {
             HttpSession session = request.getSession(false);
             if (session != null) session.invalidate();
 
             SecurityContextHolder.clearContext();
             ResponseCookie deleteCookie = cookieService.createCookie("", 0);
             response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             throw new LogoutFailedException("Logout process failed: " + e.getMessage());
         }
     }
@@ -150,7 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new OAuth2AuthenticationException("OAuth2 token revocation failed: " + response.getStatusCode());
             }
         } catch (RestClientException e) {
-            throw new OAuth2AuthenticationException("OAuth2 token revocation failed: " + e.getMessage());
+            throw new OAuth2AuthenticationException("Rest Client Exception: " + e.getMessage());
         }
     }
 }

@@ -2,14 +2,13 @@ package org.gontar.carsold.Controller.UserController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.gontar.carsold.Domain.Model.AuthDto;
+import org.gontar.carsold.Domain.Model.SingleStringDto;
 import org.gontar.carsold.Service.UserService.AuthenticationService.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -43,15 +42,17 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/activateAccount")
-    public ResponseEntity<?> activateAccount(@RequestParam("token") String token, HttpServletResponse response) {
+    @PostMapping("/auth/activateAccount")
+    public ResponseEntity<?> activateAccount(@RequestBody SingleStringDto singleStringDto, HttpServletResponse response) {
+        String token = singleStringDto.getValue();
         service.activateAccount(token, response);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/authenticate")
-    public ResponseEntity<?> authenticate(@RequestParam("login") String login, @RequestParam("password")
-    String password, HttpServletResponse response) {
+    @PostMapping("/auth/authenticate")
+    public ResponseEntity<?> authenticate(@RequestBody AuthDto authDto, HttpServletResponse response) {
+        String password = authDto.getPassword();
+        String login = authDto.getLogin();
         service.authenticate(login, password, response);
         return ResponseEntity.ok().build();
     }

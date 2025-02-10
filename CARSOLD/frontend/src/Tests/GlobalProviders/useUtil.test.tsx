@@ -1,5 +1,5 @@
 import {renderHook} from "@testing-library/react";
-import {useUtil, UtilContext} from "../GlobalProviders/Util/useUtil.ts";
+import {useUtil, UtilContext} from "../../GlobalProviders/Util/useUtil";
 
 beforeEach(() => {
     jest.clearAllMocks();

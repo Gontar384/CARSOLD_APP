@@ -1,12 +1,13 @@
 package org.gontar.carsold.ServiceTest.UserServiceTest.ProfilePicServiceTest;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.Exception.CustomException.AccountActivationException;
+import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
+import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.ProfilePicService.ProfilePicServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,8 +17,11 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
@@ -30,6 +34,7 @@ import static org.mockito.Mockito.*;
 //need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarsoldApplication.class)
+@Transactional
 public class ProfilePicServiceIntegrationTest {
 
     @BeforeAll
@@ -38,13 +43,13 @@ public class ProfilePicServiceIntegrationTest {
     }
 
     @Autowired
-    private ProfilePicServiceImpl service;
+    private ProfilePicServiceImpl profilePicService;
 
     @Autowired
-    private UserRepository repo;
+    private UserRepository repository;
 
-    @Autowired
-    private JwtService jwtService;
+    @Mock
+    private SecurityContext securityContext;
 
     @Mock
     private HttpServletRequest request;
@@ -53,8 +58,8 @@ public class ProfilePicServiceIntegrationTest {
     private String bucketName;
 
     @Test
-    public void testUploadProfilePic_failure_fileIsNotAnImage() throws IOException {
-        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserProfilePicServiceTest/TestImages/fakeProfilePic.txt");
+    public void uploadProfilePic_fileIsNotAnImage() throws IOException {
+        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserServiceTest/ProfilePicServiceTest/TestImage/fakeProfilePic.txt");
         byte[] fileBytes = Files.readAllBytes(file.toPath());
         MockMultipartFile mockFile = new MockMultipartFile(
                 "testFile",
@@ -63,13 +68,13 @@ public class ProfilePicServiceIntegrationTest {
                 fileBytes
         );
 
-        boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
+        MediaNotSupportedException exception = assertThrows(MediaNotSupportedException.class, () -> profilePicService.uploadProfilePic(mockFile));
 
-        assertFalse(result, "Could not upload, this is not an image");
+        assertEquals("This is not an acceptable image", exception.getMessage());
     }
 
     @Test
-    public void testUploadProfilePicWithSafeSearch_failure_tooLargeImage() {
+    public void uploadProfilePic_tooLargeImage() {
         byte[] largeFileBytes = new byte[4 * 1024 * 1024];
         largeFileBytes[0] = (byte) 0xFF;
         largeFileBytes[1] = (byte) 0xD8;
@@ -82,14 +87,14 @@ public class ProfilePicServiceIntegrationTest {
                 largeFileBytes
         );
 
-        boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
+        MediaNotSupportedException exception = assertThrows(MediaNotSupportedException.class, () -> profilePicService.uploadProfilePic(mockFile));
 
-        assertFalse(result, "Could not upload, image is too large");
+        assertEquals("Image is too large", exception.getMessage());
     }
 
     @Test
-    public void testUploadProfilePicWithSafeSearch_failure_sensitiveImage() throws IOException {
-        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserProfilePicServiceTest/TestImages/sensitiveProfilePic.png");
+    public void uploadProfilePic_sensitiveImage() throws IOException {
+        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserServiceTest/ProfilePicServiceTest/TestImage/sensitiveProfilePic.png");
         byte[] fileBytes = Files.readAllBytes(file.toPath());
         MockMultipartFile mockFile = new MockMultipartFile(
                 "testFile",
@@ -98,46 +103,18 @@ public class ProfilePicServiceIntegrationTest {
                 fileBytes
         );
 
-        boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
+        InappropriateContentException exception = assertThrows(InappropriateContentException.class, () -> profilePicService.uploadProfilePic(mockFile));
 
-        assertFalse(result, "Could not upload, image contains sensitive content");
+        assertEquals("Image contains sensitive content", exception.getMessage());
     }
 
     @Test
-    public void testUploadProfilePicWithSafeSearch_failure_problemWithRequest() throws IOException {
-        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserProfilePicServiceTest/TestImages/profilePic.png");
+    public void uploadProfilePic_deleteProfilePic_combined_success() throws IOException {
+        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserServiceTest/ProfilePicServiceTest/TestImage/profilePic.png");
         byte[] fileBytes = Files.readAllBytes(file.toPath());
         MockMultipartFile mockFile = new MockMultipartFile(
                 "testFile",
                 "profilePic.png",
-                "image/png",
-                fileBytes
-        );
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
-
-        boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
-
-        assertFalse(result, "Should return false, problem with request");
-    }
-
-    @Test
-    public void testDeleteProfilePic_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
-
-        boolean result = service.deleteProfilePic(request);
-
-        assertFalse(result, "Should return false, problem with request");
-    }
-
-    @Test
-    public void testUploadProfilePicWithSafeSearchAndDeleteProfilePicCombined_success() throws IOException {
-        File file = new File("src/test/java/org/gontar/carsold/ServiceTest/UserProfilePicServiceTest/TestImages/profilePic.png");
-        byte[] fileBytes = Files.readAllBytes(file.toPath());
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "testFile",
-                "sensitiveProfilePic.png",
                 "image/png",
                 fileBytes
         );
@@ -146,31 +123,23 @@ public class ProfilePicServiceIntegrationTest {
         user.setUsername(testUsername);
         user.setEmail("test@gmail.com");
         user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
+        user.setOauth2(false);
+        repository.save(user);
 
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(new UserPrincipal(user));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
-        boolean result = service.uploadProfilePicWithSafeSearch(mockFile, request);
-        user = repo.findByUsername(testUsername);
+        profilePicService.uploadProfilePic(mockFile);
 
-        assertTrue(result, "Pic should be uploaded successfully");
         assertNotNull(user.getProfilePic(), "Pic URL should be saved in DB");
         String expectedUrlPrefix = "https://storage.googleapis.com/" + bucketName + "/" + user.getUsername();
         assertTrue(user.getProfilePic().startsWith(expectedUrlPrefix), "Pic URL should point to the cloud storage");
 
-        boolean deleteResult = service.deleteProfilePic(request);
-        user = repo.findByUsername(testUsername);
+        profilePicService.deleteProfilePic();
 
-        assertTrue(deleteResult, "Pic should be deleted successfully");
         assertNull(user.getProfilePic(), "Pic URL should be removed from DB");
-
-        //cleanup
-        repo.delete(user);
     }
-
-    //planned to add test which checks what happen when cloud storage fails, but it is too hard, since uploadProfilePic
-    //method is private and I want to keep it private - provided well-structured logs, so this test is no so necessary
 }

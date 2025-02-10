@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
             await handleCheckAuth();
         } catch (error: unknown) {
             if (error instanceof InternalServerError) {
-                console.log("Error during logout: ", error);
+                console.error("Error during logout: ", error);
             } else {
                 console.error("Unexpected error during logout: ", error);
             }

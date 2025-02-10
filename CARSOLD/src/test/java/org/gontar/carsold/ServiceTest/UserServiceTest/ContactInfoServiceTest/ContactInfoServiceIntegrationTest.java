@@ -1,12 +1,12 @@
 package org.gontar.carsold.ServiceTest.UserServiceTest.ContactInfoServiceTest;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.gontar.carsold.CarsoldApplication;
-import org.gontar.carsold.Exception.CustomException.AccountActivationException;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
+import org.gontar.carsold.Domain.Model.CitySuggestionsDto;
+import org.gontar.carsold.Exception.CustomException.InvalidValueException;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,18 +15,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 //need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarsoldApplication.class)
+@Transactional
 public class ContactInfoServiceIntegrationTest {
 
     @BeforeAll
@@ -35,247 +40,145 @@ public class ContactInfoServiceIntegrationTest {
     }
 
     @Autowired
-    private ContactInfoServiceImpl service;
+    private ContactInfoServiceImpl contactInfoService;
 
     @Autowired
-    private JwtService jwtService;
+    private UserRepository repository;
 
     @Mock
-    private HttpServletRequest request;
+    private SecurityContext securityContext;
 
-    @Autowired
-    private UserRepository repo;
-
-    @Test
-    public void testChangeName_failure_problemWithRequest() {
-        String testName = "Kuba";
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
-
-        boolean result = service.changeName(testName, request);
-
-        assertFalse(result, "Should return false, problem with request");
-    }
-
-    @Test
-    public void testChangeName_failure_inappropriateName() {
+    private User createAuthenticatedUser() {
         User user = new User();
         String testUsername = "testUsername";
         user.setUsername(testUsername);
         user.setEmail("test@gmail.com");
         user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
+        user.setOauth2(false);
+        repository.save(user);
 
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(new UserPrincipal(user));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        return user;
+    }
+
+    @Test
+    public void updateName_deleteName() {
+        User user = createAuthenticatedUser();
+        user.setName("Matty");
+        String testName = "";
+
+        contactInfoService.updateName(testName);
+
+        assertNull(user.getName());
+    }
+
+    @Test
+    public void updateName_notRealName() {
+        User user = createAuthenticatedUser();
 
         String testName = "inappropriateName";
-        boolean result = service.changeName(testName, request);
-        user = repo.findByUsername(testUsername);
+        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> contactInfoService.updateName(testName));
 
-        assertFalse(result, "Should return false, name is inappropriate");
+        assertEquals("Invalid name", exception.getMessage());
         assertNull(user.getName(), "User's name should remain null");
-
-        //cleanup
-        repo.delete(user);
     }
 
     @Test
-    public void testChangeName_success_isPolishName() {
-        User user = new User();
-        String testUsername = "testUsername1";
-        user.setUsername(testUsername);
-        user.setEmail("test1@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
-
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+    public void updateName_isPolishName_success() {
+        User user = createAuthenticatedUser();
 
         String testName = "Marcin";
-        boolean result = service.changeName(testName, request);
-        user = repo.findByUsername(testUsername);
+        contactInfoService.updateName(testName);
 
-        assertTrue(result, "Should return true, is is polish name");
         assertEquals("Marcin", user.getName());
-
-        //cleanup
-        repo.delete(user);
     }
 
     @Test
-    public void testChangeName_success_isValidName() {
-        User user = new User();
-        String testUsername = "testUsername2";
-        user.setUsername(testUsername);
-        user.setEmail("test2@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
-
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+    public void updateName_isValidName_success() {
+        User user = createAuthenticatedUser();
 
         String testName = "Paul";
-        boolean result = service.changeName(testName, request);
-        user = repo.findByUsername(testUsername);
+        contactInfoService.updateName(testName);
 
-        assertTrue(result, "Should return true, name is valid");
         assertEquals("Paul", user.getName());
-
-        //cleanup
-        repo.delete(user);
     }
 
     @Test
-    public void testChangePhone_failure_problemWithRequest() {
-        String testPhone = "721721721";
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
+    public void updatePhone_deletePhone () {
+        User user = createAuthenticatedUser();
+        user.setPhone("123456789");
+        String testPhone = "";
 
-        boolean result = service.changePhone(testPhone, request);
+        contactInfoService.updatePhone(testPhone);
 
-        assertFalse(result, "Should return false, problem with request");
+        assertNull(user.getPhone());
     }
 
     @Test
-    public void testChangePhone_failure_wrongPhoneFormat() {
-        User user = new User();
-        String testUsername = "testUsername3";
-        user.setUsername(testUsername);
-        user.setEmail("test3@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
-
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+    public void updatePhone_wrongPhoneFormat() {
+        User user = createAuthenticatedUser();
 
         String testPhone = "123123123123";
+        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> contactInfoService.updatePhone(testPhone));
 
-        boolean result = service.changePhone(testPhone, request);
-        user = repo.findByUsername(testUsername);
-
-        assertFalse(result, "Should return false, phone is incorrect");
-        assertNull(user.getPhone());
-
-        //cleanup
-        repo.delete(user);
+        assertEquals("Invalid phone number", exception.getMessage());
+        assertNull(user.getPhone(), "User's name should remain null");
     }
 
     @Test
-    public void testChangePhone_success_withoutCountryNumber() {
-        User user = new User();
-        String testUsername = "testUsername4";
-        user.setUsername(testUsername);
-        user.setEmail("test4@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
-
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+    public void updatePhone_withoutCountryNumber_success() {
+        User user = createAuthenticatedUser();
 
         String testPhone = "721721721";
+        contactInfoService.updatePhone(testPhone);
 
-        boolean result = service.changePhone(testPhone, request);
-        user = repo.findByUsername(testUsername);
-
-        assertTrue(result, "Should return true, phone is correct");
         assertEquals("+48 721 721 721", user.getPhone(), "Returns reformated number with default polish country number");
-
-        //cleanup
-        repo.delete(user);
     }
 
     @Test
-    public void testChangePhone_success_withCountryNumber() {
-        User user = new User();
-        String testUsername = "testUsername5";
-        user.setUsername(testUsername);
-        user.setEmail("test5@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
+    public void updatePhone_withCountryNumber_success() {
+        User user = createAuthenticatedUser();
 
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+        String testPhone = "+48 721 721 721";
+        contactInfoService.updatePhone(testPhone);
 
-        String testPhone = "+49645363822";  //german number
-
-        boolean result = service.changePhone(testPhone, request);
-        user = repo.findByUsername(testUsername);
-
-        assertTrue(result, "Should return true, phone is correct");
-        assertEquals("+49 6453 63822", user.getPhone(), "Returns reformated number with provided country number");
-
-        //cleanup
-        repo.delete(user);
+        assertEquals("+48 721 721 721", user.getPhone(), "Returns reformated number with default polish country number");
     }
 
     @Test
-    public void testChangeCity_failure_incorrectCity() {
-        User user = new User();
-        String testUsername = "testUsername6";
-        user.setUsername(testUsername);
-        user.setEmail("test6@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
-
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+    public void updateCity_failure_wrongCity() {
+        User user = createAuthenticatedUser();
 
         String incorrectCity = "wrongCity";
-        boolean result = service.changeCity(incorrectCity, request);
 
-        assertFalse(result, "Should return false, city is incorrect");
+        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> contactInfoService.updateCity(incorrectCity));
+        assertEquals("Invalid city", exception.getMessage());
+
         assertNull(user.getCity());
-
-        //cleanup
-        repo.delete(user);
     }
 
     @Test
-    public void testChangeCity_success() {
-        User user = new User();
-        String testUsername = "testUsername7";
-        user.setUsername(testUsername);
-        user.setEmail("test7@gmail.com");
-        user.setActive(true);
-        user.setOauth2User(false);
-        repo.save(user);
+    public void updateCity_success() {
+        User user = createAuthenticatedUser();
 
-        String testToken = jwtService.generateToken(testUsername, 1L);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("JWT", testToken));
+        String city = "Warsaw";
 
-        String incorrectCity = "Warszawa";
-        boolean result = service.changeCity(incorrectCity, request);
-        user = repo.findByUsername(testUsername);
-
-        assertTrue(result, "Should return true");
-        assertEquals("Warszawa", user.getCity());
-
-        //cleanup
-        repo.delete(user);
+        contactInfoService.updateCity(city);
+        assertEquals(city, user.getCity());
     }
 
     @Test
-    public void testFetchCitySuggestions_success() {
-        String input = "Po";
-        List<String> expectedCityNames = Arrays.asList("Poznań, Poland", "Potsdam, Germany", "Poprad, Slovakia");
-        List<String> citySuggestions = service.fetchCitySuggestions(input);
+    public void fetchCitySuggestions() {
+        String input = "Wa";
+        List<String> expectedCityNames = Arrays.asList("Warsaw, Poland", "Wałbrzych, Poland", "Wagrain, Austria", "Waalwijk, Netherlands", "Wageningen, Netherlands");
+        CitySuggestionsDto citySuggestions = contactInfoService.fetchCitySuggestions(input);
+        System.out.println(citySuggestions);
 
-        assertTrue(citySuggestions.containsAll(expectedCityNames), "City suggestions should match");
+        assertTrue(citySuggestions.getCitySuggestions().containsAll(expectedCityNames), "City suggestions should match");
     }
 }

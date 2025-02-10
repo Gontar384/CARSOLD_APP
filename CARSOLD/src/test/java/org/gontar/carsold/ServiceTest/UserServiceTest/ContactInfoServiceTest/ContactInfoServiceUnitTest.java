@@ -1,10 +1,9 @@
 package org.gontar.carsold.ServiceTest.UserServiceTest.ContactInfoServiceTest;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.gontar.carsold.Exception.CustomException.AccountActivationException;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Model.ContactInfoDto;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.JwtService.JwtService;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,131 +11,53 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactInfoServiceUnitTest {
 
-    @Mock
-    private JwtService jwtService;
-
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    private UserRepository repo;
-
-    @Mock
-    private ErrorHandler errorHandler;
-
     @InjectMocks
-    private ContactInfoServiceImpl service;
+    private ContactInfoServiceImpl contactInfoService;
+
+    @Mock
+    private MyUserDetailsService userDetailsService;
+
+    @Mock
+    private UserRepository repository;
 
     @Test
-    public void testChangeContactInfoPublic_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
+    public void updateAndFetchContactPublic_updateAndFetch() {
+        User user = new User();
+        user.setContactPublic(false);
+        when(userDetailsService.loadUser()).thenReturn(user);
 
-        boolean result = service.changeContactInfoPublic(request, true);
-
-        assertFalse(result, "Should return false, problem with request");
-        verify(jwtService).extractUserFromRequest(request);
-        verify(errorHandler).logBoolean("Error changing contact info: JWT is missing in the cookie");
-        verifyNoMoreInteractions(jwtService, errorHandler);
+        boolean isPublic = contactInfoService.updateAndFetchContactPublic(true);
+        assertTrue(isPublic, "Should change to true");
     }
 
     @Test
-    public void testChangeContactInfoPublic_success_changedToTrue() {
-        User mockuser = new User();
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
+    public void updateAndFetchContactPublic_onlyFetch() {
+        User user = new User();
+        user.setContactPublic(false);
+        when(userDetailsService.loadUser()).thenReturn(user);
 
-        boolean result = service.changeContactInfoPublic(request, true);
-
-        assertTrue(result, "Should return true, changed successfully");
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
+        boolean isPublic = contactInfoService.updateAndFetchContactPublic(null);
+        assertFalse(isPublic, "Should remain false");
     }
 
     @Test
-    public void testChangeContactInfoPublic_success_changedToFalse() {
-        User mockuser = new User();
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
+    public void fetchContactInfo() {
+        User user = new User();
+        user.setName("John");
+        user.setPhone("+48 603 604 605");
+        user.setCity("Poznań, Poland");
+        when(userDetailsService.loadUser()).thenReturn(user);
 
-        boolean result = service.changeContactInfoPublic(request, false);
+        ContactInfoDto contactInfoDto = contactInfoService.fetchContactInfo();
 
-        assertFalse(result, "Should return false, changed successfully");
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testFetchContactInfoPublic_failure_isNull() {
-        User mockuser = new User();
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
-
-        boolean result = service.fetchContactInfoPublic(request);
-
-        assertFalse(result, "Should return false, contactPublic is null");
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testFetchContactInfoPublic_success_isTrue() {
-        User mockuser = new User();
-        mockuser.setContactPublic(true);
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
-
-        boolean result = service.fetchContactInfoPublic(request);
-
-        assertTrue(result, "Should return true, contactPublic is true");
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testFetchContactInfoPublic_success_isFalse() {
-        User mockuser = new User();
-        mockuser.setContactPublic(false);
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
-
-        boolean result = service.fetchContactInfoPublic(request);
-
-        assertFalse(result, "Should return false, contactPublic is false");
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
-    }
-
-    @Test
-    public void testFetchInfo_failure_problemWithRequest() {
-        when(jwtService.extractUserFromRequest(request))
-                .thenThrow(new AccountActivationException("JWT is missing in the cookie"));
-
-        Map<String, String> result = service.fetchInfo(request);
-
-        assertEquals(Collections.emptyMap(), result);
-        verify(jwtService).extractUserFromRequest(request);
-        verify(errorHandler).logVoid("Error fetching info: JWT is missing in the cookie");
-        verifyNoMoreInteractions(jwtService, errorHandler);
-    }
-
-    @Test
-    public void testFetchInfo_success() {
-        User mockuser = new User();
-        mockuser.setName("Kuba");
-        mockuser.setPhone("+48721721721");
-        mockuser.setCity("Warsaw, Poland");
-        when(jwtService.extractUserFromRequest(request)).thenReturn(mockuser);
-
-        Map<String, String> result = service.fetchInfo(request);
-        assertEquals("Kuba", result.get("name"));
-        assertEquals("+48721721721", result.get("phone"));
-        assertEquals("Warsaw, Poland", result.get("city"));
-        verify(jwtService).extractUserFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
+        assertEquals("John", contactInfoDto.getName());
+        assertEquals("+48 603 604 605", contactInfoDto.getPhone());
+        assertEquals("Poznań, Poland", contactInfoDto.getCity());
     }
 }

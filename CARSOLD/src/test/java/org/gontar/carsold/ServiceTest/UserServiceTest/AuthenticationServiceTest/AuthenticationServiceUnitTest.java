@@ -2,51 +2,50 @@ package org.gontar.carsold.ServiceTest.UserServiceTest.AuthenticationServiceTest
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.gontar.carsold.Service.UserService.AuthenticationService.AuthenticationServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceUnitTest {
 
+    @InjectMocks
+    private AuthenticationServiceImpl authService;
+
     @Mock
-    private UserRepository repo;
+    private SecurityContext securityContext;
+
+    @Mock
+    private MyUserDetailsService userDetailsService;
 
     @Mock
     private JwtService jwtService;
 
     @Mock
-    private AuthenticationManager authenticationManager;
-
-    @Mock
-    private OAuth2AuthorizedClientService authorizedClientService;
+    private UserRepository repository;
 
     @Mock
     private CookieService cookieService;
-
-    @Mock
-    private ErrorHandler errorHandler;
 
     @Mock
     private HttpServletRequest request;
@@ -54,208 +53,251 @@ public class AuthenticationServiceUnitTest {
     @Mock
     private HttpServletResponse response;
 
-    @InjectMocks
-    private AuthenticationServiceImpl service;
+    @Mock
+    private AuthenticationManager authenticationManager;
 
-    @Test
-    public void testActivateAccount_failure_problemWithToken() {
-        String invalidToken = "invalid_token";
+    @Mock
+    private BCryptPasswordEncoder encoder;
 
-        boolean result = service.activateAccount(invalidToken, response);
+    @Mock
+    private RestTemplate restTemplate;
 
-        assertFalse(result, "Should return false, invalid token");
+    @BeforeEach
+    void setUp() {
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
-    public void testActivateAccount_failure_userIsActive() {
-        String testUsername = "testUsername";
-        String testToken = "validToken";
-        User mockUser = new User();
-        mockUser.setUsername(testUsername);
-        mockUser.setActive(true);
-        when(jwtService.extractUserFromToken(testToken)).thenReturn(mockUser);
+    public void checkAuth_shouldReturnTrue_whenUserIsAuthenticated() {
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
 
-        boolean result = service.activateAccount(testToken, response);
-
-        assertTrue(result, "Should return true, but user is not updated");
-        verify(jwtService).extractUserFromToken(testToken);
-        verify(repo, never()).save(mockUser);
+        assertTrue(authService.checkAuth());
     }
 
     @Test
-    public void testActivateAccount_success() {
-        String testUsername = "testUsername";
-        String testToken = "validToken";
-        User mockUser = new User();
-        mockUser.setUsername(testUsername);
-        mockUser.setActive(false);
-        when(jwtService.extractUserFromToken(testToken)).thenReturn(mockUser);
+    public void checkAuth_shouldReturnFalse_whenAuthenticationIsNull() {
+        when(securityContext.getAuthentication()).thenReturn(null);
 
-        boolean result = service.activateAccount(testToken, response);
-
-        assertTrue(result, "Should return true, account activated");
-        assertTrue(mockUser.getActive(), "User should be marked as active after activation");
-        verify(jwtService).extractUserFromToken(testToken);
-        verify(repo).save(mockUser);
+        assertFalse(authService.checkAuth());
     }
 
     @Test
-    public void testAuthenticate_failure_noLoginProvided() {
+    public void checkAuth_shouldReturnFalse_whenUserIsAnonymous() {
+        Authentication authentication = mock(AnonymousAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        assertFalse(authService.checkAuth());
+    }
+
+    @Test
+    public void checkAuth_shouldReturnFalse_whenAuthenticationIsNotAuthenticated() {
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(false);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        assertFalse(authService.checkAuth());
+    }
+
+    @Test
+    public void refreshJwt_shouldCallCookieService_whenUserIsAuthenticated() {
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("testUser");
+        when(userDetailsService.loadUser()).thenReturn(user);
+
+        authService.refreshJwt(response);
+
+        verify(cookieService).addCookieWithNewTokenToResponse("testUser", response);
+    }
+
+    @Test
+    public void refreshJwt_shouldThrowException_whenUserLoadFails() {
+        when(userDetailsService.loadUser()).thenThrow(new UserDetailsException("User not authenticated"));
+
+        UserDetailsException exception = assertThrows(UserDetailsException.class, () -> authService.refreshJwt(response));
+
+        assertEquals("User not authenticated", exception.getMessage());
+        verify(cookieService, never()).addCookieWithNewTokenToResponse(anyString(), any());
+    }
+
+    @Test
+    public void activateAccount_shouldActivateUserAndSetAuthentication_whenTokenIsValid() {
+        String token = "validToken";
+        User user = new User();
+        user.setUsername("testUser");
+        user.setActive(false);
+        when(jwtService.extractUserFromToken(token)).thenReturn(user);
+        Authentication mockAuthentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(mockAuthentication.getPrincipal()).thenReturn(user.getUsername());
+        when(securityContext.getAuthentication()).thenReturn(mockAuthentication);
+
+        authService.activateAccount(token, response);
+
+        assertTrue(user.getActive());
+        verify(repository).save(user);
+        verify(cookieService).addCookieWithNewTokenToResponse("testUser", response);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertNotNull(authentication, "Authentication should not be null");
+        assertEquals("testUser", authentication.getPrincipal(), "Principal should match the username");
+    }
+
+    @Test
+    public void activateAccount_shouldThrowException_whenTokenIsNull() {
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> authService.activateAccount(null, response));
+
+        assertEquals("JWT cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void activateAccount_shouldThrowAccountActivationException_whenTokenExtractionFails() {
+        String token = "invalidToken";
+
+        when(jwtService.extractUserFromToken(token)).thenThrow(new JwtServiceException("Error during claims extraction"));
+
+        AccountActivationException exception = assertThrows(AccountActivationException.class, () -> authService.activateAccount(token, response));
+
+        assertTrue(exception.getMessage().contains("Account activation process failed"));
+        verify(repository, never()).save(any());
+        verify(cookieService, never()).addCookieWithNewTokenToResponse(anyString(), any());
+    }
+
+    @Test
+    public void activateAccount_shouldThrowAccountActivationException_whenAuthenticationFails() {
+        String token = "validToken";
+        User user = new User();
+        user.setUsername("testUser");
+        user.setActive(false);
+
+        when(jwtService.extractUserFromToken(token)).thenReturn(user);
+        doThrow(new AuthenticationServiceException("Authentication failed")).when(repository).save(user);
+
+        AccountActivationException exception = assertThrows(AccountActivationException.class, () -> authService.activateAccount(token, response));
+
+        assertTrue(exception.getMessage().contains("Account activation process failed"));
+        verify(cookieService, never()).addCookieWithNewTokenToResponse(anyString(), any());
+    }
+
+    @Test
+    public void authenticate_shouldThrowUserNotFoundException_whenUserNotFoundByLogin() {
+        String login = "testLogin";
         String password = "password";
 
-        boolean result = service.authenticate(null, password, response);
+        when(repository.findByUsername(login)).thenReturn(null);
 
-        assertFalse(result, "Should return false, no login provided");
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> authService.authenticate(login, password, response));
+
+        assertEquals("User not found for login: " + login, exception.getMessage());
     }
 
     @Test
-    public void testAuthenticate_failure_userNotFound() {
-        String login = "login";
+    public void authenticate_shouldThrowUserDataException_whenUserIsNotActive() {
+        String login = "testLogin";
         String password = "password";
-        when(repo.findByUsername(login)).thenReturn(null);
 
-        boolean result = service.authenticate(login, password, response);
+        User user = new User();
+        user.setEmail(login);
+        user.setActive(false);
 
-        assertFalse(result, "Should return false, user not found");
-        verify(errorHandler).logBoolean("User not found");
-        verify(repo).findByUsername(login);
-        verifyNoMoreInteractions(repo);
+        when(repository.findByUsername(login)).thenReturn(user);
+
+        UserDataException exception = assertThrows(UserDataException.class, () -> authService.authenticate(login, password, response));
+
+        assertEquals("User " + login + " is not active", exception.getMessage());
     }
 
     @Test
-    public void testAuthenticate_failure_badCredentials() {
-        String login = "testUser";
-        String password = "wrongPassword";
-        User mockUser = new User();
-        mockUser.setUsername(login);
+    public void authenticate_shouldThrowUserDataException_whenUserIsOauth2() {
+        String login = "testLogin";
+        String password = "password";
 
-        when(repo.findByUsername(login)).thenReturn(mockUser);
+        User user = new User();
+        user.setEmail(login);
+        user.setActive(true);
+        user.setOauth2(true);
 
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(mockUser.getUsername(), password)))
-                .thenThrow(new BadCredentialsException("Bad credentials"));
+        when(repository.findByUsername(login)).thenReturn(user);
 
-        boolean result = service.authenticate(login, password, response);
+        UserDataException exception = assertThrows(UserDataException.class, () -> authService.authenticate(login, password, response));
 
-        assertFalse(result, "Should return false, bad credentials");
-        verify(errorHandler).logBoolean("Authentication failed: Bad credentials");
-        verify(repo).findByUsername(login);
-        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(login, password));
-        verifyNoMoreInteractions(repo, authenticationManager);
+        assertEquals("User " + login + " is an oauth2 user", exception.getMessage());
     }
 
     @Test
-    public void testAuthenticate_success() {
-        String login = "testUser";
-        String password = "wrongPassword";
-        User mockUser = new User();
-        mockUser.setUsername(login);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(login, password);
+    public void authenticate_shouldThrowBadCredentialsException_whenPasswordDoesNotMatch() {
+        String login = "testLogin";
+        String password = "password";
 
-        when(repo.findByUsername(login)).thenReturn(mockUser);
+        User user = new User();
+        user.setEmail(login);
+        user.setPassword("hashedPassword");
+        user.setActive(true);
+        user.setOauth2(false);
 
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(mockUser.getUsername(), password)))
-                .thenReturn(authentication);
+        when(repository.findByUsername(login)).thenReturn(user);
+        when(encoder.matches(password, user.getPassword())).thenReturn(false);
 
-        boolean result = service.authenticate(login, password, response);
+        AuthFailedException exception = assertThrows(AuthFailedException.class, () -> authService.authenticate(login, password, response));
 
-        assertTrue(result, "Should return true, wrong credentials");
-        verify(repo).findByUsername(login);
-        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(login, password));
-        verifyNoMoreInteractions(repo, authenticationManager);
+        assertEquals("Authentication process failed: Bad credentials", exception.getMessage());
     }
 
     @Test
-    public void testCheckAuthentication_failure_userNotAuthOrProblemWithRequest() {
-        when(jwtService.extractAndValidateTokenFromRequest(request)).thenReturn(false);
+    public void authenticate_shouldAuthenticateUserAndAddToken_whenValidCredentials() {
+        String login = "test@example.com";
+        String password = "password";
 
-        boolean result = service.checkAuthentication(request);
+        User user = new User();
+        user.setEmail(login);
+        user.setPassword("hashedPassword");
+        user.setActive(true);
+        user.setOauth2(false);
 
-        assertFalse(result, "Should return false, user is not authenticated or there is problem with request");
-        verify(jwtService).extractAndValidateTokenFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
+        when(repository.findByEmail(login)).thenReturn(user);
+        when(encoder.matches(password, user.getPassword())).thenReturn(true);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+
+        authService.authenticate(login, password, response);
+
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(cookieService).addCookieWithNewTokenToResponse(user.getUsername(), response);
     }
 
     @Test
-    public void testCheckAuthentication_success() {
-        when(jwtService.extractAndValidateTokenFromRequest(request)).thenReturn(true);
+    public void authenticate_shouldThrowAuthFailedException_whenAuthenticationFails() {
+        String login = "test@example.com";
+        String password = "password";
 
-        boolean result = service.checkAuthentication(request);
+        User user = new User();
+        user.setEmail(login);
+        user.setPassword("hashedPassword");
+        user.setActive(true);
+        user.setOauth2(false);
 
-        assertTrue(result, "Should return true, user is authenticated");
-        verify(jwtService).extractAndValidateTokenFromRequest(request);
-        verifyNoMoreInteractions(jwtService);
+        when(repository.findByEmail(login)).thenReturn(user);
+        when(encoder.matches(password, user.getPassword())).thenReturn(true);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new AuthenticationServiceException("Authentication failed"));
+
+        AuthFailedException exception = assertThrows(AuthFailedException.class, () -> authService.authenticate(login, password, response));
+
+        assertEquals("Authentication process failed: Authentication failed", exception.getMessage());
     }
 
     @Test
-    public void testLogout_failure() {
-        when(request.getSession(false)).thenThrow(new RuntimeException("Session error"));
+    public void logout_nonOAuth2Authentication() {
+        Authentication nonOauthAuthentication = mock(Authentication.class);
 
-        boolean result = service.logout(request, response, null);
+        ResponseCookie mockCookie = mock(ResponseCookie.class);
+        when(cookieService.createCookie(any(), anyInt())).thenReturn(mockCookie);
+        when(mockCookie.toString()).thenReturn("Set-Cookie: mockCookie");
 
-        assertFalse(result, "Should return false, session error occurred");
-        verify(errorHandler).logBoolean("Failed to log out: Session error");
-        verifyNoMoreInteractions(request, response);
-        SecurityContextHolder.clearContext();
-    }
+        authService.logout(request, response, nonOauthAuthentication);
 
-    @Test
-    public void testLogout_success_withGoogleAuthentication() {
-        OAuth2AuthenticationToken oauth2Token = mock(OAuth2AuthenticationToken.class);
-        when(oauth2Token.getAuthorizedClientRegistrationId()).thenReturn("google");
-
-        HttpSession session = mock(HttpSession.class);
-        when(request.getSession(false)).thenReturn(session);
-
-        ResponseCookie cookie = ResponseCookie.from("JWT", "").maxAge(0).path("/").build();
-        when(cookieService.createCookie("", 0)).thenReturn(cookie);
-
-        boolean result = service.logout(request, response, oauth2Token);
-
-        assertTrue(result, "Should return true, logged out successfully");
-        verify(session).invalidate();
-        verify(response).addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        verifyNoMoreInteractions(session, response, cookieService);
-        SecurityContextHolder.clearContext();
-    }
-
-    @Test
-    public void testLogout_success_withNormalAuthentication() {
-        HttpSession session = mock(HttpSession.class);
-        when(request.getSession(false)).thenReturn(session);
-
-        ResponseCookie cookie = ResponseCookie.from("JWT", "").maxAge(0).path("/").build();
-        when(cookieService.createCookie("", 0)).thenReturn(cookie);
-
-        boolean result = service.logout(request, response, null);
-
-        assertTrue(result, "Should return true, logged out successfully");
-        verify(session).invalidate();
-        verify(response).addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        verifyNoMoreInteractions(session, response, cookieService);
-        SecurityContextHolder.clearContext();
-    }
-
-    @Test
-    public void testRefreshJwt_failure_problemWithRequest() {
-        when(jwtService.extractAndValidateTokenFromRequest(request)).thenReturn(false);
-
-        service.refreshJwt(request, response);
-
-        verify(errorHandler).logVoid("Couldn't refresh JWT");
-        verify(jwtService).extractAndValidateTokenFromRequest(request);
-        verifyNoMoreInteractions(jwtService, errorHandler);
-    }
-
-    @Test
-    public void testRefreshJwt_success() {
-        String testUsername = "testUsername";
-        when(jwtService.extractAndValidateTokenFromRequest(request)).thenReturn(true);
-        when(jwtService.extractUsernameFromRequest(request)).thenReturn(testUsername);
-
-        service.refreshJwt(request, response);
-
-        verify(errorHandler, never()).logVoid("Couldn't refresh JWT");
-        verify(jwtService).extractAndValidateTokenFromRequest(request);
-        verify(jwtService).extractUsernameFromRequest(request);
+        verify(restTemplate, never()).postForEntity(any(), any(), eq(String.class));
+        verify(cookieService).createCookie(any(), anyInt());
+        verify(response).addHeader(eq("Set-Cookie"), anyString());
     }
 }

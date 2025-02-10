@@ -1,13 +1,13 @@
 import {render, waitFor} from '@testing-library/react';
-import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
-import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "../Config/TokensConfig/TokensUtil.ts";
-import {api} from "../Config/AxiosConfig/AxiosConfig.ts";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth";
+import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "../../Config/TokensConfig/TokensUtil";
+import {api} from "../../Config/AxiosConfig/AxiosConfig";
 
-jest.mock("../GlobalProviders/Auth/useAuth.ts", () => ({
+jest.mock("../../GlobalProviders/Auth/useAuth", () => ({
     useAuth: jest.fn(),
 }));
 
-jest.mock("../Config/AxiosConfig/AxiosConfig.ts", () => ({
+jest.mock("../../Config/AxiosConfig/AxiosConfig", () => ({
     api: {
         get: jest.fn(),
         defaults: {
@@ -34,7 +34,7 @@ describe('useFetchCsrf', () => {
         return render(<TestComponent />);
     }
 
-    it('fetches CSRF token if authenticated and sets it in api.defaults.headers', async () => {
+    it('fetches CSRF token and sets it in api.defaults.headers', async () => {
         const mockToken = 'test-csrf-token';
 
         (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loadingAuth: false });
@@ -43,19 +43,8 @@ describe('useFetchCsrf', () => {
         renderTestComponent();
 
         await waitFor(() => {
-            expect(api.get).toHaveBeenCalledWith('api/auth/csrf');
+            expect(api.get).toHaveBeenCalledWith('api/auth/getCsrfToken');
             expect(api.defaults.headers['X-CSRF-TOKEN']).toBe(mockToken);
-        });
-    });
-
-    it('does not fetch CSRF token if not authenticated', async () => {
-        (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, loadingAuth: false });
-
-        renderTestComponent();
-
-        await waitFor(() => {
-            expect(api.get).not.toHaveBeenCalled();
-            expect(api.defaults.headers['X-CSRF-TOKEN']).toBeUndefined();
         });
     });
 
@@ -88,7 +77,7 @@ describe('useRefreshJwt', () => {
         renderTestComponent();
 
         await waitFor(() => {
-            expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
+            expect(api.get).toHaveBeenCalledWith('api/auth/refreshJwt');
         });
     });
 
@@ -109,7 +98,7 @@ describe('useRefreshJwt', () => {
         renderTestComponent();
 
         await waitFor(() => {
-            expect(api.get).toHaveBeenCalledWith('api/auth/refresh');
+            expect(api.get).toHaveBeenCalledWith('api/auth/refreshJwt');
             expect(console.error).toHaveBeenCalledWith("Error refreshing JWT token: ", expect.any(Error));
         });
     });
@@ -135,7 +124,7 @@ describe('useTrackUserActivity', () => {
 
         renderTestComponentAndSimulate(1);
 
-        expect(api.get).toHaveBeenCalledWith('api/auth/keep-alive');
+        expect(api.get).toHaveBeenCalledWith('api/auth/keepSessionAlive');
     });
 
     it('does not send request if disabled', () => {
@@ -157,6 +146,6 @@ describe('useTrackUserActivity', () => {
 
         renderTestComponentAndSimulate(1);
 
-        expect(api.get).toHaveBeenCalledTimes(3);
+        expect(api.get).toHaveBeenCalledTimes(2);
     });
 });

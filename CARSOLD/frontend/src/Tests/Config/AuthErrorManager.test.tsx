@@ -1,9 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import AuthErrorManager from "../Config/AuthConfig/AuthErrorManager.tsx";
-import { api } from "../Config/AxiosConfig/AxiosConfig.ts";
+import AuthErrorManager from "../../Config/AuthConfig/AuthErrorManager";
+import { api } from "../../Config/AxiosConfig/AxiosConfig";
 import { act } from "react";
+import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider";
 
-jest.mock('../Config/AxiosConfig/AxiosConfig.ts', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
         get: jest.fn(),
         interceptors: {
@@ -15,7 +16,7 @@ jest.mock('../Config/AxiosConfig/AxiosConfig.ts', () => ({
     },
 }));
 
-jest.mock("../SharedComponents/Additional/Banners/SessionExpiredBanner.tsx", () => () => <div>Session Expired Banner</div>);
+jest.mock("../../SharedComponents/Additional/Banners/SessionExpiredBanner", () => () => <div>Session Expired Banner</div>);
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -34,7 +35,11 @@ const setupInterceptorMock = (status: number) => {
         return 1;
     });
 
-    render(<AuthErrorManager />);
+    render(
+        <AuthProvider>
+            <AuthErrorManager />
+        </AuthProvider>
+    );
 
     return async () => {
         await act(async () => {

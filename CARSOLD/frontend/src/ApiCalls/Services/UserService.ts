@@ -40,14 +40,14 @@ export const keepSessionAlive = async (): Promise<void> => {
 
 export const activateAccount = async (token: string | null): Promise<void> => {
     try {
-        await api.get(`api/auth/activateAccount`, { params: { token } });
+        await api.post(`api/auth/activateAccount`, { value: token });
     } catch (error) {
         handleError(error);
     }
 };
 
 export const authenticate = async (login: string | null, password: string | null): Promise<AxiosResponse> => {
-    return await api.get(`api/auth/authenticate`, { params: { login, password } }); //manually handling errors in main function
+    return await api.post(`api/auth/authenticate`, { login: login, password: password}); //manually handling errors in main function
 };
 
 export const logout = async (): Promise<void> => {

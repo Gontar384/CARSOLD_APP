@@ -2,25 +2,34 @@ package org.gontar.carsold.ServiceTest.UserServiceTest.EmailServiceTest;
 
 import jakarta.mail.internet.MimeMessage;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Exception.CustomException.UserDataException;
+import org.gontar.carsold.Exception.CustomException.UserNotFoundException;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.UserService.EmailService.EmailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailServiceUnitTest {
 
+    @InjectMocks
+    private EmailServiceImpl emailService;
+
     @Mock
-    private UserRepository repo;
+    private UserRepository repository;
 
     @Mock
     private JwtService jwtService;
@@ -29,108 +38,77 @@ public class EmailServiceUnitTest {
     private JavaMailSender emailSender;
 
     @Mock
-    private ErrorHandler errorHandler;
+    private MimeMessage mimeMessage;
 
-    @InjectMocks
-    private EmailServiceImpl emailService;
+    @Mock
+    private MimeMessageHelper mimeMessageHelper;
 
-    @Test
-    void testSendEmail() {
-        String email = "test@example.com";
-        String subject = "Test Subject";
-        String content = "Test Content";
-        MimeMessage mockMessage = mock(MimeMessage.class);
-
-        when(emailSender.createMimeMessage()).thenReturn(mockMessage);
-        doNothing().when(emailSender).send(mockMessage);
-
-        emailService.sendEmail(email, subject, content);
-
-        verify(emailSender).createMimeMessage();
-        verify(emailSender).send(mockMessage);
-        verifyNoMoreInteractions(emailSender, errorHandler);
-    }
+    @Captor
+    private ArgumentCaptor<MimeMessage> mimeMessageCaptor;
 
     @Test
-    void testSendEmail_failure() {
-        String email = "test@example.com";
-        String subject = "Test Subject";
-        String content = "Test Content";
-
-        when(emailSender.createMimeMessage()).thenThrow(new RuntimeException("Error during sending"));
-
-        emailService.sendEmail(email, subject, content);
-
-        verify(errorHandler).logVoid(contains("Failed to send email: Error during sending"));
-        verifyNoMoreInteractions(errorHandler);
-    }
-
-    @Test
-    void testSendVerificationEmail_success() {
-        String email = "test@example.com";
-        String link = "frontendUrl.com/activate?token=testJwt";
-        String username = "testUser";
-        User mockUser = new User();
-        mockUser.setUsername(username);
-        MimeMessage mimeMessage = mock(MimeMessage.class);
-
-        when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
-
-        boolean result = emailService.sendVerificationEmail(email, username, link);
-
-        assertTrue(result, "Should return true, message sent successfully");
-        verify(emailSender).createMimeMessage();
-        verify(emailSender).send(mimeMessage);
-        verifyNoMoreInteractions(emailSender, errorHandler);
-    }
-
-    @Test
-    void testSendVerificationEmail_failure() {
+    public void sendAccountActivationEmail_success() {
         String email = "test@example.com";
         String username = "testUser";
-        String link = "frontendUrl.com/activate?token=testJwt";
-
-        when(emailService.sendVerificationEmail(email, username, link)).thenThrow(new RuntimeException("Error during sending"));
-
-        boolean result = emailService.sendVerificationEmail(email, username, link);
-
-        assertFalse(result, "Should return false, message cannot be sent");
-        verify(errorHandler).logBoolean(contains("Failed to send email: Error during sending"));
-        verifyNoMoreInteractions(errorHandler);
-    }
-
-    @Test
-    void testSendPasswordRecoveryEmail_success() {
-        String email = "test@example.com";
-        String token = "testToken";
-        User mockUser = new User();
-        mockUser.setUsername("TestUser");
-        MimeMessage mimeMessage = mock(MimeMessage.class);
-
-        when(repo.findByEmail(email)).thenReturn(mockUser);
-        when(jwtService.generateToken(mockUser.getUsername(), 10L)).thenReturn(token);
+        String link = "http://activationlink";
         when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
-        doNothing().when(emailSender).send(mimeMessage);
 
-        boolean result = emailService.sendPasswordRecoveryEmail(email);
+        emailService.sendAccountActivationEmail(email, username, link);
 
-        assertTrue(result, "Should return true, message sent successfully");
-        verify(repo).findByEmail(email);
-        verify(jwtService).generateToken(mockUser.getUsername(), 10L);
-        verify(emailSender).createMimeMessage();
-        verify(emailSender).send(mimeMessage);
-        verifyNoMoreInteractions(emailSender);
+        verify(emailSender).send(mimeMessageCaptor.capture());
     }
 
     @Test
-    void testSendPasswordRecoveryEmail_failure_userNotFound() {
+    public void sendPasswordRecoveryEmail_success() {
         String email = "test@example.com";
-        when(repo.findByEmail(email)).thenReturn(null);
+        User user = new User();
+        user.setUsername("testUser");
+        user.setActive(true);
+        user.setOauth2(false);
+        when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-        boolean result = emailService.sendPasswordRecoveryEmail(email);
+        when(repository.findByEmail(email)).thenReturn(user);
+        when(jwtService.generateToken(anyString(), anyInt())).thenReturn("test_token");
 
-        assertFalse(result, "Should return false, message cannot be sent");
-        verify(repo).findByEmail(email);
-        verifyNoMoreInteractions(repo, emailSender, jwtService);
+        emailService.sendPasswordRecoveryEmail(email);
+
+        verify(emailSender).send(mimeMessageCaptor.capture());
+    }
+
+    @Test
+    public void sendPasswordRecoveryEmail_failure_userNotFound() {
+        String email = "test@example.com";
+        when(repository.findByEmail(email)).thenReturn(null);
+
+        assertThrows(UserNotFoundException.class, () -> emailService.sendPasswordRecoveryEmail(email));
+    }
+
+    @Test
+    public void sendPasswordRecoveryEmail_failure_userNotActive() {
+        String email = "test@example.com";
+        User user = new User();
+        user.setUsername("testUser");
+        user.setActive(false);
+        when(repository.findByEmail(email)).thenReturn(user);
+
+        assertThrows(UserDataException.class, () -> emailService.sendPasswordRecoveryEmail(email));
+    }
+
+    @Test
+    public void sendPasswordRecoveryEmail_failure_userIsOAuth2() {
+        String email = "test@example.com";
+        User user = new User();
+        user.setUsername("testUser");
+        user.setActive(true);
+        user.setOauth2(true);
+        when(repository.findByEmail(email)).thenReturn(user);
+
+        assertThrows(UserDataException.class, () -> emailService.sendPasswordRecoveryEmail(email));
+    }
+
+    @Test
+    public void sendEmail_failure_nullEmail(){
+        assertThrows(NullPointerException.class, () -> emailService.sendAccountActivationEmail(null,"testUser","testLink"));
+        assertThrows(NullPointerException.class, () -> emailService.sendPasswordRecoveryEmail(null));
     }
 }
