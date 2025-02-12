@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
-import {useItems} from "../../../../../GlobalProviders/Items/useItems.ts";
-import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
+import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface DetailsProps {
     userIconAnimation?: "animate-pop" | null;
@@ -32,7 +32,7 @@ const Details: React.FC<DetailsProps> = ({userIconAnimation, userDetails, profil
             </div>
             {messages > 0 && bigWidth &&(
                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
-                                 className="absolute -right-4 top-4 text-[10px]"/>)}
+                                 className="absolute -right-4 top-6 text-[10px]"/>)}
         </div>
     )
 }

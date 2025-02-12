@@ -15,6 +15,7 @@ import CookieBanner from "./SharedComponents/Additional/Banners/CookieBanner.tsx
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokensManager from "./Config/TokensConfig/TokensManager.ts";
+import OfferForm from "./PageComponents/ListingOffer/OfferForm.tsx";
 
 const App: React.FC = () => {
 
@@ -36,6 +37,7 @@ const App: React.FC = () => {
 
                             <Route element={<PrivateRoutes/>}>
                                 <Route path="/details/:section?" element={<AccountDetails/>}/>
+                                <Route path="/listingOffer" element={<OfferForm/>}/>
                             </Route>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>

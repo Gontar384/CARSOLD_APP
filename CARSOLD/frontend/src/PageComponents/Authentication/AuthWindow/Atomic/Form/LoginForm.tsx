@@ -59,7 +59,7 @@ const LoginForm: React.FC = () => {
 
     const handleAuthenticate = async () => {
         if (isDisabled) return;
-        if (!login || password.length < 8) return;
+        if (!login || password.length < 5) return;
 
         setWrongPassword(false);
         setIsDisabled(true);

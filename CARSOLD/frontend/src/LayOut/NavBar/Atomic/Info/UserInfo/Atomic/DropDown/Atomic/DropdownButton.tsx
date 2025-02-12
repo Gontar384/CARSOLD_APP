@@ -1,23 +1,25 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle} from "@fortawesome/free-solid-svg-icons";
-import {useButton} from "../../../../../../../CustomHooks/useButton.ts";
-import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
+import {Link, useNavigate} from "react-router-dom";
+import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface DropdownButtonProps {
     label: string;
-    onClick: () => void;
+    path: string;
     count?: number;
 }
 
-const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }) => {
+const DropdownButton: React.FC<DropdownButtonProps> = ({ label, path, count }) => {
 
+    const navigate = useNavigate();
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
 
     return (
-        <button className={`flex items-center justify-center w-full h-9 ${buttonColor ? "bg-white" : "bg-lime"}`}
-                onClick={onClick} onKeyDown={(event) => { if (event.key === "Enter") onClick() }}
+        <Link className={`flex items-center justify-center w-full h-9 ${buttonColor ? "bg-white" : "bg-lime"}`}
+                to={path} onKeyDown={(event) => {if (event.key === "Enter") navigate(path)}}
                 onTouchStart={isMobile ? handleStart : undefined}
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}
@@ -26,10 +28,10 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, onClick, count }
             {count && count > 0 ? <div className="relative ml-1">
                 <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}
                                  className="text-[22px]"/>
-                <p className="inset-0 m-auto top-[5px] text-xs text-white absolute">
+                <p className="inset-0.5 m-auto text-center text-sm text-white absolute">
                     {count}</p>
             </div> : null}
-        </button>
+        </Link>
     )
 }
 

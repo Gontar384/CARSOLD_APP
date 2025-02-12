@@ -6,7 +6,7 @@ import Content from "./Content/Content.tsx";
 
 const AccountDetails: React.FC = () => {
 
-    document.title = "CARSOLD | Account UsernameAndPic";
+    document.title = "CARSOLD | Account";
 
     return (
         <LayOut>

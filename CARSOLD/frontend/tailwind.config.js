@@ -4,9 +4,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                global: ['sans-serif', 'Arial'],  //font set globally
+                global: ['sans-serif', 'Arial'],
             },
-            colors: { //custom colors
+            colors: {
                 "lime": "#caf04f",
                 "darkLime": "#82ad00",
                 "lowLime": "#bedb65",
@@ -15,10 +15,10 @@ export default {
                 "coolGreen": "#7cff70",
                 "coolYellow": "#d3d61c"
             },
-            screens: {  //custom screens
+            screens: {
                 "m": "450px"
             },
-            keyframes: {  //animations specific details
+            keyframes: {
                 spinBounce: {
                     '0%': {transform: "rotate(0deg) scale(1)"},
                     '50%': {transform: "rotate(180deg) scale(1.5)"},
@@ -147,7 +147,7 @@ export default {
                     '100%': {transform: "translateX(-100%)"}
                 },
             },
-            animation: {  //animations details
+            animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
                 slideIn: 'slideIn 0.3s ease-out forwards',
                 slideOut: 'slideOut 0.3s ease-out forwards',

@@ -34,7 +34,7 @@ const Content: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center w-full rounded-sm
-        max-w-[1500px] min-h-[550px] bg-lowLime border border-black border-opacity-40">
+        max-w-[1500px] min-h-[550px] bg-lowLime border border-gray-400">
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>
             : choice === "messages" ? <Messages/>

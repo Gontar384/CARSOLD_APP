@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import UserInfoLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
-import LoginButton from "./Atomic/LoginButton.tsx";
+import UserInfoLoader from "../../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
+import LoginRegisterButton from "../LoginRegisterButton/LoginRegisterButton.tsx";
 import Dropdown from "./Atomic/DropDown/Dropdown.tsx";
-import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
-import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
+import {useUserUtil} from "../../../../../CustomHooks/useUserUtil.ts";
+import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useItems} from "../../../../../GlobalProviders/Items/useItems.ts";
 import Details from "./Atomic/Details.tsx";
 
 const UserInfo: React.FC = () => {
@@ -75,12 +75,12 @@ const UserInfo: React.FC = () => {
     }
 
     return (
-        <div
-            className="flex justify-center items-center h-full min-w-[220px]"
+        <div className="flex justify-center items-center h-full min-w-[220px]"
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched ? (
                     <div className="relative h-full flex justify-center items-center hover: cursor-pointer"
+                         tabIndex={0} role="button"
                          onMouseEnter={!isMobile ? handleActivateBar : undefined}
                          onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                          onTouchStart={isMobile ? handleToggleBar : undefined}
@@ -94,7 +94,7 @@ const UserInfo: React.FC = () => {
                     <UserInfoLoader/>
                 )
             ) : (
-                <LoginButton/>
+                <LoginRegisterButton/>
             )}
         </div>
     )

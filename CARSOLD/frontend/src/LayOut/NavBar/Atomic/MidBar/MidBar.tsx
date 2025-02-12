@@ -1,15 +1,15 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import Details from "../UserInfo/Atomic/Details.tsx";
+import Details from "../Info/UserInfo/Atomic/Details.tsx";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
-import LoginButton from "../UserInfo/Atomic/LoginButton.tsx";
+import LoginRegisterButton from "../Info/LoginRegisterButton/LoginRegisterButton.tsx";
 import BarButton from "./Atomic/BarButton.tsx";
 import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverWrench, faLightbulb, faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-icons";
-import {useNavigate} from "react-router-dom";
+import BarFunctionButton from "./Atomic/BarFunctionButton.tsx";
 
 interface MidBarProps {
     excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
@@ -20,7 +20,6 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     const [midBarActive, setMidBarActive] = useState<boolean>(false);
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
-    const navigate = useNavigate();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
     const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
@@ -87,19 +86,19 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                             <UserDetailsLoader/>
                         )
                     ) : (
-                        <LoginButton/>
+                        <LoginRegisterButton/>
                     )}
                 </div>
                 <div className="flex flex-col items-start w-full">
-                    <BarButton onClick={() => navigate("")} icon={faFileCirclePlus} label="Add offer"/>
-                    <BarButton onClick={() => navigate("/details/myOffers")} icon={faMoneyCheckDollar} label="My offers"/>
-                    <BarButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed" count={followed}/>
-                    <BarButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={messages}/>
-                    <BarButton onClick={() => navigate("/details/settings")} icon={faScrewdriverWrench} label="Settings"/>
+                    <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/listingOffer"} />
+                    <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
+                    <BarButton label="Followed" icon={faHeart} path={"/details/followed"} count={followed}/>
+                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={messages}/>
+                    <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&
                         <>
-                            <BarButton onClick={toggleDarkMode} icon={darkMode ? faLightbulb : faLightBulbRegular} label={`${!darkMode ? "Dark" : "Light"} mode`}/>
-                            <BarButton onClick={handleLogout} icon={faArrowRightFromBracket} label="Logout"/>
+                            <BarFunctionButton label={`${!darkMode ? "Dark" : "Light"} mode`} icon={darkMode ? faLightbulb : faLightBulbRegular} onClick={toggleDarkMode}/>
+                            <BarFunctionButton label="Logout" icon={faArrowRightFromBracket} onClick={handleLogout}/>
                         </>}
                 </div>
             </div>

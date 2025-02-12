@@ -61,12 +61,11 @@ const SwitchButton: React.FC = () => {
                 Public
             </p>
             {!isFetching ? (
-                <button className={`flex items-center justify-center w-[54px] h-[30px] m:scale-110 border border-black border-opacity-40
+                <button className={`flex items-center justify-center w-[54px] h-[30px] m:scale-110 border border-gray-500
                 rounded-full transition-all duration-300 ${isPublic ? "bg-lime" : "bg-gray-300"} `}
                         onClick={handleSwitchButton}>
                     <div className={`w-[calc(100%-6px)] h-[calc(100%-6px)] flex ${initialLoad ? "justify-end" : "justify-start"} rounded-full`}>
-                        <div className={`h-full aspect-square bg-white border border-black 
-                        border-opacity-5 rounded-full ${buttonAnimation}`}></div>
+                        <div className={`h-full aspect-square bg-white border border-gray-400 rounded-full ${buttonAnimation}`}></div>
                     </div>
                 </button>
             ) : (
