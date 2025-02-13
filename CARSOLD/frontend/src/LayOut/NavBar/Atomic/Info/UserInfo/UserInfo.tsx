@@ -84,9 +84,7 @@ const UserInfo: React.FC = () => {
                          onMouseEnter={!isMobile ? handleActivateBar : undefined}
                          onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                          onTouchStart={isMobile ? handleToggleBar : undefined}
-                         onKeyDown={(event) => {
-                             if (event.key === "Enter") handleToggleBar()
-                         }}>
+                         onKeyDown={(event) => {if (event.key === "Enter") handleToggleBar()}}>
                         <Details userIconAnimation={userIconAnimation} userDetails={username} profilePic={profilePic}/>
                         <Dropdown barActive={barActive}/>
                     </div>
