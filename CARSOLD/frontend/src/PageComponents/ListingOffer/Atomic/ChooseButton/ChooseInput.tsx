@@ -7,10 +7,10 @@ interface ChooseButtonProps {
     firstOption: string;
     secondOption: string;
     value: boolean | null;
-    setValue: (value: boolean | null) => void;
+    setValue: React.Dispatch<React.SetStateAction<boolean | null>>;
     required: boolean;
     isWrong: boolean;
-    setIsWrong: (isWrong: boolean) => void;
+    setIsWrong: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOption, value, setValue, required, isWrong, setIsWrong }) => {
@@ -24,11 +24,13 @@ const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOp
         <div className="relative">
             <p className={`text-lg m:text-xl text-center ${!isWrong ? "text-black" : "text-coolRed"}`}>{label}</p>
             <div className="flex flex-row">
-                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-l-md border hover:bg-lime ${!isWrong ? "border-gray-300" : "border-coolRed"}
+                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-l-md border hover:bg-lime 
+                ${!isWrong ? value ? "border-darkLime" : "border-gray-300" : "border-coolRed"}
                 ${value === null ? "bg-white" : value ? "bg-lime" : "bg-white"}`}
                         onClick={() => handleButtonClick(true)}>{firstOption}
                 </button>
-                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-r-md border hover:bg-lime ${!isWrong ? "border-gray-300" : "border-coolRed"}
+                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-r-md border hover:bg-lime 
+                ${!isWrong ? !value ? "border-darkLime" : "border-gray-300" : "border-coolRed"}
                 ${value === null ? "bg-white" : !value ? "bg-lime" : "bg-white"}`}
                         onClick={() => handleButtonClick(false)}>{secondOption}
                 </button>

@@ -3,6 +3,7 @@ import LayOut from "../../LayOut/LayOut.tsx";
 import TitleInput from "./Atomic/TitleInput/TitleInput.tsx";
 import SelectInput from "./Atomic/SelectInput/SelectInput.tsx";
 import ChooseInput from "./Atomic/ChooseButton/ChooseInput.tsx";
+import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
 
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Listing Offer";
@@ -14,6 +15,8 @@ const OfferForm: React.FC = () => {
     const [wrongBrand, setWrongBrand] = useState<boolean>(false);
     const [techCondition, setTechCondition] = useState<boolean | null>(null);
     const [wrongTechCondition, setWrongTechCondition] = useState<boolean>(false);
+    const [description, setDescription] = useState<string>("");
+    const [wrongDescription, setWrongDescription] = useState<boolean>(false);
 
     return (
         <LayOut>
@@ -25,18 +28,14 @@ const OfferForm: React.FC = () => {
                                 isWrong={wrongTitle} setIsWrong={setWrongTitle} maxLength={40}/>
                     <br/>
                     <SelectInput label="Brand" setValue={setBrand} required={true} isRight={rightBrand} isWrong={wrongBrand} setIsWrong={setWrongBrand}
-                                 options={[
-                                     { value: "Volkswagen", label: "Volkswagen" },
-                                     { value: "Audi", label: "Audi" },
-                                     { value: "Mercedes", label: "Mercedes" },
-                                     { value: "BMW", label: "BMW"},
-                                     { value: "Porsche", label: "Porsche"},
-                                     { value: "Cupra", label: "Cupra"}
-                                 ]}/>
+                                 options={["Volkswagen", "Audi", "Mercedes", "BMW", "Porsche", "Cupra"]}/>
                     <br/>
                     <ChooseInput label="Technical condition" firstOption="Undamaged" secondOption="Damaged"
                                  value={techCondition} setValue={setTechCondition} required={true}
                                  isWrong={wrongTechCondition} setIsWrong={setWrongTechCondition}/>
+                    <br/>
+                    <DescriptionInput label="Description:" value={description} setValue={setDescription} isWrong={wrongDescription}
+                                      setIsWrong={setWrongDescription} maxLength={100} required={true}/>
                 </div>
             </div>
         </LayOut>

@@ -4,15 +4,15 @@ import {faAsterisk, faPlay, faSquareCheck} from "@fortawesome/free-solid-svg-ico
 
 interface SelectInputProps {
     label: string;
-    options: { value: string; label: string }[];
-    setValue: (value: string) => void;
+    options: string[];
+    setValue: React.Dispatch<React.SetStateAction<string>>;
     required: boolean;
     isRight: boolean;
     isWrong: boolean;
-    setIsWrong: (isWrong: boolean) => void;
+    setIsWrong: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ options, setValue, label, required, isWrong, setIsWrong, isRight }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, options, setValue, required, isRight, isWrong, setIsWrong }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [selected, setSelected] = useState<string | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);
@@ -49,21 +49,20 @@ const SelectInput: React.FC<SelectInputProps> = ({ options, setValue, label, req
             ${!isWrong ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </p>
-            <div className={`w-full p-2 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 
-            ${selected ? "text-black" : !isWrong ? "text-gray-500" : "text-coolRed"}
+            <div className={`w-full p-2 pr-6 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black truncate
             ${!isWrong ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
                  onClick={() => setIsOpen(!isOpen)}>
-                {selected ? options.find((o) => o.value === selected)?.label : "\u200B"}
+                {selected || "\u200B"}
             </div>
             {isOpen && (
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
-                 max-h-[134px] overflow-y-auto z-10">
+                max-h-[222px] overflow-y-auto overflow-x-hidden z-10 animate-unroll">
                     {options.map((option) => (
-                        <li key={option.value} className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                        <li key={option} className="p-2 hover:bg-gray-200 cursor-pointer"
                             tabIndex={0} role="button"
-                            onClick={() => handleSelect(option.value)}
-                            onKeyDown={(event) => {if (event.key === "Enter") handleSelect(option.value)}}>
-                            {option.label}
+                            onClick={() => handleSelect(option)}
+                            onKeyDown={(event) => {if (event.key === "Enter") handleSelect(option)}}>
+                            {option}
                         </li>
                     ))}
                 </ul>

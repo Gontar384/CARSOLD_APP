@@ -146,6 +146,16 @@ export default {
                     '0%': {transform: "translateX(0)"},
                     '100%': {transform: "translateX(-100%)"}
                 },
+                unroll: {
+                    '0%': {transform: "scaleY(0)", transformOrigin: "top"},
+                    '50%': {transform: "scaleY(0.5)", transformOrigin: "top"},
+                    '100%': {transform: "scaleY(1)", transformOrigin: "top"}
+                },
+                unrollRev: {
+                    '0%': {transform: "scaleY(1)", transformOrigin: "top"},
+                    '50%': {transform: "scaleY(0.5)", transformOrigin: "top"},
+                    '100%': {transform: "scaleY(0)", transformOrigin: "top"}
+                }
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -176,6 +186,8 @@ export default {
                 swing: 'swing 0.7s ease-in-out forwards',
                 slideShow: 'slideShow 0.3s ease-out forwards',
                 slideHide: 'slideHide 0.3s ease-out forwards',
+                unroll: 'unroll 0.2s linear forwards',
+                unrollRev: 'unrollRev 0.2s linear forwards',
             },
         },
     },
