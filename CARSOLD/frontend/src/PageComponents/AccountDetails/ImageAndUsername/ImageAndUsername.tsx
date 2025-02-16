@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Image from "./Atomic/Image.tsx";
 import Username from "./Atomic/Username.tsx";
-import Message from "./Atomic/Message.tsx";
+import Message from "../../../SharedComponents/Message/Message.tsx";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const ImageAndUsername: React.FC = () => {

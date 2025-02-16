@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import TitleInput from "./Atomic/TitleInput/TitleInput.tsx";
 import SelectInput from "./Atomic/SelectInput/SelectInput.tsx";
-import ChooseInput from "./Atomic/ChooseButton/ChooseInput.tsx";
+import ChooseInput from "./Atomic/ChooseInput/ChooseInput.tsx";
 import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
+import ImageInput from "./Atomic/ImageInput/ImageInput.tsx";
 
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Listing Offer";
@@ -17,11 +18,12 @@ const OfferForm: React.FC = () => {
     const [wrongTechCondition, setWrongTechCondition] = useState<boolean>(false);
     const [description, setDescription] = useState<string>("");
     const [wrongDescription, setWrongDescription] = useState<boolean>(false);
+    const [photos, setPhotos] = useState<(string | null)[]>(Array(8).fill(null));
 
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px] h-[1000px]
+                <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
                     <p className="text-3xl m:text-4xl my-14 m:my-16 text-center">Listing Offer</p>
                     <TitleInput label={"Title"} value={title} setValue={setTitle} required={true} isRight={rightTitle}
@@ -36,6 +38,8 @@ const OfferForm: React.FC = () => {
                     <br/>
                     <DescriptionInput label="Description:" value={description} setValue={setDescription} isWrong={wrongDescription}
                                       setIsWrong={setWrongDescription} maxLength={100} required={true}/>
+                    <br/>
+                    <ImageInput photos={photos} setPhotos={setPhotos}/>
                 </div>
             </div>
         </LayOut>

@@ -145,8 +145,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
              onTouchStart={isMobile ? handleToggleInput : undefined}
              onTouchEnd={isMobile ? handleClickable : undefined}>
-            <div
-                className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
+            <div className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
                 style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
                     <div className="relative w-full h-full rounded-full">
@@ -162,7 +161,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                             rounded-full bg-lowLime bg-opacity-50 z-20">
                                 {inputClickable &&
                                     <input type="file" accept="image/*" title=""
-                                           className="file-input absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
+                                           className="absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
                                            onChange={handleUploadPic} onClick={() => setHideButton(true)}/>}
                                 {!hideButton &&
                                     <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}

@@ -23,15 +23,15 @@ const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOp
     return (
         <div className="relative">
             <p className={`text-lg m:text-xl text-center ${!isWrong ? "text-black" : "text-coolRed"}`}>{label}</p>
-            <div className="flex flex-row">
-                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-l-md border hover:bg-lime 
-                ${!isWrong ? value ? "border-darkLime" : "border-gray-300" : "border-coolRed"}
-                ${value === null ? "bg-white" : value ? "bg-lime" : "bg-white"}`}
+            <div className="flex flex-row text-lg m:text-xl">
+                <button className={`w-32 m:w-36 py-2 rounded-l-md border
+                ${isWrong ? "border-coolRed bg-white" : value === null
+                || !value ? "border-gray-300 bg-white" : "border-darkLime bg-lime"}`}
                         onClick={() => handleButtonClick(true)}>{firstOption}
                 </button>
-                <button className={`text-lg m:text-xl w-32 m:w-36 py-2 rounded-r-md border hover:bg-lime 
-                ${!isWrong ? !value ? "border-darkLime" : "border-gray-300" : "border-coolRed"}
-                ${value === null ? "bg-white" : !value ? "bg-lime" : "bg-white"}`}
+                <button className={`w-32 m:w-36 py-2 rounded-r-md border
+                               ${isWrong ? "border-coolRed bg-white" : value === null
+                || value ? "border-gray-300 bg-white" : "border-darkLime bg-lime"}`}
                         onClick={() => handleButtonClick(false)}>{secondOption}
                 </button>
             </div>
