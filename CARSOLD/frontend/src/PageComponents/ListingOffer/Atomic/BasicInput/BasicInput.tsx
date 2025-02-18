@@ -4,6 +4,8 @@ import {faAsterisk} from "@fortawesome/free-solid-svg-icons";
 
 interface TitleInputProps {
     label: string;
+    type: "text" | "number";
+    symbol?: string;
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     required: boolean;
@@ -13,7 +15,7 @@ interface TitleInputProps {
     maxLength: number;
 }
 
-const TitleInput: React.FC<TitleInputProps> = ({ label, value, setValue, required, isWrong, setIsWrong, message, maxLength }) => {
+const BasicInput: React.FC<TitleInputProps> = ({ label, type, symbol, value, setValue, required, isWrong, setIsWrong, message, maxLength }) => {
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,10 +35,11 @@ const TitleInput: React.FC<TitleInputProps> = ({ label, value, setValue, require
             ${!isWrong ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </label>
-            <input className={`w-full p-2 text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow truncate
+            <input className={`w-full p-2 ${symbol && "pr-12 m:pr-14"} text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow
             ${!isWrong ? "border-gray-300 focus:border-darkLime" : "border-coolRed"}`}
-                value={value} type="text" onChange={handleChange}
+                value={value} type={type} onChange={handleChange}
                 onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(value !== "")}/>
+            {symbol && <p className="absolute right-2 top-2.5 text-lg m:text-xl text-gray-500">{symbol}</p>}
             {required && <FontAwesomeIcon className="absolute -right-3 m:-right-3.5 top-[18px] text-[10px] m:text-xs" icon={faAsterisk}/>}
             <div className="flex flex-row justify-between text-xs m:text-sm text-gray-700 mt-1">
                 <p>{message}</p>
@@ -46,4 +49,4 @@ const TitleInput: React.FC<TitleInputProps> = ({ label, value, setValue, require
     )
 }
 
-export default TitleInput
+export default BasicInput

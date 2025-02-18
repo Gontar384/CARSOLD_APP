@@ -131,7 +131,8 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     };
 
     return (
-        <div className={`max-w-40 h-32 m:w-48 m:h-40 m:max-w-full border-2 bg-white border-gray-300 rounded-md cursor-pointer relative`}
+        <div className={`max-w-40 h-32 m:w-48 m:h-40 m:max-w-full bg-white border-2 border-gray-300 rounded-md 
+        cursor-pointer relative transition-transform duration-200 ${imgHovered && "brightness-75 scale-105"}`}
             onDrop={handleFileDrop} onDragOver={(e) => e.preventDefault()}>
             {preview === null ? (
                 <>
@@ -147,28 +148,28 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
                 <div className="w-full h-full" ref={imageRef}
                      onMouseEnter={!isMobile ? () => setImgHovered(true) : undefined}
                      onMouseLeave={!isMobile ? () => setImgHovered(false) : undefined}>
-                    <img className={`w-full h-full object-cover rounded-md transition-transform duration-200 
-                    ${imgHovered && "brightness-75 scale-105"}`} alt="Car Image"
-                         src={preview} draggable={true}
+                    {index === 0 && <p className="absolute left-1 bottom-1 p-0.5 text-lg m:text-xl bg-lime rounded">MAIN</p>}
+                    <img className={`w-full h-full object-cover rounded`}
+                         alt="Car Image" draggable={true} src={preview}
                          onDragStart={(e) => handleDragStart(e, index)}
                          onTouchStart={isMobile ? handleTouch : undefined}/>
                     {imgHovered && (
-                        <button className={`flex absolute top-0 right-0 p-2 bg-gray-200 rounded-lg ${!isMobile && "hover:brightness-90"}`}
+                        <button className={`flex absolute top-1 right-1 p-2 bg-white rounded-lg ${!isMobile && "hover:brightness-90"}`}
                                 onMouseUp={!isMobile ? handleImageDelete : undefined}
                                 onTouchEnd={isMobile ? handleImageDelete : undefined}>
                             <FontAwesomeIcon className="text-2xl m:text-3xl" icon={faTrashCan}/>
                         </button>
                     )}
                     {imgHovered && isMobile && (
-                        <div className="flex absolute bottom-0 right-0 gap-2">
+                        <div className="flex absolute bottom-1 right-1 gap-2">
                             {index > 0 && photos[index - 1] !== null && (
-                                <button className="flex bg-gray-200 p-2 rounded-lg"
+                                <button className="flex bg-white p-2 rounded-lg"
                                         onTouchEnd={isMobile ? () => moveImageOnMobile(index, index - 1) : undefined}>
                                     <FontAwesomeIcon className="text-2xl m:text-3xl" icon={faArrowLeft}/>
                                 </button>
                             )}
                             {index < photos.length - 1 && photos[index + 1] !== null && (
-                                <button className="flex bg-gray-200 p-2 rounded-lg"
+                                <button className="flex bg-white p-2 rounded-lg"
                                         onTouchEnd={isMobile ? () => moveImageOnMobile(index, index + 1) : undefined}>
                                     <FontAwesomeIcon className="text-2xl m:text-3xl" style={{transform: "rotate(180deg)"}} icon={faArrowLeft}/>
                                 </button>
