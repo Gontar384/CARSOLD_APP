@@ -1,18 +1,20 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faImage, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faImage, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface SingularImageInputProps {
     index: number;
     photos: (string | null)[];
     setPhotos: React.Dispatch<React.SetStateAction<(string | null)[]>>;
+    setWarning: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, setPhotos}) => {
-    const MAX_SIZE_MB = 3;
+const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, setPhotos, setWarning}) => {
+    const MAX_SIZE_MB = 1;
     const MAX_IMAGES = 8;
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const imageRef = useRef<HTMLInputElement>(null);
     const [animation, setAnimation] = useState<"animate-pop" | null>(null);
     const [imgHovered, setImgHovered] = useState<boolean>(false);
     const preview: string | null = photos[index];
@@ -32,9 +34,9 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
 
         Array.from(files).forEach(file => {
             if (!file.type.startsWith("image/")) {
-                console.warn(`File "${file.name}" is not an image and was not added.`);
+                setWarning(`File "${file.name}" is not an image and was not added.`);
             } else if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                console.warn(`File "${file.name}" exceeds the size limit of ${MAX_SIZE_MB}MB and was not added.`);
+                setWarning(`File "${file.name}" exceeds the size limit of ${MAX_SIZE_MB}MB and was not added.`);
             } else if (remainingSlots > 0) {
                 validFiles.push(file);
                 remainingSlots--;
@@ -53,24 +55,28 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
         });
 
         if (validFiles.length < files.length) {
-            console.warn(`Only ${validFiles.length} images were added. ${files.length - validFiles.length} were ignored due to size/type/limit.`);
+            setWarning(`Only ${validFiles.length} images were added. ${files.length - validFiles.length} were ignored due to size/type/limit.`);
         }
 
         updatePhotos(newPhotos);
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setWarning(null);
         if (event.target.files) {
             processFiles(event.target.files);
         }
     };
 
     const handleImageDelete = () => {
-        setImgHovered(false);
-        const newPhotos = [...photos];
-        newPhotos[index] = null;
-        updatePhotos(newPhotos);
-        if (fileInputRef.current) fileInputRef.current.value = "";
+        setWarning(null);
+        setTimeout(() => {
+            setImgHovered(false);
+            const newPhotos = [...photos];
+            newPhotos[index] = null;
+            updatePhotos(newPhotos);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }, 50);
     };
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, draggedIndex: number) => {
@@ -78,6 +84,7 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     };
 
     const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        setWarning(null);
         event.preventDefault();
         const draggedIndex = event.dataTransfer.getData("draggedIndex");
 
@@ -93,9 +100,39 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
         }
     };
 
+    const handleTouch = () => {
+        setImgHovered(prev => !prev);
+    }
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (imgHovered && imageRef.current && !imageRef.current.contains(event.target as Node)) {
+                setImgHovered(false);
+            }
+        }
+
+        if (imgHovered) {
+            document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("touchstart", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        }
+    }, [imgHovered])   //adds event listener to off img "activation"
+
+    const moveImageOnMobile = (fromIndex: number, toIndex: number) => {
+        setWarning(null);
+        const newPhotos = [...photos];
+        [newPhotos[fromIndex], newPhotos[toIndex]] = [newPhotos[toIndex], newPhotos[fromIndex]];
+        setPhotos(newPhotos);
+        setImgHovered(false);
+    };
+
     return (
-        <div className={`max-w-44 h-36 m:w-48 m:h-40 m:max-w-full border-2 bg-white border-gray-300 rounded-md cursor-pointer relative`}
-             onDrop={handleFileDrop} onDragOver={(e) => e.preventDefault()}>
+        <div className={`max-w-40 h-32 m:w-48 m:h-40 m:max-w-full border-2 bg-white border-gray-300 rounded-md cursor-pointer relative`}
+            onDrop={handleFileDrop} onDragOver={(e) => e.preventDefault()}>
             {preview === null ? (
                 <>
                     <input className="w-full h-full opacity-0 cursor-pointer"
@@ -107,17 +144,36 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
                     <FontAwesomeIcon className={`absolute inset-0 m-auto text-2xl m:text-3xl pointer-events-none ${animation}`} icon={faImage}/>
                 </>
             ) : (
-                <div className="w-full h-full"
+                <div className="w-full h-full" ref={imageRef}
                      onMouseEnter={!isMobile ? () => setImgHovered(true) : undefined}
                      onMouseLeave={!isMobile ? () => setImgHovered(false) : undefined}>
-                    <img className={`w-full h-full object-cover rounded-md ${imgHovered && "brightness-75"}`} alt="Car Image"
+                    <img className={`w-full h-full object-cover rounded-md transition-transform duration-200 
+                    ${imgHovered && "brightness-75 scale-105"}`} alt="Car Image"
                          src={preview} draggable={true}
-                         onDragStart={(e) => handleDragStart(e, index)} />
+                         onDragStart={(e) => handleDragStart(e, index)}
+                         onTouchStart={isMobile ? handleTouch : undefined}/>
                     {imgHovered && (
-                        <button className="absolute top-2 right-2 p-1 bg-gray-200 rounded-xl"
-                                onClick={handleImageDelete}>
+                        <button className={`flex absolute top-0 right-0 p-2 bg-gray-200 rounded-lg ${!isMobile && "hover:brightness-90"}`}
+                                onMouseUp={!isMobile ? handleImageDelete : undefined}
+                                onTouchEnd={isMobile ? handleImageDelete : undefined}>
                             <FontAwesomeIcon className="text-2xl m:text-3xl" icon={faTrashCan}/>
                         </button>
+                    )}
+                    {imgHovered && isMobile && (
+                        <div className="flex absolute bottom-0 right-0 gap-2">
+                            {index > 0 && photos[index - 1] !== null && (
+                                <button className="flex bg-gray-200 p-2 rounded-lg"
+                                        onTouchEnd={isMobile ? () => moveImageOnMobile(index, index - 1) : undefined}>
+                                    <FontAwesomeIcon className="text-2xl m:text-3xl" icon={faArrowLeft}/>
+                                </button>
+                            )}
+                            {index < photos.length - 1 && photos[index + 1] !== null && (
+                                <button className="flex bg-gray-200 p-2 rounded-lg"
+                                        onTouchEnd={isMobile ? () => moveImageOnMobile(index, index + 1) : undefined}>
+                                    <FontAwesomeIcon className="text-2xl m:text-3xl" style={{transform: "rotate(180deg)"}} icon={faArrowLeft}/>
+                                </button>
+                            )}
+                        </div>
                     )}
                 </div>
             )}

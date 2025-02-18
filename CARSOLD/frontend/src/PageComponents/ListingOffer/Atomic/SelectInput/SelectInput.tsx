@@ -1,24 +1,23 @@
 import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAsterisk, faPlay, faSquareCheck} from "@fortawesome/free-solid-svg-icons";
+import {faAsterisk, faPlay} from "@fortawesome/free-solid-svg-icons";
 
 interface SelectInputProps {
     label: string;
     options: string[];
-    setValue: React.Dispatch<React.SetStateAction<string>>;
+    value: string | null;
+    setValue: React.Dispatch<React.SetStateAction<string | null>>;
+    active: boolean;
     required: boolean;
-    isRight: boolean;
     isWrong: boolean;
     setIsWrong: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, options, setValue, required, isRight, isWrong, setIsWrong }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, required, isWrong, setIsWrong, active }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [selected, setSelected] = useState<string | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);
 
     const handleSelect = (value: string) => {
-        setSelected(value);
         setValue(value);
         setIsOpen(false);
         setIsWrong(false);
@@ -42,17 +41,16 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, setValue, req
 
     return (
         <div className="relative w-64 m:w-72" ref={componentRef} tabIndex={0} role="button"
-             onKeyDown={(event) => {if (event.key === "Enter" && !isOpen) setIsOpen(true)}}>
-            {isRight && <FontAwesomeIcon className="absolute -left-[17px] m:-left-5 top-4 m:top-[15px] text-base m:text-lg" icon={faSquareCheck}/>}
+             onKeyDown={(event) => {if (event.key === "Enter" && !isOpen && active) setIsOpen(true)}}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
-            ${isOpen || selected ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
+            ${isOpen || value ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!isWrong ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </p>
             <div className={`w-full p-2 pr-6 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black truncate
             ${!isWrong ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
-                 onClick={() => setIsOpen(!isOpen)}>
-                {selected || "\u200B"}
+                 onClick={() => active && setIsOpen(!isOpen)}>
+                {value || "\u200B"}
             </div>
             {isOpen && (
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
