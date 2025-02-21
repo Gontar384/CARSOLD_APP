@@ -1,5 +1,8 @@
 export const carDrives = [
-    "FWD (Front-Wheel Drive)", "RWD (Rear-Wheel Drive)", "AWD (All-Wheel Drive)", "4WD (4x4 Four-Wheel Drive)",
-    "Part-Time 4WD (Selectable Four-Wheel Drive)", "Full-Time 4WD (Always-Engaged Four-Wheel Drive)",
+    "FWD (Front-Wheel Drive)",
+    "RWD (Rear-Wheel Drive)",
+    "Permanent AWD (Full-Time All-Wheel Drive)",
+    "Part-Time AWD (Selectable All-Wheel Drive)",
+    "Automatic AWD (All-Wheel Drive with Automatic Engagement)",
     "Electric AWD (Electric All-Wheel Drive)"
 ];

@@ -6,36 +6,38 @@ interface ChooseButtonProps {
     label: string;
     firstOption: string;
     secondOption: string;
-    value: boolean | null;
-    setValue: React.Dispatch<React.SetStateAction<boolean | null>>;
-    required: boolean;
-    isWrong: boolean;
-    setIsWrong: React.Dispatch<React.SetStateAction<boolean>>;
+    value: string;
+    setValue: React.Dispatch<React.SetStateAction<string>>;
+    required?: boolean;
+    error: boolean;
+    setError: React.Dispatch<React.SetStateAction<boolean>>;
+    message?: string;
 }
 
-const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOption, value, setValue, required, isWrong, setIsWrong }) => {
+const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOption, value, setValue, required, error, setError, message }) => {
 
-    const handleButtonClick = (option: boolean) => {
+    const handleButtonClick = (option: string) => {
         setValue(option);
-        if (isWrong) setIsWrong(false);
+        if (error) setError(false);
     }
 
     return (
         <div className="relative">
-            <p className={`text-lg m:text-xl text-center ${!isWrong ? "text-black" : "text-coolRed"}`}>{label}</p>
+            <p className={`text-lg m:text-xl text-center ${!error ? "text-black" : "text-coolRed"}`}>{label}</p>
             <div className="flex flex-row text-lg m:text-xl">
                 <button className={`w-32 m:w-36 py-2 rounded-l-md border
-                ${isWrong ? "border-coolRed bg-white" : value === null
-                || !value ? "border-gray-300 bg-white" : "border-darkLime bg-lime"}`}
-                        onClick={() => handleButtonClick(true)}>{firstOption}
+                ${error ? "border-coolRed bg-white" 
+                    : value === firstOption ? "border-darkLime bg-lime" : "border-gray-300 bg-white"}`}
+                        onClick={() => handleButtonClick(firstOption)}>{firstOption}
                 </button>
                 <button className={`w-32 m:w-36 py-2 rounded-r-md border
-                               ${isWrong ? "border-coolRed bg-white" : value === null
-                || value ? "border-gray-300 bg-white" : "border-darkLime bg-lime"}`}
-                        onClick={() => handleButtonClick(false)}>{secondOption}
+                ${error ? "border-coolRed bg-white" 
+                    : value === secondOption ? "border-darkLime bg-lime" : "border-gray-300 bg-white" }`}
+                        onClick={() => handleButtonClick(secondOption)}>{secondOption}
                 </button>
             </div>
             {required && <FontAwesomeIcon className="absolute -right-3 m:-right-3.5 top-[46px] text-[10px] m:text-xs pointer-events-none" icon={faAsterisk} />}
+            {message && <p className="text-xs m:text-sm text-gray-700 mt-1">{message}</p>}
         </div>
     )
 }

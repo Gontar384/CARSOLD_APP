@@ -1,22 +1,19 @@
 import React, {useState} from "react";
 import SingularImageInput from "./Atomic/SingularImageInput.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAsterisk} from "@fortawesome/free-solid-svg-icons";
 
 interface ImageInputProps {
-    photos: (string | null)[];
-    setPhotos: React.Dispatch<React.SetStateAction<(string | null)[]>>;
+    photos: (string)[];
+    setPhotos: React.Dispatch<React.SetStateAction<(string)[]>>;
 }
 
 const ImageInput: React.FC<ImageInputProps> = ({ photos, setPhotos }) => {
-    const [warning, setWarning] = useState<string | null>(null);
+    const [warning, setWarning] = useState<string>("");
     const {isMobile} = useUtil();
 
     return (
         <div className="flex flex-col items-center w-fit mx-1 pb-8">
             <div className="flex flex-row items-center justify-between w-full mb-1 m:mb-2 relative">
-                <FontAwesomeIcon className="absolute left-[95px] m:left-[108px] text-[10px] m:text-xs" icon={faAsterisk}/>
                 <span className={`text-lg m:text-xl`}>Add photos</span>
                 <span className="text-xs m:text-sm">{!isMobile ? "Drag " : "Click on "}item to change order.</span>
             </div>

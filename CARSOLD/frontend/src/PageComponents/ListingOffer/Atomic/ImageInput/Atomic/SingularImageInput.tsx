@@ -5,9 +5,9 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface SingularImageInputProps {
     index: number;
-    photos: (string | null)[];
-    setPhotos: React.Dispatch<React.SetStateAction<(string | null)[]>>;
-    setWarning: React.Dispatch<React.SetStateAction<string | null>>;
+    photos: (string)[];
+    setPhotos: React.Dispatch<React.SetStateAction<(string)[]>>;
+    setWarning: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, setPhotos, setWarning}) => {
@@ -17,20 +17,20 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     const imageRef = useRef<HTMLInputElement>(null);
     const [animation, setAnimation] = useState<"animate-pop" | null>(null);
     const [imgHovered, setImgHovered] = useState<boolean>(false);
-    const preview: string | null = photos[index];
+    const preview: string = photos[index];
     const {isMobile} = useUtil();
 
-    const updatePhotos = (updated: (string | null)[]) => {
-        const filteredPhotos: (string | null)[] = updated.filter(img => img !== null);
+    const updatePhotos = (updated: (string)[]) => {
+        const filteredPhotos: (string)[] = updated.filter(img => img !== "");
         while (filteredPhotos.length < MAX_IMAGES) {
-            filteredPhotos.push(null);
+            filteredPhotos.push("");
         }
         setPhotos(filteredPhotos.slice(0, MAX_IMAGES));
     };
 
     const processFiles = (files: FileList | File[]) => {
         const validFiles: File[] = [];
-        let remainingSlots = photos.filter(p => p === null).length;
+        let remainingSlots = photos.filter(p => p === "").length;
 
         Array.from(files).forEach(file => {
             if (!file.type.startsWith("image/")) {
@@ -48,7 +48,7 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
         const newPhotos = [...photos];
 
         validFiles.forEach(file => {
-            const emptyIndex = newPhotos.indexOf(null);
+            const emptyIndex = newPhotos.indexOf("");
             if (emptyIndex !== -1) {
                 newPhotos[emptyIndex] = URL.createObjectURL(file);
             }
@@ -62,21 +62,21 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setWarning(null);
+        setWarning("");
         if (event.target.files) {
             processFiles(event.target.files);
         }
     };
 
     const handleImageDelete = () => {
-        setWarning(null);
+        setWarning("");
         setTimeout(() => {
             setImgHovered(false);
             const newPhotos = [...photos];
-            newPhotos[index] = null;
+            newPhotos[index] = "";
             updatePhotos(newPhotos);
             if (fileInputRef.current) fileInputRef.current.value = "";
-        }, 50);
+        }, 250);
     };
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, draggedIndex: number) => {
@@ -84,17 +84,17 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     };
 
     const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        setWarning(null);
+        setWarning("");
         event.preventDefault();
         const draggedIndex = event.dataTransfer.getData("draggedIndex");
 
         if (draggedIndex) {
-            if (photos[index] === null) return;
+            if (photos[index] === "") return;
             const newPhotos = [...photos];
             [newPhotos[index], newPhotos[Number(draggedIndex)]] = [newPhotos[Number(draggedIndex)], newPhotos[index]];
             setPhotos(newPhotos);
         } else if (event.dataTransfer.files.length > 0) {
-            if (photos[index] === null) {
+            if (photos[index] === "") {
                 processFiles(event.dataTransfer.files);
             }
         }
@@ -123,7 +123,7 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     }, [imgHovered])   //adds event listener to off img "activation"
 
     const moveImageOnMobile = (fromIndex: number, toIndex: number) => {
-        setWarning(null);
+        setWarning("");
         const newPhotos = [...photos];
         [newPhotos[fromIndex], newPhotos[toIndex]] = [newPhotos[toIndex], newPhotos[fromIndex]];
         setPhotos(newPhotos);
@@ -134,7 +134,7 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
         <div className={`max-w-40 h-32 m:w-48 m:h-40 m:max-w-full bg-white border-2 border-gray-300 rounded-md 
         cursor-pointer relative transition-transform duration-200 ${imgHovered && "brightness-75 scale-105"}`}
             onDrop={handleFileDrop} onDragOver={(e) => e.preventDefault()}>
-            {preview === null ? (
+            {preview === "" ? (
                 <>
                     <input className="w-full h-full opacity-0 cursor-pointer"
                            ref={fileInputRef} type="file" accept="image/*" title="" multiple
@@ -162,13 +162,13 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
                     )}
                     {imgHovered && isMobile && (
                         <div className="flex absolute bottom-1 right-1 gap-2">
-                            {index > 0 && photos[index - 1] !== null && (
+                            {index > 0 && photos[index - 1] !== "" && (
                                 <button className="flex bg-white p-2 rounded-lg"
                                         onTouchEnd={isMobile ? () => moveImageOnMobile(index, index - 1) : undefined}>
                                     <FontAwesomeIcon className="text-2xl m:text-3xl" icon={faArrowLeft}/>
                                 </button>
                             )}
-                            {index < photos.length - 1 && photos[index + 1] !== null && (
+                            {index < photos.length - 1 && photos[index + 1] !== "" && (
                                 <button className="flex bg-white p-2 rounded-lg"
                                         onTouchEnd={isMobile ? () => moveImageOnMobile(index, index + 1) : undefined}>
                                     <FontAwesomeIcon className="text-2xl m:text-3xl" style={{transform: "rotate(180deg)"}} icon={faArrowLeft}/>
