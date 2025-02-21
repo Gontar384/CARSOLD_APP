@@ -22,8 +22,8 @@ const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOp
     }
 
     return (
-        <div className="relative">
-            <p className={`text-lg m:text-xl text-center ${!error ? "text-black" : "text-coolRed"}`}>{label}</p>
+        <div className="relative w-fit">
+            <p className={`text-lg m:text-xl text-center mb-1 ${!error ? "text-black" : "text-coolRed"}`}>{label}</p>
             <div className="flex flex-row text-lg m:text-xl">
                 <button className={`w-32 m:w-36 py-2 rounded-l-md border
                 ${error ? "border-coolRed bg-white" 

@@ -24,13 +24,13 @@ const DescriptionInput: React.FC<DescriptionInputProps> = ({ value, setValue, er
     }
     
     return (
-        <div className="flex flex-col w-11/12 items-center">
-            <p className={`flex flex-row items-center gap-1 m:gap-1.5 w-full max-w-[550px] text-lg m:text-xl 
+        <div className="flex flex-col w-11/12 gap-1 m:gap-2">
+            <p className={`flex flex-row items-center gap-1 m:gap-1.5 w-full max-w-[650px] text-lg m:text-xl 
             ${!error ? "text-black" : "text-coolRed"}`}>
                 Description
                 <FontAwesomeIcon className="text-[10px] m:text-xs" icon={faAsterisk}/>
             </p>
-            <div className="w-full h-64 m:h-72 max-w-[550px] mb-10">
+            <div className="w-full h-64 m:h-80 max-w-[650px] mb-10">
                 <textarea className={`w-full h-full text-sm m:text-lg p-1 bg-white focus:outline-0 resize-none rounded-md border-2
                 ${!error ? "border-gray-300 focus:border-darkLime" : "border-coolRed"}`}
                           value={value} onChange={handleChange} placeholder="Describe your car and put some important info here..."/>

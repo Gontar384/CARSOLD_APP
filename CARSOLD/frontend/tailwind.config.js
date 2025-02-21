@@ -155,7 +155,16 @@ export default {
                     '0%': {transform: "scaleY(1)", transformOrigin: "top"},
                     '50%': {transform: "scaleY(0.5)", transformOrigin: "top"},
                     '100%': {transform: "scaleY(0)", transformOrigin: "top"}
-                }
+                },
+                spin: {
+                    '0%': {transform: "rotate(0deg)"},
+                    '100%': {transform: "rotate(360deg)"},
+                },
+                underline: {
+                    '0%': {transform: "scaleX(0)", transformOrigin: "top"},
+                    '50%': {transform: "scaleX(0.5)", transformOrigin: "top"},
+                    '100%': {transform: "scaleX(1)", transformOrigin: "top"}
+                },
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -188,6 +197,8 @@ export default {
                 slideHide: 'slideHide 0.3s ease-out forwards',
                 unroll: 'unroll 0.2s linear forwards',
                 unrollRev: 'unrollRev 0.2s linear forwards',
+                spin: 'spin 0.2s ease-in-out forwards',
+                underline: 'underline 0.2s linear forwards'
             },
         },
     },
