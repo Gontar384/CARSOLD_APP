@@ -10,11 +10,11 @@ interface SelectInputProps {
     disabled?: boolean;
     required?: boolean;
     error: boolean;
-    setError: React.Dispatch<React.SetStateAction<boolean>>;
     message?: string;
+    setToggled?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, setError, message }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);
     const filteredOptions = options.filter(option =>
@@ -24,7 +24,6 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
     const handleSelect = (value: string) => {
         setValue(value);
         setIsOpen(false);
-        setError(false);
     };
 
     useEffect(() => {
@@ -47,8 +46,14 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
         if (!options.includes(value)) setValue("");
     }, [isOpen]); //clears input when value doesn't match provided array
 
+    const handleSetToggled = () => {
+        setTimeout(() => {
+            setToggled?.(true);
+        }, 100);
+    };
+
     return (
-        <div className="relative w-64 m:w-72" ref={componentRef}>
+        <div className="relative w-64 m:w-72" ref={componentRef} onBlur={handleSetToggled}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
             ${isOpen || value ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!error ? "text-gray-500" : "text-coolRed"}`}>
@@ -58,7 +63,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
             ${!error ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
                    disabled={disabled} value={value} onChange={(e) => setValue(e.target.value)}
                    onFocus={() => setIsOpen(true)}/>
-            {isOpen && (
+            {isOpen && filteredOptions.length > 0 && (
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
                 max-h-[222px] overflow-y-auto overflow-x-hidden z-10 animate-unroll">
                     {filteredOptions.map((option) => (
@@ -75,7 +80,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
             <FontAwesomeIcon className="absolute right-2.5 m:right-3 top-3.5 m:top-[13px] text-xl m:text-2xl transition-all duration-200 pointer-events-none"
                 style={{transform: isOpen ? "rotate(90deg)" : "rotate(-90deg)", color: "darkgray"}} icon={faPlay}/>
             {required && <FontAwesomeIcon className="absolute -right-3 m:-right-3.5 top-[18px] text-[10px] m:text-xs pointer-events-none" icon={faAsterisk}/>}
-            {message && <p className="text-xs m:text-sm text-gray-700 mt-1">{message}</p>}
+            {message && <p className={`text-xs m:text-sm ${!error ? "text-gray-700" : "text-coolRed"} mt-1`}>{message}</p>}
         </div>
     )
 }
