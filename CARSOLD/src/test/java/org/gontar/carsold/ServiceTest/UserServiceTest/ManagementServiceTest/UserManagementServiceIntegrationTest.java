@@ -5,7 +5,7 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.UserService.ManagementService.ManagementService;
+import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-public class ManagementServiceIntegrationTest {
+public class UserManagementServiceIntegrationTest {
 
     @Autowired
-    private ManagementService managementService;
+    private UserManagementService userManagementService;
 
     @Autowired
     private UserRepository userRepository;
@@ -62,7 +62,7 @@ public class ManagementServiceIntegrationTest {
         newUser.setPassword("testPassword");
 
         Exception exception = assertThrows(InvalidValueException.class,
-                () -> managementService.registerUser(newUser));
+                () -> userManagementService.registerUser(newUser));
         assertTrue(exception.getMessage().contains("Username contains wrong characters: " + newUser.getUsername()));
     }
 
@@ -74,7 +74,7 @@ public class ManagementServiceIntegrationTest {
         user.setPassword("testPassword");
 
         Exception exception = assertThrows(InappropriateContentException.class,
-                () -> managementService.registerUser(user));
+                () -> userManagementService.registerUser(user));
         assertTrue(exception.getMessage().contains("Username is inappropriate"));
     }
 
@@ -86,7 +86,7 @@ public class ManagementServiceIntegrationTest {
         newUser.setPassword("testPassword");
 
         long countBefore = userRepository.count();
-        User registeredUser = managementService.registerUser(newUser);
+        User registeredUser = userManagementService.registerUser(newUser);
         long countAfter = userRepository.count();
 
         assertNotNull(registeredUser);
@@ -118,7 +118,7 @@ public class ManagementServiceIntegrationTest {
         when(securityContext.getAuthentication()).thenReturn(oauth2Token);
         SecurityContextHolder.setContext(securityContext);
 
-        managementService.deleteUser(null);
+        userManagementService.deleteUser(null);
 
         assertFalse(userRepository.existsByUsername("oauth2user"));
     }
@@ -144,7 +144,7 @@ public class ManagementServiceIntegrationTest {
     public void deleteUser_regularUser_correctPassword() {
         createAndAuthenticateUser();
 
-        managementService.deleteUser("correct_password");
+        userManagementService.deleteUser("correct_password");
 
         assertFalse(userRepository.existsByUsername("regularUser"));
     }
@@ -154,12 +154,12 @@ public class ManagementServiceIntegrationTest {
         createAndAuthenticateUser();
 
         assertThrows(InvalidPasswordException.class, () ->
-                managementService.deleteUser("incorrect_password"));
+                userManagementService.deleteUser("incorrect_password"));
         assertTrue(userRepository.existsByUsername("regularUser"));
     }
 
     @Test
     public void deleteUser_noUser() {
-        assertThrows(UserDetailsException.class, () -> managementService.deleteUser("some_password"));
+        assertThrows(UserDetailsException.class, () -> userManagementService.deleteUser("some_password"));
     }
 }

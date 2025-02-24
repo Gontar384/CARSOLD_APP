@@ -62,7 +62,7 @@ class ProfilePicControllerTest {
         doNothing().when(profilePicService).uploadProfilePic(any(MultipartFile.class));
 
         mockMvc.perform(multipart("/api/uploadProfilePic").file(file)
-                        .with(request -> { request.setMethod("PUT"); return request; }))
+                        .with(request -> { request.setMethod("PATCH"); return request; }))
                 .andExpect(status().isOk());
     }
 

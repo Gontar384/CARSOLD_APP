@@ -6,7 +6,6 @@ import org.gontar.carsold.Domain.Model.SingleBooleanDto;
 import org.gontar.carsold.Domain.Model.SingleStringDto;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,21 +18,21 @@ public class ContactInfoController {
         this.service = service;
     }
 
-    @PutMapping("/updateName")
+    @PatchMapping("/updateName")
     public ResponseEntity<?> updateName(@RequestBody SingleStringDto singleStringDto) {
         String name = singleStringDto.getValue();
         service.updateName(name);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/updatePhone")
+    @PatchMapping("/updatePhone")
     public ResponseEntity<?> updatePhone(@RequestBody SingleStringDto singleStringDto) {
         String phone = singleStringDto.getValue();
         service.updatePhone(phone);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/updateCity")
+    @PatchMapping("/updateCity")
     public ResponseEntity<?> updateCity(@RequestBody SingleStringDto singleStringDto) {
         String city = singleStringDto.getValue();
         service.updateCity(city);
@@ -46,7 +45,7 @@ public class ContactInfoController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/updateAndFetchContactPublic")
+    @PatchMapping("/updateAndFetchContactPublic")
     public ResponseEntity<SingleBooleanDto> updateAndFetchContactPublic(@RequestBody SingleBooleanDto singleBooleanDto) {
         Boolean isPublic = singleBooleanDto.getValue();
         boolean changedValue = service.updateAndFetchContactPublic(isPublic);

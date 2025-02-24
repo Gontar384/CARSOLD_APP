@@ -13,75 +13,72 @@ const UserInfo: React.FC = () => {
     const {isAuthenticated, loadingAuth} = useAuth();
     const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
     const {profilePicChange} = useItems();
-    const [userIconAnimation, setUserIconAnimation] = useState<"animate-pop" | null>(null);
-    const [animationActive, setAnimationActive] = useState<boolean>(false);   //prevents too many animations
+    const [iconAnimation, setIconAnimation] = useState<"animate-pop" | null>(null);
     const [barActive, setBarActive] = useState<boolean>(false);
-    const [barHovered, setBarHovered] = useState<boolean>(false);
     const [closing, setClosing] = useState<boolean>(false);
     const [dropdownAnimation, setDropdownAnimation] = useState<"animate-unroll" | "animate-unrollRev" | null>(null);
-    const {CreateDebouncedValue, isMobile} = useUtil();
-    const debouncedHover: boolean = CreateDebouncedValue(barHovered, 300)
+    const {isMobile} = useUtil();
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
-
-    //fetches username and profile pic
-    useEffect(() => {
-        handleFetchUsername();
-        handleFetchProfilePic();
-    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
+    const deactivationTimeout = useRef<NodeJS.Timeout | null>(null);  //for delays
+    const animationTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const handleActivateBar = () => {
-        if (!barActive) {
-            setDropdownAnimation("animate-unroll");
+        if (!barActive || closing) {
             setBarActive(true);
+            setIconAnimation("animate-pop");
+            setDropdownAnimation("animate-unroll");
         }
-        if (!closing) setBarHovered(true);
-
-        if (!animationActive) {
-            setUserIconAnimation("animate-pop");
-            setAnimationActive(true);
+        if (deactivationTimeout.current) {
+            clearTimeout(deactivationTimeout.current);
+            deactivationTimeout.current = null;
         }
-    }   //activates bar on mouse
+        if (animationTimeout.current) {
+            setClosing(false);
+            clearTimeout(animationTimeout.current);
+            animationTimeout.current = null;
+        }
+    }
 
     const handleDeactivateBar = () => {
-        setBarHovered(false);
-    }   //deactivates on mouse
-
-    useEffect(() => {
-        if (!debouncedHover && !barHovered) {
-            setClosing(true);
-            setAnimationActive(false);
-            setUserIconAnimation(null);
+        if (barActive) {
+            deactivationTimeout.current = setTimeout(() => {
+                setClosing(true);
+            }, 300);
         }
-    }, [debouncedHover, barHovered]);  //for user-friendly delay on MouseLeave
+    };
 
     useEffect(() => {
         if (closing) {
+            setIconAnimation(null);
             setDropdownAnimation("animate-unrollRev");
-            const timeout = setTimeout(() => {
+            animationTimeout.current = setTimeout(() => {
                 setBarActive(false);
                 setClosing(false);
             }, 300);
-
-           return () => clearTimeout(timeout);
         }
-    }, [closing]);   //manages dropdown unroll animation
+
+        return () => {
+            if (animationTimeout.current) {
+                clearTimeout(animationTimeout.current);
+            }
+        };
+    }, [closing]);   //delay for animation
 
     const handleToggleBar = () => {
         if (!barActive) {
-            setDropdownAnimation("animate-unroll");
             setBarActive(true);
+            setDropdownAnimation("animate-unroll");
         } else {
             setClosing(true);
         }
-        setUserIconAnimation(prev => prev === "animate-pop" ? null : "animate-pop");
+        setIconAnimation(prev => prev === "animate-pop" ? null : "animate-pop");
     };   //for mobile and keyboard
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setClosing(true);
-                setUserIconAnimation(null);
-                setAnimationActive(false);
+                setIconAnimation(null);
             }
         };
 
@@ -89,6 +86,12 @@ const UserInfo: React.FC = () => {
 
         return () => document.removeEventListener("touchstart", handleClickOutside);
     }, [barActive]);    //adds event listener for faster button deactivation for mobile
+
+    //fetches username and profile pic
+    useEffect(() => {
+        handleFetchUsername();
+        handleFetchProfilePic();
+    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     if (loadingAuth) {
         return <UserInfoLoader/>
@@ -105,7 +108,7 @@ const UserInfo: React.FC = () => {
                          onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                          onTouchStart={isMobile ? handleToggleBar : undefined}
                          onKeyDown={(event) => {if (event.key === "Enter") handleToggleBar()}}>
-                        <Details userIconAnimation={userIconAnimation} userDetails={username} profilePic={profilePic}/>
+                        <Details iconAnimation={iconAnimation} userDetails={username} profilePic={profilePic}/>
                         <Dropdown barActive={barActive} animation={dropdownAnimation}/>
                     </div>
                 ) : (

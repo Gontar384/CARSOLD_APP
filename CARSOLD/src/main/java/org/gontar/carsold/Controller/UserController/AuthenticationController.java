@@ -42,7 +42,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/auth/activateAccount")
+    @PatchMapping("/auth/activateAccount")
     public ResponseEntity<?> activateAccount(@RequestBody SingleStringDto singleStringDto, HttpServletResponse response) {
         String token = singleStringDto.getValue();
         service.activateAccount(token, response);
@@ -57,7 +57,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/auth/logout")
+    @PostMapping("/auth/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         service.logout(request, response, authentication);
         return ResponseEntity.ok().build();

@@ -23,7 +23,7 @@ public class ProfilePicController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/uploadProfilePic")
+    @PatchMapping("/uploadProfilePic")
     public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile file) {
         service.uploadProfilePic(file);
         return ResponseEntity.ok().build();

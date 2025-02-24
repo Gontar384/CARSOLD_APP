@@ -40,7 +40,7 @@ export const keepSessionAlive = async (): Promise<void> => {
 
 export const activateAccount = async (token: string | null): Promise<void> => {
     try {
-        await api.post(`api/auth/activateAccount`, { value: token });
+        await api.patch(`api/auth/activateAccount`, { value: token });
     } catch (error) {
         handleError(error);
     }
@@ -52,7 +52,7 @@ export const authenticate = async (login: string | null, password: string | null
 
 export const logout = async (): Promise<void> => {
     try {
-        await api.get(`api/auth/logout`);
+        await api.post(`api/auth/logout`);
     } catch (error) {
         handleError(error);
     }
@@ -75,7 +75,7 @@ export const fetchUsername = async (): Promise<AxiosResponse> => {
 
 export const changePassword = async (oldPassword: string | null, newPassword: string | null): Promise<void> => {
     try {
-        await api.put("api/changePassword", { oldPassword: oldPassword, newPassword: newPassword });
+        await api.patch("api/changePassword", { oldPassword: oldPassword, newPassword: newPassword });
     } catch (error) {
         handleError(error);
     }
@@ -83,7 +83,7 @@ export const changePassword = async (oldPassword: string | null, newPassword: st
 
 export const changePasswordRecovery = async (token: string | null, password: string | null): Promise<void> => {
     try {
-        await api.put('api/changePasswordRecovery', { token: token, password: password });
+        await api.patch('api/changePasswordRecovery', { token: token, password: password });
     } catch (error) {
         handleError(error);
     }
@@ -167,7 +167,7 @@ export const fetchProfilePic = async (): Promise<AxiosResponse> => {
 
 export const uploadProfilePic = async (formData: FormData): Promise<void> => {
     try {
-        await api.put('api/uploadProfilePic', formData);
+        await api.patch('api/uploadProfilePic', formData);
     } catch (error) {
         handleError(error);
     }
@@ -184,15 +184,15 @@ export const deleteProfilePic = async (): Promise<void> => {
 //---ContactInfo---
 
 export const updateName = async (name: string | null): Promise<AxiosResponse> => {
-    return await api.put('api/updateName', { value: name }); //manually handling errors in main function
+    return await api.patch('api/updateName', { value: name }); //manually handling errors in main function
 };
 
 export const updatePhone = async (phone: string | null): Promise<AxiosResponse> => {
-    return await api.put('api/updatePhone', { value: phone }); //manually handling errors in main function
+    return await api.patch('api/updatePhone', { value: phone }); //manually handling errors in main function
 };
 
 export const updateCity = async (city: string | null): Promise<AxiosResponse> => {
-    return await api.put('api/updateCity', { value: city }); //manually handling errors in main function
+    return await api.patch('api/updateCity', { value: city }); //manually handling errors in main function
 };
 
 export const fetchCitySuggestions = async (value: string | null): Promise<AxiosResponse> => {
@@ -206,7 +206,7 @@ export const fetchCitySuggestions = async (value: string | null): Promise<AxiosR
 
 export const updateAndFetchContactPublic = async (isPublic: boolean | null): Promise<AxiosResponse> => {
     try {
-        return await api.put('api/updateAndFetchContactPublic', { value: isPublic });
+        return await api.patch('api/updateAndFetchContactPublic', { value: isPublic });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

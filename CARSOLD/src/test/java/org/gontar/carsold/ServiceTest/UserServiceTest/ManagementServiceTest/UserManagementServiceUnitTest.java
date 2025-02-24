@@ -9,7 +9,7 @@ import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
-import org.gontar.carsold.Service.UserService.ManagementService.ManagementServiceImpl;
+import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ManagementServiceUnitTest {
+public class UserManagementServiceUnitTest {
 
     @InjectMocks
-    private ManagementServiceImpl managementService;
+    private UserManagementServiceImpl managementService;
 
     @Mock
     private MyUserDetailsService userDetailsService;

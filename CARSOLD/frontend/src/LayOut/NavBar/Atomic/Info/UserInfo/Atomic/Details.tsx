@@ -5,12 +5,12 @@ import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface DetailsProps {
-    userIconAnimation?: "animate-pop" | null;
+    iconAnimation?: "animate-pop" | null;
     userDetails: string;
     profilePic: string;
 }
 
-const Details: React.FC<DetailsProps> = ({userIconAnimation, userDetails, profilePic}) => {
+const Details: React.FC<DetailsProps> = ({iconAnimation, userDetails, profilePic}) => {
 
     const {messages} = useItems();
     const {bigWidth} = useUtil();
@@ -21,10 +21,10 @@ const Details: React.FC<DetailsProps> = ({userIconAnimation, userDetails, profil
             <div className="w-7 h-7">
                 {profilePic !== "" && !imageError ? (
                     <img src={profilePic} alt="Profile Picture"
-                         className={`object-cover w-full h-full rounded-full ${userIconAnimation}`}
+                         className={`object-cover w-full h-full rounded-full ${iconAnimation}`}
                          onError={() => setImageError(true)}/>
                 ) : (
-                    <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${userIconAnimation}`}/>)}
+                    <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${iconAnimation}`}/>)}
             </div>
             <div
                 className="text-2xl whitespace-nowrap">

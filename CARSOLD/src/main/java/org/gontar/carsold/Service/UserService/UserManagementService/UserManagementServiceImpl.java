@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service.UserService.ManagementService;
+package org.gontar.carsold.Service.UserService.UserManagementService;
 
 import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ManagementServiceImpl implements ManagementService {
+public class UserManagementServiceImpl implements UserManagementService {
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
@@ -46,9 +46,9 @@ public class ManagementServiceImpl implements ManagementService {
     private final EmailService emailService;
     private final CookieService cookieService;
 
-    public ManagementServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
-                                 JwtService jwtService, EmailService emailService,
-                                 CookieService cookieService) {
+    public UserManagementServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
+                                     JwtService jwtService, EmailService emailService,
+                                     CookieService cookieService) {
         this.repository = repository;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;

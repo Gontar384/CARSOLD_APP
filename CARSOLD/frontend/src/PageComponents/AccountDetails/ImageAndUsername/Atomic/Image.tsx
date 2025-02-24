@@ -17,11 +17,9 @@ interface ImageProps {
 const Image: React.FC<ImageProps> = ({setMessage}) => {
 
     const [inputActive, setInputActive] = useState<boolean>(false);
-    const [inputHovered, setInputHovered] = useState<boolean>(false);
-    const {isMobile, CreateDebouncedValue} = useUtil();
-    const debouncedHover: boolean = CreateDebouncedValue(inputHovered, 300)
-    const [inputClickable, setInputClickable] = useState<boolean>(false);
-    const [hideButton, setHideButton] = useState<boolean>(false);
+    const {isMobile} = useUtil();
+    const [inputDisabled, setInputDisabled] = useState<boolean>(true);
+    const [showButton, setShowButton] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside search bar
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
@@ -29,39 +27,40 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const {setProfilePicChange} = useItems();
     const {profilePic, profilePicFetched, handleFetchProfilePic} = useUserUtil();
     const {isAuthenticated} = useAuth();
+    const deactivationTimeout = useRef<NodeJS.Timeout | null>(null);  //for delays
 
     const handleActivateInput = () => {
-        setInputActive(true);
-        setInputHovered(true);
-        setInputClickable(true);
-        setHideButton(false);
-    }   //activates on mouse
+        if (!inputActive) {
+            setInputActive(true);
+            setShowButton(true);
+        }
+        if (deactivationTimeout.current) {
+            clearTimeout(deactivationTimeout.current);
+            deactivationTimeout.current = null;
+        }
+    };
 
     const handleDeactivateInput = () => {
-        setInputHovered(false);
-        setInputClickable(false);
-    }   //deactivates on mouse
-
-    useEffect(() => {
-        if (!debouncedHover && !inputHovered) setInputActive(false);
-    }, [debouncedHover, inputHovered]);   //delays deactivation
+        if (inputActive) {
+            deactivationTimeout.current = setTimeout(() => {
+                setInputActive(false);
+            }, 300);
+        }
+    };
 
     const handleToggleInput = () => {
         setInputActive(true);
-        setHideButton(false);
-    }
-
-    const handleClickable = () => {
+        setShowButton(true);
         setTimeout(() => {
-            setInputClickable(true);
-        }, 100)
-    }    //makes "clickable" delayed
+            setInputDisabled(false);
+        }, 300)
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 setInputActive(false);
-                setInputClickable(false);
+                setInputDisabled(true);
             }
         };
         if (inputActive) {
@@ -71,7 +70,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         return () => {
             document.removeEventListener("touchstart", handleClickOutside);
         };
-    }, [inputActive, inputClickable]);  //adds event listener to deactivate button
+    }, [inputActive, inputDisabled]);  //adds event listener to deactivate button
 
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (isDisabled) return;
@@ -105,12 +104,12 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 console.error("Unexpected error during image upload occurred: ", error);
             }
         } finally {
+            setIsDisabled(false);
             setPicUploaded(true);
             setInputActive(false);
-            setInputClickable(false)
-            setIsDisabled(false);
+            setInputDisabled(true);
         }
-    }   //uploads pic
+    };
 
     const handleDeletePic = async () => {
         if (isDisabled) return;
@@ -128,12 +127,12 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 console.error("Unexpected error deleting profile pic");
             }
         } finally {
+            setIsDisabled(false);
             setPicUploaded(true);
             setInputActive(false);
-            setInputClickable(false);
-            setIsDisabled(false);
+            setInputDisabled(true);
         }
-    }
+    };
 
     useEffect(() => {
         handleFetchProfilePic();
@@ -143,8 +142,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         <div className="absolute left-0 scale-125 rounded-full" ref={componentRef}
              onMouseEnter={!isMobile ? handleActivateInput : undefined}
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
-             onTouchStart={isMobile ? handleToggleInput : undefined}
-             onTouchEnd={isMobile ? handleClickable : undefined}>
+             onTouchEnd={isMobile ? handleToggleInput : undefined}>
             <div className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
                 style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
@@ -159,11 +157,10 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                         {inputActive && (
                             <div className="flex items-center justify-center absolute inset-0 w-full h-full
                             rounded-full bg-lowLime bg-opacity-50 z-20">
-                                {inputClickable &&
-                                    <input type="file" accept="image/*" title=""
+                                    <input type="file" accept="image/*" title="" disabled={isMobile ? inputDisabled : false}
                                            className="absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
-                                           onChange={handleUploadPic} onClick={() => setHideButton(true)}/>}
-                                {!hideButton &&
+                                           onChange={handleUploadPic} onClick={() => setShowButton(true)}/>
+                                {showButton &&
                                     <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
                             </div>
                         )}
@@ -173,11 +170,11 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                     <ProfilePicLoader/>
                 )}
             </div>
-            {inputActive && picUploaded && profilePic && !imageError && !hideButton &&
-                <button className={`absolute -bottom-1 -right-[14px] m:-right-4 px-[6px] m:pt-[2px] z-10 
+            {inputActive && picUploaded && profilePic && !imageError && showButton &&
+                <button className={`absolute bottom-1.5 -right-4 px-1 z-10
                 ${inputActive ? "animate-slideInDiagonal" : ""}`}
                         onClick={handleDeletePic}>
-                    <FontAwesomeIcon icon={faTrash} className="text-sm m:text-base"/>
+                    <FontAwesomeIcon icon={faTrash} className="text-xs m:text-sm"/>
                 </button>}
         </div>
     )

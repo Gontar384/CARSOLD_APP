@@ -7,7 +7,7 @@ import org.gontar.carsold.Domain.Model.RecoveryPasswordChangeDto;
 import org.gontar.carsold.Domain.Model.SingleStringDto;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.UserDto;
-import org.gontar.carsold.Service.UserService.ManagementService.ManagementService;
+import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,12 +17,12 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api")
 @Validated
-public class ManagementController {
+public class UserManagementController {
 
-    private final ManagementService service;
+    private final UserManagementService service;
     private final Mapper<User, UserDto> mapper;
 
-    public ManagementController(ManagementService service, Mapper<User, UserDto> mapper) {
+    public UserManagementController(UserManagementService service, Mapper<User, UserDto> mapper) {
         this.service = service;
         this.mapper = mapper;
     }
@@ -47,7 +47,7 @@ public class ManagementController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/changePassword")
+    @PatchMapping("/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) {
         String newPassword = passwordChangeDto.getNewPassword();
         String oldPassword = passwordChangeDto.getOldPassword();
@@ -55,7 +55,7 @@ public class ManagementController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/changePasswordRecovery")
+    @PatchMapping("/changePasswordRecovery")
     public ResponseEntity<?> changePasswordRecovery(@RequestBody RecoveryPasswordChangeDto recoveryPasswordChangeDto, HttpServletResponse response) {
         String token = recoveryPasswordChangeDto.getToken();
         String password = recoveryPasswordChangeDto.getPassword();

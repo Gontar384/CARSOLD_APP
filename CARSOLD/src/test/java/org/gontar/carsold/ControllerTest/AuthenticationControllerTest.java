@@ -14,8 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +71,7 @@ class AuthenticationControllerTest {
     public void activateAccount() throws Exception {
         String token = "sample-token";
 
-        mockMvc.perform(post("/api/auth/activateAccount")
+        mockMvc.perform(patch("/api/auth/activateAccount")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"value\":\"" + token + "\"}"))
                 .andExpect(status().isOk());
@@ -91,7 +90,7 @@ class AuthenticationControllerTest {
 
     @Test
     public void logout() throws Exception {
-        mockMvc.perform(get("/api/auth/logout"))
+        mockMvc.perform(post("/api/auth/logout"))
                 .andExpect(status().isOk());
     }
 }

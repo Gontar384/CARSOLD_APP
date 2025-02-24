@@ -25,33 +25,6 @@ import {addOffer} from "../../ApiCalls/Services/OfferService.ts";
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Listing Offer";
 
-    interface Offer {
-        title: string;
-        brand: string;
-        model: string;
-        bodyType: string;
-        year: number | null;
-        mileage: number | null;
-        fuel: string;
-        capacity: number | null;
-        power: number | null;
-        drive: string;
-        transmission: string;
-        color: string;
-        condition: string;
-        seats: number | null;
-        doors: number | null;
-        steeringWheel: string | null;
-        country: string | null;
-        vin: string | null;
-        plate: string | null;
-        firstRegistration: string | null;
-        description: string;
-        photos: FormData | null;
-        price: number | null;
-        currency: string;
-    }
-
     interface RawOffer {
         title: string;
         brand: string;
@@ -674,8 +647,9 @@ const OfferForm: React.FC = () => {
         return isValid;
     };
 
-    const convertPhotos = async () => {
+    const convertToOfferData = async (offer: RawOffer): Promise<FormData> => {
         const formData = new FormData();
+
         await Promise.all(offer.photos.map(async (photo, index) => {
             if (photo && photo.startsWith("blob:")) {
                 try {
@@ -690,11 +664,6 @@ const OfferForm: React.FC = () => {
                 formData.append("photos", photo);
             }
         }));
-        return formData;
-    };
-
-    const convertToOfferData = async (offer: RawOffer): Promise<Offer> => {
-        const photos = await convertPhotos();
 
         const parseNumber = (value: string): number | null => {
             const sanitizedValue = value.replace(/,/g, '');
@@ -702,7 +671,7 @@ const OfferForm: React.FC = () => {
             return isNaN(parsed) ? null : parsed;
         };
 
-        return {
+        const offerDto = {
             title: offer.title,
             brand: offer.brand,
             model: offer.model,
@@ -724,10 +693,13 @@ const OfferForm: React.FC = () => {
             plate: offer.plate || null,
             firstRegistration: offer.firstRegistration || null,
             description: offer.description,
-            photos: offer.photos.length ? photos : null,
             price: parseNumber(offer.price),
             currency: offer.currency,
         };
+
+        formData.append("offer", new Blob([JSON.stringify(offerDto)], { type: "application/json" }));
+
+        return formData;
     };
 
     const handleAddOffer = async () => {
@@ -742,10 +714,10 @@ const OfferForm: React.FC = () => {
         setIsDisabled(true);
 
         try {
-            const dto = await convertToOfferData(offer);
-            console.log("Converted DTO:", dto);
+            const offerData = await convertToOfferData(offer);
+            console.log("Converted DTO:", offerData);
 
-            await addOffer(dto);
+            await addOffer(offerData);
         } catch (error) {
             console.error("Error during processing: ", error);
         } finally {

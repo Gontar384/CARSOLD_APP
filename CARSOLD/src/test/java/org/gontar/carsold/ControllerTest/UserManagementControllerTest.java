@@ -1,12 +1,12 @@
 package org.gontar.carsold.ControllerTest;
 
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.Controller.UserController.ManagementController;
+import org.gontar.carsold.Controller.UserController.UserManagementController;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.PasswordChangeDto;
 import org.gontar.carsold.Domain.Model.RecoveryPasswordChangeDto;
 import org.gontar.carsold.Domain.Model.UserDto;
-import org.gontar.carsold.Service.UserService.ManagementService.ManagementService;
+import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,13 +26,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class ManagementControllerTest {
+class UserManagementControllerTest {
 
     @InjectMocks
-    private ManagementController managementController;
+    private UserManagementController userManagementController;
 
     @Mock
-    private ManagementService managementService;
+    private UserManagementService userManagementService;
 
     @Mock
     private MockMvc mockMvc;
@@ -47,7 +47,7 @@ class ManagementControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(managementController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userManagementController).build();
     }
 
     @Test
@@ -58,7 +58,7 @@ class ManagementControllerTest {
         User user = new User();
         user.setUsername("newUser");
 
-        when(managementService.registerUser(any(User.class))).thenReturn(user);
+        when(userManagementService.registerUser(any(User.class))).thenReturn(user);
         when(mapper.mapToEntity(any(UserDto.class))).thenReturn(user);
         when(mapper.mapToDto(any(User.class))).thenReturn(userDto);
 
@@ -73,7 +73,7 @@ class ManagementControllerTest {
     @Test
     public void fetchUsername() throws Exception {
         String username = "existingUser";
-        when(managementService.fetchUsername()).thenReturn(username);
+        when(userManagementService.fetchUsername()).thenReturn(username);
 
         mockMvc.perform(get("/api/fetchUsername"))
                 .andExpect(status().isOk());
@@ -85,9 +85,9 @@ class ManagementControllerTest {
         passwordChangeDto.setOldPassword("oldPassword");
         passwordChangeDto.setNewPassword("newPassword");
 
-        doNothing().when(managementService).changePassword("oldPassword", "newPassword");
+        doNothing().when(userManagementService).changePassword("oldPassword", "newPassword");
 
-        mockMvc.perform(put("/api/changePassword")
+        mockMvc.perform(patch("/api/changePassword")
                         .contentType("application/json")
                         .content("{\"oldPassword\":\"oldPassword\", \"newPassword\":\"newPassword\"}"))
                 .andExpect(status().isOk());
@@ -99,9 +99,9 @@ class ManagementControllerTest {
         recoveryPasswordChangeDto.setToken("recoveryToken");
         recoveryPasswordChangeDto.setPassword("newPassword");
 
-        doNothing().when(managementService).changePasswordRecovery(eq("recoveryToken"), eq("newPassword"), any());
+        doNothing().when(userManagementService).changePasswordRecovery(eq("recoveryToken"), eq("newPassword"), any());
 
-        mockMvc.perform(put("/api/changePasswordRecovery")
+        mockMvc.perform(patch("/api/changePasswordRecovery")
                         .contentType("application/json")
                         .content("{\"token\":\"recoveryToken\", \"password\":\"newPassword\"}"))
                 .andExpect(status().isOk());
@@ -111,7 +111,7 @@ class ManagementControllerTest {
     public void deleteUser() throws Exception {
         String password = "userPassword";
 
-        doNothing().when(managementService).deleteUser("userPassword");
+        doNothing().when(userManagementService).deleteUser("userPassword");
 
         mockMvc.perform(delete("/api/deleteUser")
                         .param("password", password))

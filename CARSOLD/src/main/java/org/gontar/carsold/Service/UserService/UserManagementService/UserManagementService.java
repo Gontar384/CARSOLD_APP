@@ -1,9 +1,9 @@
-package org.gontar.carsold.Service.UserService.ManagementService;
+package org.gontar.carsold.Service.UserService.UserManagementService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Domain.Entity.User.User;
 
-public interface ManagementService {
+public interface UserManagementService {
     User registerUser(User user);
     String fetchUsername();
     void changePassword(String oldPassword, String newPassword);

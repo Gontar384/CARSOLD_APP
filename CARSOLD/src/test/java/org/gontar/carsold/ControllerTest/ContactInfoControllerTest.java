@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +50,7 @@ class ContactInfoControllerTest {
     public void updateName() throws Exception {
         SingleStringDto singleStringDto = new SingleStringDto("John");
 
-        mockMvc.perform(put("/api/updateName")
+        mockMvc.perform(patch("/api/updateName")
                         .contentType("application/json")
                         .content(new ObjectMapper().writeValueAsString(singleStringDto)))
                 .andExpect(status().isOk());
@@ -61,7 +60,7 @@ class ContactInfoControllerTest {
     public void updatePhone() throws Exception {
         SingleStringDto singleStringDto = new SingleStringDto("603604605");
 
-        mockMvc.perform(put("/api/updatePhone")
+        mockMvc.perform(patch("/api/updatePhone")
                         .contentType("application/json")
                         .content(new ObjectMapper().writeValueAsString(singleStringDto)))
                 .andExpect(status().isOk());
@@ -71,7 +70,7 @@ class ContactInfoControllerTest {
     public void updateCity() throws Exception {
         SingleStringDto singleStringDto = new SingleStringDto("Poznań, Poland");
 
-        mockMvc.perform(put("/api/updateCity")
+        mockMvc.perform(patch("/api/updateCity")
                         .contentType("application/json")
                         .content(new ObjectMapper().writeValueAsString(singleStringDto)))
                 .andExpect(status().isOk());
@@ -98,7 +97,7 @@ class ContactInfoControllerTest {
 
         when(contactInfoService.updateAndFetchContactPublic(true)).thenReturn(true);
 
-        mockMvc.perform(put("/api/updateAndFetchContactPublic")
+        mockMvc.perform(patch("/api/updateAndFetchContactPublic")
                         .contentType("application/json")
                         .content(new ObjectMapper().writeValueAsString(singleBooleanDto)))
                 .andExpect(status().isOk())
