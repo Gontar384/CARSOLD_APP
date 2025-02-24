@@ -17,7 +17,7 @@ const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOp
 
     const handleButtonClick = (option: string) => {
         setValue(option);
-    }
+    };
 
     return (
         <div className="relative w-fit">

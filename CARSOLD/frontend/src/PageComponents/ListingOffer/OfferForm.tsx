@@ -19,6 +19,8 @@ import {carDoors} from "./Atomic/SelectInput/SelectData/carDoors.ts";
 import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
 import ContactDetails from "./Atomic/ContactDetails/ContactDetails.tsx";
 import SubmitOfferButton from "./Atomic/Button/SubmitOfferButton.tsx";
+import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import {addOffer} from "../../ApiCalls/Services/OfferService.ts";
 
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Listing Offer";
@@ -28,28 +30,56 @@ const OfferForm: React.FC = () => {
         brand: string;
         model: string;
         bodyType: string;
-        year: string;
-        mileage: string;
+        year: number | null;
+        mileage: number | null;
         fuel: string;
-        capacity: number;
-        power: number;
+        capacity: number | null;
+        power: number | null;
         drive: string;
         transmission: string;
-        seats: string | null;
+        color: string;
+        condition: string;
+        seats: number | null;
         doors: number | null;
         steeringWheel: string | null;
-        condition: string;
-        color: string;
         country: string | null;
         vin: string | null;
         plate: string | null;
         firstRegistration: string | null;
         description: string;
-        photos: (string)[] | null;
-        price: string;
+        photos: FormData | null;
+        price: number | null;
+        currency: string;
     }
 
-    const [offer, setOffer] = useState({
+    interface RawOffer {
+        title: string;
+        brand: string;
+        model: string;
+        bodyType: string;
+        year: string;
+        mileage: string;
+        fuel: string;
+        capacity: string;
+        power: string;
+        drive: string;
+        transmission: string;
+        color: string;
+        condition: string;
+        seats: string;
+        doors: string;
+        steeringWheel: string;
+        country: string;
+        vin: string;
+        plate: string;
+        firstRegistration: string;
+        description: string;
+        photos: string[];
+        price: string;
+        currency: string;
+    }
+
+    const [offer, setOffer] = useState<RawOffer>({
         title: "",
         brand: "",
         model: "",
@@ -61,11 +91,11 @@ const OfferForm: React.FC = () => {
         power: "",
         drive: "",
         transmission: "",
+        color: "",
+        condition: "",
         seats: "",
         doors: "",
         steeringWheel: "",
-        condition: "",
-        color: "",
         country: "",
         vin: "",
         plate: "",
@@ -88,11 +118,11 @@ const OfferForm: React.FC = () => {
         power: false,
         drive: false,
         transmission: false,
+        color: false,
+        condition: false,
         seats: false,
         doors: false,
         steeringWheel: false,
-        condition: false,
-        color: false,
         country: false,
         vin: false,
         plate: false,
@@ -139,10 +169,10 @@ const OfferForm: React.FC = () => {
         drive: false,
         transmission: false,
         color: false,
+        condition: false,
         seats: false,
         doors: false,
         steeringWheel: false,
-        condition: false,
         country: false,
         vin: false,
         plate: false,
@@ -179,7 +209,7 @@ const OfferForm: React.FC = () => {
             }));
         };
 
-    //errors and messages management
+    //user interactions (errors and messages)
     //title
     useEffect(() => {
         if (toggled.title) {
@@ -195,7 +225,7 @@ const OfferForm: React.FC = () => {
     }, [toggled.title]);
 
     useEffect(() => {
-        if (offer.title.length < 40) {
+        if (offer.title.length < 30) {
             if ((offer.title.match(/[A-Z]/g) || []).length > 10) {
                 setErrorField("title", true);
                 setMessageField("title", "Too many BIG LETTERS!");
@@ -363,6 +393,14 @@ const OfferForm: React.FC = () => {
         }
     }, [toggled.drive]);
 
+    //transmission
+    useEffect(() => {
+        if (offer.transmission !== "") {
+            setErrorField("transmission", false);
+            setMessageField("transmission", "Choose car's transmission.")
+        }
+    }, [offer.transmission]);
+
     //color
     useEffect(() => {
         if (toggled.color) {
@@ -376,6 +414,14 @@ const OfferForm: React.FC = () => {
             setToggledField("color", false);
         }
     }, [toggled.color]);
+
+    //condition
+    useEffect(() => {
+        if (offer.condition !== "") {
+            setErrorField("condition", false);
+            setMessageField("condition", "Choose car's condition.")
+        }
+    }, [offer.condition]);
 
     //vin
     useEffect(() => {
@@ -488,8 +534,223 @@ const OfferForm: React.FC = () => {
         }
     }, [offer.price]);
 
-    const handleClick = () => {
-        console.log("test")
+    //adding offer logic
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [banner, setBanner] = useState<boolean>(false);
+
+    const checkValues= () => {
+        let isValid = true;
+
+        if (offer.title === "") {
+            setErrorField("title", true);
+            setMessageField("title", "You have to provide title.")
+            isValid = false;
+        } else if (offer.title.length < 5) {
+            setErrorField("title", true);
+            setMessageField("title", "Title is too short.");
+            isValid = false;
+        } else if (offer.title.length > 30) {
+            setErrorField("title", true);
+            setMessageField("title", "Title is too long.");
+            isValid = false;
+        } else if ((offer.title.match(/[A-Z]/g) || []).length > 10) {
+            setErrorField("title", true);
+            setMessageField("title", "Too many BIG LETTERS!");
+            isValid = false;
+        }
+        if (offer.brand === "") {
+            setErrorField("brand", true);
+            setMessageField("brand", "You have to choose brand.")
+            isValid = false;
+        }
+        if (offer.brand !== "Other" && offer.model === "") {
+            setErrorField("model", true);
+            setMessageField("model", "You have to choose model.");
+            isValid = false;
+        }
+        if (offer.bodyType === "") {
+            setErrorField("bodyType", true);
+            setMessageField("bodyType", "You have to choose body type.");
+            isValid = false;
+        }
+        if (offer.year === "") {
+            setErrorField("year", true);
+            setMessageField("year", "You have to choose year of production.");
+            isValid = false;
+        }
+        if (offer.mileage === "") {
+            setErrorField("mileage", true);
+            setMessageField("mileage", "You have to provide car's mileage.");
+            isValid = false;
+        } else if (offer.mileage.length > 9) {
+            setErrorField("mileage", true);
+            setMessageField("mileage", "Mileage is incorrect!");
+            isValid = false;
+        }
+        if (offer.fuel === "") {
+            setErrorField("fuel", true);
+            setMessageField("fuel", "You have to choose fuel type.");
+            isValid = false;
+        }
+        if (offer.capacity === "") {
+            setErrorField("capacity", true);
+            setMessageField("capacity", "You have to provide engine capacity.");
+            isValid = false;
+        } else if (offer.capacity.length < 3) {
+            setErrorField("capacity", true);
+            setMessageField("capacity", "Engine capacity is incorrect!");
+            isValid = false;
+        }
+        if (offer.power === "") {
+            setErrorField("power", true);
+            setMessageField("power", "You have to provide engine power.");
+            isValid = false;
+        } else if (offer.power.length > 5) {
+            setErrorField("power", true);
+            setMessageField("power", "Engine power is incorrect!");
+            isValid = false;
+        }
+        if (offer.drive === "") {
+            setErrorField("drive", true);
+            setMessageField("drive", "You have to choose drive.");
+            isValid = false;
+        }
+        if (offer.transmission === "") {
+            setErrorField("transmission", true);
+            setMessageField("transmission", "You have to choose car's transmission.");
+            isValid = false;
+        }
+        if (offer.color === "") {
+            setErrorField("color", true);
+            setMessageField("color", "You have to choose color.");
+            isValid = false;
+        }
+        if (offer.condition === "") {
+            setErrorField("condition", true);
+            setMessageField("condition", "You have to choose car's condition.");
+            isValid = false;
+        }
+        if (offer.vin !== "" && !/^[A-Z0-9]{17}$/.test(offer.vin)) {
+            setErrorField("vin", true);
+            setMessageField("vin", "VIN is incorrect!");
+            isValid = false;
+        }
+        if (offer.plate !== "" && !/^[A-Z0-9]{4,8}$/.test(offer.plate)) {
+            setErrorField("plate", true);
+            setMessageField("plate", "License plate number is incorrect!");
+            isValid = false;
+        }
+        if (offer.firstRegistration !== "") {
+            const year = Number(offer.firstRegistration.split("-")[0]);
+            if (year < 1900 && year > 2025) {
+                setErrorField("firstRegistration", true);
+                setMessageField("firstRegistration", "Incorrect date!");
+                isValid = false;
+            }
+        }
+        if (offer.description === "") {
+            setErrorField("description", true);
+            setMessageField("description", "You have to add description.");
+            isValid = false;
+        } else if (offer.description.length < 30) {
+            setErrorField("description", true);
+            setMessageField("description", "Description is too short.");
+            isValid = false;
+        } else if (offer.description.length > 2000) {
+            setErrorField("description", true);
+            setMessageField("description", "Description is too long!");
+            isValid = false;
+        }
+        if (offer.price === "") {
+            setErrorField("price", true);
+            setMessageField("price", "You have to set price.");
+            isValid = false;
+        } else if (offer.price.length < 3 || offer.price.length > 12) {
+            setErrorField("price", true);
+            setMessageField("price", "Price is incorrect!");
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    const convertPhotos = async () => {
+        const formData = new FormData();
+        await Promise.all(offer.photos.map(async (photo, index) => {
+            if (photo && photo.startsWith("blob:")) {
+                try {
+                    const response = await fetch(photo);
+                    const blob = await response.blob();
+                    const filename = `photo${index}.${blob.type.split("/")[1]}`;
+                    formData.append("photos", blob, filename);
+                } catch (error) {
+                    console.error(`Error converting blob URL to file: ${photo}`, error);
+                }
+            } else {
+                formData.append("photos", photo);
+            }
+        }));
+        return formData;
+    };
+
+    const convertToOfferData = async (offer: RawOffer): Promise<Offer> => {
+        const photos = await convertPhotos();
+
+        const parseNumber = (value: string): number | null => {
+            const sanitizedValue = value.replace(/,/g, '');
+            const parsed = Number(sanitizedValue);
+            return isNaN(parsed) ? null : parsed;
+        };
+
+        return {
+            title: offer.title,
+            brand: offer.brand,
+            model: offer.model,
+            bodyType: offer.bodyType,
+            year: parseNumber(offer.year),
+            mileage: parseNumber(offer.mileage),
+            fuel: offer.fuel,
+            capacity: parseNumber(offer.capacity),
+            power: parseNumber(offer.power),
+            drive: offer.drive,
+            transmission: offer.transmission,
+            seats: offer.seats ? parseNumber(offer.seats) : null,
+            doors: offer.doors ? parseNumber(offer.doors) : null,
+            steeringWheel: offer.steeringWheel || null,
+            condition: offer.condition,
+            color: offer.color,
+            country: offer.country || null,
+            vin: offer.vin || null,
+            plate: offer.plate || null,
+            firstRegistration: offer.firstRegistration || null,
+            description: offer.description,
+            photos: offer.photos.length ? photos : null,
+            price: parseNumber(offer.price),
+            currency: offer.currency,
+        };
+    };
+
+    const handleAddOffer = async () => {
+        if (isDisabled) return;
+
+        const isValid = checkValues();
+        if (!isValid) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setBanner(true);
+            return;
+        }
+        setIsDisabled(true);
+
+        try {
+            const dto = await convertToOfferData(offer);
+            console.log("Converted DTO:", dto);
+
+            await addOffer(dto);
+        } catch (error) {
+            console.error("Error during processing: ", error);
+        } finally {
+            setTimeout(() => setIsDisabled(false), 1000);
+        }
     };
 
     return (
@@ -508,7 +769,7 @@ const OfferForm: React.FC = () => {
                     <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3">
                         <div className="flex justify-center m:block w-full mb-14 m:mb-16">
                             <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}
-                                        error={error.title} message={message.title} maxLength={40} setToggled={handleSetToggled("title")}/>
+                                        error={error.title} message={message.title} maxLength={30} setToggled={handleSetToggled("title")}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">
                             <SelectInput label="Brand" options={carBrands} value={offer.brand} setValue={handleSetOffer("brand")}
@@ -573,10 +834,12 @@ const OfferForm: React.FC = () => {
                             <ContactDetails/>
                         </div>
                         <div className="flex justify-center m:block w-full mb-20 m:mb-24">
-                            <SubmitOfferButton onClick={handleClick} disabled={false}/>
+                            <SubmitOfferButton onClick={handleAddOffer}/>
                         </div>
                     </div>
                 </div>
+                {banner && <AnimatedBanner text={"Fill fields correctly"} onAnimationEnd={() => setBanner(false)}
+                                           delay={2000} color={"bg-coolRed"} z={"z-10"}/>}
             </div>
         </LayOut>
     );

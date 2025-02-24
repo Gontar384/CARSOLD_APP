@@ -1,5 +1,6 @@
 package org.gontar.carsold.Exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
@@ -199,6 +200,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleNullPointerException(NullPointerException ex) {
         log.error("NullPointerException: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<?> handleJsonProcessingException(JsonProcessingException ex) {
+        log.error("Json Processing Error: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Json Processing Error");
     }
 
     @ExceptionHandler(DataAccessException.class)
