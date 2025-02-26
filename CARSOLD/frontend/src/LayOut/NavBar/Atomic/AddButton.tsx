@@ -13,7 +13,7 @@ const AddButton: React.FC = () => {
     return (
         <Link className={`flex flex-row items-center px-[2px] gap-1 border-2 border-solid 
           border-black cursor-pointer rounded ${buttonColor ? "bg-white" : "bg-lime"}`}
-                to={("/listingOffer")}
+                to={("/addingOffer")}
                 onTouchStart={isMobile ? handleStart : undefined}
                 onTouchEnd={isMobile ? handleEnd : undefined}
                 onMouseEnter={!isMobile ? handleStart : undefined}

@@ -21,9 +21,13 @@ import ContactDetails from "./Atomic/ContactDetails/ContactDetails.tsx";
 import SubmitOfferButton from "./Atomic/Button/SubmitOfferButton.tsx";
 import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {addOffer} from "../../ApiCalls/Services/OfferService.ts";
+import {AxiosError} from "axios";
+import {useNavigate, useParams} from "react-router-dom";
+import AddingOfferLoader from "../../SharedComponents/Additional/Loading/AddingOfferLoader.tsx";
+import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 
 const OfferForm: React.FC = () => {
-    document.title = "CARSOLD | Listing Offer";
+    document.title = "CARSOLD | Adding Offer";
 
     interface RawOffer {
         title: string;
@@ -78,6 +82,63 @@ const OfferForm: React.FC = () => {
         price: "",
         currency: "PLN",
     });
+
+    const {section} = useParams();
+    const navigate = useNavigate();
+    const [id, setId] = useState<number | null>(null);
+    const {handleFetchOffer} = useOfferUtil();
+    const [data, setData] = useState<RawOffer | null>(null);
+    const [permission, setPermission] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (section) {
+            const numericId = Number(section.replace(/,/g, ''));
+            if (!isNaN(numericId)) setId(numericId);
+        }
+    }, [section]);  //gets id from section
+
+    useEffect(() => {
+        const handleFetchOfferData = async (id: number) => {
+            const { offerData, userPermission } = await handleFetchOffer(id);
+            setData(offerData);
+            setPermission(userPermission);
+        };
+        if (id !== null) {
+            handleFetchOfferData(id);
+        }
+    }, [id]); //fetches offer and user permission
+
+    useEffect(() => {
+        if (data !== null && permission) {
+            const transformedOffer: RawOffer = {
+                title: data.title,
+                brand: data.brand,
+                model: data.model,
+                bodyType: data.bodyType,
+                year: String(data.year),
+                mileage: String(data.mileage),
+                fuel: data.fuel,
+                capacity: String(data.capacity),
+                power: String(data.power),
+                drive: data.drive,
+                transmission: data.transmission,
+                color: data.color,
+                condition: data.condition,
+                seats: String(data.seats),
+                doors: String(data.doors),
+                steeringWheel: data.steeringWheel,
+                country: data.country,
+                vin: data.vin || "",
+                plate: data.plate || "",
+                firstRegistration: data.firstRegistration ? String(data.firstRegistration) : "",
+                description: data.description,
+                photos: (data.photos as unknown as string)?.split(",") || Array(8).fill(""),
+                price: String(data.price),
+                currency: data.currency
+            };
+            setOffer(transformedOffer);
+        }
+    }, [data, permission]);  //transfers data to object for updating offer purpose
 
     const [error, setError] = useState({
         title: false,
@@ -241,7 +302,9 @@ const OfferForm: React.FC = () => {
     }, [toggled.model]);
 
     useEffect(() => {
-        setOffer(prev => ({...prev, model: ""}));
+        if (!carModels[offer.brand]?.includes(offer.model)) {
+            setOffer(prev => ({...prev, model: ""}));
+        }
     }, [offer.brand]);  //to reset model when brand changes
 
     //bodyType
@@ -509,7 +572,10 @@ const OfferForm: React.FC = () => {
 
     //adding offer logic
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [banner, setBanner] = useState<boolean>(false);
+    const [formErrorBanner, setFormErrorBanner] = useState<boolean>(false);
+    const [inappropriateContentBanner, setInappropriateContentBanner] = useState<boolean>(false);
+    const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const checkValues= () => {
         let isValid = true;
@@ -651,7 +717,7 @@ const OfferForm: React.FC = () => {
         const formData = new FormData();
 
         await Promise.all(offer.photos.map(async (photo, index) => {
-            if (photo && photo.startsWith("blob:")) {
+            if (photo) {
                 try {
                     const response = await fetch(photo);
                     const blob = await response.blob();
@@ -660,8 +726,6 @@ const OfferForm: React.FC = () => {
                 } catch (error) {
                     console.error(`Error converting blob URL to file: ${photo}`, error);
                 }
-            } else {
-                formData.append("photos", photo);
             }
         }));
 
@@ -708,20 +772,31 @@ const OfferForm: React.FC = () => {
         const isValid = checkValues();
         if (!isValid) {
             window.scrollTo({ top: 0, behavior: "smooth" });
-            setBanner(true);
+            setFormErrorBanner(true);
             return;
         }
         setIsDisabled(true);
-
+        setLoading(true);
         try {
             const offerData = await convertToOfferData(offer);
-            console.log("Converted DTO:", offerData);
-
-            await addOffer(offerData);
-        } catch (error) {
-            console.error("Error during processing: ", error);
+            const response = await addOffer(offerData);
+            if (response.status === 201) {
+                sessionStorage.setItem("offerAdded", "true");
+                navigate('/details/myOffers');
+            }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 422) {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    setInappropriateContentBanner(true);
+                } else {
+                    setWentWrongBanner(true);
+                    console.error("Unexpected error during processing offer: ", error);
+                }
+            }
         } finally {
-            setTimeout(() => setIsDisabled(false), 1000);
+            setLoading(false);
+            setIsDisabled(false);
         }
     };
 
@@ -730,7 +805,7 @@ const OfferForm: React.FC = () => {
             <div className="flex flex-col items-center">
                 <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
-                    <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">Listing Offer</p>
+                    <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">Adding Offer</p>
                     <div className="flex justify-center w-[90%] mb-20 m:mb-24 bg-white rounded-md border-2 border-gray-300">
                         <p className="w-full text-lg m:text-xl p-4 m:p-6">
                             We need some information about your car to interest possible customers!
@@ -810,8 +885,15 @@ const OfferForm: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                {banner && <AnimatedBanner text={"Fill fields correctly"} onAnimationEnd={() => setBanner(false)}
-                                           delay={2000} color={"bg-coolRed"} z={"z-10"}/>}
+                {formErrorBanner &&
+                    <AnimatedBanner text={"Fill fields correctly"} onAnimationEnd={() => setFormErrorBanner(false)}
+                                    delay={2000} color={"bg-coolRed"} z={"z-10"}/>}
+                {inappropriateContentBanner &&
+                    <AnimatedBanner text={"Title or description contains inappropriate content"}
+                                    onAnimationEnd={() => setInappropriateContentBanner(false)} delay={5000} color={"bg-coolRed"} z={"z-10"}/>}
+                {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
+                                              delay={2000} color={"bg-coolYellow"} z={"z-10"}/>}
+                {loading && <AddingOfferLoader/>}
             </div>
         </LayOut>
     );

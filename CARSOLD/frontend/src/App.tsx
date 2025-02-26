@@ -15,15 +15,15 @@ import CookieBanner from "./SharedComponents/Additional/Banners/CookieBanner.tsx
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokensManager from "./Config/TokensConfig/TokensManager.ts";
-import OfferForm from "./PageComponents/ListingOffer/OfferForm.tsx";
+import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
 
 const App: React.FC = () => {
 
     return (
-        <UtilProvider> {/*provides util*/}
-            <AuthProvider> {/*manages authentication*/}
-                <ItemsProvider> {/*provides items*/}
-                    <BrowserRouter> {/*manages routes*/}
+        <BrowserRouter> {/*manages routes*/}
+            <UtilProvider> {/*provides util*/}
+                <AuthProvider> {/*manages authentication*/}
+                    <ItemsProvider> {/*provides items*/}
                         <Routes>
                             <Route element={<PublicRoutes/>}>
                                 <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
@@ -37,7 +37,8 @@ const App: React.FC = () => {
 
                             <Route element={<PrivateRoutes/>}>
                                 <Route path="/details/:section?" element={<AccountDetails/>}/>
-                                <Route path="/listingOffer" element={<OfferForm/>}/>
+                                <Route path="/addingOffer" element={<OfferForm/>}/>
+                                <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
                             </Route>
 
                             <Route path="*" element={<Navigate to="/home"/>}/>
@@ -45,10 +46,10 @@ const App: React.FC = () => {
                         <TokensManager/> {/*manages tokens*/}
                         <CookieBanner/> {/*displays cookie banner*/}
                         <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
-                    </BrowserRouter>
-                </ItemsProvider>
-            </AuthProvider>
-        </UtilProvider>
+                    </ItemsProvider>
+                </AuthProvider>
+            </UtilProvider>
+        </BrowserRouter>
     )
 };
 

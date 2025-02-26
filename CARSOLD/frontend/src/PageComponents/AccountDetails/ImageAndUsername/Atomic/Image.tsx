@@ -164,7 +164,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                                     <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
                             </div>
                         )}
-                        {!picUploaded && <LoadingPicAnimation/>}
+                        {!picUploaded && <LoadingPicAnimation size={30}/>}
                     </div>
                 ) : (
                     <ProfilePicLoader/>

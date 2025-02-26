@@ -1,20 +1,188 @@
 package org.gontar.carsold.Service.OfferService.OfferManagementService;
 
+import com.google.cloud.storage.*;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
+import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
+import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OfferManagementServiceImpl implements OfferManagementService {
 
-    private final OfferRepository repository;
+    @Value("${PERSPECTIVE_API_KEY}")
+    private String perspectiveApiKey;
 
-    public OfferManagementServiceImpl(OfferRepository repository) {
+    @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
+    private String bucketName;
+    private static final Logger logger = LoggerFactory.getLogger(OfferManagementServiceImpl.class);
+
+    private final OfferRepository repository;
+    private final MyUserDetailsService userDetailsService;
+
+    public OfferManagementServiceImpl(OfferRepository repository, MyUserDetailsService userDetailsService) {
         this.repository = repository;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
-    public Offer createOffer(Offer offer) {
-        return null;
+    public Offer createOffer(Offer offer, List<MultipartFile> photos) {
+        Objects.requireNonNull(offer, "Offer cannot be null");
+        if (isContentToxic(offer.getTitle(), offer.getDescription())) {
+            throw new InappropriateContentException("Title or description are inappropriate");
+        }
+
+        User user = userDetailsService.loadUser();
+        offer.setUser(user);
+        Offer savedOffer = repository.save(offer);
+        processImages(savedOffer, photos, user);
+
+        return savedOffer;
+    }
+
+    private boolean isContentToxic(String title, String description) {
+        try {
+            String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
+            String fullUrl = apiUrl + "?key=" + perspectiveApiKey;
+            List<String> languages = List.of("en", "pl");
+            String combinedText = title + " " + description;
+
+            List<String> textChunks = new ArrayList<>();
+            int start = 0;
+            while (start < combinedText.length()) {
+                int end = Math.min(start + 300, combinedText.length());
+
+                if (end < combinedText.length() && Character.isLetterOrDigit(combinedText.charAt(end))) {
+                    while (end > start && Character.isLetterOrDigit(combinedText.charAt(end - 1))) {
+                        end--;
+                    }
+                }
+                textChunks.add(combinedText.substring(start, end).trim());
+                start = end;
+            }
+            double totalScore = 0;
+            int count = 0;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/json");
+            RestTemplate restTemplate = new RestTemplate();
+
+            for (String chunk : textChunks) {
+                JSONObject payload = new JSONObject();
+                payload.put("comment", new JSONObject().put("text", chunk));
+                payload.put("languages", languages);
+                payload.put("requestedAttributes", new JSONObject().put("TOXICITY", new JSONObject()));
+
+                HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
+                ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
+                JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(response.getBody()));
+
+                double toxicityScore = jsonResponse
+                        .getJSONObject("attributeScores")
+                        .getJSONObject("TOXICITY")
+                        .getJSONObject("summaryScore")
+                        .getDouble("value");
+
+                totalScore += toxicityScore;
+                count++;
+            }
+            double averageToxicity = totalScore / count;
+            return averageToxicity > 0.2;
+        } catch (Exception e) {
+            logger.warn("Perspective API failed: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    private void processImages(Offer offer, List<MultipartFile> photos, User user) {
+        if (photos != null && !photos.isEmpty()) {
+            if (photos.size() > 8) {
+                logger.warn("Too many images uploaded. Only the first 8 will be used.");
+            }
+            photos = photos.subList(0, Math.min(photos.size(), 8));
+            List<String> photoUrls = new ArrayList<>();
+
+            for (int i = 0; i < photos.size(); i++) {
+                MultipartFile file = photos.get(i);
+                try {
+                    String photoUrl = uploadToStorage(file, user.getUsername(), offer.getId(), i + 1);
+                    photoUrls.add(photoUrl);
+                } catch (MediaNotSupportedException e) {
+                    logger.warn("Skipping unsupported image: {}", file.getOriginalFilename());
+                } catch (IOException | StorageException e) {
+                    logger.error("Failed to upload image: {} - Reason: {}", file.getOriginalFilename(), e.getMessage());
+                }
+            }
+
+            offer.setPhotos(photoUrls);
+            repository.save(offer);
+        }
+    }
+
+    private boolean isImageValid(MultipartFile file) throws IOException {
+        byte[] fileBytes = file.getBytes();
+        //PNG
+        if (fileBytes[0] == (byte) 0x89 && fileBytes[1] == (byte) 0x50 &&
+                fileBytes[2] == (byte) 0x4E && fileBytes[3] == (byte) 0x47 &&
+                fileBytes[4] == (byte) 0x0D && fileBytes[5] == (byte) 0x0A &&
+                fileBytes[6] == (byte) 0x1A && fileBytes[7] == (byte) 0x0A) {
+
+            return true;
+        }
+        //JPEG/JPG
+        if (fileBytes[0] == (byte) 0xFF && fileBytes[1] == (byte) 0xD8 && fileBytes[2] == (byte) 0xFF) {
+            return true;
+        }
+        //WEBP
+        return fileBytes[0] == (byte) 0x52 && fileBytes[1] == (byte) 0x49 &&
+                fileBytes[2] == (byte) 0x46 && fileBytes[3] == (byte) 0x46 &&
+                fileBytes[4] == (byte) 0x57 && fileBytes[5] == (byte) 0x45 &&
+                fileBytes[6] == (byte) 0x42 && fileBytes[7] == (byte) 0x50;
+    }
+
+    private String uploadToStorage(MultipartFile file, String username, Long id, int imageIndex) throws StorageException, IOException {
+        if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
+        if (file.getSize() > 3 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
+
+        String fileName = username + "/offer" + id + "/offer" + id + "image" + imageIndex;
+
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+        storage.create(blobInfo, file.getBytes());
+
+        return String.format("https://storage.googleapis.com/%s/%s?timestamp=%d", bucketName, fileName, System.currentTimeMillis());
+    }
+
+    @Override
+    public Offer fetchOffer(Long id) {
+        Objects.requireNonNull(id, "Id cannot be null");
+        return repository.findById(id)
+                .orElseThrow(() -> new OfferNotFound("Offer not found"));
+    }
+
+    @Override
+    public boolean fetchPermission(Offer offer) {
+        Objects.requireNonNull(offer, "Offer cannot be null");
+        User user = userDetailsService.loadUser();
+        return offer.getUser().getId().equals(user.getId());
     }
 }

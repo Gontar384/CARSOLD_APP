@@ -1,14 +1,14 @@
 package org.gontar.carsold.Domain.Entity.Offer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.User.User;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -19,8 +19,8 @@ import java.util.List;
 public class Offer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
-    @SequenceGenerator(name = "my_seq", sequenceName = "my_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_offer_seq")
+    @SequenceGenerator(name = "my_offer_seq", sequenceName = "my_offer_sequence", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -142,17 +142,21 @@ public class Offer {
     @Size(max = 5, message = "Currency must be or under 5 characters")
     private String currency;
 
-    @Column(length = 2000)
-    private String photosJson;
+    @Column(name = "photos", length = 2000)
+    private String photosString;
 
-    public void setPhotos(List<String> photos) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.photosJson = objectMapper.writeValueAsString(photos);
+    public List<String> getPhotos() {
+        if (photosString == null || photosString.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(photosString.split(","));
     }
 
-    public List<String> getPhotos() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(this.photosJson, new TypeReference<>() {
-        });
+    public void setPhotos(List<String> photos) {
+        if (photos != null && !photos.isEmpty()) {
+            this.photosString = String.join(",", photos);
+        } else {
+            this.photosString = null;
+        }
     }
 }

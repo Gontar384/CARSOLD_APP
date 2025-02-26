@@ -3,7 +3,6 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferDto;
-import org.gontar.carsold.Domain.Model.UserDto;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,11 +27,10 @@ public class OfferManagementController {
     }
 
     @PostMapping(path = "/add", consumes = "multipart/form-data")
-    public ResponseEntity<OfferDto> createOffer(@RequestPart("offer") OfferDto offerDto, @RequestPart("photos") List<MultipartFile> photos) {
-        offerDto.setPhotos(photos);
-
+    public ResponseEntity<OfferDto> createOffer(@RequestPart("offer") OfferDto offerDto,
+                                                @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
         Offer offer = mapper.mapToEntity(offerDto);
-        Offer createdOffer = service.createOffer(offer);
+        Offer createdOffer = service.createOffer(offer, photos);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -42,5 +40,16 @@ public class OfferManagementController {
 
         OfferDto createdOfferDto = mapper.mapToDto(createdOffer);
         return ResponseEntity.created(location).body(createdOfferDto);
+    }
+
+    @GetMapping("/fetch/{id}")
+    public ResponseEntity<OfferDto> fetchOffer(@PathVariable Long id) {
+        Offer offer = service.fetchOffer(id);
+        boolean permission = service.fetchPermission(offer);
+        OfferDto offerDto = mapper.mapToDto(offer);
+
+        return ResponseEntity.ok()
+                .header("user-permission", permission ? "true" : "false")
+                .body(offerDto);
     }
 }

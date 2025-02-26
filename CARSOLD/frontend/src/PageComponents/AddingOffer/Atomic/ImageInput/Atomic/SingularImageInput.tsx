@@ -11,7 +11,7 @@ interface SingularImageInputProps {
 }
 
 const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, setPhotos, setWarning}) => {
-    const MAX_SIZE_MB = 1;
+    const MAX_SIZE_MB = 3;
     const MAX_IMAGES = 8;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLInputElement>(null);

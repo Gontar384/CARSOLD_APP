@@ -184,6 +184,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
 
+    @ExceptionHandler(OfferNotFound.class)
+    public ResponseEntity<?> handleOfferNotFound(OfferNotFound ex) {
+        log.error("Offer Not Found: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Offer Not Found");
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("IllegalArgumentException: {}", ex.getMessage(), ex);

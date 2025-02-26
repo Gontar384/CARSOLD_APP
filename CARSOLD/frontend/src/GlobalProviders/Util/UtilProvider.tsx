@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { UtilContext } from "./useUtil";
+import {useLocation} from "react-router-dom";
 
 //manages dark mode, lower bar presence, window size, creates debounced values and recognize device: mobile/PC
 export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -14,6 +15,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth <= 1024);
     const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 1024);
     const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    const location = useLocation();
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
@@ -114,6 +116,11 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
             window.removeEventListener("resize", handleResize);
         };
     }, []); //checks if user is on mobile / PC
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);  //make sure that user is scrolled top during navigation
+
 
     return (
         <UtilContext.Provider

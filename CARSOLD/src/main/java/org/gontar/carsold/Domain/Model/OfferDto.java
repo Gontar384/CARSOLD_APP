@@ -3,16 +3,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferDto {
-    private Long id;
+    private Long id; //for response only
     private String title;
     private String brand;
     private String model;
@@ -36,7 +34,5 @@ public class OfferDto {
     private String description;
     private Integer price;
     private String currency;
-    @JsonIgnore
-    private List<MultipartFile> photos = new ArrayList<>();
-    private List<String> photosUrls;
+    private String photos; //for response only
 }

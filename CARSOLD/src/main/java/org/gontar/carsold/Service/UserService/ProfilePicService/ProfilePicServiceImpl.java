@@ -36,7 +36,7 @@ public class ProfilePicServiceImpl implements ProfilePicService {
     @Override
     public void uploadProfilePic(MultipartFile file) {
         try {
-            if (!isValidImage(file)) throw new MediaNotSupportedException("This is not an acceptable image");
+            if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
             if (file.getSize() > 3 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
             if (isImageSensitive(file)) throw new InappropriateContentException("Image contains sensitive content");
 
@@ -53,7 +53,7 @@ public class ProfilePicServiceImpl implements ProfilePicService {
         }
     }
 
-    private boolean isValidImage(MultipartFile file) throws IOException {
+    private boolean isImageValid(MultipartFile file) throws IOException {
         byte[] fileBytes = file.getBytes();
         //PNG
         if (fileBytes[0] == (byte) 0x89 && fileBytes[1] == (byte) 0x50 &&
@@ -103,7 +103,7 @@ public class ProfilePicServiceImpl implements ProfilePicService {
     }
 
     private String uploadToStorage(MultipartFile file, String username) throws StorageException, IOException {
-        String fileName = username + "/" + username + ".profilePic";
+        String fileName = username + "/profilePic/profilePic";
         Storage storage = StorageOptions.getDefaultInstance().getService();
         BlobId blobId = BlobId.of(bucketName, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
@@ -115,9 +115,8 @@ public class ProfilePicServiceImpl implements ProfilePicService {
     @Override
     public void deleteProfilePic() {
         User user = userDetailsService.loadUser();
-
         try {
-            String fileName = user.getUsername() + "/" + user.getUsername() + ".profilePic";
+            String fileName = user.getUsername() + "/profilePic/profilePic";
             Storage storage = StorageOptions.getDefaultInstance().getService();
             BlobId blobId = BlobId.of(bucketName, fileName);
             storage.delete(blobId);
