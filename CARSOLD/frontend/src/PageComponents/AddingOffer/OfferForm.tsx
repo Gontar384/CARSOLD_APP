@@ -20,9 +20,9 @@ import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
 import ContactDetails from "./Atomic/ContactDetails/ContactDetails.tsx";
 import SubmitOfferButton from "./Atomic/Button/SubmitOfferButton.tsx";
 import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
-import {addOffer} from "../../ApiCalls/Services/OfferService.ts";
+import {addOffer, updateOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {AxiosError} from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import AddingOfferLoader from "../../SharedComponents/Additional/Loading/AddingOfferLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 
@@ -55,7 +55,13 @@ const OfferForm: React.FC = () => {
         price: string;
         currency: string;
     }
-
+    const {section} = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {handleFetchOffer} = useOfferUtil();
+    const [id, setId] = useState<number | null>(null);
+    const [data, setData] = useState<RawOffer | null>(null);
+    const [permission, setPermission] = useState<boolean | null>(null);
     const [offer, setOffer] = useState<RawOffer>({
         title: "",
         brand: "",
@@ -82,64 +88,6 @@ const OfferForm: React.FC = () => {
         price: "",
         currency: "PLN",
     });
-
-    const {section} = useParams();
-    const navigate = useNavigate();
-    const [id, setId] = useState<number | null>(null);
-    const {handleFetchOffer} = useOfferUtil();
-    const [data, setData] = useState<RawOffer | null>(null);
-    const [permission, setPermission] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        if (section) {
-            const numericId = Number(section.replace(/,/g, ''));
-            if (!isNaN(numericId)) setId(numericId);
-        }
-    }, [section]);  //gets id from section
-
-    useEffect(() => {
-        const handleFetchOfferData = async (id: number) => {
-            const { offerData, userPermission } = await handleFetchOffer(id);
-            setData(offerData);
-            setPermission(userPermission);
-        };
-        if (id !== null) {
-            handleFetchOfferData(id);
-        }
-    }, [id]); //fetches offer and user permission
-
-    useEffect(() => {
-        if (data !== null && permission) {
-            const transformedOffer: RawOffer = {
-                title: data.title,
-                brand: data.brand,
-                model: data.model,
-                bodyType: data.bodyType,
-                year: String(data.year),
-                mileage: String(data.mileage),
-                fuel: data.fuel,
-                capacity: String(data.capacity),
-                power: String(data.power),
-                drive: data.drive,
-                transmission: data.transmission,
-                color: data.color,
-                condition: data.condition,
-                seats: String(data.seats),
-                doors: String(data.doors),
-                steeringWheel: data.steeringWheel,
-                country: data.country,
-                vin: data.vin || "",
-                plate: data.plate || "",
-                firstRegistration: data.firstRegistration ? String(data.firstRegistration) : "",
-                description: data.description,
-                photos: (data.photos as unknown as string)?.split(",") || Array(8).fill(""),
-                price: String(data.price),
-                currency: data.currency
-            };
-            setOffer(transformedOffer);
-        }
-    }, [data, permission]);  //transfers data to object for updating offer purpose
-
     const [error, setError] = useState({
         title: false,
         brand: false,
@@ -164,7 +112,6 @@ const OfferForm: React.FC = () => {
         description: false,
         price: false
     });
-
     const [message, setMessage] = useState({
         title: "At least 10 characters.",
         brand: "Choose car's brand.",
@@ -189,7 +136,6 @@ const OfferForm: React.FC = () => {
         description: "At least 30 characters.",
         price: "Enter price of your offer."
     });
-
     const [toggled, setToggled] = useState({
         title: false,
         brand: false,
@@ -214,7 +160,134 @@ const OfferForm: React.FC = () => {
         description: false,
         price: false
     });
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [formErrorBanner, setFormErrorBanner] = useState<boolean>(false);
+    const [inappropriateContentBanner, setInappropriateContentBanner] = useState<boolean>(false);
+    const [waitBanner, setWaitBanner] = useState<boolean>(false);
+    const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
 
+    //if user redirects from /modifyingOffer/{id} to //addingOffer, it resets all states
+    useEffect(() => {
+        if (location.pathname === '/addingOffer') {
+            setId(null);
+            setData(null);
+            setPermission(null);
+            setOffer({
+                title: "",
+                brand: "",
+                model: "",
+                bodyType: "",
+                year: "",
+                mileage: "",
+                fuel: "",
+                capacity: "",
+                power: "",
+                drive: "",
+                transmission: "",
+                color: "",
+                condition: "",
+                seats: "",
+                doors: "",
+                steeringWheel: "",
+                country: "",
+                vin: "",
+                plate: "",
+                firstRegistration: "",
+                description: "",
+                photos: Array(8).fill(""),
+                price: "",
+                currency: "PLN",
+            });
+            setError(Object.fromEntries(Object.keys(error).map((key) => [key, false])) as typeof error);
+            setMessage({
+                title: "At least 10 characters.",
+                brand: "Choose car's brand.",
+                model: "Choose car's model.",
+                bodyType: "Choose car's body type.",
+                year: "Choose year of production.",
+                mileage: "Provide car's mileage in km.",
+                fuel: "Choose fuel type.",
+                capacity: "Provide engine capacity in cm3.",
+                power: "Provide engine power in HP.",
+                drive: "Choose car's drive.",
+                transmission: "Choose car's transmission.",
+                color: "Choose car's color.",
+                condition: "Choose car's condition.",
+                seats: "Choose number of seats.",
+                steeringWheel: "Choose steering wheel side.",
+                doors: "Choose number of doors.",
+                country: "Choose car's origin country.",
+                vin: "Provide car's VIN.",
+                plate: "Provide license plate's number.",
+                firstRegistration: "Provide date of first registration.",
+                description: "At least 30 characters.",
+                price: "Enter price of your offer."
+            })
+            setToggled(Object.fromEntries(Object.keys(toggled).map((key) => [key, false])) as typeof toggled);
+            setIsDisabled(false);
+            setLoading(false);
+            setFormErrorBanner(false);
+            setInappropriateContentBanner(false);
+            setWaitBanner(false);
+            setWentWrongBanner(false);
+        }
+    }, [location.pathname]);
+
+    //those work when /modifyingOffer/{id}
+    useEffect(() => {
+        if (section) {
+            const numericId = Number(section.replace(/,/g, ''));
+            if (!isNaN(numericId)) setId(numericId);
+        }
+    }, [section]);  //gets id from section
+
+    useEffect(() => {
+        const handleFetchOfferData = async (id: number) => {
+            const { offerData, userPermission } = await handleFetchOffer(id);
+            setData(offerData);
+            setPermission(userPermission);
+        };
+        if (id !== null) {
+            handleFetchOfferData(id);
+        }
+    }, [id]); //fetches offer and user permission
+
+    useEffect(() => {
+        if (data !== null && permission === true) {
+            const transformedOffer: RawOffer = {
+                title: data.title || "",
+                brand: data.brand || "",
+                model: data.model || "",
+                bodyType: data.bodyType || "",
+                year: String(data.year) || "",
+                mileage: String(data.mileage) || "",
+                fuel: data.fuel || "",
+                capacity: String(data.capacity) || "",
+                power: String(data.power) || "",
+                drive: data.drive || "",
+                transmission: data.transmission || "",
+                color: data.color || "",
+                condition: data.condition || "",
+                seats: String(data.seats) || "",
+                doors: String(data.doors) || "",
+                steeringWheel: data.steeringWheel || "",
+                country: data.country || "",
+                vin: data.vin || "",
+                plate: data.plate || "",
+                firstRegistration: data.firstRegistration ? String(data.firstRegistration) : "",
+                description: data.description || "",
+                photos: (data.photos as unknown as string)?.split(",") || Array(8).fill(""),
+                price: String(data.price) || "",
+                currency: data.currency || "",
+            };
+            setOffer(transformedOffer);
+        } else if (permission === false) {
+            navigate("/addingOffer");
+        }
+    }, [data, permission]);  //transfers data to object for updating offer purpose
+
+    //helper methods
     const handleSetOffer = (key: keyof typeof offer) =>
         (setValue: React.SetStateAction<string> | React.SetStateAction<string[]>) => {
             setOffer(prev => ({
@@ -570,13 +643,7 @@ const OfferForm: React.FC = () => {
         }
     }, [offer.price]);
 
-    //adding offer logic
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [formErrorBanner, setFormErrorBanner] = useState<boolean>(false);
-    const [inappropriateContentBanner, setInappropriateContentBanner] = useState<boolean>(false);
-    const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-
+    //adding & updating offer logic
     const checkValues= () => {
         let isValid = true;
 
@@ -716,7 +783,8 @@ const OfferForm: React.FC = () => {
     const convertToOfferData = async (offer: RawOffer): Promise<FormData> => {
         const formData = new FormData();
 
-        await Promise.all(offer.photos.map(async (photo, index) => {
+        for (let index = 0; index < offer.photos.length; index++) {
+            const photo = offer.photos[index];
             if (photo) {
                 try {
                     const response = await fetch(photo);
@@ -727,7 +795,7 @@ const OfferForm: React.FC = () => {
                     console.error(`Error converting blob URL to file: ${photo}`, error);
                 }
             }
-        }));
+        }
 
         const parseNumber = (value: string): number | null => {
             const sanitizedValue = value.replace(/,/g, '');
@@ -769,8 +837,7 @@ const OfferForm: React.FC = () => {
     const handleAddOffer = async () => {
         if (isDisabled) return;
 
-        const isValid = checkValues();
-        if (!isValid) {
+        if (!checkValues()) {
             window.scrollTo({ top: 0, behavior: "smooth" });
             setFormErrorBanner(true);
             return;
@@ -797,6 +864,43 @@ const OfferForm: React.FC = () => {
         } finally {
             setLoading(false);
             setIsDisabled(false);
+        }
+    };
+
+    const handleUpdateOffer = async () => {
+        if (isDisabled) return;
+
+        if (!checkValues()) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setFormErrorBanner(true);
+            return;
+        }
+        setIsDisabled(true);
+        setLoading(true);
+        try {
+            const offerData = await convertToOfferData(offer);
+            const response = await updateOffer(id, offerData);
+            if (response.status === 200) {
+                sessionStorage.setItem("offerUpdated", "true");
+                navigate("/details/myOffers");
+            }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 422) {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    setInappropriateContentBanner(true);
+                } else if (error.response.status === 405) {
+                    setWaitBanner(true);
+                } else if (error.response.status === 403) {
+                    navigate("/addingOffer");
+                } else {
+                    setWentWrongBanner(true);
+                    console.error("Unexpected error during processing offer: ", error);
+                }
+            }
+        } finally {
+            setLoading(false);
+            setTimeout(() => setIsDisabled(false), 500);
         }
     };
 
@@ -881,7 +985,8 @@ const OfferForm: React.FC = () => {
                             <ContactDetails/>
                         </div>
                         <div className="flex justify-center m:block w-full mb-20 m:mb-24">
-                            <SubmitOfferButton onClick={handleAddOffer}/>
+                            <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer}
+                                               type={id !== null && permission === true}/>
                         </div>
                     </div>
                 </div>
@@ -890,7 +995,9 @@ const OfferForm: React.FC = () => {
                                     delay={2000} color={"bg-coolRed"} z={"z-10"}/>}
                 {inappropriateContentBanner &&
                     <AnimatedBanner text={"Title or description contains inappropriate content"}
-                                    onAnimationEnd={() => setInappropriateContentBanner(false)} delay={5000} color={"bg-coolRed"} z={"z-10"}/>}
+                                    onAnimationEnd={() => setInappropriateContentBanner(false)} delay={4000} color={"bg-coolRed"} z={"z-10"}/>}
+                {waitBanner && <AnimatedBanner text={"You need to wait a while before modifying offer again"} onAnimationEnd={() => setWaitBanner(false)}
+                                               delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
                                               delay={2000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}

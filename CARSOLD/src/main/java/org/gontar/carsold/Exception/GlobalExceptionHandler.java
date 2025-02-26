@@ -98,6 +98,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Access Denied");
     }
 
+    @ExceptionHandler(NoPermissionException.class)
+    public ResponseEntity<?> handleNoPermissionException(NoPermissionException ex) {
+        log.error("No Permission: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No Permission");
+    }
+
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
         log.error("Authorization Denied: {}", ex.getMessage(), ex);

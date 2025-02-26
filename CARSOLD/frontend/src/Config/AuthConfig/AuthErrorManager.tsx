@@ -11,10 +11,9 @@ const AuthErrorManager: React.FC = () => {
 
     const isAuthenticationRequest = (url: string | undefined): boolean => {
         if (!url) return false;
-        const paths =
-            ['api/auth/authenticate', 'api/deleteUser', 'api/changePassword'];
+        const paths = ['api/auth/authenticate', 'api/deleteUser', 'api/changePassword', 'api/offer/update'];
 
-        return paths.includes(url);
+        return paths.some(path => url.startsWith(path))
     };
 
     const handleAuthError = () => {

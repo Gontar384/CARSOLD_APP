@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.User.User;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Offer {
     @SequenceGenerator(name = "my_offer_seq", sequenceName = "my_offer_sequence", allocationSize = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -159,4 +160,7 @@ public class Offer {
             this.photosString = null;
         }
     }
+
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
 }

@@ -1,29 +1,32 @@
 package org.gontar.carsold.Service.OfferService.OfferManagementService;
 
 import com.google.cloud.storage.*;
+import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
+import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class OfferManagementServiceImpl implements OfferManagementService {
 
@@ -32,7 +35,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
-    private static final Logger logger = LoggerFactory.getLogger(OfferManagementServiceImpl.class);
 
     private final OfferRepository repository;
     private final MyUserDetailsService userDetailsService;
@@ -52,7 +54,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         User user = userDetailsService.loadUser();
         offer.setUser(user);
         Offer savedOffer = repository.save(offer);
-        processImages(savedOffer, photos, user);
+        processImages(savedOffer, photos, user.getUsername());
 
         return savedOffer;
     }
@@ -104,17 +106,17 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                 count++;
             }
             double averageToxicity = totalScore / count;
-            return averageToxicity > 0.2;
+            return averageToxicity > 0.3;
         } catch (Exception e) {
-            logger.warn("Perspective API failed: {}", e.getMessage());
+            log.error("Perspective API failed: {}", e.getMessage());
             return false;
         }
     }
 
-    private void processImages(Offer offer, List<MultipartFile> photos, User user) {
+    private void processImages(Offer offer, List<MultipartFile> photos, String username) {
         if (photos != null && !photos.isEmpty()) {
             if (photos.size() > 8) {
-                logger.warn("Too many images uploaded. Only the first 8 will be used.");
+                log.info("Too many images uploaded. Only the first 8 will be used.");
             }
             photos = photos.subList(0, Math.min(photos.size(), 8));
             List<String> photoUrls = new ArrayList<>();
@@ -122,12 +124,12 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             for (int i = 0; i < photos.size(); i++) {
                 MultipartFile file = photos.get(i);
                 try {
-                    String photoUrl = uploadToStorage(file, user.getUsername(), offer.getId(), i + 1);
+                    String photoUrl = uploadToStorage(file, username, offer.getId(), i + 1);
                     photoUrls.add(photoUrl);
                 } catch (MediaNotSupportedException e) {
-                    logger.warn("Skipping unsupported image: {}", file.getOriginalFilename());
+                    log.info("Skipping unsupported image: {}", file.getOriginalFilename());
                 } catch (IOException | StorageException e) {
-                    logger.error("Failed to upload image: {} - Reason: {}", file.getOriginalFilename(), e.getMessage());
+                    log.error("Failed to upload image: {} - Reason: {}", file.getOriginalFilename(), e.getMessage());
                 }
             }
 
@@ -184,5 +186,59 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         Objects.requireNonNull(offer, "Offer cannot be null");
         User user = userDetailsService.loadUser();
         return offer.getUser().getId().equals(user.getId());
+    }
+
+    @Override
+    public Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos) {
+        Objects.requireNonNull(id, "Id cannot be null");
+        Objects.requireNonNull(offer, "Offer cannot be null");
+        Offer existingOffer = repository.findById(id)
+                .orElseThrow(() -> new OfferNotFound("Offer not found"));
+
+        if (!fetchPermission(existingOffer)) {
+            throw new NoPermissionException("User has no permission to update offer");
+        }
+        if (existingOffer.getLastUpdated() != null &&
+                existingOffer.getLastUpdated().isAfter(LocalDateTime.now().minusMinutes(5))) {
+            throw new AccessDeniedException("User can update offer only once every 5 minutes");
+        }
+        if (isContentToxic(offer.getTitle(), offer.getDescription())) {
+            throw new InappropriateContentException("Title or description are inappropriate");
+        }
+
+        Offer updatedOffer = updateContent(existingOffer, offer);
+        processImages(updatedOffer, photos, updatedOffer.getUser().getUsername());
+
+        return updatedOffer;
+    }
+
+    private Offer updateContent(Offer existingOffer, Offer offer) {
+        existingOffer.setTitle(offer.getTitle());
+        existingOffer.setBrand(offer.getBrand());
+        existingOffer.setModel(offer.getModel());
+        existingOffer.setBodyType(offer.getBodyType());
+        existingOffer.setYear(offer.getYear());
+        existingOffer.setMileage(offer.getMileage());
+        existingOffer.setFuel(offer.getFuel());
+        existingOffer.setCapacity(offer.getCapacity());
+        existingOffer.setPower(offer.getPower());
+        existingOffer.setDrive(offer.getDrive());
+        existingOffer.setTransmission(offer.getTransmission());
+        existingOffer.setColor(offer.getColor());
+        existingOffer.setCondition(offer.getCondition());
+        existingOffer.setSeats(offer.getSeats());
+        existingOffer.setDoors(offer.getDoors());
+        existingOffer.setSteeringWheel(offer.getSteeringWheel());
+        existingOffer.setCountry(offer.getCountry());
+        existingOffer.setVin(offer.getVin());
+        existingOffer.setPlate(offer.getPlate());
+        existingOffer.setFirstRegistration(offer.getFirstRegistration());
+        existingOffer.setDescription(offer.getDescription());
+        existingOffer.setPrice(offer.getPrice());
+        existingOffer.setCurrency(offer.getCurrency());
+        existingOffer.setLastUpdated(LocalDateTime.now());
+        repository.save(existingOffer);
+
+        return existingOffer;
     }
 }

@@ -71,7 +71,7 @@ const ContactDetails: React.FC = () => {
             </div>
             <div className="flex flex-row gap-3">
                 <p className="w-2/3 text-sm m:text-base">
-                    These are your contact details for now. They will be attached to your offer, if public.
+                    Those are your contact details for now. They will be attached to your offer, if public.
                     You can change them directly in your account settings.
                 </p>
                 <div className="flex justify-center items-center w-1/3">

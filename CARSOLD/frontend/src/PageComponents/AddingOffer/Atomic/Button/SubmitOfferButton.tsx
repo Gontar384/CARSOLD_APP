@@ -3,9 +3,10 @@ import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface SubmitOfferButtonProps {
     onClick: () => void;
+    type: boolean;
 }
 
-const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick }) => {
+const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick, type }) => {
     const [hovered, setHovered] = useState<boolean>(false);
     const {isMobile} = useUtil();
 
@@ -22,9 +23,9 @@ const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick }) => {
                 onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
                 onTouchStart={isMobile ? handleTouchButton : undefined}
                 onClick={onClick}>
-            Submit & add offer
+            {`Submit & ${type ? "update" : "add"} offer`}
             {hovered &&
-                <div className={'w-[150px] m:w-[168px] h-[2px] absolute bg-black animate-underline'}/>
+                <div className={`${type ? "w-[174px] m:w-[194px]" : "w-[150px] m:w-[168px]"} h-[2px] absolute bg-black animate-underline`}/>
             }
         </button>
     )

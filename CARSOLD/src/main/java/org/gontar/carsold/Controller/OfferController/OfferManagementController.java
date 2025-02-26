@@ -52,4 +52,14 @@ public class OfferManagementController {
                 .header("user-permission", permission ? "true" : "false")
                 .body(offerDto);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<OfferDto> updateOffer(@PathVariable Long id, @RequestPart("offer") OfferDto offerDto,
+                                                @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
+        Offer offer = mapper.mapToEntity(offerDto);
+        Offer updatedOffer = service.updateOffer(id, offer, photos);
+        OfferDto updatedOfferDto = mapper.mapToDto(updatedOffer);
+
+        return ResponseEntity.ok(updatedOfferDto);
+    }
 }

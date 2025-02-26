@@ -9,4 +9,5 @@ public interface OfferManagementService {
     Offer createOffer(Offer offer, List<MultipartFile> photos);
     Offer fetchOffer(Long id);
     boolean fetchPermission(Offer offer);
+    Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos);
 }
