@@ -1,4 +1,4 @@
-package org.gontar.carsold.ControllerTest;
+package org.gontar.carsold.ControllerTest.UserControllerTest;
 
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Controller.UserController.UserManagementController;

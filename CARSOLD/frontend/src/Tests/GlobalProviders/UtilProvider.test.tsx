@@ -2,6 +2,7 @@ import {render, waitFor, act, fireEvent} from '@testing-library/react';
 import {useUtil} from "../../GlobalProviders/Util/useUtil";
 import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider";
 import React from "react";
+import {MemoryRouter} from "react-router-dom";
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -41,9 +42,11 @@ describe('UtilProvider', () => {
         localStorage.setItem('theme', 'dark');
 
         const { getByText } = render(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         expect(getByText('Dark Mode')).toBeInTheDocument();
@@ -51,9 +54,11 @@ describe('UtilProvider', () => {
 
     it('should toggle dark mode correctly', () => {
         const { getByText, getByRole } = render(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         expect(getByText('Light Mode')).toBeInTheDocument();
@@ -69,9 +74,11 @@ describe('UtilProvider', () => {
         Object.defineProperty(window, 'innerWidth', { writable: true, value: 400 });
 
         const { getByText, rerender } = render(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         expect(getByText('Mobile: Yes')).toBeInTheDocument();
@@ -84,9 +91,11 @@ describe('UtilProvider', () => {
         });
 
         rerender(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         await waitFor(() => {
@@ -98,9 +107,11 @@ describe('UtilProvider', () => {
 
     it('should detect device type as mobile or PC', async () => {
         const { getByText, rerender } = render(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         expect(getByText('PC')).toBeInTheDocument();
@@ -111,9 +122,11 @@ describe('UtilProvider', () => {
         });
 
         rerender(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         await waitFor(() => {
@@ -123,9 +136,11 @@ describe('UtilProvider', () => {
 
     it('should create and update debounced value correctly', async () => {
         const { getByText, getByRole } = render(
-            <UtilProvider>
-                <TestComponent />
-            </UtilProvider>
+            <MemoryRouter>
+                <UtilProvider>
+                    <TestComponent />
+                </UtilProvider>
+            </MemoryRouter>
         );
 
         const input = getByRole('textbox');

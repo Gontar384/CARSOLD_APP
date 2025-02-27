@@ -1,4 +1,4 @@
-package org.gontar.carsold.ServiceTest.UserServiceTest.ManagementServiceTest;
+package org.gontar.carsold.ServiceTest.UserServiceTest.UserManagementServiceTest;
 
 import jakarta.transaction.Transactional;
 import org.gontar.carsold.Domain.Entity.User.User;
@@ -6,6 +6,7 @@ import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
+import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class UserManagementServiceIntegrationTest {
 
     @Autowired
-    private UserManagementService userManagementService;
+    private UserManagementServiceImpl userManagementService;
 
     @Autowired
     private UserRepository userRepository;

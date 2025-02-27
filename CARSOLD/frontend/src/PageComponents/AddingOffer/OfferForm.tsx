@@ -643,7 +643,8 @@ const OfferForm: React.FC = () => {
         }
     }, [offer.price]);
 
-    //adding & updating offer logic
+    //offer logic
+    //checks if values are valid before commiting
     const checkValues= () => {
         let isValid = true;
 
@@ -664,22 +665,22 @@ const OfferForm: React.FC = () => {
             setMessageField("title", "Too many BIG LETTERS!");
             isValid = false;
         }
-        if (offer.brand === "") {
+        if (offer.brand === "" || !carBrands.includes(offer.brand)) {
             setErrorField("brand", true);
             setMessageField("brand", "You have to choose brand.")
             isValid = false;
         }
-        if (offer.brand !== "Other" && offer.model === "") {
+        if (offer.model === "" && offer.brand !== "Other" || !carModels[offer.brand].includes(offer.model)) {
             setErrorField("model", true);
             setMessageField("model", "You have to choose model.");
             isValid = false;
         }
-        if (offer.bodyType === "") {
+        if (offer.bodyType === "" || !carBodyTypes.includes(offer.bodyType)) {
             setErrorField("bodyType", true);
             setMessageField("bodyType", "You have to choose body type.");
             isValid = false;
         }
-        if (offer.year === "") {
+        if (offer.year === "" || !carYears.includes(offer.year)) {
             setErrorField("year", true);
             setMessageField("year", "You have to choose year of production.");
             isValid = false;
@@ -693,7 +694,7 @@ const OfferForm: React.FC = () => {
             setMessageField("mileage", "Mileage is incorrect!");
             isValid = false;
         }
-        if (offer.fuel === "") {
+        if (offer.fuel === "" || !carFuels.includes(offer.fuel)) {
             setErrorField("fuel", true);
             setMessageField("fuel", "You have to choose fuel type.");
             isValid = false;
@@ -703,6 +704,10 @@ const OfferForm: React.FC = () => {
             setMessageField("capacity", "You have to provide engine capacity.");
             isValid = false;
         } else if (offer.capacity.length < 3) {
+            setErrorField("capacity", true);
+            setMessageField("capacity", "Engine capacity is incorrect!");
+            isValid = false;
+        } else if (offer.capacity.length > 6) {
             setErrorField("capacity", true);
             setMessageField("capacity", "Engine capacity is incorrect!");
             isValid = false;
@@ -716,24 +721,44 @@ const OfferForm: React.FC = () => {
             setMessageField("power", "Engine power is incorrect!");
             isValid = false;
         }
-        if (offer.drive === "") {
+        if (offer.drive === "" || !carDrives.includes(offer.drive)) {
             setErrorField("drive", true);
             setMessageField("drive", "You have to choose drive.");
             isValid = false;
         }
-        if (offer.transmission === "") {
+        if (offer.transmission === "" || !["Manual", "Automatic"].includes(offer.transmission)) {
             setErrorField("transmission", true);
             setMessageField("transmission", "You have to choose car's transmission.");
             isValid = false;
         }
-        if (offer.color === "") {
+        if (offer.color === "" || !carColors.includes(offer.color)) {
             setErrorField("color", true);
             setMessageField("color", "You have to choose color.");
             isValid = false;
         }
-        if (offer.condition === "") {
+        if (offer.condition === "" || !["Undamaged", "Damaged"].includes(offer.condition)) {
             setErrorField("condition", true);
             setMessageField("condition", "You have to choose car's condition.");
+            isValid = false;
+        }
+        if (offer.seats !== "" && !carSeats.includes(offer.seats)) {
+            setErrorField("seats", true);
+            setMessageField("seats", "You have to choose seats.");
+            isValid = false;
+        }
+        if (offer.doors !== "" && !carDoors.includes(offer.doors)) {
+            setErrorField("doors", true);
+            setMessageField("doors", "You have to choose doors.");
+            isValid = false;
+        }
+        if (offer.steeringWheel !== "" && !["Left", "Right"].includes(offer.steeringWheel)) {
+            setErrorField("steeringWheel", true);
+            setMessageField("steeringWheel", "You have to choose steering wheel side.");
+            isValid = false;
+        }
+        if (offer.country !== "" && !carCountries.includes(offer.country)) {
+            setErrorField("country", true);
+            setMessageField("country", "You have to choose country.");
             isValid = false;
         }
         if (offer.vin !== "" && !/^[A-Z0-9]{17}$/.test(offer.vin)) {
@@ -780,6 +805,7 @@ const OfferForm: React.FC = () => {
         return isValid;
     };
 
+    //fetch photos, convert photos and Offer object to formData
     const convertToOfferData = async (offer: RawOffer): Promise<FormData> => {
         const formData = new FormData();
 

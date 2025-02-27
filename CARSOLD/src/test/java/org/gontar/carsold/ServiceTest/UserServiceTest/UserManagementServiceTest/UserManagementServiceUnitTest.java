@@ -1,4 +1,4 @@
-package org.gontar.carsold.ServiceTest.UserServiceTest.ManagementServiceTest;
+package org.gontar.carsold.ServiceTest.UserServiceTest.UserManagementServiceTest;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Domain.Entity.User.User;

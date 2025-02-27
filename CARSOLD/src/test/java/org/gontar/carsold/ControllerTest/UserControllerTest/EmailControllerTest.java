@@ -1,4 +1,4 @@
-package org.gontar.carsold.ControllerTest;
+package org.gontar.carsold.ControllerTest.UserControllerTest;
 
 import org.gontar.carsold.Controller.UserController.EmailController;
 import org.gontar.carsold.Service.UserService.EmailService.EmailService;

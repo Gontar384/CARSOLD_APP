@@ -110,12 +110,10 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
                 setImgHovered(false);
             }
         }
-
         if (imgHovered) {
             document.addEventListener("mousedown", handleClickOutside);
             document.addEventListener("touchstart", handleClickOutside);
         }
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
             document.removeEventListener("touchstart", handleClickOutside);
