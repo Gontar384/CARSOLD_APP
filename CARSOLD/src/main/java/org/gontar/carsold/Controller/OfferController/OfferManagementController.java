@@ -3,6 +3,7 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferDto;
+import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -61,5 +62,11 @@ public class OfferManagementController {
         OfferDto updatedOfferDto = mapper.mapToDto(updatedOffer);
 
         return ResponseEntity.ok(updatedOfferDto);
+    }
+
+    @GetMapping("/fetchAll")
+    public ResponseEntity<List<PartialOfferDto>> fetchAllOffers() {
+        List<PartialOfferDto> partialOfferDtos = service.fetchAllOffers();
+        return ResponseEntity.ok(partialOfferDtos);
     }
 }

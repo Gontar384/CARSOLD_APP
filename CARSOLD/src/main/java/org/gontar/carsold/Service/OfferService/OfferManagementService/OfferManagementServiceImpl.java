@@ -4,6 +4,7 @@ import com.google.cloud.storage.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
 import org.gontar.carsold.Exception.CustomException.NoPermissionException;
@@ -242,5 +243,28 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         repository.save(existingOffer);
 
         return existingOffer;
+    }
+
+    @Override
+    public List<PartialOfferDto> fetchAllOffers() {
+        User user = userDetailsService.loadUser();
+        List<Offer> offers = repository.findAllByUserId(user.getId());
+        List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
+        for (Offer offer : offers) {
+            PartialOfferDto partialOfferDto = new PartialOfferDto();
+            partialOfferDto.setId(offer.getId());
+            partialOfferDto.setTitle(offer.getTitle());
+            partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+            partialOfferDto.setPrice(offer.getPrice());
+            partialOfferDto.setCurrency(offer.getCurrency());
+            partialOfferDto.setPower(offer.getPower());
+            partialOfferDto.setCapacity(offer.getCapacity());
+            partialOfferDto.setTransmission(offer.getTransmission());
+            partialOfferDto.setFuel(offer.getFuel());
+            partialOfferDto.setMileage(offer.getMileage());
+            partialOfferDto.setYear(offer.getYear());
+            partialOfferDtos.add(partialOfferDto);
+        }
+        return partialOfferDtos;
     }
 }

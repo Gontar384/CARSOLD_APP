@@ -18,3 +18,12 @@ export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
 export const updateOffer = async (id: number | null, offer: object): Promise<AxiosResponse> => {
     return api.put(`api/offer/update/${id}`, offer); //manually handling errors in main function
 }
+
+export const fetchAllOffers = async (): Promise<AxiosResponse> => {
+    try {
+        return api.get('/api/offer/fetchAll')
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+}

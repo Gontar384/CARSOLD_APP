@@ -277,7 +277,7 @@ const OfferForm: React.FC = () => {
                 plate: data.plate || "",
                 firstRegistration: data.firstRegistration ? String(data.firstRegistration) : "",
                 description: data.description || "",
-                photos: (data.photos as unknown as string)?.split(",") || Array(8).fill(""),
+                photos: ((data.photos as unknown as string)?.split(",") || []).concat(Array(8).fill("").slice(0, 8 - (data.photos as unknown as string)?.split(",")?.length)),
                 price: String(data.price) || "",
                 currency: data.currency || "",
             };
