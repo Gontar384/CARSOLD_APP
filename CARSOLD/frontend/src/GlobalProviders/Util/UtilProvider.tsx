@@ -97,14 +97,28 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     useEffect(() => {
         const detectDeviceType = () => {
-            setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0);
+            const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+            const isSmallScreen = window.innerWidth <= 450;
+            setIsMobile(isTouchDevice || isSmallScreen);
         };
 
         const handlePointerChange = (event: PointerEvent) => {
-            setIsMobile(event.pointerType === "touch");
+            if (event.pointerType === "touch") {
+                setIsMobile(true);
+            } else if (event.pointerType === "mouse") {
+                setIsMobile(false);
+            }
         };
 
-        const handleResize = () => detectDeviceType();
+        let lastWidth = window.innerWidth;
+
+        const handleResize = () => {
+            const newWidth = window.innerWidth;
+            if ((lastWidth > 450 && newWidth <= 450) || (lastWidth <= 450 && newWidth > 450)) {
+                detectDeviceType();
+            }
+            lastWidth = newWidth;
+        };
 
         window.addEventListener("pointerdown", handlePointerChange);
         window.addEventListener("resize", handleResize);
@@ -120,7 +134,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location]);  //make sure that user is scrolled top during navigation
-
 
     return (
         <UtilContext.Provider

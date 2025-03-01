@@ -323,6 +323,9 @@ const OfferForm: React.FC = () => {
             if (offer.title === "") {
                 setErrorField("title", true);
                 setMessageField("title", "You have to provide title.");
+            } else if (!/[a-zA-Z0-9]/.test(offer.title)) {
+                setErrorField("title", true);
+                setMessageField("title", "Incorrect title!");
             } else if (offer.title.length < 5) {
                 setErrorField("title", true);
                 setMessageField("title", "Title is too short.");
@@ -332,7 +335,7 @@ const OfferForm: React.FC = () => {
     }, [toggled.title]);
 
     useEffect(() => {
-        if (offer.title.length < 30) {
+        if (offer.title.length <= 30) {
             if ((offer.title.match(/[A-Z]/g) || []).length > 10) {
                 setErrorField("title", true);
                 setMessageField("title", "Too many BIG LETTERS!");
@@ -601,6 +604,9 @@ const OfferForm: React.FC = () => {
             if (offer.description === "") {
                 setErrorField("description", true);
                 setMessageField("description", "You have to add description.");
+            } else if (!/[a-zA-Z0-9]/.test(offer.description)) {
+                setErrorField("description", true);
+                setMessageField("description", "Incorrect description!");
             } else if (offer.description.length < 30) {
                 setErrorField("description", true);
                 setMessageField("description", "Description is too short.");
@@ -651,6 +657,10 @@ const OfferForm: React.FC = () => {
         if (offer.title === "") {
             setErrorField("title", true);
             setMessageField("title", "You have to provide title.")
+            isValid = false;
+        } else if (!/[a-zA-Z0-9]/.test(offer.title)) {
+            setErrorField("title", true);
+            setMessageField("title", "Incorrect title!");
             isValid = false;
         } else if (offer.title.length < 5) {
             setErrorField("title", true);
@@ -783,6 +793,10 @@ const OfferForm: React.FC = () => {
             setErrorField("description", true);
             setMessageField("description", "You have to add description.");
             isValid = false;
+        } else if (!/[a-zA-Z0-9]/.test(offer.description)) {
+            setErrorField("description", true);
+            setMessageField("description", "Incorrect description!");
+            isValid = false;
         } else if (offer.description.length < 30) {
             setErrorField("description", true);
             setMessageField("description", "Description is too short.");
@@ -824,7 +838,7 @@ const OfferForm: React.FC = () => {
         }
 
         const parseNumber = (value: string): number | null => {
-            const sanitizedValue = value.replace(/,/g, '');
+            const sanitizedValue = value.replace(/./g, '');
             const parsed = Number(sanitizedValue);
             return isNaN(parsed) ? null : parsed;
         };
