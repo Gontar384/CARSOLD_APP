@@ -2,6 +2,9 @@ import React, {useEffect, useState} from "react";
 import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
 import {fetchAllOffers} from "../../../../ApiCalls/Services/OfferService.ts";
 import SmallOfferDisplay from "./Atomic/SmallOfferDisplay.tsx";
+import {useNavigate} from "react-router-dom";
+import {useButton} from "../../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 const MyOffers: React.FC = () => {
     interface FetchedOffer {
@@ -17,6 +20,7 @@ const MyOffers: React.FC = () => {
         mileage: number;
         year: number;
     }
+
     interface UpdatedOffer {
         id: number;
         title: string;
@@ -30,10 +34,31 @@ const MyOffers: React.FC = () => {
         mileage: string;
         year: string;
     }
+
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const itemsPerPage = 3;
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedOffers = offers.slice(startIndex, endIndex);
+    const navigate = useNavigate();
+    const {buttonColor, handleStart, handleEnd} = useButton();
+    const {isMobile} = useUtil();
+
+    const nextPage = () => {
+        if (endIndex < offers.length) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
 
     useEffect(() => {
         if (sessionStorage.getItem("offerAdded") === "true") {
@@ -68,25 +93,54 @@ const MyOffers: React.FC = () => {
                     setOffers(formattedOffers);
                 }
             } catch (error) {
-                console.error("Custom error: ", error);
+                console.error("Unexpected error occurred during offers fetch: ", error);
             } finally {
                 setLoading(false);
             }
         }
         handleFetchAllOffers();
-    }, []);
+    }, []); //fetch offer
 
     if (loading) return null;
 
     return (
         <>
-            <div className="w-[90%] m:w-[95%] h-full max-w-[600px] py-6 m:py-8">
-                {offers.length > 0 && (
-                    offers.map((offer) => (
-                        <SmallOfferDisplay key={offer.id} offer={offer}/>
-                    ))
+            {offers.length > 0 ?
+                (
+                    <div className="w-[90%] m:w-[95%] h-full max-w-[600px] py-6 m:py-8">
+                            {paginatedOffers.map((offer) => (
+                                <SmallOfferDisplay key={offer.id} offer={offer}/>
+                            ))}
+                        {offers.length > itemsPerPage &&
+                            <div className="flex justify-center mt-8 m:mt-10 gap-4 m:gap-5 text-sm m:text-base">
+                                <button onClick={prevPage} disabled={currentPage === 0}
+                                        className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
+                                    rounded-md disabled:opacity-60">
+                                    Previous
+                                </button>
+                                <button onClick={nextPage} disabled={endIndex >= offers.length}
+                                        className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
+                                    rounded-md disabled:opacity-60">
+                                    Next
+                                </button>
+                            </div>
+                        }
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center w-[90%] m:w-[95%] h-full mt-28 m:mt-32">
+                        <p className="text-xl m:text-2xl text-center">You don't have any offer added yet. Click here to
+                            add one:</p>
+                        <button className={`mt-8 m:mt-10 text-xl m:text-2xl p-2 m:p-3 border-2 border-black border-opacity-40 rounded
+                        ${buttonColor ? "bg-white" : "bg-lime"}`}
+                                onClick={() => navigate("/addingOffer")}
+                                onMouseEnter={!isMobile ? handleStart : undefined}
+                                onMouseLeave={!isMobile ? handleEnd : undefined}
+                                onTouchStart={isMobile ? handleStart : undefined}
+                            onTouchEnd={isMobile ? handleEnd : undefined}>
+                            Add Offer
+                        </button>
+                    </div>
                 )}
-            </div>
             {offerAdded &&
                 <AnimatedBanner text={"Offer added successfully!"} onAnimationEnd={() => setOfferAdded(false)}
                                 delay={3000} color={"bg-gray-200"} z={"z-10"}/>}
