@@ -4,6 +4,7 @@ import com.google.cloud.storage.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Model.OfferWithContactDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -185,6 +188,10 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Override
     public boolean fetchPermission(Offer offer) {
         Objects.requireNonNull(offer, "Offer cannot be null");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return false;
+        }
         User user = userDetailsService.loadUser();
         return offer.getUser().getId().equals(user.getId());
     }
@@ -246,7 +253,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
-    public List<PartialOfferDto> fetchAllOffers() {
+    public List<PartialOfferDto> fetchAllUserOffers() {
         User user = userDetailsService.loadUser();
         List<Offer> offers = repository.findAllByUserId(user.getId());
         List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
@@ -266,5 +273,44 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             partialOfferDtos.add(partialOfferDto);
         }
         return partialOfferDtos;
+    }
+
+    @Override
+    public OfferWithContactDto fetchOfferWithContact(Long id) {
+        Offer offer = fetchOffer(id);
+        User user = offer.getUser();
+        OfferWithContactDto offerWithContactDto = new OfferWithContactDto();
+        offerWithContactDto.setId(id);
+        offerWithContactDto.setTitle(offer.getTitle());
+        offerWithContactDto.setBrand(offer.getBrand());
+        offerWithContactDto.setModel(offer.getModel());
+        offerWithContactDto.setBodyType(offer.getBodyType());
+        offerWithContactDto.setYear(offer.getYear());
+        offerWithContactDto.setMileage(offer.getMileage());
+        offerWithContactDto.setFuel(offer.getFuel());
+        offerWithContactDto.setCapacity(offer.getCapacity());
+        offerWithContactDto.setPower(offer.getPower());
+        offerWithContactDto.setDrive(offer.getDrive());
+        offerWithContactDto.setTransmission(offer.getTransmission());
+        offerWithContactDto.setColor(offer.getColor());
+        offerWithContactDto.setCondition(offer.getCondition());
+        offerWithContactDto.setSeats(offer.getSeats());
+        offerWithContactDto.setDoors(offer.getDoors());
+        offerWithContactDto.setSteeringWheel(offer.getSteeringWheel());
+        offerWithContactDto.setCountry(offer.getCountry());
+        offerWithContactDto.setVin(offer.getVin());
+        offerWithContactDto.setPlate(offer.getPlate());
+        offerWithContactDto.setFirstRegistration(offer.getFirstRegistration());
+        offerWithContactDto.setDescription(offer.getDescription());
+        offerWithContactDto.setPrice(offer.getPrice());
+        offerWithContactDto.setCurrency(offer.getCurrency());
+        offerWithContactDto.setPhotos(offer.getPhotosString());
+        if (user.getContactPublic()) {
+            offerWithContactDto.setName(user.getName());
+            offerWithContactDto.setPhone(user.getPhone());
+            offerWithContactDto.setCity(user.getCity());
+        }
+        offerWithContactDto.setPermission(fetchPermission(offer));
+        return offerWithContactDto;
     }
 }

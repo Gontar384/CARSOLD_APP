@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
-import {fetchAllOffers} from "../../../../ApiCalls/Services/OfferService.ts";
 import SmallOfferDisplay from "./Atomic/SmallOfferDisplay.tsx";
 import {useNavigate} from "react-router-dom";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 
 const MyOffers: React.FC = () => {
     interface FetchedOffer {
@@ -38,7 +38,6 @@ const MyOffers: React.FC = () => {
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const itemsPerPage = 3;
     const startIndex = currentPage * itemsPerPage;
@@ -47,6 +46,7 @@ const MyOffers: React.FC = () => {
     const navigate = useNavigate();
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
+    const {handleFetchAllUserOffers, loading} = useOfferUtil();
 
     const nextPage = () => {
         if (endIndex < offers.length) {
@@ -72,12 +72,10 @@ const MyOffers: React.FC = () => {
     }, []); //detects if new offer was added and displays banner
 
     useEffect(() => {
-        const handleFetchAllOffers = async () => {
-            setLoading(true);
-            try {
-                const response = await fetchAllOffers();
-                if (response.data) {
-                    const formattedOffers: UpdatedOffer[] = response.data.map((offer: FetchedOffer) => ({
+        const manageFetchAllOffers = async () => {
+                const offerData = await handleFetchAllUserOffers();
+                if (offerData) {
+                    const formattedOffers: UpdatedOffer[] = offerData.map((offer: FetchedOffer) => ({
                         id: offer.id,
                         title: offer.title,
                         photoUrl: offer.photoUrl,
@@ -92,13 +90,8 @@ const MyOffers: React.FC = () => {
                     }));
                     setOffers(formattedOffers);
                 }
-            } catch (error) {
-                console.error("Unexpected error occurred during offers fetch: ", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        handleFetchAllOffers();
+        };
+        manageFetchAllOffers();
     }, []); //fetch offer
 
     if (loading) return null;

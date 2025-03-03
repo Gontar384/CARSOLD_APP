@@ -15,13 +15,22 @@ export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
     }
 }
 
+export const fetchOfferWithContact = async (id: number | null): Promise<AxiosResponse> => {
+  try {
+      return api.get(`api/offer/fetchWithContact/${id}`);
+  }  catch (error) {
+      handleError(error);
+      return Promise.reject(error);
+  }
+};
+
 export const updateOffer = async (id: number | null, offer: object): Promise<AxiosResponse> => {
     return api.put(`api/offer/update/${id}`, offer); //manually handling errors in main function
 }
 
-export const fetchAllOffers = async (): Promise<AxiosResponse> => {
+export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
     try {
-        return api.get('/api/offer/fetchAll')
+        return api.get('/api/offer/fetchAllUser')
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

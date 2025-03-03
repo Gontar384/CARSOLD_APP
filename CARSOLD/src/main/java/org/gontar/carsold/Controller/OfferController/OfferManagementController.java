@@ -3,6 +3,7 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferDto;
+import org.gontar.carsold.Domain.Model.OfferWithContactDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,12 @@ public class OfferManagementController {
                 .body(offerDto);
     }
 
+    @GetMapping("fetchWithContact/{id}")
+    public ResponseEntity<OfferWithContactDto> fetchOfferWithContact(@PathVariable Long id) {
+        OfferWithContactDto offerWithContactDto = service.fetchOfferWithContact(id);
+        return ResponseEntity.ok(offerWithContactDto);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<OfferDto> updateOffer(@PathVariable Long id, @RequestPart("offer") OfferDto offerDto,
                                                 @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
@@ -64,9 +71,9 @@ public class OfferManagementController {
         return ResponseEntity.ok(updatedOfferDto);
     }
 
-    @GetMapping("/fetchAll")
-    public ResponseEntity<List<PartialOfferDto>> fetchAllOffers() {
-        List<PartialOfferDto> partialOfferDtos = service.fetchAllOffers();
+    @GetMapping("/fetchAllUser")
+    public ResponseEntity<List<PartialOfferDto>> fetchAllUserOffers() {
+        List<PartialOfferDto> partialOfferDtos = service.fetchAllUserOffers();
         return ResponseEntity.ok(partialOfferDtos);
     }
 }

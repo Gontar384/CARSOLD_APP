@@ -253,33 +253,37 @@ const OfferForm: React.FC = () => {
         }
     }, [id]); //fetches offer and user permission
 
+    const formatNumber = (value: string) => {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
     useEffect(() => {
         if (data !== null && permission === true) {
             const transformedOffer: RawOffer = {
-                title: data.title || "",
-                brand: data.brand || "",
-                model: data.model || "",
-                bodyType: data.bodyType || "",
-                year: String(data.year) || "",
-                mileage: String(data.mileage) || "",
-                fuel: data.fuel || "",
-                capacity: String(data.capacity) || "",
-                power: String(data.power) || "",
-                drive: data.drive || "",
-                transmission: data.transmission || "",
-                color: data.color || "",
-                condition: data.condition || "",
-                seats: String(data.seats) || "",
-                doors: String(data.doors) || "",
-                steeringWheel: data.steeringWheel || "",
-                country: data.country || "",
-                vin: data.vin || "",
-                plate: data.plate || "",
-                firstRegistration: data.firstRegistration ? String(data.firstRegistration) : "",
-                description: data.description || "",
+                title: data.title ?? "",
+                brand: data.brand ?? "",
+                model: data.model ?? "",
+                bodyType: data.bodyType ?? "",
+                year: String(data.year ?? ""),
+                mileage: formatNumber(String(data.mileage ?? "")),
+                fuel: data.fuel ?? "",
+                capacity: formatNumber(String(data.capacity ?? "")),
+                power: formatNumber(String(data.power ?? "")),
+                drive: data.drive ?? "",
+                transmission: data.transmission ?? "",
+                color: data.color ?? "",
+                condition: data.condition ?? "",
+                seats: String(data.seats ?? ""),
+                doors: String(data.doors ?? ""),
+                steeringWheel: data.steeringWheel ?? "",
+                country: data.country ?? "",
+                vin: data.vin ?? "",
+                plate: data.plate ?? "",
+                firstRegistration: String(data.firstRegistration ?? ""),
+                description: data.description ?? "",
                 photos: ((data.photos as unknown as string)?.split(",") || []).concat(Array(8).fill("").slice(0, 8 - (data.photos as unknown as string)?.split(",")?.length)),
-                price: String(data.price) || "",
-                currency: data.currency || "",
+                price: formatNumber(String(data.price ?? "")),
+                currency: data.currency ?? "",
             };
             setOffer(transformedOffer);
         } else if (permission === false) {
@@ -838,7 +842,7 @@ const OfferForm: React.FC = () => {
         }
 
         const parseNumber = (value: string): number | null => {
-            const sanitizedValue = value.replace(/./g, '');
+            const sanitizedValue = value.replace(/\./g, '');
             const parsed = Number(sanitizedValue);
             return isNaN(parsed) ? null : parsed;
         };

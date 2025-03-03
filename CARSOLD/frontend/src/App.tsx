@@ -16,6 +16,7 @@ import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokensManager from "./Config/TokensConfig/TokensManager.ts";
 import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
+import OfferDisplay from "./PageComponents/OfferDisplay/OfferDisplay.tsx";
 
 const App: React.FC = () => {
 
@@ -34,6 +35,7 @@ const App: React.FC = () => {
 
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                             <Route path="/home" element={<Home/>}/>
+                            <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
 
                             <Route element={<PrivateRoutes/>}>
                                 <Route path="/details/:section?" element={<AccountDetails/>}/>

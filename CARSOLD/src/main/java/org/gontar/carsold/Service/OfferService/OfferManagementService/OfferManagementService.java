@@ -1,6 +1,7 @@
 package org.gontar.carsold.Service.OfferService.OfferManagementService;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Model.OfferWithContactDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,5 +12,6 @@ public interface OfferManagementService {
     Offer fetchOffer(Long id);
     boolean fetchPermission(Offer offer);
     Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos);
-    List<PartialOfferDto> fetchAllOffers();
+    List<PartialOfferDto> fetchAllUserOffers();
+    OfferWithContactDto fetchOfferWithContact(Long id);
 }
