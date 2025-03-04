@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useParams} from "react-router-dom";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
+import ImageDisplay from "./Atomic/ImageDisplay.tsx";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -70,11 +71,6 @@ const OfferDisplay: React.FC = () => {
         city: "",
         permission: false,
     });
-    const [contact, setContact] = useState({
-        name: "",
-        phone: "",
-        city: "",
-    })
 
     useEffect(() => {
         if (section) {
@@ -128,34 +124,15 @@ const OfferDisplay: React.FC = () => {
         }
     }, [id]); //fetches offer and user permission
 
-    useEffect(() => {
-        if (!!offer?.name && !!offer?.phone && !!offer.city) {
-            setContact( prev => ({...prev,
-                name: offer.name,
-                phone: offer.phone,
-                city: offer.city
-            }));
-        }
-    }, [offer]);
-
     return (
         <LayOut>
             <div className="flex flex-col items-center">
                 <div className="flex flex-col sm:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full sm:w-2/3 border border-blue-500">
-                        {offer.name}
-                        {offer.permission ? "true" : "false"}
+                    <div className="flex flex-col w-full items-center sm:w-[70%] border border-blue-500">
+                        <ImageDisplay photos={offer.photos} loading={loading}/>
                     </div>
-                    <div className="flex flex-col w-full sm:w-1/3 border border-red-400">
-                        {Object.entries(contact).map(([key, value]) => (
-                            <div key={key}>
-                                <p className="text-base m:text-lg">{key === "name" ? "Name:" : key === "phone" ? "Phone:" : "City:"}</p>
-                                <p className="flex items-center pl-1 w-44 m:w-48 h-9 m:h-10 text-lg m:text-xl border border-gray-400
-                            text-gray-700 bg-gray-50 rounded overflow-hidden truncate cursor-not-allowed">
-                                    {value}
-                                </p>
-                            </div>
-                        ))}
+                    <div className="flex flex-col w-full sm:w-[30%] border border-red-400">
+
                     </div>
                 </div>
             </div>

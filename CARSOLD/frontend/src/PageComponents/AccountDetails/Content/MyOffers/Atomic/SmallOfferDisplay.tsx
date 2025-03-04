@@ -54,8 +54,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, followForm}
                         {offer.photoUrl !== "" && !photoError ?
                             <img src={offer.photoUrl} alt={"Offer image"} className="object-cover w-full h-full rounded"
                                  onError={() => setPhotoError(true)}/> :
-                            <div
-                                className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
+                            <div className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
                                 <FontAwesomeIcon icon={faImage} className="text-3xl m:text-4xl"/>
                             </div>}
                     </div>
