@@ -127,11 +127,11 @@ const OfferDisplay: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col sm:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full items-center sm:w-[70%] border border-blue-500">
+                <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
+                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-blue-500">
                         <ImageDisplay photos={offer.photos} loading={loading}/>
                     </div>
-                    <div className="flex flex-col w-full sm:w-[30%] border border-red-400">
+                    <div className="flex flex-col w-full lg:w-[30%] border border-red-400">
 
                     </div>
                 </div>
