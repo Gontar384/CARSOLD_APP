@@ -13,10 +13,7 @@ import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -145,54 +142,62 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         }
     }
 
-    private boolean isCityValid(String city) {
-        JSONArray predictions = fetchCitySuggestionsFromApi(city);
-
-        for (int i = 0; i < predictions.length(); i++) {
-            JSONObject prediction = predictions.getJSONObject(i);
-            String description = prediction.getString("description");
-
-            if (description != null && (description.equals(city) || description.split(",")[0].trim().equals(city))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private JSONArray fetchCitySuggestionsFromApi(String input) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = UriComponentsBuilder.fromUriString("https://maps.googleapis.com/maps/api/place/autocomplete/json")
-                    .queryParam("input", input)
-                    .queryParam("key", placesApiKey)
-                    .queryParam("types", "(cities)")
-                    .queryParam("location", "52.13,19.39")
-                    .queryParam("radius", "1000000")
-                    .queryParam("strictbounds", "false")
-                    .build()
-                    .toString();
+            String url = "https://places.googleapis.com/v1/places:autocomplete";
 
-            String response = restTemplate.getForObject(url, String.class);
-            assert response != null;
-            JSONObject jsonResponse = new JSONObject(response);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-Goog-Api-Key", placesApiKey);
 
-            return jsonResponse.getJSONArray("predictions");
+            String requestBody = String.format("{\"input\": \"%s\", \"includedPrimaryTypes\": [\"locality\"]}", input);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(response.getBody()));
+
+            if (jsonResponse.has("suggestions")) return jsonResponse.getJSONArray("suggestions");
+            else return new JSONArray();
         } catch (Exception e) {
-            throw new ExternalCheckException("Error fetching city suggestions with Places API: " + e.getMessage());
+            throw new ExternalCheckException("Error fetching city suggestions with Places API v2: " + e.getMessage());
         }
     }
 
     @Override
     public CitySuggestionsDto fetchCitySuggestions(String value) {
         JSONArray predictions = fetchCitySuggestionsFromApi(value);
-
-        List<String> cityNames = new ArrayList<>();
-        for (int i = 0; i < predictions.length(); i++) {
-            JSONObject prediction = predictions.getJSONObject(i);
-            cityNames.add(prediction.getString("description"));
-        }
+        List<String> cityNames = formatData(predictions);
 
         return new CitySuggestionsDto(cityNames);
+    }
+
+    private List<String> formatData(JSONArray predictions) {
+        List<Map<String, String>> cityInfoList = new ArrayList<>();
+        for (int i = 0; i < predictions.length(); i++) {
+            JSONObject prediction = predictions.getJSONObject(i);
+            JSONObject placePrediction = prediction.getJSONObject("placePrediction");
+            JSONObject structuredFormat = placePrediction.getJSONObject("structuredFormat");
+            JSONObject mainText = structuredFormat.getJSONObject("mainText");
+            JSONObject secondaryText = structuredFormat.getJSONObject("secondaryText");
+            String cityName = mainText.getString("text");
+            String secondaryInfo = secondaryText.getString("text");
+            Map<String, String> cityInfo = new HashMap<>();
+            cityInfo.put("city", cityName);
+            cityInfo.put("secondaryInfo", secondaryInfo);
+            cityInfoList.add(cityInfo);
+        }
+        List<String> cityNames = new ArrayList<>();
+        for(Map<String, String> cityInfo : cityInfoList){
+            cityNames.add(cityInfo.get("city") + ", " + cityInfo.get("secondaryInfo"));
+        }
+        return cityNames;
+    }
+
+    private boolean isCityValid(String city) {
+        JSONArray predictions = fetchCitySuggestionsFromApi(city);
+        List<String> cityNames = formatData(predictions);
+        return cityNames.contains(city);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.gontar.carsold.ServiceTest.OfferServiceTest;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
@@ -11,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,6 +32,9 @@ public class OfferManagementServiceUnitTest {
 
     @Mock
     private MyUserDetailsService userDetailsService;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @Test
     public void fetchOffer_shouldReturnOffer_whenOfferExists() {
@@ -52,12 +61,21 @@ public class OfferManagementServiceUnitTest {
         assertEquals("Offer not found", exception.getMessage());
     }
 
+    private void authenticate(User user) {
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(new UserPrincipal(user));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+    }
+
     @Test
     public void fetchPermission_shouldReturnTrue_whenUserHasPermission() {
         User mockUser = new User();
         mockUser.setId(1L);
         Offer mockOffer = new Offer();
         mockOffer.setUser(mockUser);
+        authenticate(mockUser);
         when(userDetailsService.loadUser()).thenReturn(mockUser);
 
         boolean hasPermission = offerManagementService.fetchPermission(mockOffer);
@@ -76,6 +94,7 @@ public class OfferManagementServiceUnitTest {
         otherUser.setId(otherUserId);
         Offer mockOffer = new Offer();
         mockOffer.setUser(otherUser);
+        authenticate(mockUser);
         when(userDetailsService.loadUser()).thenReturn(mockUser);
 
         boolean hasPermission = offerManagementService.fetchPermission(mockOffer);

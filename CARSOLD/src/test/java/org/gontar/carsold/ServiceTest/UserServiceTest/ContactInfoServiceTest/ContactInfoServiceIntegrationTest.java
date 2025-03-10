@@ -166,7 +166,7 @@ public class ContactInfoServiceIntegrationTest {
     public void updateCity_success() {
         User user = createAuthenticatedUser();
 
-        String city = "Warsaw";
+        String city = "Warsaw, Poland";
 
         contactInfoService.updateCity(city);
         assertEquals(city, user.getCity());
@@ -174,8 +174,8 @@ public class ContactInfoServiceIntegrationTest {
 
     @Test
     public void fetchCitySuggestions() {
-        String input = "Wa";
-        List<String> expectedCityNames = Arrays.asList("Warsaw, Poland", "Wałbrzych, Poland", "Wagrain, Austria", "Waalwijk, Netherlands", "Wageningen, Netherlands");
+        String input = "Ber";
+        List<String> expectedCityNames = Arrays.asList("Berlin, Germany", "Bergamo, Province of Bergamo, Italy", "Bergen, Norway", "Bern, Switzerland", "Berkeley, CA, USA");
         CitySuggestionsDto citySuggestions = contactInfoService.fetchCitySuggestions(input);
         System.out.println(citySuggestions);
 

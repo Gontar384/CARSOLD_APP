@@ -54,8 +54,8 @@ public class User {
     @Size(max = 20, message = "Phone number must be under 20 characters")
     private String phone;
 
-    @Column(length = 50)
-    @Size(max = 50, message = "City must be under 50 characters")
+    @Column(length = 100)
+    @Size(max = 100, message = "City must be under 100 characters")
     private String city;
 
     @Column(nullable = false)

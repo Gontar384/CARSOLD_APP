@@ -48,7 +48,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             setAdditionalInfo("Provided value is too short.");
             return;
         }
-        if (value.length > 50 || valueType !== "city" && value.length > 20) {
+        if (value.length > 100 || valueType !== "city" && value.length > 20) {
             setInvalidInput(false);
             setAdditionalInfo("Provided value is too long.");
             return;
