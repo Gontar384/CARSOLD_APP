@@ -1,4 +1,4 @@
-import {fetchAllUserOffers, fetchOffer, fetchOfferWithContact} from "../ApiCalls/Services/OfferService.ts";
+import {fetchAllUserOffers, fetchOffer, fetchOfferWithUser} from "../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../ApiCalls/Errors/CustomErrors.ts";
 import {useState} from "react";
 
@@ -26,10 +26,10 @@ export const useOfferUtil = () => {
 
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleFetchOfferWithContact = async (id: number) => {
+    const handleFetchOfferWithUser = async (id: number) => {
         setLoading(true);
         try {
-            const response = await fetchOfferWithContact(id);
+            const response = await fetchOfferWithUser(id);
             if (response.data) {
                 return response.data;
             }
@@ -57,6 +57,6 @@ export const useOfferUtil = () => {
         }
     };
 
-    return {handleFetchOffer, handleFetchOfferWithContact, handleFetchAllUserOffers, loading}
+    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, loading}
 }
 

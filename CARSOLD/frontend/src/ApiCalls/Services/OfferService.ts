@@ -15,9 +15,9 @@ export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
     }
 }
 
-export const fetchOfferWithContact = async (id: number | null): Promise<AxiosResponse> => {
+export const fetchOfferWithUser = async (id: number | null): Promise<AxiosResponse> => {
   try {
-      return api.get(`api/offer/fetchWithContact/${id}`);
+      return api.get(`api/offer/fetchWithUser/${id}`);
   }  catch (error) {
       handleError(error);
       return Promise.reject(error);

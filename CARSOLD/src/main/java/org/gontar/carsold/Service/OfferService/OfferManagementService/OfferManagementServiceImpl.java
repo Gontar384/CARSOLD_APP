@@ -4,7 +4,7 @@ import com.google.cloud.storage.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Domain.Model.OfferWithContactDto;
+import org.gontar.carsold.Domain.Model.OfferWithUserDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
@@ -276,41 +276,43 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
-    public OfferWithContactDto fetchOfferWithContact(Long id) {
+    public OfferWithUserDto fetchOfferWithUser(Long id) {
         Offer offer = fetchOffer(id);
         User user = offer.getUser();
-        OfferWithContactDto offerWithContactDto = new OfferWithContactDto();
-        offerWithContactDto.setId(id);
-        offerWithContactDto.setTitle(offer.getTitle());
-        offerWithContactDto.setBrand(offer.getBrand());
-        offerWithContactDto.setModel(offer.getModel());
-        offerWithContactDto.setBodyType(offer.getBodyType());
-        offerWithContactDto.setYear(offer.getYear());
-        offerWithContactDto.setMileage(offer.getMileage());
-        offerWithContactDto.setFuel(offer.getFuel());
-        offerWithContactDto.setCapacity(offer.getCapacity());
-        offerWithContactDto.setPower(offer.getPower());
-        offerWithContactDto.setDrive(offer.getDrive());
-        offerWithContactDto.setTransmission(offer.getTransmission());
-        offerWithContactDto.setColor(offer.getColor());
-        offerWithContactDto.setCondition(offer.getCondition());
-        offerWithContactDto.setSeats(offer.getSeats());
-        offerWithContactDto.setDoors(offer.getDoors());
-        offerWithContactDto.setSteeringWheel(offer.getSteeringWheel());
-        offerWithContactDto.setCountry(offer.getCountry());
-        offerWithContactDto.setVin(offer.getVin());
-        offerWithContactDto.setPlate(offer.getPlate());
-        offerWithContactDto.setFirstRegistration(offer.getFirstRegistration());
-        offerWithContactDto.setDescription(offer.getDescription());
-        offerWithContactDto.setPrice(offer.getPrice());
-        offerWithContactDto.setCurrency(offer.getCurrency());
-        offerWithContactDto.setPhotos(offer.getPhotosString());
+        OfferWithUserDto offerWithUserDto = new OfferWithUserDto();
+        offerWithUserDto.setId(id);
+        offerWithUserDto.setTitle(offer.getTitle());
+        offerWithUserDto.setBrand(offer.getBrand());
+        offerWithUserDto.setModel(offer.getModel());
+        offerWithUserDto.setBodyType(offer.getBodyType());
+        offerWithUserDto.setYear(offer.getYear());
+        offerWithUserDto.setMileage(offer.getMileage());
+        offerWithUserDto.setFuel(offer.getFuel());
+        offerWithUserDto.setCapacity(offer.getCapacity());
+        offerWithUserDto.setPower(offer.getPower());
+        offerWithUserDto.setDrive(offer.getDrive());
+        offerWithUserDto.setTransmission(offer.getTransmission());
+        offerWithUserDto.setColor(offer.getColor());
+        offerWithUserDto.setCondition(offer.getCondition());
+        offerWithUserDto.setSeats(offer.getSeats());
+        offerWithUserDto.setDoors(offer.getDoors());
+        offerWithUserDto.setSteeringWheel(offer.getSteeringWheel());
+        offerWithUserDto.setCountry(offer.getCountry());
+        offerWithUserDto.setVin(offer.getVin());
+        offerWithUserDto.setPlate(offer.getPlate());
+        offerWithUserDto.setFirstRegistration(offer.getFirstRegistration());
+        offerWithUserDto.setDescription(offer.getDescription());
+        offerWithUserDto.setPrice(offer.getPrice());
+        offerWithUserDto.setCurrency(offer.getCurrency());
+        offerWithUserDto.setPhotos(offer.getPhotosString());
+        offerWithUserDto.setUsername(user.getUsername());
+        offerWithUserDto.setProfilePic(user.getProfilePic());
         if (user.getContactPublic()) {
-            offerWithContactDto.setName(user.getName());
-            offerWithContactDto.setPhone(user.getPhone());
-            offerWithContactDto.setCity(user.getCity());
+            offerWithUserDto.setName(user.getName());
+            offerWithUserDto.setPhone(user.getPhone());
+            offerWithUserDto.setCity(user.getCity());
         }
-        offerWithContactDto.setPermission(fetchPermission(offer));
-        return offerWithContactDto;
+        offerWithUserDto.setPermission(fetchPermission(offer));
+        return offerWithUserDto;
     }
 }

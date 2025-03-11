@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useParams} from "react-router-dom";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
-import ImageDisplay from "./Atomic/ImageDisplay.tsx";
+import ImageDisplay from "./BigContainer/ImageDisplay.tsx";
+import UserInformation from "./SmallContainer/UserInformation.tsx";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -32,6 +33,8 @@ const OfferDisplay: React.FC = () => {
         photos: string[];
         price: string;
         currency: string;
+        username: string;
+        profilePic: string;
         name: string;
         phone: string;
         city: string;
@@ -39,7 +42,7 @@ const OfferDisplay: React.FC = () => {
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
-    const {handleFetchOfferWithContact, loading} = useOfferUtil();
+    const {handleFetchOfferWithUser, loading} = useOfferUtil();
     const [offer, setOffer] = useState<FetchedOffer>({
         id: null,
         title: "",
@@ -66,6 +69,8 @@ const OfferDisplay: React.FC = () => {
         photos: [],
         price: "",
         currency: "",
+        username: "",
+        profilePic: "",
         name: "",
         phone: "",
         city: "",
@@ -85,7 +90,7 @@ const OfferDisplay: React.FC = () => {
 
     useEffect(() => {
         const manageFetchFetchOfferWithContact = async (id: number) => {
-          const data = await handleFetchOfferWithContact(id);
+          const data = await handleFetchOfferWithUser(id);
             const transformedOffer: FetchedOffer = {
                 id: data.id ?? null,
                 title: data.title ?? "",
@@ -112,6 +117,8 @@ const OfferDisplay: React.FC = () => {
                 photos: ((data.photos)?.split(",")) ?? "",
                 price: formatNumber(String(data.price ?? "")),
                 currency: data.currency ?? "",
+                username: data.username ?? "",
+                profilePic: data.profilePic ?? "",
                 name: data.name ?? "",
                 phone: data.phone ?? "",
                 city: data.city ?? "",
@@ -128,11 +135,11 @@ const OfferDisplay: React.FC = () => {
         <LayOut>
             <div className="flex flex-col items-center">
                 <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-blue-500">
+                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded">
                         <ImageDisplay photos={offer.photos} loading={loading}/>
                     </div>
-                    <div className="flex flex-col w-full lg:w-[30%] border border-red-400">
-
+                    <div className="flex flex-col w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
+                        <UserInformation username={offer.username} profilePic={offer.profilePic} loading={loading}/>
                     </div>
                 </div>
             </div>

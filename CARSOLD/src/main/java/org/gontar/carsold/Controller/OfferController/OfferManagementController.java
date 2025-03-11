@@ -3,7 +3,7 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferDto;
-import org.gontar.carsold.Domain.Model.OfferWithContactDto;
+import org.gontar.carsold.Domain.Model.OfferWithUserDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +55,10 @@ public class OfferManagementController {
                 .body(offerDto);
     }
 
-    @GetMapping("fetchWithContact/{id}")
-    public ResponseEntity<OfferWithContactDto> fetchOfferWithContact(@PathVariable Long id) {
-        OfferWithContactDto offerWithContactDto = service.fetchOfferWithContact(id);
-        return ResponseEntity.ok(offerWithContactDto);
+    @GetMapping("fetchWithUser/{id}")
+    public ResponseEntity<OfferWithUserDto> fetchOfferWithUser(@PathVariable Long id) {
+        OfferWithUserDto offerWithUserDto = service.fetchOfferWithUser(id);
+        return ResponseEntity.ok(offerWithUserDto);
     }
 
     @PutMapping("/update/{id}")

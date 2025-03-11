@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OfferWithContactDto {
+public class OfferWithUserDto {
     private Long id;
     private String title;
     private String brand;
@@ -33,6 +33,8 @@ public class OfferWithContactDto {
     private Integer price;
     private String currency;
     private String photos;
+    private String username;
+    private String profilePic;
     private String name;
     private String phone;
     private String city;
