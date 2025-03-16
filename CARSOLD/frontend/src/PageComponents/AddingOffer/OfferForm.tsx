@@ -19,11 +19,11 @@ import {carDoors} from "./Atomic/SelectInput/SelectData/carDoors.ts";
 import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
 import ContactDetails from "./Atomic/ContactDetails/ContactDetails.tsx";
 import SubmitOfferButton from "./Atomic/Button/SubmitOfferButton.tsx";
-import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {addOffer, updateOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {AxiosError} from "axios";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import AddingOfferLoader from "../../SharedComponents/Additional/Loading/AddingOfferLoader.tsx";
+import AddingOfferLoader from "../../Additional/Loading/AddingOfferLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 
 const OfferForm: React.FC = () => {

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
-import PasswordChangeForm from "../../SharedComponents/PasswordChange/PasswordChangeForm.tsx";
+import PasswordChangeForm from "./PasswordChangeForm/PasswordChangeForm.tsx";
 
 const PasswordRecChange: React.FC = () => {
 

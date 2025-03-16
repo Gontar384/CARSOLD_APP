@@ -206,8 +206,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         if (!fetchPermission(existingOffer)) {
             throw new NoPermissionException("User has no permission to update offer");
         }
-        System.out.println(existingOffer.getLastUpdated());
-
         if (existingOffer.getLastUpdated() != null &&
                 existingOffer.getLastUpdated().isAfter(LocalDateTime.now().minusMinutes(5))) {
             throw new AccessDeniedException("User can update offer only once every 5 minutes");

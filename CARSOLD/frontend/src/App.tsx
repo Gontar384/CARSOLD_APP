@@ -11,7 +11,7 @@ import AccountActivation from "./PageComponents/AccountActivation/AccountActivat
 import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
 import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery.tsx";
 import PasswordRecChange from "./PageComponents/PasswordRecoveryChange/PasswordRecChange.tsx";
-import CookieBanner from "./SharedComponents/Additional/Banners/CookieBanner.tsx";
+import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokensManager from "./Config/TokensConfig/TokensManager.ts";

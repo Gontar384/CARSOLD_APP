@@ -1,5 +1,5 @@
 import React from "react";
-import PasswordChangeForm from "../../../../../../SharedComponents/PasswordChange/PasswordChangeForm.tsx";
+import PasswordChangeForm from "../../../../../PasswordRecoveryChange/PasswordChangeForm/PasswordChangeForm.tsx";
 
 interface PasswordChangeProps {
     setIsChanged: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 import SmallOfferDisplay from "./Atomic/SmallOfferDisplay.tsx";
 import {useNavigate} from "react-router-dom";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
+import UserOffersLoader from "../../../../Additional/Loading/UserOffersLoader.tsx";
 
 const MyOffers: React.FC = () => {
     interface FetchedOffer {
@@ -46,7 +47,7 @@ const MyOffers: React.FC = () => {
     const navigate = useNavigate();
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
-    const {handleFetchAllUserOffers, loading} = useOfferUtil();
+    const {handleFetchAllUserOffers, offerFetched} = useOfferUtil();
 
     const nextPage = () => {
         if (endIndex < offers.length) {
@@ -72,7 +73,7 @@ const MyOffers: React.FC = () => {
     }, []); //detects if new offer was added and displays banner
 
     useEffect(() => {
-        const manageFetchAllOffers = async () => {
+        const manageHandleFetchAllUserOffers = async () => {
                 const offerData = await handleFetchAllUserOffers();
                 if (offerData) {
                     const formattedOffers: UpdatedOffer[] = offerData.map((offer: FetchedOffer) => ({
@@ -91,19 +92,17 @@ const MyOffers: React.FC = () => {
                     setOffers(formattedOffers);
                 }
         };
-        manageFetchAllOffers();
+        manageHandleFetchAllUserOffers();
     }, []); //fetch offer
-
-    if (loading) return null;
 
     return (
         <>
-            {offers.length > 0 ?
-                (
+            {offerFetched ? (
+                offers.length > 0 ? (
                     <div className="w-[90%] m:w-[95%] h-full max-w-[600px] py-6 m:py-8">
-                            {paginatedOffers.map((offer) => (
-                                <SmallOfferDisplay key={offer.id} offer={offer}/>
-                            ))}
+                        {paginatedOffers.map((offer) => (
+                            <SmallOfferDisplay key={offer.id} offer={offer}/>
+                        ))}
                         {offers.length > itemsPerPage &&
                             <div className="flex justify-center mt-8 m:mt-10 gap-4 m:gap-5 text-sm m:text-base">
                                 <button onClick={prevPage} disabled={currentPage === 0}
@@ -129,11 +128,18 @@ const MyOffers: React.FC = () => {
                                 onMouseEnter={!isMobile ? handleStart : undefined}
                                 onMouseLeave={!isMobile ? handleEnd : undefined}
                                 onTouchStart={isMobile ? handleStart : undefined}
-                            onTouchEnd={isMobile ? handleEnd : undefined}>
+                                onTouchEnd={isMobile ? handleEnd : undefined}>
                             Add Offer
                         </button>
                     </div>
-                )}
+                )
+            ) : (
+                <>
+                    {Array.from({ length: 3 }).map((_, index) => (
+                        <UserOffersLoader key={index} />
+                    ))}
+                </>
+            )}
             {offerAdded &&
                 <AnimatedBanner text={"Offer added successfully!"} onAnimationEnd={() => setOfferAdded(false)}
                                 delay={3000} color={"bg-gray-200"} z={"z-10"}/>}

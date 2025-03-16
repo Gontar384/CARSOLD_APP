@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 import ImageDisplay from "./BigContainer/ImageDisplay.tsx";
 import UserInformation from "./SmallContainer/UserInformation.tsx";
@@ -42,7 +42,7 @@ const OfferDisplay: React.FC = () => {
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
-    const {handleFetchOfferWithUser, loading} = useOfferUtil();
+    const {handleFetchOfferWithUser, offerFetched} = useOfferUtil();
     const [offer, setOffer] = useState<FetchedOffer>({
         id: null,
         title: "",
@@ -76,12 +76,13 @@ const OfferDisplay: React.FC = () => {
         city: "",
         permission: false,
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (section) {
             const numericId = Number(section.replace(/,/g, ''));
             if (!isNaN(numericId)) setId(numericId);
-        }
+        } else navigate("/home");
     }, [section]);  //gets id from section
 
     const formatNumber = (value: string) => {
@@ -89,7 +90,7 @@ const OfferDisplay: React.FC = () => {
     };
 
     useEffect(() => {
-        const manageFetchFetchOfferWithContact = async (id: number) => {
+        const manageHandleFetchOfferWithUser = async (id: number) => {
           const data = await handleFetchOfferWithUser(id);
             const transformedOffer: FetchedOffer = {
                 id: data.id ?? null,
@@ -127,7 +128,7 @@ const OfferDisplay: React.FC = () => {
             setOffer(transformedOffer);
         };
         if (id !== null) {
-            manageFetchFetchOfferWithContact(id);
+            manageHandleFetchOfferWithUser(id);
         }
     }, [id]); //fetches offer and user permission
 
@@ -136,10 +137,10 @@ const OfferDisplay: React.FC = () => {
             <div className="flex flex-col items-center">
                 <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
                     <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded">
-                        <ImageDisplay photos={offer.photos} loading={loading}/>
+                        <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                     </div>
                     <div className="flex flex-col w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
-                        <UserInformation username={offer.username} profilePic={offer.profilePic} loading={loading}/>
+                        <UserInformation username={offer.username} profilePic={offer.profilePic} offerFetched={offerFetched}/>
                     </div>
                 </div>
             </div>

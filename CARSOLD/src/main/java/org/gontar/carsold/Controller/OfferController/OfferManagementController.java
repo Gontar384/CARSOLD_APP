@@ -55,7 +55,7 @@ public class OfferManagementController {
                 .body(offerDto);
     }
 
-    @GetMapping("fetchWithUser/{id}")
+    @GetMapping("/fetchWithUser/{id}")
     public ResponseEntity<OfferWithUserDto> fetchOfferWithUser(@PathVariable Long id) {
         OfferWithUserDto offerWithUserDto = service.fetchOfferWithUser(id);
         return ResponseEntity.ok(offerWithUserDto);

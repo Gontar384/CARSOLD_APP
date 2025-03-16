@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import ContactPublicLoader from "../../../../../../../SharedComponents/Additional/Loading/ContactPublicLoader.tsx";
+import ContactPublicLoader from "../../../../../../../Additional/Loading/ContactPublicLoader.tsx";
 import {updateAndFetchContactPublic} from "../../../../../../../ApiCalls/Services/UserService.ts";
 
 const SwitchButton: React.FC = () => {

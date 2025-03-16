@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Input from "../../../../../../../../SharedComponents/FormUtil/Input.tsx";
+import Input from "../../../../../../../Authentication/AuthWindow/Atomic/Form/FormUtil/Input.tsx";
 import ConfirmButton from "./Atomic/ConfirmButton.tsx";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../../../../../../../GlobalProviders/Util/useUtil.ts";

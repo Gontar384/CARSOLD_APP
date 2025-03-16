@@ -48,7 +48,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, followForm}
     return (
         <div className="relative border mb-4 m:mb-5">
             <div className="flex flex-row bg-white border border-black border-opacity-50 p-1 m:p-1.5 rounded overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/modifyingOffer/${offer.id}`)}>
+            onClick={() => navigate(`/displayOffer/${offer.id}`)}>
                 <div className="w-20 m:w-32 h-fit">
                     <div className="w-20 h-20 m:w-32 m:h-32 flex-shrink-0 rounded">
                         {offer.photoUrl !== "" && !photoError ?

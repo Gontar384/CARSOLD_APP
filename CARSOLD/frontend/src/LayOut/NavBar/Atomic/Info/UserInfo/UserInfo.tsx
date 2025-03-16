@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import UserInfoLoader from "../../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
+import UserInfoLoader from "../../../../../Additional/Loading/UserInfoLoader.tsx";
 import LoginRegisterButton from "../LoginRegisterButton/LoginRegisterButton.tsx";
 import Dropdown from "./Atomic/Dropdown/Dropdown.tsx";
 import {useUserUtil} from "../../../../../CustomHooks/useUserUtil.ts";
@@ -108,7 +108,7 @@ const UserInfo: React.FC = () => {
                          onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                          onTouchStart={isMobile ? handleToggleBar : undefined}
                          onKeyDown={(event) => {if (event.key === "Enter") handleToggleBar()}}>
-                        <Details iconAnimation={iconAnimation} userDetails={username} profilePic={profilePic}/>
+                        <Details iconAnimation={iconAnimation} username={username} profilePic={profilePic}/>
                         <Dropdown barActive={barActive} animation={dropdownAnimation}/>
                     </div>
                 ) : (

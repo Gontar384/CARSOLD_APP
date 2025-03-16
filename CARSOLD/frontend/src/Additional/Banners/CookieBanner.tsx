@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const CookieBanner: React.FC = () => {
 

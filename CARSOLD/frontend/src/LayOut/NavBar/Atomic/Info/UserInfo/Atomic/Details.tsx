@@ -6,11 +6,11 @@ import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface DetailsProps {
     iconAnimation?: "animate-pop" | null;
-    userDetails: string;
+    username: string;
     profilePic: string;
 }
 
-const Details: React.FC<DetailsProps> = ({iconAnimation, userDetails, profilePic}) => {
+const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic}) => {
 
     const {messages} = useItems();
     const {bigWidth} = useUtil();
@@ -28,7 +28,7 @@ const Details: React.FC<DetailsProps> = ({iconAnimation, userDetails, profilePic
             </div>
             <div
                 className="text-2xl whitespace-nowrap">
-                {userDetails}
+                {username}
             </div>
             {messages > 0 && bigWidth &&(
                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}

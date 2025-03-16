@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
-import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
+import Input from "./FormUtil/Input.tsx";
+import SubmitButton from "./FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation, IconDefinition} from "@fortawesome/free-solid-svg-icons";
-import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {authenticate} from "../../../../../ApiCalls/Services/UserService.ts";
@@ -71,7 +71,7 @@ const LoginForm: React.FC = () => {
                 if (error.response.status === 401) {
                     setWrongPassword(true);
                 } else if (error.response.status === 404) {
-                    setLoginInfo("Wrong username.");
+                    setLoginInfo("Wrong login.");
                 } else if (error.response.status !== 400) {
                     setWentWrong(true);
                     console.error("Unexpected error during authentication: ", error);

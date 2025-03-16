@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
-import UsernameLoader from "../../../../SharedComponents/Additional/Loading/UsernameLoader.tsx";
+import UsernameLoader from "../../../../Additional/Loading/UsernameLoader.tsx";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 
 const Username: React.FC = () => {

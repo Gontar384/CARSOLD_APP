@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 interface AnimatedBannerProps {
     text: string;

@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
-import Input from "../FormUtil/Input.tsx";
-import SubmitButton from "../FormUtil/SubmitButton.tsx";
+import Input from "../../Authentication/AuthWindow/Atomic/Form/FormUtil/Input.tsx";
+import SubmitButton from "../../Authentication/AuthWindow/Atomic/Form/FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
-import {useUserInfo} from "../../CustomHooks/useUserInfo.ts";
+import {useUserInfo} from "../../../CustomHooks/useUserInfo.ts";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
+import {useAuth} from "../../../GlobalProviders/Auth/useAuth.ts";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
-import {changePassword, changePasswordRecovery} from "../../ApiCalls/Services/UserService.ts";
-import {BadRequestError, ForbiddenError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {changePassword, changePasswordRecovery} from "../../../ApiCalls/Services/UserService.ts";
+import {BadRequestError, ForbiddenError} from "../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;

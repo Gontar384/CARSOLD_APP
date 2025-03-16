@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import PasswordChange from "./Atomic/PasswordChange/PasswordChange.tsx";
 import {useUserInfo} from "../../../../CustomHooks/useUserInfo.ts";
-import AnimatedBanner from "../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 import ContactInfo from "./Atomic/ContactInfo/ContactInfo.tsx";
 import DeleteAccountButton from "./Atomic/DeleteAccount/DeleteAccountButton.tsx";
 import Popup from "./Atomic/DeleteAccount/Popup/Popup.tsx";

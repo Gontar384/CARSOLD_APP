@@ -1,8 +1,12 @@
 import {fetchAllUserOffers, fetchOffer, fetchOfferWithUser} from "../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../ApiCalls/Errors/CustomErrors.ts";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 export const useOfferUtil = () => {
+
+    const [offerFetched, setOfferFetched] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const handleFetchOffer = async (id: number) => {
         try {
@@ -24,10 +28,7 @@ export const useOfferUtil = () => {
         return { offerData: null, userPermission: false };
     };
 
-    const [loading, setLoading] = useState<boolean>(false);
-
     const handleFetchOfferWithUser = async (id: number) => {
-        setLoading(true);
         try {
             const response = await fetchOfferWithUser(id);
             if (response.data) {
@@ -35,28 +36,29 @@ export const useOfferUtil = () => {
             }
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
+                navigate('/home');
                 console.error("Offer not found: ", error);
+            } else {
+                console.error("Unexpected error when fetching offer with user's contact info: ", error);
             }
-            console.error("Unexpected error when fetching offer with user's contact info: ", error);
         } finally {
-            setLoading(false);
+            setOfferFetched(true);
         }
 
         return { offerWithContactData: null, userPermission: false };
     };
 
     const handleFetchAllUserOffers = async () => {
-        setLoading(true);
         try {
             const response = await fetchAllUserOffers();
             if (response.data) return response.data;
         } catch (error) {
             console.error("Unexpected error occurred during offers fetch: ", error);
         } finally {
-            setLoading(false);
+            setOfferFetched(true);
         }
     };
 
-    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, loading}
+    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, offerFetched}
 }
 

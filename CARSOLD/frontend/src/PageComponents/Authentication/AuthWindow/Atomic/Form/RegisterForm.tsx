@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import Input from "../../../../../SharedComponents/FormUtil/Input.tsx";
-import SubmitButton from "../../../../../SharedComponents/FormUtil/SubmitButton.tsx";
+import Input from "./FormUtil/Input.tsx";
+import SubmitButton from "./FormUtil/SubmitButton.tsx";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
-import AnimatedBanner from "../../../../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";

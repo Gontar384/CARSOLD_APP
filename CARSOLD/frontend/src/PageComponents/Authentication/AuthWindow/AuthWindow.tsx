@@ -3,7 +3,7 @@ import LoginForm from "./Atomic/Form/LoginForm.tsx";
 import Headers from "./Atomic/Headers/Headers.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import RegisterForm from "./Atomic/Form/RegisterForm.tsx";
-import AuthWindowLoader from "../../../SharedComponents/Additional/Loading/AuthWindowLoader.tsx";
+import AuthWindowLoader from "../../../Additional/Loading/AuthWindowLoader.tsx";
 
 
 const AuthWindow: React.FC = () => {

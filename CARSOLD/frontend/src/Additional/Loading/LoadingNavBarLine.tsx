@@ -1,5 +1,5 @@
 import React from "react";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const LoadingNavBarLine: React.FC = () => {
 

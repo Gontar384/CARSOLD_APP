@@ -3,12 +3,12 @@ import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {handleError} from "../Errors/ErrorHandler.ts";
 
 export const addOffer = async (offer: object): Promise<AxiosResponse> => {
-    return api.post('api/offer/add', offer);  //manually handling errors in main function
+    return await api.post('api/offer/add', offer);  //manually handling errors in main function
 }
 
 export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
     try {
-        return api.get(`/api/offer/fetch/${id}`);
+        return await api.get(`api/offer/fetch/${id}`);
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -17,7 +17,7 @@ export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
 
 export const fetchOfferWithUser = async (id: number | null): Promise<AxiosResponse> => {
   try {
-      return api.get(`api/offer/fetchWithUser/${id}`);
+      return await api.get(`api/offer/fetchWithUser/${id}`);
   }  catch (error) {
       handleError(error);
       return Promise.reject(error);
@@ -25,12 +25,12 @@ export const fetchOfferWithUser = async (id: number | null): Promise<AxiosRespon
 };
 
 export const updateOffer = async (id: number | null, offer: object): Promise<AxiosResponse> => {
-    return api.put(`api/offer/update/${id}`, offer); //manually handling errors in main function
+    return await api.put(`api/offer/update/${id}`, offer); //manually handling errors in main function
 }
 
 export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
     try {
-        return api.get('/api/offer/fetchAllUser')
+        return await api.get('api/offer/fetchAllUser');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

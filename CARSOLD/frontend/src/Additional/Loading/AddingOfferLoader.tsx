@@ -1,6 +1,6 @@
 import React from "react";
 import LoadingPicAnimation from "./LoadingPicAnimation.tsx";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const AddingOfferLoader: React.FC = () => {
     const {isMobile} = useUtil();

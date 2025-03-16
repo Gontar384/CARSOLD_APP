@@ -1,10 +1,10 @@
-import Input from "../../SharedComponents/FormUtil/Input.tsx";
+import Input from "../Authentication/AuthWindow/Atomic/Form/FormUtil/Input.tsx";
 import React, {useEffect, useState} from "react";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import {useUserInfo} from "../../CustomHooks/useUserInfo.ts";
-import SubmitButton from "../../SharedComponents/FormUtil/SubmitButton.tsx";
-import AnimatedBanner from "../../SharedComponents/Additional/Banners/AnimatedBanner.tsx";
+import SubmitButton from "../Authentication/AuthWindow/Atomic/Form/FormUtil/SubmitButton.tsx";
+import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {sendPasswordRecoveryEmail} from "../../ApiCalls/Services/UserService.ts";

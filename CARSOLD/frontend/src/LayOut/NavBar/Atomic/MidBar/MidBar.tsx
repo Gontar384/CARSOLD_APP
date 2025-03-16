@@ -4,12 +4,12 @@ import Details from "../Info/UserInfo/Atomic/Details.tsx";
 import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
-import UserDetailsLoader from "../../../../SharedComponents/Additional/Loading/UserDetailsLoader.tsx";
 import LoginRegisterButton from "../Info/LoginRegisterButton/LoginRegisterButton.tsx";
 import BarButton from "./Atomic/BarButton.tsx";
 import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverWrench, faLightbulb, faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-icons";
 import BarFunctionButton from "./Atomic/BarFunctionButton.tsx";
+import UserInfoLoader from "../../../../Additional/Loading/UserInfoLoader.tsx";
 
 interface MidBarProps {
     excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
@@ -81,9 +81,9 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
                         usernameFetched ? (
-                            <Details userDetails={username} profilePic={profilePic}/>
+                            <Details username={username} profilePic={profilePic}/>
                         ) : (
-                            <UserDetailsLoader/>
+                            <UserInfoLoader/>
                         )
                     ) : (
                         <LoginRegisterButton/>

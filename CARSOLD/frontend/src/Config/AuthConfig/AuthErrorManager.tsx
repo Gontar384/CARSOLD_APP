@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {AxiosError, AxiosResponse} from "axios";
 import {api} from "../AxiosConfig/AxiosConfig.ts";
-import SessionExpiredBanner from "../../SharedComponents/Additional/Banners/SessionExpiredBanner.tsx";
+import SessionExpiredBanner from "../../Additional/Banners/SessionExpiredBanner.tsx";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 const AuthErrorManager: React.FC = () => {
