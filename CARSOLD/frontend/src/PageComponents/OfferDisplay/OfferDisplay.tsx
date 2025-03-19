@@ -39,6 +39,7 @@ const OfferDisplay: React.FC = () => {
         phone: string;
         city: string;
         permission: boolean;
+        coordinates: string;
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
@@ -75,6 +76,7 @@ const OfferDisplay: React.FC = () => {
         phone: "",
         city: "",
         permission: false,
+        coordinates: "",
     });
     const navigate = useNavigate();
 
@@ -124,6 +126,7 @@ const OfferDisplay: React.FC = () => {
                 phone: data.phone ?? "",
                 city: data.city ?? "",
                 permission: data.permission ?? false,
+                coordinates: data.coordinates ?? "",
             };
             setOffer(transformedOffer);
         };
@@ -140,7 +143,8 @@ const OfferDisplay: React.FC = () => {
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                     </div>
                     <div className="flex flex-col w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
-                        <UserInformation username={offer.username} profilePic={offer.profilePic} offerFetched={offerFetched}/>
+                        <UserInformation username={offer.username} profilePic={offer.profilePic} offerFetched={offerFetched}
+                        name={offer.name} phone={offer.phone} city={offer.city} coordinates={offer.coordinates}/>
                     </div>
                 </div>
             </div>

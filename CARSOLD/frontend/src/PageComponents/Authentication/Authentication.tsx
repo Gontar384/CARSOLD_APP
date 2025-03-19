@@ -5,9 +5,7 @@ import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Authentication: React.FC = () => {
-
     document.title = "CARSOLD | Authenticate";
-
     const {bigWidth} = useUtil();
 
     return (

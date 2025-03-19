@@ -39,4 +39,5 @@ public class OfferWithUserDto {
     private String phone;
     private String city;
     private boolean permission;
+    private String coordinates;
 }

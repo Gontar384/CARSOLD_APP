@@ -6,17 +6,16 @@ import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.OfferWithUserDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
-import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
-import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
-import org.gontar.carsold.Exception.CustomException.NoPermissionException;
-import org.gontar.carsold.Exception.CustomException.OfferNotFound;
+import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +38,9 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
+
+    @Value("${PLACES_API_KEY}")
+    private String placesApiKey;
 
     private final OfferRepository repository;
     private final MyUserDetailsService userDetailsService;
@@ -165,7 +167,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     private String uploadToStorage(MultipartFile file, String username, Long id, int imageIndex) throws StorageException, IOException {
         if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
-        if (file.getSize() > 3 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
+        if (file.getSize() > 5 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
 
         String fileName = username + "/offer" + id + "/offer" + id + "image" + imageIndex;
 
@@ -309,8 +311,43 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             offerWithUserDto.setName(user.getName());
             offerWithUserDto.setPhone(user.getPhone());
             offerWithUserDto.setCity(user.getCity());
+            if (user.getCity() != null) {
+                String mapUrl = fetchMapUrlFromApi(user.getCity());
+                offerWithUserDto.setCoordinates(mapUrl);
+            }
         }
         offerWithUserDto.setPermission(fetchPermission(offer));
         return offerWithUserDto;
+    }
+
+    private String fetchMapUrlFromApi(String input) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://places.googleapis.com/v1/places:searchText";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-Goog-Api-Key", placesApiKey);
+            headers.set("X-Goog-FieldMask", "places.location");
+
+            String requestBody = String.format("{\"textQuery\": \"%s\"}", input);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            String responseBody = response.getBody();
+            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(responseBody));
+
+            if (!jsonResponse.has("places") || jsonResponse.getJSONArray("places").isEmpty()) return null;
+            JSONObject firstPlace = jsonResponse.getJSONArray("places").getJSONObject(0);
+            if (!firstPlace.has("location")) return null;
+
+            JSONObject location = firstPlace.getJSONObject("location");
+            double latitude = location.getDouble("latitude");
+            double longitude = location.getDouble("longitude");
+            return latitude + "," + longitude;
+        } catch (Exception e) {
+            log.error("Error fetching map URL with Places API: {}", e.getMessage());
+            return null;
+        }
     }
 }

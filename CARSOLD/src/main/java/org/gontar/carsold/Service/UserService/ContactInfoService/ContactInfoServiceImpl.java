@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -142,7 +141,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         }
     }
 
-    private JSONArray fetchCitySuggestionsFromApi(String input) {
+    public JSONArray fetchCitySuggestionsFromApi(String input) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = "https://places.googleapis.com/v1/places:autocomplete";

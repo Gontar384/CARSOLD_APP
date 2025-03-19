@@ -37,14 +37,14 @@ const ContactInfo: React.FC = () => {
     return (
         <div className="flex flex-col w-full items-center mt-[72px] m:mt-20">
             <div>
-                <p className="text-lg m:text-xl mb-8 m:mb-10 w-fit">Edit contact details:</p>
+                <p className="text-xl m:text-2xl mb-8 m:mb-10 w-fit">Edit contact details:</p>
                 <div className="flex flex-col gap-6 m:gap-7">
                     <InputField label="Name" value={name} setValue={setName} valueType="name" setFetch={setFetch}
                                 isLoading={isLoading} errorInfo="It doesn't look like a name."/>
                     <InputField label="Phone" value={phone} setValue={setPhone} valueType="phone"
                                 setFetch={setFetch}
                                 isLoading={isLoading} errorInfo="Wrong phone number."/>
-                    <InputField label="City" value={city} setValue={setCity} valueType="city" setFetch={setFetch}
+                    <InputField label="City (add details)" value={city} setValue={setCity} valueType="city" setFetch={setFetch}
                                 isLoading={isLoading} errorInfo="Wrong address." isCityInput={true}/>
                     <SwitchButton/>
                 </div>

@@ -28,7 +28,6 @@ import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Adding Offer";
-
     interface RawOffer {
         title: string;
         brand: string;

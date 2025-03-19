@@ -160,9 +160,9 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             <label className="text-lg m:text-xl">
                 {label}
             </label>
-            <div className="flex flex-row justify-between w-[280px] m:w-[350px] h-fit text-xl m:text-2xl"
+            <div className="flex flex-row justify-between w-[290px] m:w-[380px] h-fit text-xl m:text-2xl"
                  ref={componentRef}>
-                <div className="w-[220px] m:w-[280px] h-9 m:h-10 relative z-20">
+                <div className="w-[230px] m:w-[310px] h-9 m:h-10 relative z-20">
                     {!isLoading ?
                         <div className={`flex items-center w-full h-full px-1 m:px-[6px] rounded-sm overflow-hidden whitespace-nowrap
                         ${!inputActive ? "border border-black border-opacity-10" : ""}`} title={value}>

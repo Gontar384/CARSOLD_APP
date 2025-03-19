@@ -96,8 +96,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     }, [fullScreen])  //adds event listener to off fullScreen image display
 
     return (
-        <>
-            {offerFetched ? (
+            offerFetched ? (
                 photos.length > 0 && !error &&
                     <div className={`w-full cursor-pointer aspect-[15/10] overflow-hidden
                     ${fullScreen && "m:w-[95%] max-w-[1200px] max-h-[800px] fixed inset-0 m-auto z-50"}`}
@@ -153,8 +152,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                     </div>
             ) : (
                 <ImageDisplayLoader/>
-            )}
-        </>
+            )
     );
 };
 

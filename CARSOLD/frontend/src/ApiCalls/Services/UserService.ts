@@ -181,7 +181,7 @@ export const deleteProfilePic = async (): Promise<void> => {
     }
 };
 
-//---ContactInfo---
+//---UserContactInfo---
 
 export const updateName = async (name: string | null): Promise<AxiosResponse> => {
     return await api.patch('api/updateName', { value: name }); //manually handling errors in main function

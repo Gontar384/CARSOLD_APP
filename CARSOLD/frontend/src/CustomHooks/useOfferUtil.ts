@@ -21,8 +21,11 @@ export const useOfferUtil = () => {
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
                 console.error("Offer not found: ", error);
+                navigate('/home');
+            } else {
+                console.error("Unexpected error when fetching offer: ", error);
+                navigate('/home');
             }
-            console.error("Unexpected error when fetching offer: ", error);
         }
 
         return { offerData: null, userPermission: false };
@@ -36,10 +39,11 @@ export const useOfferUtil = () => {
             }
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
-                navigate('/home');
                 console.error("Offer not found: ", error);
+                navigate('/home');
             } else {
                 console.error("Unexpected error when fetching offer with user's contact info: ", error);
+                navigate('/home');
             }
         } finally {
             setOfferFetched(true);
