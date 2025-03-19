@@ -1,8 +1,8 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMessage} from "@fortawesome/free-solid-svg-icons";
-import {useButton} from "../../../../CustomHooks/useButton.ts";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useButton} from "../../../../../CustomHooks/useButton.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 const SendMessageButton: React.FC = () => {
 
@@ -11,7 +11,7 @@ const SendMessageButton: React.FC = () => {
 
   return (
       <div className="flex justify-center w-full">
-          <button className={`flex flex-row items-center justify-evenly bg-white rounded-lg w-48 h-11 m:w-56 m:h-12 
+          <button className={`flex flex-row items-center justify-evenly bg-lime border border-gray-600 rounded-lg w-48 h-11 m:w-56 m:h-12 
           ${buttonColor && "brightness-[97%] shadow"}`}
           onMouseEnter={!isMobile ? handleStart : undefined}
           onMouseLeave={!isMobile ? handleEnd : undefined}

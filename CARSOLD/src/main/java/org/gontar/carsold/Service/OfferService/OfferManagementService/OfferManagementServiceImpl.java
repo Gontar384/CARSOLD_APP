@@ -305,6 +305,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setPrice(offer.getPrice());
         offerWithUserDto.setCurrency(offer.getCurrency());
         offerWithUserDto.setPhotos(offer.getPhotosString());
+        offerWithUserDto.setCreatedOn(offer.getCreatedOn());
         offerWithUserDto.setUsername(user.getUsername());
         offerWithUserDto.setProfilePic(user.getProfilePic());
         if (user.getContactPublic()) {

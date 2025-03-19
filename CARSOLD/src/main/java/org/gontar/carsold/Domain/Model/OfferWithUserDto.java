@@ -33,6 +33,7 @@ public class OfferWithUserDto {
     private Integer price;
     private String currency;
     private String photos;
+    private String createdOn;
     private String username;
     private String profilePic;
     private String name;

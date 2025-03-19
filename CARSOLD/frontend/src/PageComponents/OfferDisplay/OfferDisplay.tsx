@@ -2,14 +2,17 @@ import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
-import ImageDisplay from "./BigContainer/ImageDisplay.tsx";
-import UserInformation from "./SmallContainer/UserInformation.tsx";
+import ImageDisplay from "./BigContainer/ImageDisplay/ImageDisplay.tsx";
+import UserInformation from "./SmallContainer/UserInformation/UserInformation.tsx";
+import OfferDetails from "./BigContainer/OfferDetails/OfferDetails.tsx";
+import BaseInfo from "./SmallContainer/BaseInfo/BaseInfo.tsx";
+import OfferSmallLoader from "../../Additional/Loading/OfferSmallLoader.tsx";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
     interface FetchedOffer {
-        id: number | null;
-        title: string;
+        id: number | null; //*
+        title: string; //
         brand: string;
         model: string;
         bodyType: string;
@@ -30,16 +33,17 @@ const OfferDisplay: React.FC = () => {
         plate: string;
         firstRegistration: string;
         description: string;
-        photos: string[];
-        price: string;
-        currency: string;
-        username: string;
-        profilePic: string;
-        name: string;
-        phone: string;
-        city: string;
-        permission: boolean;
-        coordinates: string;
+        photos: string[]; //
+        createdOn: string; //
+        price: string; //
+        currency: string; //
+        username: string; //
+        profilePic: string; //
+        name: string; //
+        phone: string; //
+        city: string; //
+        permission: boolean; //*
+        coordinates: string; //
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
@@ -68,6 +72,7 @@ const OfferDisplay: React.FC = () => {
         firstRegistration: "",
         description: "",
         photos: [],
+        createdOn: "",
         price: "",
         currency: "",
         username: "",
@@ -118,6 +123,7 @@ const OfferDisplay: React.FC = () => {
                 firstRegistration: String(data.firstRegistration ?? ""),
                 description: data.description ?? "",
                 photos: ((data.photos)?.split(",")) ?? "",
+                createdOn: data.createdOn ?? "",
                 price: formatNumber(String(data.price ?? "")),
                 currency: data.currency ?? "",
                 username: data.username ?? "",
@@ -141,10 +147,21 @@ const OfferDisplay: React.FC = () => {
                 <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
                     <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded">
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
+                        {offerFetched &&
+                            <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
+                                          fuel={offer.fuel} capacity={offer.capacity} power={offer.power} drive={offer.drive} transmission={offer.transmission}
+                                          color={offer.color} condition={offer.condition} seats={offer.seats} doors={offer.doors} steeringWheel={offer.steeringWheel}
+                                          country={offer.country} vin={offer.vin} plate={offer.plate} firstRegistration={offer.firstRegistration} description={offer.description}/>
+                        }
                     </div>
                     <div className="flex flex-col w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
-                        <UserInformation username={offer.username} profilePic={offer.profilePic} offerFetched={offerFetched}
-                        name={offer.name} phone={offer.phone} city={offer.city} coordinates={offer.coordinates}/>
+                        {offerFetched ?
+                            <>
+                                <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
+                                <UserInformation username={offer.username} profilePic={offer.profilePic} name={offer.name}
+                                                 phone={offer.phone} city={offer.city} coordinates={offer.coordinates}/>
+                            </> : <OfferSmallLoader/>
+                        }
                     </div>
                 </div>
             </div>

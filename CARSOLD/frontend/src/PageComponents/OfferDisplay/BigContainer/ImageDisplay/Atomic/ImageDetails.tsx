@@ -2,8 +2,8 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlay, faMagnifyingGlassPlus, faMagnifyingGlassMinus} from "@fortawesome/free-solid-svg-icons";
 import {AnimatePresence, motion} from "framer-motion";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import ImageDisplayLoader from "../../../../Additional/Loading/ImageDisplayLoader.tsx";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import ImageDisplayLoader from "../../../../../Additional/Loading/ImageDisplayLoader.tsx";
 
 interface ImageDetailsProps {
     photos: string[];
