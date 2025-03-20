@@ -7,6 +7,10 @@ import UserInformation from "./SmallContainer/UserInformation/UserInformation.ts
 import OfferDetails from "./BigContainer/OfferDetails/OfferDetails.tsx";
 import BaseInfo from "./SmallContainer/BaseInfo/BaseInfo.tsx";
 import OfferSmallLoader from "../../Additional/Loading/OfferSmallLoader.tsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart} from "@fortawesome/free-solid-svg-icons";
+import {useButton} from "../../CustomHooks/useButton.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -84,6 +88,8 @@ const OfferDisplay: React.FC = () => {
         coordinates: "",
     });
     const navigate = useNavigate();
+    const {handleStart, handleEnd, buttonColor} = useButton();
+    const {isMobile} = useUtil();
 
     useEffect(() => {
         if (section) {
@@ -145,7 +151,7 @@ const OfferDisplay: React.FC = () => {
         <LayOut>
             <div className="flex flex-col items-center">
                 <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded">
+                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded relative">
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                         {offerFetched &&
                             <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
@@ -153,13 +159,22 @@ const OfferDisplay: React.FC = () => {
                                           color={offer.color} condition={offer.condition} seats={offer.seats} doors={offer.doors} steeringWheel={offer.steeringWheel}
                                           country={offer.country} vin={offer.vin} plate={offer.plate} firstRegistration={offer.firstRegistration} description={offer.description}/>
                         }
+                        {offerFetched && !offer.permission &&
+                            <button className="absolute right-2.5 top-1.5 m:right-3 m:top-2"
+                                onMouseEnter={!isMobile ? handleStart : undefined}
+                                onMouseLeave={!isMobile ? handleEnd : undefined}
+                                onTouchStart={isMobile ? handleStart : undefined}
+                                onTouchEnd={isMobile ? handleEnd : undefined}>
+                                <FontAwesomeIcon icon={faHeart}
+                                                 className={`text-3xl m:text-4xl ${buttonColor ? "text-coolRed" : "text-gray-800"}`}/>
+                            </button>}
                     </div>
-                    <div className="flex flex-col w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
+                    <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
                         {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
-                                <UserInformation username={offer.username} profilePic={offer.profilePic} name={offer.name}
-                                                 phone={offer.phone} city={offer.city} coordinates={offer.coordinates}/>
+                                <UserInformation username={offer.username} profilePic={offer.profilePic} name={offer.name} phone={offer.phone}
+                                                 city={offer.city} coordinates={offer.coordinates} permission={offer.permission} id={offer.id}/>
                             </> : <OfferSmallLoader/>
                         }
                     </div>

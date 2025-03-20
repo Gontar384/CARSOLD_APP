@@ -21,7 +21,6 @@ const MyOffers: React.FC = () => {
         mileage: number;
         year: number;
     }
-
     interface UpdatedOffer {
         id: number;
         title: string;
@@ -35,7 +34,6 @@ const MyOffers: React.FC = () => {
         mileage: string;
         year: string;
     }
-
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
