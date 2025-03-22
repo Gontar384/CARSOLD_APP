@@ -2,6 +2,8 @@ import {AxiosResponse} from "axios";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {handleError} from "../Errors/ErrorHandler.ts";
 
+//---Management---
+
 export const addOffer = async (offer: object): Promise<AxiosResponse> => {
     return await api.post('api/offer/add', offer);  //manually handling errors in main function
 }
@@ -36,3 +38,9 @@ export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
         return Promise.reject(error);
     }
 }
+
+//---Functionality---
+
+export const followAndCheck = async (id: number | null, follow: boolean): Promise<AxiosResponse> => {
+    return await api.patch(`api/offer/followAndCheck/${id}`, { value: follow }); //manually handling errors in main function
+};

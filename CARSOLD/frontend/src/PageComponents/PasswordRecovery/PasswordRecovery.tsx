@@ -11,7 +11,6 @@ import {sendPasswordRecoveryEmail} from "../../ApiCalls/Services/UserService.ts"
 import {BadRequestError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const PasswordRecovery: React.FC = () => {
-
     document.title = "CARSOLD | Password Recovery";
     const [email, setEmail] = useState<string>("");
     const [emailInfo, setEmailInfo] = useState<string>("");

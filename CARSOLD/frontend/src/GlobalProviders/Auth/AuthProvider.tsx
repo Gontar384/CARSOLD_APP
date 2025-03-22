@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {AuthContext} from './useAuth.ts';
 import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import {checkAuth, logout} from "../../ApiCalls/Services/UserService.ts";
+import {useNavigate} from "react-router-dom";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
+    const navigate = useNavigate();
 
     const handleCheckAuth = async () => {
         setLoadingAuth(true);
@@ -36,15 +37,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         handleCheckAuth();
 
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
     const handleLogout = async () => {
         try {
             await logout();
             await handleCheckAuth();
+            navigate("/authenticate/login");
         } catch (error: unknown) {
             if (error instanceof InternalServerError) {
                 console.error("Error during logout: ", error);

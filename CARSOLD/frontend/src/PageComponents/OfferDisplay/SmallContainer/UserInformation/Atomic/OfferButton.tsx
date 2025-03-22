@@ -4,6 +4,7 @@ import {faGear, faMessage} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 
 interface OfferButtonProps {
     permission: boolean;
@@ -15,6 +16,13 @@ const OfferButton: React.FC<OfferButtonProps> = ({ permission, id }) => {
   const {buttonColor, handleStart, handleEnd} = useButton();
   const {isMobile} = useUtil();
   const navigate = useNavigate();
+  const {isAuthenticated} = useAuth();
+  const handleSendMessage = () => {
+    if (!isAuthenticated) {
+        navigate("/authenticate/login");
+        return;
+    }
+  };
 
   return (
       <div className="flex justify-center w-full">
@@ -24,7 +32,7 @@ const OfferButton: React.FC<OfferButtonProps> = ({ permission, id }) => {
           onMouseLeave={!isMobile ? handleEnd : undefined}
           onTouchStart={isMobile ? handleStart : undefined}
           onTouchEnd={isMobile ? handleEnd : undefined}
-          onClick={permission ? () => navigate(`/modifyingOffer/${id}`) : () => console.log("Sending message...")}>
+          onClick={permission ? () => navigate(`/modifyingOffer/${id}`) : handleSendMessage}>
               <FontAwesomeIcon icon={permission ? faGear : faMessage} className="text-2xl m:text-3xl text-gray-600"/>
               <p className="text-xl m:text-2xl text-gray-600">{permission ? "Edit offer" : "Send message"}</p>
           </button>

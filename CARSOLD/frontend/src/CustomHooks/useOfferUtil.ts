@@ -1,11 +1,13 @@
-import {fetchAllUserOffers, fetchOffer, fetchOfferWithUser} from "../ApiCalls/Services/OfferService.ts";
+import {fetchAllUserOffers, fetchOffer, fetchOfferWithUser, followAndCheck} from "../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../ApiCalls/Errors/CustomErrors.ts";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {AxiosError} from "axios";
 
 export const useOfferUtil = () => {
 
     const [offerFetched, setOfferFetched] = useState<boolean>(false);
+    const [followed, setFollowed] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const handleFetchOffer = async (id: number) => {
@@ -63,6 +65,23 @@ export const useOfferUtil = () => {
         }
     };
 
-    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, offerFetched}
+    const handleFollowAndCheck = async (id: number | null, follow: boolean) => {
+        try {
+            const response = await followAndCheck(id, follow);
+            if (response.status === 200) setFollowed(true);
+            else if (response.status === 204) setFollowed(false);
+        } catch (error: unknown) {
+            setFollowed(false);
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.status === 405) {
+                    console.error("User cannot follow his own offer");
+                } else {
+                    console.error("Unexpected error occurred during checking if following", error);
+                }
+            }
+        }
+    };
+
+    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, offerFetched, handleFollowAndCheck, followed}
 }
 

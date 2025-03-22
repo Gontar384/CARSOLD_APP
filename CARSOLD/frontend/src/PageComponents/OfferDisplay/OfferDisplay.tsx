@@ -11,6 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -51,7 +52,7 @@ const OfferDisplay: React.FC = () => {
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
-    const {handleFetchOfferWithUser, offerFetched} = useOfferUtil();
+    const {handleFetchOfferWithUser, offerFetched, handleFollowAndCheck, followed} = useOfferUtil();
     const [offer, setOffer] = useState<FetchedOffer>({
         id: null,
         title: "",
@@ -90,6 +91,8 @@ const OfferDisplay: React.FC = () => {
     const navigate = useNavigate();
     const {handleStart, handleEnd, buttonColor} = useButton();
     const {isMobile} = useUtil();
+    const {isAuthenticated} = useAuth();
+    const [disabled, setDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         if (section) {
@@ -147,6 +150,22 @@ const OfferDisplay: React.FC = () => {
         }
     }, [id]); //fetches offer and user permission
 
+    useEffect(() => {
+        if (id === null || offer.permission || !isAuthenticated) return;
+        handleFollowAndCheck(id, false);
+    }, [offerFetched]);
+
+    const handleFollow = async (id: number | null, follow: boolean) => {
+        if (disabled) return;
+        if (id === null || offer.permission || !isAuthenticated) {
+            navigate("/authenticate/login");
+            return;
+        }
+        setDisabled(true);
+        handleFollowAndCheck(id, follow);
+        setTimeout(() => setDisabled(false), 500);
+    };
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">
@@ -164,9 +183,10 @@ const OfferDisplay: React.FC = () => {
                                 onMouseEnter={!isMobile ? handleStart : undefined}
                                 onMouseLeave={!isMobile ? handleEnd : undefined}
                                 onTouchStart={isMobile ? handleStart : undefined}
-                                onTouchEnd={isMobile ? handleEnd : undefined}>
+                                onTouchEnd={isMobile ? handleEnd : undefined}
+                                onClick={() => handleFollow(id, true)}>
                                 <FontAwesomeIcon icon={faHeart}
-                                                 className={`text-3xl m:text-4xl ${buttonColor ? "text-coolRed" : "text-gray-800"}`}/>
+                                                 className={`text-3xl m:text-4xl ${followed ? "text-coolRed" : "text-gray-800"} ${buttonColor && "brightness-[80%]"}`}/>
                             </button>}
                     </div>
                     <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">

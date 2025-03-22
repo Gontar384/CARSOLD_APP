@@ -10,7 +10,6 @@ import {AxiosError} from "axios";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 
 const LoginForm: React.FC = () => {
-
     const [login, setLogin] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [loginIcon, setLoginIcon] = useState<IconDefinition | null>(null);

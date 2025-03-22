@@ -5,7 +5,6 @@ import {activateAccount} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const AccountActivation: React.FC = () => {
-
     document.title = "CARSOLD | Account Activation";
     const [count, setCount] = useState<number>(3);
     const [activationMessage, setActivationMessage] = useState<string | null>(null);

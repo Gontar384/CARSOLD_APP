@@ -95,7 +95,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, followForm}
                         onTouchStart={isMobile ? () => setHeartHovered(true) : undefined}
                         onTouchEnd={isMobile ? () => setHeartHovered(false) : undefined}>
                     <FontAwesomeIcon icon={faHeart} className={`text-2xl m:text-3xl ${followed ? "text-coolRed" : "text-gray-800"} 
-                    ${heartHovered && "brightness-[120%]"}`}/>
+                    ${heartHovered && "brightness-[80%]"}`}/>
                 </button>
             }
         </div>

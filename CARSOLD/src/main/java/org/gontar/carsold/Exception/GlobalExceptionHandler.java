@@ -98,6 +98,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Access Denied");
     }
 
+    @ExceptionHandler(InappropriateActionException.class)
+    public ResponseEntity<?> handleInappropriateActionException(InappropriateActionException ex) {
+        log.error("Inappropriate Action: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Inappropriate Action");
+    }
+
     @ExceptionHandler(NoPermissionException.class)
     public ResponseEntity<?> handleNoPermissionException(NoPermissionException ex) {
         log.error("No Permission: {}", ex.getMessage(), ex);

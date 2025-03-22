@@ -20,7 +20,8 @@ const AddButton: React.FC = () => {
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
             <FontAwesomeIcon icon={faPlus} className="text-2xl"/>
             <p className="text-2xl whitespace-nowrap">
-                Add Offer</p>
+                Add Offer
+            </p>
         </Link>
     )
 }

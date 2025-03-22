@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -64,6 +67,24 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @Column
+    private String followedOffers;
+
+    public List<String> getFollowedOffers() {
+        if (followedOffers == null || followedOffers.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(Arrays.asList(followedOffers.split(",")));
+    }
+
+    public void setFollowedOffers(List<String> offers) {
+        if (offers != null && !offers.isEmpty()) {
+            this.followedOffers = String.join(",", offers);
+        } else {
+            this.followedOffers = null;
+        }
+    }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Offer> offers;
