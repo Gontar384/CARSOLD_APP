@@ -72,7 +72,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     };
 
     return (
-        <div className="w-[95%] bg-white rounded border-2 border-black border-opacity-40 mb-8 m:mb-10">
+        <div className="w-[95%] bg-white rounded border-2 border-black border-opacity-40 mb-14 m:mb-16">
             <p className="text-2xl m:text-3xl text-center font-bold mt-6 m:mt-8">{brand + " " + model}</p>
             <div className="flex flex-row justify-evenly mt-10 m:mt-12">
                 {details.map((item, index) => (
@@ -103,9 +103,8 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                         </div>
                     )}
                 </div>}
-            <div className="flex flex-col items-center justify-center mt-10 m:mt-12">
                 {(vin || plate || firstRegistration) &&
-                    <>
+                    <div className="flex flex-col items-center justify-center mt-10 m:mt-12">
                         <FontAwesomeIcon icon={faCircleInfo} className="text-2xl m:text-3xl mb-4"/>
                         {registrationInfo.map((item, index) => (
                             <div className="flex flex-row gap-0.5 m:gap-1 text-base m:text-lg" key={index}>
@@ -113,14 +112,13 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                                 <p>{item.value}</p>
                             </div>
                         ))}
-                    </>
+                    </div>
                 }
-            </div>
             <div className="flex justify-center my-12 m:my-14">
                 <div className="w-[95%]">
                     <p className="mb-0.5 m:mb-1 text-base m:text-lg font-bold">Description</p>
                     <div className={`${!isExpanded && "max-h-[200px] m:max-h-[300px]"} p-1.5 m:p-2 text-sm m:text-base relative
-                    rounded border border-black border-opacity-40 whitespace-pre-line overflow-hidden`} ref={textRef}>
+                    rounded border border-black border-opacity-10 whitespace-pre-line overflow-hidden`} ref={textRef}>
                         {description}
                         {!isExpanded && isOverflowing && <div className="absolute bottom-0 w-full h-8 m:h-10 bg-gradient-to-t from-white to-transparent"></div>}
                     </div>

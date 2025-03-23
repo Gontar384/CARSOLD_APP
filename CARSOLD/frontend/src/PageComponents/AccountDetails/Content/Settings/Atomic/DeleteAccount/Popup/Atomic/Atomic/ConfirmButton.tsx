@@ -15,7 +15,7 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({label, onClick, type, isDi
     const {buttonColor, handleStart, handleEnd} = useButton();
 
     return (
-        <button className={`border border-black rounded-sm bg-lime
+        <button className={`border border-black rounded bg-lime
         ${type === "choice" ? "w-16 m:w-[76px]" : "w-20 m:w-[92px]"} h-8 m:h-9
              ${buttonColor ? "text-white" : ""}`} disabled={isDisabled}
                 onClick={onClick}

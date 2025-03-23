@@ -4,8 +4,8 @@ import SocialLink from "./Atomic/SocialLink.tsx";
 const Socials: React.FC = () => {
 
     return (
-        <div className="mt-12 m:mt-14">
-            <p className="mb-6 m:mb-8 font-bold">Check our socials:</p>
+        <div className="mt-14 m:mt-16">
+            <p className="mb-8 m:mb-10 font-bold">Check our socials:</p>
             <div className="flex flex-col items-center relative z-10 gap-2 m:gap-3">
                 <SocialLink imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png"
                             name="GitHub" link="https://github.com/Gontar384"/>

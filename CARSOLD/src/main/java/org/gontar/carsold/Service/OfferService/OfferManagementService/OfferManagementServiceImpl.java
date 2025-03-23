@@ -204,7 +204,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         Objects.requireNonNull(offer, "Offer cannot be null");
         Offer existingOffer = repository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
-
         if (!fetchPermission(existingOffer)) {
             throw new NoPermissionException("User has no permission to update offer");
         }
@@ -261,7 +260,9 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             PartialOfferDto partialOfferDto = new PartialOfferDto();
             partialOfferDto.setId(offer.getId());
             partialOfferDto.setTitle(offer.getTitle());
-            partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+            }
             partialOfferDto.setPrice(offer.getPrice());
             partialOfferDto.setCurrency(offer.getCurrency());
             partialOfferDto.setPower(offer.getPower());
@@ -308,6 +309,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setCreatedOn(offer.getCreatedOn());
         offerWithUserDto.setUsername(user.getUsername());
         offerWithUserDto.setProfilePic(user.getProfilePic());
+        offerWithUserDto.setPermission(fetchPermission(offer));
         if (user.getContactPublic()) {
             offerWithUserDto.setName(user.getName());
             offerWithUserDto.setPhone(user.getPhone());
@@ -317,8 +319,30 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                 offerWithUserDto.setCoordinates(mapUrl);
             }
         }
-        offerWithUserDto.setPermission(fetchPermission(offer));
+        offer.setViews(offer.getViews() + 1);
+        repository.save(offer);
         return offerWithUserDto;
+    }
+
+    @Override
+    public void deleteOffer(Long id) {
+        Objects.requireNonNull(id, "Id cannot be null");
+        Offer existingOffer = repository.findById(id)
+                .orElseThrow(() -> new OfferNotFound("Offer not found"));
+        if (!fetchPermission(existingOffer)) {
+            throw new NoPermissionException("User has no permission to delete offer");
+        }
+        User user = userDetailsService.loadUser();
+        try {
+            String folderPrefix = user.getUsername() + "/offer" + id + "/";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                    .iterateAll()
+                    .forEach(Blob::delete);
+        } catch (StorageException e) {
+            throw new ExternalDeleteException("Failed to delete images for offer with id = " + id + " in Google Cloud: " + e.getMessage());
+        }
+        repository.delete(existingOffer);
     }
 
     private String fetchMapUrlFromApi(String input) {

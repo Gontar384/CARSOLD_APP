@@ -213,19 +213,20 @@ public class UserManagementServiceImpl implements UserManagementService {
             Objects.requireNonNull(password, "password cannot be null");
             if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
         }
-        try {
-            deleteUserInCloud(user.getUsername());
-            repository.delete(user);
-        } catch (StorageException e) {
-            throw new ExternalDeleteException("Failed to delete user in Google Cloud: " + e.getMessage());
-        }
+        deleteUserInCloud(user.getUsername());
+        repository.flush();
+        repository.delete(user);
     }
 
-    private void deleteUserInCloud(String username) throws StorageException {
+    private void deleteUserInCloud(String username) {
+        try {
         String folderPrefix = username + "/";
         Storage storage = StorageOptions.getDefaultInstance().getService();
         storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
                 .iterateAll()
                 .forEach(Blob::delete);
+        } catch (StorageException e) {
+            throw new ExternalDeleteException("Failed to delete user in Google Cloud: " + e.getMessage());
+        }
     }
 }

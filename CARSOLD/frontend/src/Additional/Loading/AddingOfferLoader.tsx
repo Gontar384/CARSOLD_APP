@@ -6,7 +6,7 @@ const AddingOfferLoader: React.FC = () => {
     const {isMobile} = useUtil();
 
     return (
-        <div className="fixed top-0 w-full h-full z-50 bg-lowBlack opacity-30">
+        <div className="fixed top-0 left-0 w-full h-full z-50 bg-lowBlack opacity-30">
             <div className="w-[100px]">
                 <LoadingPicAnimation size={isMobile ? 100 : 140}/>
             </div>

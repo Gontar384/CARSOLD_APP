@@ -9,7 +9,6 @@ interface PopupProps {
 }
 
 const Popup: React.FC<PopupProps> = ({setPopup, googleLogged}) => {
-
     const [confirmed, setConfirmed] = useState<boolean>(false);
 
     return (

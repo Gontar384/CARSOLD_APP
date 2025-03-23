@@ -14,4 +14,5 @@ public interface OfferManagementService {
     Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos);
     List<PartialOfferDto> fetchAllUserOffers();
     OfferWithUserDto fetchOfferWithUser(Long id);
+    void deleteOffer(Long id);
 }

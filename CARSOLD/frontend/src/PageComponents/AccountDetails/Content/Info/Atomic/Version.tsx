@@ -14,7 +14,7 @@ const Version: React.FC<VersionProps> = ({v}) => {
 
     return (
         <div className="flex flex-row items-center gap-2 m:gap-3
-            mt-10 m:mt-12">
+            mt-[72px] m:mt-20">
             <p>CARSOLD version {v.toFixed(1)}</p>
             <FontAwesomeIcon icon={faGear} className={`${animation}`}
                              onMouseEnter={!isMobile ? () => setAnimation("animate-shock") : undefined}

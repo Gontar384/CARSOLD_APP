@@ -29,27 +29,30 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
         if (disabled) return;
         setDisabled(true);
         setDirection(dir);
-        setTimeout(() => {
-            setPhotoIndex(prev => prev + dir)
-        });
-        setTimeout(() => {
-            setDisabled(false);
-        }, 400);
+        setTimeout(() => setPhotoIndex(prev => prev + dir));
+        setTimeout(() => setDisabled(false), 400);
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
         setStartTouch(e.touches[0].clientX);
-    };
-
-    const handleTouchMove = (e: React.TouchEvent) => {
         setEndTouch(e.touches[0].clientX);
     };
 
+    const handleTouchMove = (e: React.TouchEvent) => {
+        const moveX = e.touches[0].clientX;
+        if (Math.abs(moveX - startTouch) > 10) {
+            setEndTouch(moveX);
+        }
+    };
+
     const handleTouchEnd = () => {
-        if (startTouch - endTouch > 50) {
-            if (photoIndex < photos.length - 1) changePhoto(1);
-        } else if (endTouch - startTouch > 50) {
-            if (photoIndex > 0) changePhoto(-1);
+        const touchDifference = startTouch - endTouch;
+        if (Math.abs(touchDifference) > 50) {
+            if (touchDifference > 0 && photoIndex < photos.length - 1) {
+                changePhoto(1);
+            } else if (touchDifference < 0 && photoIndex > 0) {
+                changePhoto(-1);
+            }
         }
         setStartTouch(0);
         setEndTouch(0);
@@ -108,7 +111,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                          onTouchStart={isMobile ? handleTouchStart : undefined}
                          onTouchMove={isMobile ? handleTouchMove : undefined}
                          onTouchEnd={isMobile ? handleTouchEnd : undefined}
-                         ref={imageRef}>
+                         ref={imageRef} onClick={!fullScreen ? () => setFullScreen(true) : undefined}>
                         <AnimatePresence custom={direction} mode="popLayout">
                             <motion.img key={photoIndex} src={photos[photoIndex]} alt="Car Photo"
                                         className="w-full h-full object-cover rounded" onError={() => setError(true)}
@@ -142,9 +145,11 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                                                 </div>
                                             ))}
                                         </div>
-                                        <FontAwesomeIcon icon={!fullScreen ? faMagnifyingGlassPlus : faMagnifyingGlassMinus}
-                                                         className="absolute text-gray-200 left-1 bottom-1 m:left-2 m:bottom-2
-                                                         text-2xl m:text-3xl p-1 m:p-2" onClick={() => setFullScreen(!fullScreen)}/>
+                                        <button className="flex absolute text-gray-200 left-1 bottom-1 m:left-2 m:bottom-2 p-1 m:p-2"
+                                                onClick={() => setFullScreen(!fullScreen)}>
+                                            <FontAwesomeIcon icon={!fullScreen ? faMagnifyingGlassPlus : faMagnifyingGlassMinus}
+                                                             className="text-2xl m:text-3xl text-gray-200"/>
+                                        </button>
                                     </>
                                 }
                             </div>

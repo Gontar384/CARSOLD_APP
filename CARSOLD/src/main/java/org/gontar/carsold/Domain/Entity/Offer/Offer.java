@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.User.User;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -163,10 +162,10 @@ public class Offer {
         }
     }
 
-    @Column(name = "last_updated")
+    @Column
     private LocalDateTime lastUpdated;
 
-    @Column(name = "created_on", updatable = false, nullable = false, length = 10)
+    @Column(updatable = false, nullable = false, length = 10)
     private String createdOn;
 
     @PrePersist
@@ -174,4 +173,10 @@ public class Offer {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.createdOn = LocalDate.now().format(formatter);
     }
+
+    @Column(nullable = false)
+    private Integer views = 0;
+
+    @Column(nullable = false)
+    private Integer follows = 0;
 }

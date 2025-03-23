@@ -162,7 +162,7 @@ const OfferDisplay: React.FC = () => {
             return;
         }
         setDisabled(true);
-        handleFollowAndCheck(id, follow);
+        await handleFollowAndCheck(id, follow);
         setTimeout(() => setDisabled(false), 500);
     };
 

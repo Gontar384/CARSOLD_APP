@@ -76,4 +76,10 @@ public class OfferManagementController {
         List<PartialOfferDto> partialOfferDtos = service.fetchAllUserOffers();
         return ResponseEntity.ok(partialOfferDtos);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteOffer(@PathVariable Long id) {
+        service.deleteOffer(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -11,7 +11,6 @@ import org.gontar.carsold.Domain.Entity.Offer.Offer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -86,6 +85,6 @@ public class User {
         }
     }
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Offer> offers;
 }

@@ -1,8 +1,14 @@
 import React from "react";
 
-const UserOffersLoader: React.FC = () => {
+interface UserOffersLoaderProps {
+    type: "myOffers" | "followed";
+}
+
+const UserOffersLoader: React.FC<UserOffersLoaderProps> = ({ type }) => {
     return (
-        <div className="w-[90%] m:w-[95%] h-[110px] m:h-[140px] max-w-[600px] bg-black opacity-20 animate-pulse mt-6 m:mt-8"></div>
+        <div className={`w-[90%] m:w-[95%] max-w-[600px] bg-black opacity-20 animate-pulse
+        ${type === "myOffers" ? "h-[138px] m:h-[173px]" : "h-[110px] m:h-[142px]"} mt-8 m:mt-10`}>
+        </div>
     )
 };
 

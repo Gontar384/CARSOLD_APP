@@ -36,6 +36,7 @@ const MyOffers: React.FC = () => {
     }
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
+    const [offerDeleted, setOfferDeleted] = useState<boolean>(false);
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const itemsPerPage = 3;
@@ -46,6 +47,7 @@ const MyOffers: React.FC = () => {
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
     const {handleFetchAllUserOffers, offerFetched} = useOfferUtil();
+    const [deleted, setDeleted] = useState<boolean>(false);
 
     const nextPage = () => {
         if (endIndex < offers.length) {
@@ -68,41 +70,47 @@ const MyOffers: React.FC = () => {
             setOfferUpdated(true);
             sessionStorage.removeItem("offerUpdated");
         }
-    }, []); //detects if new offer was added and displays banner
+        if (sessionStorage.getItem("offerDeleted") === "true") {
+            setOfferDeleted(true);
+            sessionStorage.removeItem("offerDeleted");
+        }
+        setDeleted(false);
+    }, [deleted]); //detects if offer was added, modified or deleted and displays banner
 
     useEffect(() => {
         const manageHandleFetchAllUserOffers = async () => {
                 const offerData = await handleFetchAllUserOffers();
                 if (offerData) {
                     const formattedOffers: UpdatedOffer[] = offerData.map((offer: FetchedOffer) => ({
-                        id: offer.id,
-                        title: offer.title,
-                        photoUrl: offer.photoUrl,
-                        price: String(offer.price),
-                        currency: offer.currency,
-                        power: String(offer.power),
-                        capacity: String(offer.capacity),
-                        transmission: offer.transmission,
-                        fuel: offer.fuel,
-                        mileage: String(offer.mileage),
-                        year: String(offer.year),
+                        id: offer.id ?? "",
+                        title: offer.title ?? "",
+                        photoUrl: offer.photoUrl ?? "",
+                        price: String(offer.price ?? ""),
+                        currency: offer.currency ?? "",
+                        power: String(offer.power ?? ""),
+                        capacity: String(offer.capacity ?? ""),
+                        transmission: offer.transmission ?? "",
+                        fuel: offer.fuel ?? "",
+                        mileage: String(offer.mileage ?? ""),
+                        year: String(offer.year ?? ""),
                     }));
                     setOffers(formattedOffers);
                 }
         };
         manageHandleFetchAllUserOffers();
-    }, []); //fetch offer
+        setDeleted(false);
+    }, [deleted]); //fetch offers
 
     return (
         <>
             {offerFetched ? (
                 offers.length > 0 ? (
-                    <div className="w-[90%] m:w-[95%] h-full max-w-[600px] py-6 m:py-8">
+                    <div className="w-[90%] m:w-[95%] h-full max-w-[600px]">
                         {paginatedOffers.map((offer) => (
-                            <SmallOfferDisplay key={offer.id} offer={offer}/>
+                            <SmallOfferDisplay type="myOffers" key={offer.id} offer={offer} setDeleted={setDeleted}/>
                         ))}
                         {offers.length > itemsPerPage &&
-                            <div className="flex justify-center mt-8 m:mt-10 gap-4 m:gap-5 text-sm m:text-base">
+                            <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                                 <button onClick={prevPage} disabled={currentPage === 0}
                                         className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
                                     rounded-md disabled:opacity-60">
@@ -118,8 +126,9 @@ const MyOffers: React.FC = () => {
                     </div>
                 ) : (
                     <div className="flex flex-col items-center w-[90%] m:w-[95%] h-full mt-28 m:mt-32">
-                        <p className="text-xl m:text-2xl text-center">You don't have any offer added yet. Click here to
-                            add one:</p>
+                        <p className="text-xl m:text-2xl text-center">
+                            You don't have any offers added yet. Click here to add one:
+                        </p>
                         <button className={`mt-8 m:mt-10 text-xl m:text-2xl p-2 m:p-3 border-2 border-black border-opacity-40 rounded
                         ${buttonColor ? "bg-white" : "bg-lime"}`}
                                 onClick={() => navigate("/addingOffer")}
@@ -134,16 +143,14 @@ const MyOffers: React.FC = () => {
             ) : (
                 <>
                     {Array.from({ length: 3 }).map((_, index) => (
-                        <UserOffersLoader key={index} />
+                        <UserOffersLoader key={index} type="myOffers"/>
                     ))}
                 </>
             )}
-            {offerAdded &&
-                <AnimatedBanner text={"Offer added successfully!"} onAnimationEnd={() => setOfferAdded(false)}
-                                delay={3000} color={"bg-gray-200"} z={"z-10"}/>}
-            {offerUpdated &&
-                <AnimatedBanner text={"Offer updated successfully!"} onAnimationEnd={() => setOfferUpdated(false)}
-                                delay={3000} color={"bg-gray-200"} z={"z-10"}/>}
+            {(offerAdded || offerUpdated || offerDeleted) &&
+            <AnimatedBanner text={`Offer ${offerAdded ? "added" : offerUpdated ? "updated" : "deleted"} successfully!`}
+            onAnimationEnd={offerAdded ? () => setOfferAdded(false) : offerUpdated ? () => setOfferUpdated(false) : () => setOfferDeleted(false)}
+            delay={3000} color="bg-gray-200" z="z-10"/>}
         </>
     )
 }

@@ -39,8 +39,34 @@ export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
     }
 }
 
+export const deleteOffer = async (id: number | null): Promise<void> => {
+    try {
+        await api.delete(`api/offer/delete/${id}`)
+    } catch (error) {
+        handleError(error);
+    }
+};
+
 //---Functionality---
 
 export const followAndCheck = async (id: number | null, follow: boolean): Promise<AxiosResponse> => {
     return await api.patch(`api/offer/followAndCheck/${id}`, { value: follow }); //manually handling errors in main function
+};
+
+export const fetchStats = async (id: number | null): Promise<AxiosResponse> => {
+  try {
+      return await api.get(`api/offer/fetchStats/${id}`);
+  } catch (error) {
+      handleError(error);
+      return Promise.reject(error);
+  }
+};
+
+export const fetchAllFollowed = async (): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/offer/fetchAllFollowed');
+    } catch (error) {
+        handleError(error);
+        return Promise.reject();
+    }
 };

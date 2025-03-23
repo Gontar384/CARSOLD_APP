@@ -18,7 +18,7 @@ const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick, type }) 
     };
 
     return (
-        <button className="p-2 m:p-3 text-lg m:text-xl border-[3px] border-gray-300 rounded-lg bg-white relative"
+        <button className="p-2 m:p-3 text-lg m:text-xl border-[3px] text-nowrap border-gray-300 rounded-lg bg-white relative"
                 onMouseEnter={!isMobile ? () => setHovered(true) : undefined}
                 onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
                 onTouchStart={isMobile ? handleTouchButton : undefined}

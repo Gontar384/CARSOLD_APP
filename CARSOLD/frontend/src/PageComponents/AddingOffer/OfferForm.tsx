@@ -20,11 +20,13 @@ import DescriptionInput from "./Atomic/DescriptionInput/DescriptionInput.tsx";
 import ContactDetails from "./Atomic/ContactDetails/ContactDetails.tsx";
 import SubmitOfferButton from "./Atomic/Button/SubmitOfferButton.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
-import {addOffer, updateOffer} from "../../ApiCalls/Services/OfferService.ts";
+import {addOffer, deleteOffer, updateOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {AxiosError} from "axios";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import AddingOfferLoader from "../../Additional/Loading/AddingOfferLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
+import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
+import {ForbiddenError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const OfferForm: React.FC = () => {
     document.title = "CARSOLD | Adding Offer";
@@ -166,7 +168,7 @@ const OfferForm: React.FC = () => {
     const [waitBanner, setWaitBanner] = useState<boolean>(false);
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
 
-    //if user redirects from /modifyingOffer/{id} to //addingOffer, it resets all states
+    //if user redirects from /modifyingOffer/{id} to /addingOffer, it resets all states
     useEffect(() => {
         if (location.pathname === '/addingOffer') {
             setId(null);
@@ -899,6 +901,7 @@ const OfferForm: React.FC = () => {
                 if (error.response.status === 422) {
                     window.scrollTo({ top: 0, behavior: "smooth" });
                     setInappropriateContentBanner(true);
+                    console.error("Provided details are inappropriate")
                 } else {
                     setWentWrongBanner(true);
                     console.error("Unexpected error during processing offer: ", error);
@@ -934,7 +937,11 @@ const OfferForm: React.FC = () => {
                     setInappropriateContentBanner(true);
                 } else if (error.response.status === 405) {
                     setWaitBanner(true);
-                } else if (error.response.status === 403) {
+                }  else if (error.response.status === 403) {
+                    console.error("User has no permission to update offer");
+                    navigate("/addingOffer");
+                } else if (error.response.status === 404) {
+                    console.error("Offer not found");
                     navigate("/addingOffer");
                 } else {
                     setWentWrongBanner(true);
@@ -947,22 +954,49 @@ const OfferForm: React.FC = () => {
         }
     };
 
+    const handleDeleteOffer = async () => {
+        if (isDisabled) return;
+        setIsDisabled(true);
+        setLoading(true);
+
+        try {
+            await deleteOffer(id);
+            sessionStorage.setItem("offerDeleted", "true");
+            navigate("/details/myOffers");
+        } catch (error: unknown) {
+            setWentWrongBanner(true);
+            if (error instanceof ForbiddenError) {
+                console.error("User has not permission to delete offer", error);
+            } else if (error instanceof NotFoundError) {
+                console.error("Offer not found", error);
+            } else {
+                console.error("Unexpected error during offer removal", error);
+            }
+        } finally {
+            setLoading(false);
+            setTimeout(() => setIsDisabled(false), 500);
+        }
+    };
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">
                 <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
-                    <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">Adding Offer</p>
-                    <div className="flex justify-center w-[90%] mb-20 m:mb-24 bg-white rounded-md border-2 border-gray-300">
+                    <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
+                        {id !== null && permission === true ? "Modifying offer" : "Adding offer"}
+                    </p>
+                    <div className="flex justify-center w-[90%] bg-white rounded-md border-2 border-gray-300">
                         <p className="w-full text-lg m:text-xl p-4 m:p-6">
                             We need some information about your car to interest possible customers!
-                            You must fill fields marked with <FontAwesomeIcon className="mb-[2px] text-xs m:text-sm" icon={faAsterisk}/> mark,
-                            but try to provide as many details as you can. Good luck!
+                            You must fill fields marked with <FontAwesomeIcon className="mb-0.5 mr-1 m:mr-1.5 text-xs m:text-sm" icon={faAsterisk}/>
+                            mark, but try to provide as many details as you can. Good luck!
                         </p>
                     </div>
-                    <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3">
+                    <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3 mt-20 m:mb-24">
                         <div className="flex justify-center m:block w-full mb-14 m:mb-16">
-                            <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}
+                            <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")}
+                                        required={true}
                                         error={error.title} message={message.title} maxLength={30} setToggled={handleSetToggled("title")}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">
@@ -1027,9 +1061,12 @@ const OfferForm: React.FC = () => {
                         <div className="flex justify-center m:block w-full mb-24 m:mb-28">
                             <ContactDetails/>
                         </div>
-                        <div className="flex justify-center m:block w-full mb-20 m:mb-24">
+                        <div className="flex flex-row flex-wrap justify-center m:justify-start w-[97%] m:w-full gap-3 m:gap-4 mb-20 m:mb-24">
                             <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer}
                                                type={id !== null && permission === true}/>
+                            {id !== null && permission === true &&
+                                <DeleteOfferButton onClick={handleDeleteOffer}/>
+                            }
                         </div>
                     </div>
                 </div>
@@ -1042,7 +1079,7 @@ const OfferForm: React.FC = () => {
                 {waitBanner && <AnimatedBanner text={"You need to wait a while before modifying offer again"} onAnimationEnd={() => setWaitBanner(false)}
                                                delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
-                                              delay={2000} color={"bg-coolYellow"} z={"z-10"}/>}
+                                              delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}
             </div>
         </LayOut>

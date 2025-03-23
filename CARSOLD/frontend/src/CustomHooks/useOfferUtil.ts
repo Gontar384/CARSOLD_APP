@@ -1,4 +1,11 @@
-import {fetchAllUserOffers, fetchOffer, fetchOfferWithUser, followAndCheck} from "../ApiCalls/Services/OfferService.ts";
+import {
+    fetchAllFollowed,
+    fetchAllUserOffers,
+    fetchOffer,
+    fetchOfferWithUser,
+    fetchStats,
+    followAndCheck
+} from "../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../ApiCalls/Errors/CustomErrors.ts";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -73,7 +80,9 @@ export const useOfferUtil = () => {
         } catch (error: unknown) {
             setFollowed(false);
             if (error instanceof AxiosError && error.response) {
-                if (error.response.status === 405) {
+                if (error.response.status === 404) {
+                    console.log("Offer not found");
+                } else if (error.response.status === 405) {
                     console.error("User cannot follow his own offer");
                 } else {
                     console.error("Unexpected error occurred during checking if following", error);
@@ -82,6 +91,31 @@ export const useOfferUtil = () => {
         }
     };
 
-    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, offerFetched, handleFollowAndCheck, followed}
+    const handleFetchStats = async (id: number | null) => {
+      try {
+          const response = await fetchStats(id);
+          if (response.data) return response.data;
+      } catch (error: unknown) {
+          if (error instanceof NotFoundError) {
+              console.error("Offer not found", error);
+          } else {
+              console.error("Unexpected error during offer stats fetching", error)
+          }
+      }
+    };
+
+    const handleFetchAllFollowed = async () => {
+        try {
+            const response = await fetchAllFollowed();
+            if (response.data) return response.data;
+        } catch (error) {
+            console.error("Unexpected error fetching all followed offers: ", error)
+        } finally {
+            setOfferFetched(true);
+        }
+    };
+
+    return {handleFetchOffer, handleFetchOfferWithUser, handleFetchAllUserOffers, offerFetched,
+        handleFollowAndCheck, followed, handleFetchStats, handleFetchAllFollowed}
 }
 

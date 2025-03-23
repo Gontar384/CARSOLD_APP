@@ -13,7 +13,7 @@ const Contact: React.FC<ContactProps> = ({email}) => {
     const {isMobile} = useUtil();
 
     return (
-        <div className="flex flex-col mt-8 m:mt-10">
+        <div className="flex flex-col mt-10 m:mt-12">
             <p>We will be glad, if you report any issues at: </p>
             <div className="flex flex-row items-center justify-center gap-2 m:gap-3 mt-1 m:mt-[6px]">
                 <p className="font-bold">{email}</p>
