@@ -185,8 +185,8 @@ const OfferDisplay: React.FC = () => {
                                 onTouchStart={isMobile ? handleStart : undefined}
                                 onTouchEnd={isMobile ? handleEnd : undefined}
                                 onClick={() => handleFollow(id, true)}>
-                                <FontAwesomeIcon icon={faHeart}
-                                                 className={`text-3xl m:text-4xl ${followed ? "text-coolRed" : "text-gray-800"} ${buttonColor && "brightness-[80%]"}`}/>
+                                <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl transition-colors duration-300
+                                                 ${followed ? "text-coolRed" : "text-gray-800"} ${buttonColor && "brightness-[80%]"}`}/>
                             </button>}
                     </div>
                     <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">

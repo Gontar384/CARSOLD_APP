@@ -4,6 +4,8 @@ import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Controller.OfferController.OfferManagementController;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferDto;
+import org.gontar.carsold.Domain.Model.OfferWithUserDto;
+import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -102,6 +104,32 @@ class OfferManagementControllerTest {
                             request.setMethod("PUT");
                             return request;
                         }))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void fetchAllUserOffers() throws Exception {
+        List<PartialOfferDto> partialOfferDtos = List.of(new PartialOfferDto(), new PartialOfferDto());
+        when(offerManagementService.fetchAllUserOffers()).thenReturn(partialOfferDtos);
+
+        mockMvc.perform(get("/api/offer/fetchAllUser"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$" ).isArray())
+                .andExpect(jsonPath("$.length()" ).value(2));
+    }
+
+    @Test
+    void fetchOfferWithUser() throws Exception {
+        OfferWithUserDto offerWithUserDto = new OfferWithUserDto();
+        when(offerManagementService.fetchOfferWithUser(1L)).thenReturn(offerWithUserDto);
+
+        mockMvc.perform(get("/api/offer/fetchWithUser/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteOffer() throws Exception {
+        mockMvc.perform(delete("/api/offer/delete/1"))
                 .andExpect(status().isOk());
     }
 }

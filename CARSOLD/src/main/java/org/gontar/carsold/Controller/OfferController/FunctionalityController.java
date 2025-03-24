@@ -3,7 +3,7 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Domain.Model.OfferStatsDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Domain.Model.SingleBooleanDto;
-import org.gontar.carsold.Service.OfferService.OfferFunctionalityService.OfferFunctionalityService;
+import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,20 +11,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/offer")
-public class OfferFunctionalityController {
+public class FunctionalityController {
 
-    private final OfferFunctionalityService service;
+    private final FunctionalityService service;
 
-    public OfferFunctionalityController(OfferFunctionalityService service) {
+    public FunctionalityController(FunctionalityService service) {
         this.service = service;
-    }
-
-    @PatchMapping("/followAndCheck/{id}")
-    public ResponseEntity<?> followAndCheck(@PathVariable Long id, @RequestBody SingleBooleanDto singleBooleanDto) {
-        Boolean follow = singleBooleanDto.getValue();
-        boolean result = service.followAndCheck(id, follow);
-        if (result) return ResponseEntity.ok().build();
-        else return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/fetchStats/{id}")
@@ -37,5 +29,13 @@ public class OfferFunctionalityController {
     public ResponseEntity<List<PartialOfferDto>> fetchAllFollowed() {
         List<PartialOfferDto> partialOfferDtos = service.fetchAllFollowed();
         return ResponseEntity.ok(partialOfferDtos);
+    }
+
+    @PatchMapping("/followAndCheck/{id}")
+    public ResponseEntity<?> followAndCheck(@PathVariable Long id, @RequestBody SingleBooleanDto singleBooleanDto) {
+        Boolean follow = singleBooleanDto.getValue();
+        boolean result = service.followAndCheck(id, follow);
+        if (result) return ResponseEntity.ok().build();
+        else return ResponseEntity.noContent().build();
     }
 }

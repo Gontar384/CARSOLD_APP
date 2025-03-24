@@ -51,6 +51,117 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
+    public Offer fetchOffer(Long id) {
+        Objects.requireNonNull(id, "Id cannot be null");
+        return repository.findById(id)
+                .orElseThrow(() -> new OfferNotFound("Offer not found"));
+    }
+
+    @Override
+    public List<PartialOfferDto> fetchAllUserOffers() {
+        User user = userDetailsService.loadUser();
+        List<Offer> offers = repository.findAllByUserId(user.getId());
+        List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
+        for (Offer offer : offers) {
+            PartialOfferDto partialOfferDto = new PartialOfferDto();
+            partialOfferDto.setId(offer.getId());
+            partialOfferDto.setTitle(offer.getTitle());
+            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+            }
+            partialOfferDto.setPrice(offer.getPrice());
+            partialOfferDto.setCurrency(offer.getCurrency());
+            partialOfferDto.setPower(offer.getPower());
+            partialOfferDto.setCapacity(offer.getCapacity());
+            partialOfferDto.setTransmission(offer.getTransmission());
+            partialOfferDto.setFuel(offer.getFuel());
+            partialOfferDto.setMileage(offer.getMileage());
+            partialOfferDto.setYear(offer.getYear());
+            partialOfferDtos.add(partialOfferDto);
+        }
+        return partialOfferDtos;
+    }
+
+    @Override
+    public OfferWithUserDto fetchOfferWithUser(Long id) {
+        Offer offer = fetchOffer(id);
+        User user = offer.getUser();
+        OfferWithUserDto offerWithUserDto = new OfferWithUserDto();
+        offerWithUserDto.setId(id);
+        offerWithUserDto.setTitle(offer.getTitle());
+        offerWithUserDto.setBrand(offer.getBrand());
+        offerWithUserDto.setModel(offer.getModel());
+        offerWithUserDto.setBodyType(offer.getBodyType());
+        offerWithUserDto.setYear(offer.getYear());
+        offerWithUserDto.setMileage(offer.getMileage());
+        offerWithUserDto.setFuel(offer.getFuel());
+        offerWithUserDto.setCapacity(offer.getCapacity());
+        offerWithUserDto.setPower(offer.getPower());
+        offerWithUserDto.setDrive(offer.getDrive());
+        offerWithUserDto.setTransmission(offer.getTransmission());
+        offerWithUserDto.setColor(offer.getColor());
+        offerWithUserDto.setCondition(offer.getCondition());
+        offerWithUserDto.setSeats(offer.getSeats());
+        offerWithUserDto.setDoors(offer.getDoors());
+        offerWithUserDto.setSteeringWheel(offer.getSteeringWheel());
+        offerWithUserDto.setCountry(offer.getCountry());
+        offerWithUserDto.setVin(offer.getVin());
+        offerWithUserDto.setPlate(offer.getPlate());
+        offerWithUserDto.setFirstRegistration(offer.getFirstRegistration());
+        offerWithUserDto.setDescription(offer.getDescription());
+        offerWithUserDto.setPrice(offer.getPrice());
+        offerWithUserDto.setCurrency(offer.getCurrency());
+        offerWithUserDto.setPhotos(offer.getPhotosString());
+        offerWithUserDto.setCreatedOn(offer.getCreatedOn());
+        offerWithUserDto.setUsername(user.getUsername());
+        offerWithUserDto.setProfilePic(user.getProfilePic());
+        offerWithUserDto.setPermission(fetchPermission(offer));
+        if (user.getContactPublic()) {
+            offerWithUserDto.setName(user.getName());
+            offerWithUserDto.setPhone(user.getPhone());
+            offerWithUserDto.setCity(user.getCity());
+            if (user.getCity() != null) {
+                String cords = fetchCordsFromApi(user.getCity());
+                offerWithUserDto.setCoordinates(cords);
+            }
+        }
+        offer.setViews(offer.getViews() + 1);
+        repository.save(offer);
+        return offerWithUserDto;
+    }
+
+    private String fetchCordsFromApi(String input) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://places.googleapis.com/v1/places:searchText";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-Goog-Api-Key", placesApiKey);
+            headers.set("X-Goog-FieldMask", "places.location");
+
+            String requestBody = String.format("{\"textQuery\": \"%s\"}", input);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            String responseBody = response.getBody();
+            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(responseBody));
+
+            if (!jsonResponse.has("places") || jsonResponse.getJSONArray("places").isEmpty()) return null;
+            JSONObject firstPlace = jsonResponse.getJSONArray("places").getJSONObject(0);
+            if (!firstPlace.has("location")) return null;
+
+            JSONObject location = firstPlace.getJSONObject("location");
+            double latitude = location.getDouble("latitude");
+            double longitude = location.getDouble("longitude");
+            return latitude + "," + longitude;
+        } catch (Exception e) {
+            log.error("Error fetching map URL with Places API: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
     public Offer createOffer(Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(offer, "Offer cannot be null");
         if (isContentToxic(offer.getTitle(), offer.getDescription())) {
@@ -181,24 +292,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
-    public Offer fetchOffer(Long id) {
-        Objects.requireNonNull(id, "Id cannot be null");
-        return repository.findById(id)
-                .orElseThrow(() -> new OfferNotFound("Offer not found"));
-    }
-
-    @Override
-    public boolean fetchPermission(Offer offer) {
-        Objects.requireNonNull(offer, "Offer cannot be null");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-            return false;
-        }
-        User user = userDetailsService.loadUser();
-        return offer.getUser().getId().equals(user.getId());
-    }
-
-    @Override
     public Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(id, "Id cannot be null");
         Objects.requireNonNull(offer, "Offer cannot be null");
@@ -252,79 +345,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
-    public List<PartialOfferDto> fetchAllUserOffers() {
-        User user = userDetailsService.loadUser();
-        List<Offer> offers = repository.findAllByUserId(user.getId());
-        List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
-        for (Offer offer : offers) {
-            PartialOfferDto partialOfferDto = new PartialOfferDto();
-            partialOfferDto.setId(offer.getId());
-            partialOfferDto.setTitle(offer.getTitle());
-            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
-            }
-            partialOfferDto.setPrice(offer.getPrice());
-            partialOfferDto.setCurrency(offer.getCurrency());
-            partialOfferDto.setPower(offer.getPower());
-            partialOfferDto.setCapacity(offer.getCapacity());
-            partialOfferDto.setTransmission(offer.getTransmission());
-            partialOfferDto.setFuel(offer.getFuel());
-            partialOfferDto.setMileage(offer.getMileage());
-            partialOfferDto.setYear(offer.getYear());
-            partialOfferDtos.add(partialOfferDto);
-        }
-        return partialOfferDtos;
-    }
-
-    @Override
-    public OfferWithUserDto fetchOfferWithUser(Long id) {
-        Offer offer = fetchOffer(id);
-        User user = offer.getUser();
-        OfferWithUserDto offerWithUserDto = new OfferWithUserDto();
-        offerWithUserDto.setId(id);
-        offerWithUserDto.setTitle(offer.getTitle());
-        offerWithUserDto.setBrand(offer.getBrand());
-        offerWithUserDto.setModel(offer.getModel());
-        offerWithUserDto.setBodyType(offer.getBodyType());
-        offerWithUserDto.setYear(offer.getYear());
-        offerWithUserDto.setMileage(offer.getMileage());
-        offerWithUserDto.setFuel(offer.getFuel());
-        offerWithUserDto.setCapacity(offer.getCapacity());
-        offerWithUserDto.setPower(offer.getPower());
-        offerWithUserDto.setDrive(offer.getDrive());
-        offerWithUserDto.setTransmission(offer.getTransmission());
-        offerWithUserDto.setColor(offer.getColor());
-        offerWithUserDto.setCondition(offer.getCondition());
-        offerWithUserDto.setSeats(offer.getSeats());
-        offerWithUserDto.setDoors(offer.getDoors());
-        offerWithUserDto.setSteeringWheel(offer.getSteeringWheel());
-        offerWithUserDto.setCountry(offer.getCountry());
-        offerWithUserDto.setVin(offer.getVin());
-        offerWithUserDto.setPlate(offer.getPlate());
-        offerWithUserDto.setFirstRegistration(offer.getFirstRegistration());
-        offerWithUserDto.setDescription(offer.getDescription());
-        offerWithUserDto.setPrice(offer.getPrice());
-        offerWithUserDto.setCurrency(offer.getCurrency());
-        offerWithUserDto.setPhotos(offer.getPhotosString());
-        offerWithUserDto.setCreatedOn(offer.getCreatedOn());
-        offerWithUserDto.setUsername(user.getUsername());
-        offerWithUserDto.setProfilePic(user.getProfilePic());
-        offerWithUserDto.setPermission(fetchPermission(offer));
-        if (user.getContactPublic()) {
-            offerWithUserDto.setName(user.getName());
-            offerWithUserDto.setPhone(user.getPhone());
-            offerWithUserDto.setCity(user.getCity());
-            if (user.getCity() != null) {
-                String mapUrl = fetchMapUrlFromApi(user.getCity());
-                offerWithUserDto.setCoordinates(mapUrl);
-            }
-        }
-        offer.setViews(offer.getViews() + 1);
-        repository.save(offer);
-        return offerWithUserDto;
-    }
-
-    @Override
     public void deleteOffer(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
         Offer existingOffer = repository.findById(id)
@@ -345,34 +365,14 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         repository.delete(existingOffer);
     }
 
-    private String fetchMapUrlFromApi(String input) {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "https://places.googleapis.com/v1/places:searchText";
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-Goog-Api-Key", placesApiKey);
-            headers.set("X-Goog-FieldMask", "places.location");
-
-            String requestBody = String.format("{\"textQuery\": \"%s\"}", input);
-
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-            String responseBody = response.getBody();
-            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(responseBody));
-
-            if (!jsonResponse.has("places") || jsonResponse.getJSONArray("places").isEmpty()) return null;
-            JSONObject firstPlace = jsonResponse.getJSONArray("places").getJSONObject(0);
-            if (!firstPlace.has("location")) return null;
-
-            JSONObject location = firstPlace.getJSONObject("location");
-            double latitude = location.getDouble("latitude");
-            double longitude = location.getDouble("longitude");
-            return latitude + "," + longitude;
-        } catch (Exception e) {
-            log.error("Error fetching map URL with Places API: {}", e.getMessage());
-            return null;
+    @Override
+    public boolean fetchPermission(Offer offer) {
+        Objects.requireNonNull(offer, "Offer cannot be null");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return false;
         }
+        User user = userDetailsService.loadUser();
+        return offer.getUser().getId().equals(user.getId());
     }
 }

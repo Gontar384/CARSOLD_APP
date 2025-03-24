@@ -28,6 +28,29 @@ public class OfferManagementController {
         this.mapper = mapper;
     }
 
+    @GetMapping("/fetch/{id}")
+    public ResponseEntity<OfferDto> fetchOffer(@PathVariable Long id) {
+        Offer offer = service.fetchOffer(id);
+        boolean permission = service.fetchPermission(offer);
+        OfferDto offerDto = mapper.mapToDto(offer);
+
+        return ResponseEntity.ok()
+                .header("user-permission", permission ? "true" : "false")
+                .body(offerDto);
+    }
+
+    @GetMapping("/fetchAllUser")
+    public ResponseEntity<List<PartialOfferDto>> fetchAllUserOffers() {
+        List<PartialOfferDto> partialOfferDtos = service.fetchAllUserOffers();
+        return ResponseEntity.ok(partialOfferDtos);
+    }
+
+    @GetMapping("/fetchWithUser/{id}")
+    public ResponseEntity<OfferWithUserDto> fetchOfferWithUser(@PathVariable Long id) {
+        OfferWithUserDto offerWithUserDto = service.fetchOfferWithUser(id);
+        return ResponseEntity.ok(offerWithUserDto);
+    }
+
     @PostMapping(path = "/add", consumes = "multipart/form-data")
     public ResponseEntity<OfferDto> createOffer(@RequestPart("offer") OfferDto offerDto,
                                                 @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
@@ -44,23 +67,6 @@ public class OfferManagementController {
         return ResponseEntity.created(location).body(createdOfferDto);
     }
 
-    @GetMapping("/fetch/{id}")
-    public ResponseEntity<OfferDto> fetchOffer(@PathVariable Long id) {
-        Offer offer = service.fetchOffer(id);
-        boolean permission = service.fetchPermission(offer);
-        OfferDto offerDto = mapper.mapToDto(offer);
-
-        return ResponseEntity.ok()
-                .header("user-permission", permission ? "true" : "false")
-                .body(offerDto);
-    }
-
-    @GetMapping("/fetchWithUser/{id}")
-    public ResponseEntity<OfferWithUserDto> fetchOfferWithUser(@PathVariable Long id) {
-        OfferWithUserDto offerWithUserDto = service.fetchOfferWithUser(id);
-        return ResponseEntity.ok(offerWithUserDto);
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<OfferDto> updateOffer(@PathVariable Long id, @RequestPart("offer") OfferDto offerDto,
                                                 @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
@@ -69,12 +75,6 @@ public class OfferManagementController {
         OfferDto updatedOfferDto = mapper.mapToDto(updatedOffer);
 
         return ResponseEntity.ok(updatedOfferDto);
-    }
-
-    @GetMapping("/fetchAllUser")
-    public ResponseEntity<List<PartialOfferDto>> fetchAllUserOffers() {
-        List<PartialOfferDto> partialOfferDtos = service.fetchAllUserOffers();
-        return ResponseEntity.ok(partialOfferDtos);
     }
 
     @DeleteMapping("/delete/{id}")

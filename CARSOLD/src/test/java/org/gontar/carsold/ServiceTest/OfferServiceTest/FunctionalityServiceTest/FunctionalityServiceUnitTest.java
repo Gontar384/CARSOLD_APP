@@ -1,0 +1,156 @@
+package org.gontar.carsold.ServiceTest.OfferServiceTest.FunctionalityServiceTest;
+
+import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Domain.Model.OfferStatsDto;
+import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Exception.CustomException.InappropriateActionException;
+import org.gontar.carsold.Exception.CustomException.NoPermissionException;
+import org.gontar.carsold.Exception.CustomException.OfferNotFound;
+import org.gontar.carsold.Repository.OfferRepository;
+import org.gontar.carsold.Repository.UserRepository;
+import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityServiceImpl;
+import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class FunctionalityServiceUnitTest {
+
+    @InjectMocks
+    private FunctionalityServiceImpl functionalityService;
+
+    @Mock
+    private OfferRepository offerRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private OfferManagementService offerManagementService;
+
+    @Mock
+    private MyUserDetailsService userDetailsService;
+
+    @Test
+    void fetchStats_shouldReturnOfferStats() {
+        Offer offer = new Offer();
+        offer.setId(1L);
+        offer.setViews(100);
+        offer.setFollows(5);
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(offerManagementService.fetchPermission(offer)).thenReturn(true);
+
+        OfferStatsDto stats = functionalityService.fetchStats(1L);
+
+        assertNotNull(stats);
+        assertEquals(100, stats.getViews());
+        assertEquals(5, stats.getFollows());
+    }
+
+    @Test
+    void fetchStats_shouldThrowExceptionWhenOfferNotFound() {
+        when(offerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(OfferNotFound.class, () -> functionalityService.fetchStats(1L));
+    }
+
+    @Test
+    void fetchStats_shouldThrowExceptionWhenNoPermission() {
+        Offer offer = new Offer();
+        offer.setId(1L);
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(offerManagementService.fetchPermission(offer)).thenReturn(false);
+
+        assertThrows(NoPermissionException.class, () -> functionalityService.fetchStats(1L));
+    }
+
+    @Test
+    void fetchAllFollowed_shouldReturnFollowedOffers() {
+        User user = new User();
+        user.setFollowedOffers(List.of("1", "2"));
+
+        Offer offer1 = new Offer();
+        offer1.setId(1L);
+        offer1.setTitle("Car 1");
+
+        Offer offer2 = new Offer();
+        offer2.setId(2L);
+        offer2.setTitle("Car 2");
+
+        when(userDetailsService.loadUser()).thenReturn(user);
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer1));
+        when(offerRepository.findById(2L)).thenReturn(Optional.of(offer2));
+
+        List<PartialOfferDto> followedOffers = functionalityService.fetchAllFollowed();
+
+        assertNotNull(followedOffers);
+        assertEquals(2, followedOffers.size());
+        assertEquals("Car 1", followedOffers.get(0).getTitle());
+        assertEquals("Car 2", followedOffers.get(1).getTitle());
+    }
+
+    @Test
+    void followAndCheck_shouldFollowOffer() {
+        User user = new User();
+        user.setOffers(new ArrayList<>());
+        user.setFollowedOffers(new ArrayList<>());
+
+        Offer offer = new Offer();
+        offer.setId(1L);
+        offer.setFollows(0);
+
+        when(userDetailsService.loadUser()).thenReturn(user);
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+
+        boolean isFollowing = functionalityService.followAndCheck(1L, true);
+
+        assertTrue(isFollowing);
+        assertEquals(1, offer.getFollows());
+    }
+
+    @Test
+    void followAndCheck_shouldUnfollowOffer() {
+        User user = new User();
+        user.setFollowedOffers(new ArrayList<>(List.of("1")));
+        user.setOffers(new ArrayList<>());
+
+        Offer offer = new Offer();
+        offer.setId(1L);
+        offer.setFollows(1);
+
+        when(userDetailsService.loadUser()).thenReturn(user);
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+
+        boolean isFollowing = functionalityService.followAndCheck(1L, true);
+
+        assertFalse(isFollowing);
+        assertEquals(0, offer.getFollows());
+    }
+
+    @Test
+    void followAndCheck_shouldThrowExceptionIfUserOwnsOffer() {
+        User user = new User();
+        Offer offer = new Offer();
+        offer.setId(1L);
+        user.setOffers(List.of(offer));
+
+        when(userDetailsService.loadUser()).thenReturn(user);
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+
+        assertThrows(InappropriateActionException.class, () -> functionalityService.followAndCheck(1L, true));
+    }
+}

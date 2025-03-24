@@ -3,8 +3,6 @@ import React, {createContext, useContext} from "react";
 interface ItemsContextType {
     messages: number,
     setMessages: React.Dispatch<React.SetStateAction<number>>,
-    followed: number,
-    setFollowed: React.Dispatch<React.SetStateAction<number>>
     profilePicChange: boolean;
     setProfilePicChange: React.Dispatch<React.SetStateAction<boolean>>;
 }

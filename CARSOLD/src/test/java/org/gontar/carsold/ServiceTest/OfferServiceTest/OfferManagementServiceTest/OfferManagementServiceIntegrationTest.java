@@ -1,4 +1,4 @@
-package org.gontar.carsold.ServiceTest.OfferServiceTest;
+package org.gontar.carsold.ServiceTest.OfferServiceTest.OfferManagementServiceTest;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
+import org.gontar.carsold.Domain.Model.OfferWithUserDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Repository.OfferRepository;
@@ -179,7 +180,7 @@ public class OfferManagementServiceIntegrationTest {
 
     @Test
     public void updateOffer_shouldThrowAccessDeniedException_whenOfferWasJustUpdated() {
-        User testUser = createAndAuthenticateUser("testUser3", "testUser3@gmail.com");
+        User testUser = createAndAuthenticateUser("testUser5", "testUser5@gmail.com");
         Offer existingOffer = createOffer(testUser, 2);
 
         Offer updatedOffer = new Offer();
@@ -190,5 +191,30 @@ public class OfferManagementServiceIntegrationTest {
                 () -> offerManagementService.updateOffer(existingOffer.getId(), updatedOffer, Collections.emptyList()));
 
         assertEquals("User can update offer only once every 5 minutes", exception.getMessage());
+    }
+
+    @Test
+    public void fetchOfferWithUser_shouldReturnOffer() {
+        User testUser = createAndAuthenticateUser("testUser6", "testUser6@gmail.com");
+        testUser.setContactPublic(true);
+        testUser.setCity("Warsaw, Poland");
+        Offer existingOffer = createOffer(testUser, 10);
+
+        OfferWithUserDto result = offerManagementService.fetchOfferWithUser(existingOffer.getId());
+
+        assertNotNull(result);
+        assertEquals("testUser6", result.getUsername());
+        assertEquals("Sell Audi Perfect", result.getTitle());
+        assertNotNull(result.getCoordinates());
+    }
+
+    @Test
+    public void deleteOffer_shouldDeleteOffer() {
+        User testUser = createAndAuthenticateUser("testUser7", "testUser7@gmail.com");
+        Offer existingOffer = createOffer(testUser, 10);
+
+        offerManagementService.deleteOffer(existingOffer.getId());
+
+        assertFalse(offerRepository.findById(existingOffer.getId()).isPresent());
     }
 }

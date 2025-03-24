@@ -11,7 +11,6 @@ interface DetailsProps {
 }
 
 const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic}) => {
-
     const {messages} = useItems();
     const {bigWidth} = useUtil();
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error

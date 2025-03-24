@@ -17,13 +17,12 @@ interface MidBarProps {
 }
 
 const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) => {
-
     const [midBarActive, setMidBarActive] = useState<boolean>(false);
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
     const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
-    const {profilePicChange, messages, followed} = useItems();
+    const {profilePicChange, messages} = useItems();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
     useEffect(() => {
@@ -92,7 +91,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                 <div className="flex flex-col items-start w-full">
                     <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"} />
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
-                    <BarButton label="Followed" icon={faHeart} path={"/details/followed"} count={followed}/>
+                    <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
                     <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={messages}/>
                     <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&

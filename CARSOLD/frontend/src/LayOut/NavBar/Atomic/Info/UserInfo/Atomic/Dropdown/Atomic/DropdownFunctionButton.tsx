@@ -8,7 +8,6 @@ interface DropdownFunctionButtonProps {
 }
 
 const DropdownFunctionButton: React.FC<DropdownFunctionButtonProps> = ({ label, onClick }) => {
-
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
 

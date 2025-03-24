@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service.OfferService.OfferFunctionalityService;
+package org.gontar.carsold.Service.OfferService.FunctionalityService;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
@@ -17,43 +17,18 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class OfferFunctionalityServiceImpl implements OfferFunctionalityService {
+public class FunctionalityServiceImpl implements FunctionalityService {
 
     private final UserRepository userRepository;
     private final OfferRepository offerRepository;
     private final MyUserDetailsService userDetailsService;
     private final OfferManagementService offerManagementService;
 
-    public OfferFunctionalityServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, OfferManagementService offerManagementService) {
+    public FunctionalityServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, OfferManagementService offerManagementService) {
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.userDetailsService = userDetailsService;
         this.offerManagementService = offerManagementService;
-    }
-
-    @Override
-    public boolean followAndCheck(Long id, Boolean follow) {
-        Objects.requireNonNull(id, "Id cannot be null");
-        User user = userDetailsService.loadUser();
-        Offer offer = offerRepository.findById(id)
-                .orElseThrow(() -> new OfferNotFound("Offer not found"));
-        if (user.getOffers().contains(offer)) {
-            throw new InappropriateActionException("User cannot follow his own offer");
-        }
-        if (follow) {
-            List<String> followedOffers = user.getFollowedOffers();
-            if (!followedOffers.contains(id.toString())) {
-                followedOffers.add(id.toString());
-                offer.setFollows(offer.getFollows() + 1);
-            } else {
-                followedOffers.remove(id.toString());
-                offer.setFollows(offer.getFollows() - 1);
-            }
-            offerRepository.save(offer);
-            user.setFollowedOffers(followedOffers);
-            userRepository.save(user);
-        }
-        return user.getFollowedOffers().contains(id.toString());
     }
 
     @Override
@@ -95,5 +70,30 @@ public class OfferFunctionalityServiceImpl implements OfferFunctionalityService 
             partialOfferDtos.add(partialOfferDto);
         }
         return partialOfferDtos;
+    }
+
+    @Override
+    public boolean followAndCheck(Long id, Boolean follow) {
+        Objects.requireNonNull(id, "Id cannot be null");
+        User user = userDetailsService.loadUser();
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFound("Offer not found"));
+        if (user.getOffers().contains(offer)) {
+            throw new InappropriateActionException("User cannot follow his own offer");
+        }
+        if (follow) {
+            List<String> followedOffers = user.getFollowedOffers();
+            if (!followedOffers.contains(id.toString())) {
+                followedOffers.add(id.toString());
+                offer.setFollows(offer.getFollows() + 1);
+            } else {
+                followedOffers.remove(id.toString());
+                offer.setFollows(offer.getFollows() - 1);
+            }
+            offerRepository.save(offer);
+            user.setFollowedOffers(followedOffers);
+            userRepository.save(user);
+        }
+        return user.getFollowedOffers().contains(id.toString());
     }
 }

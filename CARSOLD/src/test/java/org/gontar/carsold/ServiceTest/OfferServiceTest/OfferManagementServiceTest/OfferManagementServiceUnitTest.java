@@ -1,8 +1,9 @@
-package org.gontar.carsold.ServiceTest.OfferServiceTest;
+package org.gontar.carsold.ServiceTest.OfferServiceTest.OfferManagementServiceTest;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
+import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -101,5 +103,31 @@ public class OfferManagementServiceUnitTest {
 
         assertFalse(hasPermission);
         verify(userDetailsService).loadUser();
+    }
+
+    @Test
+    public void fetchAllUserOffers_shouldReturnAllOffers_whenUserHasPermission() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        when(userDetailsService.loadUser()).thenReturn(mockUser);
+
+        Offer offer1 = new Offer();
+        offer1.setId(101L);
+        offer1.setTitle("Car A");
+        offer1.setUser(mockUser);
+
+        Offer offer2 = new Offer();
+        offer2.setId(102L);
+        offer2.setTitle("Car B");
+        offer2.setUser(mockUser);
+
+        when(repository.findAllByUserId(mockUser.getId())).thenReturn(List.of(offer1, offer2));
+
+        List<PartialOfferDto> result = offerManagementService.fetchAllUserOffers();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        verify(repository).findAllByUserId(mockUser.getId());
     }
 }

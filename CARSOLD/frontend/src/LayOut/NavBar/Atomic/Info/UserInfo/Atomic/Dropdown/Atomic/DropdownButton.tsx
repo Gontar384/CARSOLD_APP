@@ -25,11 +25,12 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ label, path, count }) =
                 onMouseEnter={!isMobile ? handleStart : undefined}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
             <span className="text-xl">{label}</span>
-            {count && count > 0 ? <div className="relative ml-1">
-                <FontAwesomeIcon icon={faCircle} style={{color: label === "Followed" ? "#370eeb" : "#ff0000"}}
-                                 className="text-[22px]"/>
-                <p className="inset-0.5 m-auto text-center text-sm text-white absolute">
-                    {count}</p>
+            {count && count > 0 ? <div className="relative ml-1 flex">
+                <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
+                                 className={`${count > 99 ? "text-[28px]" : "text-[24px]"}`}/>
+                <p className={`${count > 99 ? "top-1 right-0.5" : "inset-0.5"} m-auto text-center text-sm text-white absolute`}>
+                    {count}
+                </p>
             </div> : null}
         </Link>
     )

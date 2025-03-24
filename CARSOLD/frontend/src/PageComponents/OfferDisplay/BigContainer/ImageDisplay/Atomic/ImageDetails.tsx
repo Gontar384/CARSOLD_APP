@@ -111,7 +111,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                          onTouchStart={isMobile ? handleTouchStart : undefined}
                          onTouchMove={isMobile ? handleTouchMove : undefined}
                          onTouchEnd={isMobile ? handleTouchEnd : undefined}
-                         ref={imageRef} onClick={!fullScreen ? () => setFullScreen(true) : undefined}>
+                         ref={imageRef}>
                         <AnimatePresence custom={direction} mode="popLayout">
                             <motion.img key={photoIndex} src={photos[photoIndex]} alt="Car Photo"
                                         className="w-full h-full object-cover rounded" onError={() => setError(true)}
@@ -138,13 +138,14 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                                 }
                                 {(photoHovered || isMobile) &&
                                     <>
+                                    {photos.length > 1 &&
                                         <div className="flex gap-1 m:gap-1.5 absolute bottom-3 m:bottom-4">
                                             {photos.map((_, index) => (
                                                 <div key={index} className={`w-1.5 h-1.5 m:w-2 m:h-2 border border-black border-opacity-70 rounded
                                                 ${photoIndex === index ? "bg-lowBlack" : "bg-gray-200"} transition-all duration-500`}>
                                                 </div>
                                             ))}
-                                        </div>
+                                        </div>}
                                         <button className="flex absolute text-gray-200 left-1 bottom-1 m:left-2 m:bottom-2 p-1 m:p-2"
                                                 onClick={() => setFullScreen(!fullScreen)}>
                                             <FontAwesomeIcon icon={!fullScreen ? faMagnifyingGlassPlus : faMagnifyingGlassMinus}

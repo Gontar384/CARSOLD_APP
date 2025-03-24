@@ -13,7 +13,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
 
-    const {followed, messages} = useItems();
+    const {messages} = useItems();
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
     const {handleLogout} = useAuth();
 
@@ -28,7 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
                 bg-lime shadow-bottom ${animation}`}
                      onTouchStart={isMobile ? handleDropdownInteraction : undefined}>
                     <DropdownButton label="MyOffers" path={"/details/myOffers"}/>
-                    <DropdownButton label="Followed" path={"/details/followed"} count={followed}/>
+                    <DropdownButton label="Followed" path={"/details/followed"}/>
                     <DropdownButton label="Messages" path={"/details/messages"} count={messages}/>
                     <DropdownButton label="Settings" path={"/details/settings"}/>
                     <DropdownFunctionButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode}/>

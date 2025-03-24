@@ -13,7 +13,6 @@ interface BarButtonProps {
 }
 
 const BarButton: React.FC<BarButtonProps> = ({label, icon, path, count}) => {
-
     const navigate = useNavigate();
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();
@@ -29,7 +28,7 @@ const BarButton: React.FC<BarButtonProps> = ({label, icon, path, count}) => {
             <div className="relative">
                 <FontAwesomeIcon icon={icon} className="text-2xl"/>
                 {count && count > 0 ? (
-                    <p className="absolute inset-0.5 text-center text-sm text-white">
+                    <p className="absolute inset-0.5 text-center text-xs text-white">
                         {count}
                     </p>
                 ) : null}

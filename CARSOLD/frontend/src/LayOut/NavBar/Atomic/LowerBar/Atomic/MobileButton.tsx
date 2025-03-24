@@ -12,7 +12,6 @@ interface MobileButtonProps {
 }
 
 const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}) => {
-
     const {isMobile} = useUtil();
     const {buttonColor, handleStart, handleEnd} = useButton();
 
@@ -25,7 +24,7 @@ const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}
                 onMouseLeave={!isMobile ? handleEnd : undefined}>
             <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-[28px]"/>
             {count && count > 0 ? (
-                <p className="text-xs top-3 text-white absolute">
+                <p className="text-xs top-2.5 text-white absolute">
                     {count}
                 </p>
             ) : null}
