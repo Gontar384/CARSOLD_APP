@@ -7,33 +7,34 @@ import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 import UserOffersLoader from "../../../../Additional/Loading/UserOffersLoader.tsx";
 
+export interface FetchedOffer {
+    id: number;
+    title: string;
+    photoUrl: string;
+    price: number;
+    currency: string;
+    power: number;
+    capacity: number;
+    transmission: string;
+    fuel: string;
+    mileage: number;
+    year: number;
+}
+export interface UpdatedOffer {
+    id: number;
+    title: string;
+    photoUrl: string;
+    price: string;
+    currency: string;
+    power: string;
+    capacity: string;
+    transmission: string;
+    fuel: string;
+    mileage: string;
+    year: string;
+}
+
 const MyOffers: React.FC = () => {
-    interface FetchedOffer {
-        id: number;
-        title: string;
-        photoUrl: string;
-        price: number;
-        currency: string;
-        power: number;
-        capacity: number;
-        transmission: string;
-        fuel: string;
-        mileage: number;
-        year: number;
-    }
-    interface UpdatedOffer {
-        id: number;
-        title: string;
-        photoUrl: string;
-        price: string;
-        currency: string;
-        power: string;
-        capacity: string;
-        transmission: string;
-        fuel: string;
-        mileage: string;
-        year: string;
-    }
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offerDeleted, setOfferDeleted] = useState<boolean>(false);

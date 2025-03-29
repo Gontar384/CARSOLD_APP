@@ -9,7 +9,7 @@ interface SelectInputProps {
     setValue: React.Dispatch<React.SetStateAction<string>>;
     disabled?: boolean;
     required?: boolean;
-    error: boolean;
+    error?: boolean;
     message?: string;
     setToggled?: React.Dispatch<React.SetStateAction<boolean>>;
 }
