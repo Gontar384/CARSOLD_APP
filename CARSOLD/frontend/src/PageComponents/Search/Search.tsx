@@ -2,9 +2,8 @@ import React from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import SearchFilters from "./SearchFilters/SearchFilters.tsx";
 
-const Home: React.FC = () => {
-
-    document.title = "CARSOLD | Home";
+const Search: React.FC = () => {
+    document.title = "CARSOLD | Search";
 
     return (
         <LayOut>
@@ -15,4 +14,4 @@ const Home: React.FC = () => {
     )
 }
 
-export default Home
+export default Search

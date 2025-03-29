@@ -11,7 +11,7 @@ interface TitleInputProps {
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     required?: boolean;
-    error: boolean;
+    error?: boolean;
     message?: string;
     maxLength?: number;
     firstOtherSymbol?: string;

@@ -12,7 +12,7 @@ import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
 import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery.tsx";
 import PasswordRecChange from "./PageComponents/PasswordRecoveryChange/PasswordRecChange.tsx";
 import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
-import Home from "./PageComponents/Home/Home.tsx";
+import Search from "./PageComponents/Search/Search.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
 import TokensManager from "./Config/TokensConfig/TokensManager.ts";
 import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
@@ -34,7 +34,7 @@ const App: React.FC = () => {
                             </Route>
 
                             <Route path="/termsOfUse" element={<TermsOfUse/>}/>
-                            <Route path="/home" element={<Home/>}/>
+                            <Route path="/search" element={<Search/>}/>
                             <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
 
                             <Route element={<PrivateRoutes/>}>
@@ -43,7 +43,7 @@ const App: React.FC = () => {
                                 <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
                             </Route>
 
-                            <Route path="*" element={<Navigate to="/home"/>}/>
+                            <Route path="*" element={<Navigate to="/search"/>}/>
                         </Routes>
                         <TokensManager/> {/*manages tokens*/}
                         <CookieBanner/> {/*displays cookie banner*/}

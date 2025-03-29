@@ -12,9 +12,11 @@ interface SelectInputProps {
     error?: boolean;
     message?: string;
     setToggled?: React.Dispatch<React.SetStateAction<boolean>>;
+    shrinked?: boolean;
+    symbol?: string;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled, shrinked, symbol }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);
     const filteredOptions = options.filter(option =>
@@ -53,7 +55,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
     };
 
     return (
-        <div className="relative w-64 m:w-72" ref={componentRef} onBlur={handleSetToggled}>
+        <div className={`relative ${shrinked ? "w-48 m:w-56" : "w-64 m:w-72"}`} ref={componentRef} onBlur={handleSetToggled}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
             ${isOpen || value ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!error ? "text-gray-500" : "text-coolRed"}`}>
@@ -67,12 +69,13 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
                 max-h-[222px] overflow-y-auto overflow-x-hidden z-10 animate-unroll">
                     {filteredOptions.map((option) => (
-                        <li key={option} className="p-2 hover:bg-gray-200 cursor-pointer"
+                        <li key={option} className="p-2 hover:bg-gray-200 cursor-pointer relative"
                             tabIndex={0} role="button" onClick={() => handleSelect(option)}
                             onKeyDown={(event) => {
                                 if (event.key === "Enter") handleSelect(option)
                             }}>
                             {option}
+                            {symbol && <p className="absolute right-2 top-2.5 text-lg m:text-xl text-gray-500">{symbol}</p>}
                         </li>
                     ))}
                 </ul>
