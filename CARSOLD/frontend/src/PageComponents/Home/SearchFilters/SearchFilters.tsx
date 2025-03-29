@@ -57,10 +57,10 @@ const SearchFilters: React.FC = () => {
         };
     console.log(filter)
     return (
-      <div className="flex flex-col justify-center items-center w-full border-b border-black border-opacity-20">
-          <SelectInput label="Brand" value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands}/>
-      </div>
-  )
+        <div className="flex flex-col justify-center items-center w-full border-b border-black border-opacity-20">
+            <SelectInput label="Brand" value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands}/>
+        </div>
+    )
 };
 
 export default SearchFilters
