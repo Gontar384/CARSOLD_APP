@@ -26,7 +26,7 @@ interface SmallOfferDisplayProps {
         mileage: string;
         year: string;
     };
-    type: "myOffers" | "followed";
+    type: "myOffers" | "followed" | "search";
     setDeleted?: React.Dispatch<React.SetStateAction<boolean>>;
     setFollowed?: React.Dispatch<React.SetStateAction<boolean>>;
 }

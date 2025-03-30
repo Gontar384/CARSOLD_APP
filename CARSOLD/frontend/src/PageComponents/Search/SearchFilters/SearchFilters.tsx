@@ -5,34 +5,49 @@ import {useSearchParams} from "react-router-dom";
 import {carModels} from "../../AddingOffer/Atomic/SelectInput/SelectData/carModels.ts";
 import {carBodyTypes} from "../../AddingOffer/Atomic/SelectInput/SelectData/carBodyTypes.ts";
 import {carYears} from "../../AddingOffer/Atomic/SelectInput/SelectData/carYears.ts";
-import {carMileage} from "./AdditionalData/carMileage.ts";
+import {carMileages} from "./AdditionalData/carMileages.ts";
 import {carFuels} from "../../AddingOffer/Atomic/SelectInput/SelectData/carFuels.ts";
-import {carCapacity} from "./AdditionalData/carCapacity.ts";
+import {carCapacities} from "./AdditionalData/carCapacities.ts";
+import {carPowers} from "./AdditionalData/carPowers.ts";
+import {carDrives} from "../../AddingOffer/Atomic/SelectInput/SelectData/carDrives.ts";
+import {carTransmissions} from "./AdditionalData/carTransmissions.ts";
+import {carColors} from "../../AddingOffer/Atomic/SelectInput/SelectData/carColors.ts";
+import {carConditions} from "./AdditionalData/carConditions.ts";
+import {carSeats} from "../../AddingOffer/Atomic/SelectInput/SelectData/carSeats.ts";
+import {carDoors} from "../../AddingOffer/Atomic/SelectInput/SelectData/carDoors.ts";
+import {carPrices} from "./AdditionalData/carPrices.ts";
+import SearchFiltersButton from "./Atomic/SearchFiltersButton.tsx";
+import {fetchFilteredOffers} from "../../../ApiCalls/Services/OfferService.ts";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {FetchedOffer, UpdatedOffer} from "../../AccountDetails/Content/MyOffers/MyOffers.tsx";
 
-const SearchFilters: React.FC = () => {
+interface SearchFiltersProps {
+    setOffers: React.Dispatch<React.SetStateAction<UpdatedOffer[]>>;
+    setFetched: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) => {
     interface Filter {
         brand: string;
         model: string;
         bodyType: string;
+        minPrice: string;
+        maxPrice: string;
         minYear: string;
         maxYear: string;
+        fuel: string;
         minMileage: string;
         maxMileage: string;
-        fuel: string;
-        minCapacity: string;
-        maxCapacity: string;
+        color: string;
+        transmission: string;
         minPower: string;
         maxPower: string;
+        minCapacity: string;
+        maxCapacity: string;
         drive: string;
-        transmission: string;
-        color: string;
         condition: string;
         seats: string;
         doors: string;
-        steeringWheel: string;
-        country: string;
-        minPrice: string;
-        maxPrice: string;
     }
     const [searchParams, setSearchParams] = useSearchParams();
     const [filter, setFilter] = useState<Filter>({
@@ -54,11 +69,13 @@ const SearchFilters: React.FC = () => {
         condition: searchParams.get("condition") || "",
         seats: searchParams.get("seats") || "",
         doors: searchParams.get("doors") || "",
-        steeringWheel: searchParams.get("steeringWheel") || "",
-        country: searchParams.get("country") || "",
         minPrice: searchParams.get("minPrice") || "",
         maxPrice: searchParams.get("maxPrice") || "",
     });
+    const [moreFilters, setMoreFilters] = useState<boolean>(false);
+    const [animation, setAnimation] = useState<"animate-slideDownShow" | "animate-slideUpShow" | null>(null);
+    const [disabled, setDisabled] = useState<boolean>(false);
+    const {isMobile} = useUtil();
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -87,50 +104,121 @@ const SearchFilters: React.FC = () => {
             brand: "",
             model: "",
             bodyType: "",
+            minPrice: "",
+            maxPrice: "",
             minYear: "",
             maxYear: "",
+            fuel: "",
             minMileage: "",
             maxMileage: "",
-            fuel: "",
-            minCapacity: "",
-            maxCapacity: "",
+            color: "",
+            transmission: "",
             minPower: "",
             maxPower: "",
+            minCapacity: "",
+            maxCapacity: "",
             drive: "",
-            transmission: "",
-            color: "",
             condition: "",
             seats: "",
             doors: "",
-            steeringWheel: "",
-            country: "",
-            minPrice: "",
-            maxPrice: "",
         });
     };
 
-    console.log(filter)
+    const handleMoreFilters = () => {
+        if (!moreFilters) {
+            setAnimation("animate-slideDownShow");
+            setMoreFilters(true);
+        } else {
+            setAnimation("animate-slideUpShow");
+            setTimeout(() => setMoreFilters(false), 200);
+        }
+    };
+
+    const handleManageSearch = async () => {
+        if (disabled) return;
+        const formattedFilter = Object.entries(filter).reduce((acc, [key, value]) => {
+            if (value !== "") {
+                acc[key] = ["minPrice", "maxPrice", "minYear", "maxYear", "minMileage", "maxMileage", "minPower",
+                            "maxPower", "minCapacity", "maxCapacity", "seats", "doors"].includes(key)
+                            ? Number(value) : value;
+            }
+            return acc;
+        }, {} as Record<string, string | number>);
+        const queryParams = new URLSearchParams(formattedFilter as never).toString();
+        try {
+            const offers = await fetchFilteredOffers(queryParams);
+            if (offers.data) {
+                const formattedOffers: UpdatedOffer[] = offers.data.map((offer: FetchedOffer) => ({
+                    id: offer.id ?? "",
+                    title: offer.title ?? "",
+                    photoUrl: offer.photoUrl ?? "",
+                    price: String(offer.price ?? ""),
+                    currency: offer.currency ?? "",
+                    power: String(offer.power ?? ""),
+                    capacity: String(offer.capacity ?? ""),
+                    transmission: offer.transmission ?? "",
+                    fuel: offer.fuel ?? "",
+                    mileage: String(offer.mileage ?? ""),
+                    year: String(offer.year ?? ""),
+                }));
+                setOffers(formattedOffers);
+            }
+        } catch (error) {
+            console.error("Unexpected error occurred when searching offers:", error);
+        } finally {
+            setFetched(true);
+            setDisabled(false);
+        }
+    };
+
+    useEffect(() => {
+        handleManageSearch();
+    }, []);
+
     return (
-        <div className="flex flex-col justify-center items-center w-full border-b border-black border-opacity-20">
-            <SelectInput label="Brand" value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
-            <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}
-                         disabled={!carBrands.includes(filter.brand) || filter.brand === "Other"} shrinked={true}/>
-            <SelectInput label="Body type" value={filter.bodyType} setValue={handleSetFilter("bodyType")} options={carBodyTypes} shrinked={true}/>
-            <SelectInput label="From year" value={filter.minYear} setValue={handleSetFilter("minYear")} shrinked={true}
-                         options={filter.maxYear === "" ? carYears : carYears.filter(year => Number(year) < Number(filter.maxYear))}/>
-            <SelectInput label="To year" value={filter.maxYear} setValue={handleSetFilter("maxYear")} shrinked={true}
-                         options={carYears.filter(year => Number(year) > Number(filter.minYear))}/>
-            <SelectInput label="From mileage" value={filter.minMileage} setValue={handleSetFilter("minMileage")}
-                         options={filter.maxMileage === "" ? carMileage : carMileage.filter(mileage => Number(mileage) < Number(filter.maxMileage))}
-                         shrinked={true} symbol="km"/>
-            <SelectInput label="To mileage" value={filter.maxMileage} setValue={handleSetFilter("maxMileage")} shrinked={true}
-                         options={carMileage.filter(mileage => Number(mileage) > Number(filter.minMileage))} symbol="km"/>
-            <SelectInput label="Fuel" value={filter.fuel} setValue={handleSetFilter("fuel")} options={carFuels} shrinked={true}/>
-            <SelectInput label="From capacity" value={filter.minCapacity} setValue={handleSetFilter("minCapacity")} shrinked={true} symbol="cm3"
-                         options={filter.maxCapacity === "" ? carCapacity : carCapacity.filter(capacity => Number(capacity) < Number(filter.maxCapacity))}/>
-            <SelectInput label="To capacity" value={filter.maxCapacity} setValue={handleSetFilter("maxCapacity")} shrinked={true} symbol="cm3"
-                         options={carCapacity.filter(capacity => Number(capacity) > Number(filter.minCapacity))}/>
-            <button onClick={handleResetFilter}>Reset</button>
+        <div className="flex flex-col justify-center items-center w-full pb-10 pt-16 gap-3 border-b-2 border-gray-300 bg-white">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 bg-white z-20">
+                <SelectInput label="Brand" value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
+                <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}
+                             disabled={!carBrands.includes(filter.brand) || filter.brand === "Other"} shrinked={true}/>
+                <SelectInput label="Body type" value={filter.bodyType} setValue={handleSetFilter("bodyType")} options={carBodyTypes} shrinked={true}/>
+                {isMobile && <SelectInput label="Fuel" value={filter.fuel} setValue={handleSetFilter("fuel")} options={carFuels} shrinked={true}/>}
+                <SelectInput label="From price" value={filter.minPrice} setValue={handleSetFilter("minPrice")} shrinked={true} symbol="PLN"
+                             options={filter.maxPrice === "" ? carPrices : carPrices.filter(price => Number(price) < Number(filter.maxPrice))}/>
+                <SelectInput label="To price" value={filter.maxPrice} setValue={handleSetFilter("maxPrice")} shrinked={true} symbol="PLN"
+                             options={carPrices.filter(price => Number(price) > Number(filter.minPrice))}/>
+                <SelectInput label="From year" value={filter.minYear} setValue={handleSetFilter("minYear")} shrinked={true}
+                             options={filter.maxYear === "" ? carYears : carYears.filter(year => Number(year) < Number(filter.maxYear))}/>
+                <SelectInput label="To year" value={filter.maxYear} setValue={handleSetFilter("maxYear")} shrinked={true}
+                             options={carYears.filter(year => Number(year) > Number(filter.minYear))}/>
+                {!isMobile && <SelectInput label="Fuel" value={filter.fuel} setValue={handleSetFilter("fuel")} options={carFuels} shrinked={true}/>}
+                <SelectInput label="From mileage" value={filter.minMileage} setValue={handleSetFilter("minMileage")} shrinked={true} symbol="km"
+                             options={filter.maxMileage === "" ? carMileages : carMileages.filter(mileage => Number(mileage) < Number(filter.maxMileage))}/>
+                <SelectInput label="To mileage" value={filter.maxMileage} setValue={handleSetFilter("maxMileage")} shrinked={true}
+                             options={carMileages.filter(mileage => Number(mileage) > Number(filter.minMileage))} symbol="km"/>
+            </div>
+            <div className={`${moreFilters ? `grid grid-cols-2 lg:grid-cols-5 gap-3 ${animation} z-10` : "hidden"}`}>
+                <SelectInput label="Color" value={filter.color} setValue={handleSetFilter("color")} shrinked={true} options={carColors}/>
+                {isMobile && <SelectInput label="Transmission" value={filter.transmission} setValue={handleSetFilter("transmission")} shrinked={true} options={carTransmissions}/>}
+                <SelectInput label="From power" value={filter.minPower} setValue={handleSetFilter("minPower")} shrinked={true} symbol="KM"
+                             options={filter.maxPower === "" ? carPowers : carPowers.filter(power => Number(power) < Number(filter.maxPower))}/>
+                <SelectInput label="To power" value={filter.maxPower} setValue={handleSetFilter("maxPower")} shrinked={true} symbol="KM"
+                             options={carPowers.filter(power => Number(power) > Number(filter.minPower))}/>
+                <SelectInput label="From capacity" value={filter.minCapacity} setValue={handleSetFilter("minCapacity")} shrinked={true} symbol="cm3"
+                             options={filter.maxCapacity === "" ? carCapacities : carCapacities.filter(capacity => Number(capacity) < Number(filter.maxCapacity))}/>
+                <SelectInput label="To capacity" value={filter.maxCapacity} setValue={handleSetFilter("maxCapacity")} shrinked={true} symbol="cm3"
+                             options={carCapacities.filter(capacity => Number(capacity) > Number(filter.minCapacity))}/>
+                {!isMobile && <SelectInput label="Transmission" value={filter.transmission} setValue={handleSetFilter("transmission")} shrinked={true} options={carTransmissions}/>}
+                <SelectInput label="Drive" value={filter.drive} setValue={handleSetFilter("drive")} shrinked={true} options={carDrives}/>
+                <SelectInput label="Condition" value={filter.condition} setValue={handleSetFilter("condition")} shrinked={true} options={carConditions}/>
+                <SelectInput label="Seats" value={filter.seats} setValue={handleSetFilter("seats")} shrinked={true} options={carSeats}/>
+                <SelectInput label="Doors" value={filter.doors} setValue={handleSetFilter("doors")} shrinked={true} options={carDoors}/>
+            </div>
+            <div className="flex flex-row gap-2 m:gap-3 mt-6">
+                <SearchFiltersButton label="Reset filters" onClick={handleResetFilter} color="gray-200"/>
+                <SearchFiltersButton label="More filters" onClick={handleMoreFilters} color="white"/>
+                <SearchFiltersButton label="Search" onClick={handleManageSearch} color="lowLime"/>
+            </div>
         </div>
     )
 };

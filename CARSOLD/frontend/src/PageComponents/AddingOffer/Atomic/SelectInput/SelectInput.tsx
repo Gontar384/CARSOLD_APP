@@ -55,7 +55,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
     };
 
     return (
-        <div className={`relative ${shrinked ? "w-48 m:w-56" : "w-64 m:w-72"}`} ref={componentRef} onBlur={handleSetToggled}>
+        <div className={`relative ${shrinked ? "w-40 m:w-48" : "w-64 m:w-72"}`} ref={componentRef} onBlur={handleSetToggled}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
             ${isOpen || value ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!error ? "text-gray-500" : "text-coolRed"}`}>

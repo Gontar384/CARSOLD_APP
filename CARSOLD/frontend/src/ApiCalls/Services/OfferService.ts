@@ -70,3 +70,14 @@ export const fetchAllFollowed = async (): Promise<AxiosResponse> => {
         return Promise.reject();
     }
 };
+
+//---Search---
+
+export const fetchFilteredOffers = async (queryParams: string | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get(`api/offer/search?${queryParams}`);
+    } catch (error) {
+        handleError(error);
+        return Promise.reject();
+    }
+};
