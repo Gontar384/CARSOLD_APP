@@ -28,4 +28,5 @@ public class OfferFilterDto {
     private String condition;
     private Integer seats;
     private Integer doors;
+    private String sortBy;
 }

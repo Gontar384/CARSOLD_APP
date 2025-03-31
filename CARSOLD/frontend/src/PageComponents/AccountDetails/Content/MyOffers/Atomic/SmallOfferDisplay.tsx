@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendarDays, faEye, faHeart, faImage, faRoad} from "@fortawesome/free-solid-svg-icons";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import MyOfferButton from "./Atomic/MyOfferButton.tsx";
 import ConfirmDeleteWindow from "../../../../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
 import MyOfferDetail from "./Atomic/MyOfferDetail.tsx";
@@ -62,9 +62,9 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
 
     useEffect(() => {
         const manageHandleFetchStats = async (id: number | null) => {
-          const response = await handleFetchStats(id);
-          setViews(response.views);
-          setFollows(response.follows);
+            const response = await handleFetchStats(id);
+            setViews(response.views);
+            setFollows(response.follows);
         };
         if (type === "myOffers") {
             manageHandleFetchStats(offer.id);
@@ -107,15 +107,16 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
     return (
         <>
             <div className="relative mt-8 m:mt-10">
-                <div className="flex flex-row bg-white border border-black border-opacity-50 p-1 m:p-1.5 rounded overflow-hidden cursor-pointer"
-                    onClick={() => navigate(`/displayOffer/${offer.id}`)}>
+                <Link className="flex flex-row bg-white border border-black border-opacity-50 p-1 m:p-1.5 rounded overflow-hidden cursor-pointer"
+                    to={`/displayOffer/${offer.id}`}>
                     <div className="w-20 m:w-32 h-fit">
                         <div className="w-20 h-20 m:w-32 m:h-32 flex-shrink-0 rounded">
                             {offer.photoUrl !== "" && !photoError ?
                                 <img src={offer.photoUrl} alt={"Offer image"}
                                      className="object-cover w-full h-full rounded"
                                      onError={() => setPhotoError(true)}/> :
-                                <div className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
+                                <div
+                                    className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
                                     <FontAwesomeIcon icon={faImage} className="text-3xl m:text-4xl"/>
                                 </div>}
                         </div>
@@ -149,7 +150,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                         </div>
                     </div>
                     {!isMobile && <PriceDiv/>}
-                </div>
+                </Link>
                 {type === "followed" &&
                     <button className="flex absolute -top-2 -right-[11px] m:-top-2.5 m:-right-3.5"
                             onClick={() => handleFollow(offer.id, true)}
@@ -174,7 +175,8 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                             <MyOfferDetail label="Follows" icon={faHeart} count={follows}/>
                         </div>
                     </div>
-                    {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision} onClick={handleDeleteOffer}/>)}
+                    {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
+                                                       onClick={handleDeleteOffer}/>)}
                 </>
             }
             {loading && <AddingOfferLoader/>}

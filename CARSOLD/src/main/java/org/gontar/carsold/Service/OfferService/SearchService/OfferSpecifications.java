@@ -1,11 +1,15 @@
 package org.gontar.carsold.Service.OfferService.SearchService;
 
+import jakarta.persistence.criteria.Expression;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferFilterDto;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.criteria.Predicate;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +30,22 @@ public class OfferSpecifications {
                 predicates.add(criteriaBuilder.equal(root.get("bodyType"), filter.getBodyType()));
             }
             if (filter.getMinPrice() != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"), filter.getMinPrice()));
+                BigDecimal minPrice = BigDecimal.valueOf(filter.getMinPrice());
+                Expression<BigDecimal> priceExpression = criteriaBuilder.selectCase()
+                        .when(criteriaBuilder.equal(root.get("currency"), "EUR"),
+                                criteriaBuilder.prod(root.get("price").as(BigDecimal.class), BigDecimal.valueOf(4)))
+                        .otherwise(root.get("price").as(BigDecimal.class))
+                        .as(BigDecimal.class);
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(priceExpression, minPrice));
             }
             if (filter.getMaxPrice() != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), filter.getMaxPrice()));
+                BigDecimal maxPrice = BigDecimal.valueOf(filter.getMaxPrice());
+                Expression<BigDecimal> priceExpression = criteriaBuilder.selectCase()
+                        .when(criteriaBuilder.equal(root.get("currency"), "EUR"),
+                                criteriaBuilder.prod(root.get("price").as(BigDecimal.class), BigDecimal.valueOf(4)))
+                        .otherwise(root.get("price").as(BigDecimal.class))
+                        .as(BigDecimal.class);
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(priceExpression, maxPrice));
             }
             if (filter.getMinYear() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("year"), filter.getMinYear()));
@@ -76,8 +92,24 @@ public class OfferSpecifications {
             if (filter.getDoors() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("doors"), filter.getDoors()));
             }
-            if (predicates.isEmpty() && query != null){
-                query.orderBy(criteriaBuilder.asc(criteriaBuilder.function("RANDOM", Double.class)));
+            if (query != null) {
+                if (filter.getSortBy() == null || filter.getSortBy().equals("Oldest")) {
+                    query.orderBy(criteriaBuilder.asc(
+                            criteriaBuilder.function("TO_DATE", LocalDate.class,
+                                    root.get("createdOn"),
+                                    criteriaBuilder.literal("dd/MM/yyyy"))
+                    ));
+                } else if (filter.getSortBy().equals("Newest")) {
+                    query.orderBy(criteriaBuilder.desc(
+                            criteriaBuilder.function("TO_DATE", LocalDate.class,
+                                    root.get("createdOn"),
+                                    criteriaBuilder.literal("dd/MM/yyyy"))
+                    ));
+                } else if (filter.getSortBy().equals("Most popular")) {
+                    query.orderBy(criteriaBuilder.desc(root.get("views")));
+                } else if (filter.getSortBy().equals("Least popular")) {
+                    query.orderBy(criteriaBuilder.asc(root.get("views")));
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

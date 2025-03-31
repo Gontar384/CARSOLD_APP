@@ -19,9 +19,19 @@ interface SelectInputProps {
 const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled, shrinked, symbol }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);
-    const filteredOptions = options.filter(option =>
-        option.toLowerCase().includes((value).toLowerCase())
-    );
+    const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+
+    useEffect(() => {
+        const newFilteredOptions = options.filter(option =>
+            option.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredOptions(newFilteredOptions);
+    }, [value, options]); // filters options
+
+    const handleFocus = () => {
+        setFilteredOptions(options);
+        setIsOpen(true);
+    };
 
     const handleSelect = (value: string) => {
         setValue(value);
@@ -64,7 +74,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
             <input className={`w-full p-2 pr-10 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black focus: outline-none
             ${!error ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
                    disabled={disabled} value={value} onChange={(e) => setValue(e.target.value)}
-                   onFocus={() => setIsOpen(true)}/>
+                   onFocus={handleFocus}/>
             {isOpen && filteredOptions.length > 0 && (
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
                 max-h-[222px] overflow-y-auto overflow-x-hidden z-10 animate-unroll">

@@ -20,13 +20,15 @@ import SearchFiltersButton from "./Atomic/SearchFiltersButton.tsx";
 import {fetchFilteredOffers} from "../../../ApiCalls/Services/OfferService.ts";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {FetchedOffer, UpdatedOffer} from "../../AccountDetails/Content/MyOffers/MyOffers.tsx";
+import {sortBy} from "./AdditionalData/sortBy.ts";
 
 interface SearchFiltersProps {
     setOffers: React.Dispatch<React.SetStateAction<UpdatedOffer[]>>;
     setFetched: React.Dispatch<React.SetStateAction<boolean>>;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) => {
+const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, setCurrentPage }) => {
     interface Filter {
         brand: string;
         model: string;
@@ -48,6 +50,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
         condition: string;
         seats: string;
         doors: string;
+        sortBy: string;
     }
     const [searchParams, setSearchParams] = useSearchParams();
     const [filter, setFilter] = useState<Filter>({
@@ -71,6 +74,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
         doors: searchParams.get("doors") || "",
         minPrice: searchParams.get("minPrice") || "",
         maxPrice: searchParams.get("maxPrice") || "",
+        sortBy: searchParams.get("sortBy") || ""
     });
     const [moreFilters, setMoreFilters] = useState<boolean>(false);
     const [animation, setAnimation] = useState<"animate-slideDownShow" | "animate-slideUpShow" | null>(null);
@@ -121,6 +125,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
             condition: "",
             seats: "",
             doors: "",
+            sortBy: "",
         });
     };
 
@@ -136,6 +141,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
 
     const handleManageSearch = async () => {
         if (disabled) return;
+        setCurrentPage(0);
+        setFetched(false);
         const formattedFilter = Object.entries(filter).reduce((acc, [key, value]) => {
             if (value !== "") {
                 acc[key] = ["minPrice", "maxPrice", "minYear", "maxYear", "minMileage", "maxMileage", "minPower",
@@ -176,7 +183,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
     }, []);
 
     return (
-        <div className="flex flex-col justify-center items-center w-full pb-10 pt-16 gap-3 border-b-2 border-gray-300 bg-white">
+        <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl">
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 bg-white z-20">
                 <SelectInput label="Brand" value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
                 <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}
@@ -214,11 +221,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched }) 
                 <SelectInput label="Seats" value={filter.seats} setValue={handleSetFilter("seats")} shrinked={true} options={carSeats}/>
                 <SelectInput label="Doors" value={filter.doors} setValue={handleSetFilter("doors")} shrinked={true} options={carDoors}/>
             </div>
-            <div className="flex flex-row gap-2 m:gap-3 mt-6">
+            <div className="flex flex-row gap-2 m:gap-3 mt-6 mb-4 m:mb-5">
                 <SearchFiltersButton label="Reset filters" onClick={handleResetFilter} color="gray-200"/>
                 <SearchFiltersButton label="More filters" onClick={handleMoreFilters} color="white"/>
                 <SearchFiltersButton label="Search" onClick={handleManageSearch} color="lowLime"/>
             </div>
+            <SelectInput label="Sort by" value={filter.sortBy} setValue={handleSetFilter("sortBy")} shrinked={true} options={sortBy}/>
         </div>
     )
 };

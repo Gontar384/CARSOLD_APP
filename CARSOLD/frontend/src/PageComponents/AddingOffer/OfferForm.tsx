@@ -1055,7 +1055,7 @@ const OfferForm: React.FC = () => {
                         </div>
                         <div className="flex justify-center m:block w-full mb-20 m:mb-24">
                             <BasicInput label="Price" type="number" value={offer.price} setValue={handleSetOffer("price")} error={error.price}
-                                        symbol={offer.currency} firstOtherSymbol="PLN" secondOtherSymbol="EURO" setSymbol={handleSetOffer("currency")}
+                                        symbol={offer.currency} firstOtherSymbol="PLN" secondOtherSymbol="EUR" setSymbol={handleSetOffer("currency")}
                                         required={true} message={message.price} setToggled={handleSetToggled("price")}/>
                         </div>
                         <div className="flex justify-center m:block w-full mb-24 m:mb-28">
