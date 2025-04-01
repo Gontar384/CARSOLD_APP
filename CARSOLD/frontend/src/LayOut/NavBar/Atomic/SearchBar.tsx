@@ -2,9 +2,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useNavigate} from "react-router-dom";
+import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
 
 const SearchBar: React.FC = () => {
-
     const [search, setSearch] = useState<string>("");
     const searchRef = useRef<string>("");   //gives access to most recent value, makes it work efficiently
     const [isClicked, setIsClicked] = useState<boolean>(false);  //checks if it's clicked
@@ -13,6 +14,8 @@ const SearchBar: React.FC = () => {
     const [buttonAnimation, setButtonAnimation] = useState<"animate-slideUp" | "animate-slideDown" | null>(null);
     const [isInitial, setIsInitial] = useState<boolean>(false);
     const {mobileWidth, isMobile} = useUtil();
+    const navigate = useNavigate();
+    const {setPhrase} = useItems();
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -68,9 +71,17 @@ const SearchBar: React.FC = () => {
         setButtonAnimation(null);
     }, [mobileWidth])    //resets animation
 
+    const handleSearch = () => {
+        navigate(`/search?page=0&size=10&phrase=${search}`);
+        setPhrase(search);
+    };
+
+    useEffect(() => {
+        if (search === "") setPhrase(search);
+    }, [search]);
+
     return (
-        <div
-            className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[320px]"
+        <div className="flex justify-center relative w-fit mr-2 max-w-[200px] m:max-w-[320px]"
             ref={componentRef}>
             {!isClicked && search === "" &&
                 <FontAwesomeIcon icon={faMagnifyingGlass}
@@ -82,7 +93,8 @@ const SearchBar: React.FC = () => {
             {!isMobile &&
                 <button className={`h-7 m:h-8 absolute top-0 right-0 px-1 m:px-2 text-lg m:text-xl bg-lime border border-black z-10 
                 ${buttonAnimation} ${isClicked ? 'rounded-sm border-t-0' : 'rounded-r-full z-30'}
-                ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}>
+                ${!search ? "opacity-0 pointer-events-none delay-300" : "opacity-100 pointer-events-auto"}`}
+                onClick={handleSearch}>
                     Search
                 </button>}
         </div>

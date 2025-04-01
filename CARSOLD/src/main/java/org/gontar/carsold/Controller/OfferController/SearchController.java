@@ -3,12 +3,15 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Domain.Model.OfferFilterDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.SearchService.SearchService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/offer")
@@ -21,8 +24,14 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<PartialOfferDto>> fetchFilteredOffers(OfferFilterDto filter) {
-        List<PartialOfferDto> offers = service.fetchFilteredOffers(filter);
-        return ResponseEntity.ok(offers);
+    public ResponseEntity<PagedModel<EntityModel<PartialOfferDto>>> fetchFilteredOffers(
+            OfferFilterDto filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            PagedResourcesAssembler<PartialOfferDto> assembler) {
+
+        Page<PartialOfferDto> offers = service.fetchFilteredOffers(filter, page, size);
+        PagedModel<EntityModel<PartialOfferDto>> pagedModel = assembler.toModel(offers);
+        return ResponseEntity.ok(pagedModel);
     }
 }

@@ -5,6 +5,8 @@ interface ItemsContextType {
     setMessages: React.Dispatch<React.SetStateAction<number>>,
     profilePicChange: boolean;
     setProfilePicChange: React.Dispatch<React.SetStateAction<boolean>>;
+    phrase: string;
+    setPhrase: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const ItemsContext = createContext<ItemsContextType | undefined>(undefined);

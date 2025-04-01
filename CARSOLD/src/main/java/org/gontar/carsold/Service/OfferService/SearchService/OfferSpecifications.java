@@ -19,7 +19,9 @@ public class OfferSpecifications {
     public Specification<Offer> withFilters(OfferFilterDto filter) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
+            if (filter.getPhrase() != null && !filter.getPhrase().isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + filter.getPhrase().toLowerCase() + "%"));
+            }
             if (filter.getBrand() != null && !filter.getBrand().isEmpty()) {
                 predicates.add(criteriaBuilder.equal(root.get("brand"), filter.getBrand()));
             }

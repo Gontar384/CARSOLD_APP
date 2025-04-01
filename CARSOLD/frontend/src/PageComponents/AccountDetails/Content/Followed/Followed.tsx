@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
-import UserOffersLoader from "../../../../Additional/Loading/UserOffersLoader.tsx";
+import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
 import SmallOfferDisplay from "../MyOffers/Atomic/SmallOfferDisplay.tsx";
 
 const Followed: React.FC = () => {
@@ -79,7 +79,7 @@ const Followed: React.FC = () => {
         <>
             {offerFetched ? (
                 offers.length > 0 ? (
-                    <div className="w-[90%] m:w-[95%] h-full max-w-[600px]">
+                    <div className="w-[90%] m:w-[95%] h-full max-w-[700px]">
                         {paginatedOffers.map((offer) => (
                             <SmallOfferDisplay type="followed" key={offer.id} offer={offer} setFollowed={setFollowed}/>
                         ))}
@@ -106,7 +106,7 @@ const Followed: React.FC = () => {
             ) : (
                 <>
                     {Array.from({ length: 3 }).map((_, index) => (
-                        <UserOffersLoader key={index} type="followed"/>
+                        <UserOfferLoader key={index} type="followed"/>
                     ))}
                 </>
             )}

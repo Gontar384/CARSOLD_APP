@@ -4,11 +4,11 @@ import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Model.OfferFilterDto;
 import org.gontar.carsold.Domain.Model.PartialOfferDto;
 import org.gontar.carsold.Repository.OfferRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -22,13 +22,12 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<PartialOfferDto> fetchFilteredOffers(OfferFilterDto filter) {
+    public Page<PartialOfferDto> fetchFilteredOffers(OfferFilterDto filter, int page, int size) {
         Specification<Offer> spec = offerSpecifications.withFilters(filter);
-        List<Offer> offers = offerRepository.findAll(spec);
+        Pageable pageable = PageRequest.of(Math.max(page, 0), size > 0 ? size : 8);
+        Page<Offer> offerPage = offerRepository.findAll(spec, pageable);
 
-        return offers.stream()
-                .map(this::convertToPartialDto)
-                .collect(Collectors.toList());
+        return offerPage.map(this::convertToPartialDto);
     }
 
     private PartialOfferDto convertToPartialDto(Offer offer) {

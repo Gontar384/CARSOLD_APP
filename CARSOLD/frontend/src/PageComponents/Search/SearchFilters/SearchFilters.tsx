@@ -21,15 +21,21 @@ import {fetchFilteredOffers} from "../../../ApiCalls/Services/OfferService.ts";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {FetchedOffer, UpdatedOffer} from "../../AccountDetails/Content/MyOffers/MyOffers.tsx";
 import {sortBy} from "./AdditionalData/sortBy.ts";
+import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
 
 interface SearchFiltersProps {
     setOffers: React.Dispatch<React.SetStateAction<UpdatedOffer[]>>;
     setFetched: React.Dispatch<React.SetStateAction<boolean>>;
+    itemsPerPage: number;
+    currentPage: number;
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+    setTotalElements: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, setCurrentPage }) => {
+const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, itemsPerPage, currentPage, setCurrentPage, setTotalPages, setTotalElements }) => {
     interface Filter {
+        phrase: string;
         brand: string;
         model: string;
         bodyType: string;
@@ -54,6 +60,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
     }
     const [searchParams, setSearchParams] = useSearchParams();
     const [filter, setFilter] = useState<Filter>({
+        phrase: searchParams.get("phrase") || "",
         brand: searchParams.get("brand") || "",
         model: searchParams.get("model") || "",
         bodyType: searchParams.get("bodyType") || "",
@@ -80,14 +87,18 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
     const [animation, setAnimation] = useState<"animate-slideDownShow" | "animate-slideUpShow" | null>(null);
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
+    const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
+    const {phrase} = useItems();
 
     useEffect(() => {
         const params = new URLSearchParams();
         Object.entries(filter).forEach(([key, value]) => {
             if (value) params.set(key, value);
         });
+        params.set("page", String(currentPage));
+        params.set("size", String(itemsPerPage));
         setSearchParams(params);
-    }, [filter]);
+    }, [filter, currentPage]);
 
     const handleSetFilter = (key: keyof Filter) =>
         (setValue: React.SetStateAction<string> | React.SetStateAction<string[]>) => {
@@ -105,6 +116,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
 
     const handleResetFilter = () => {
         setFilter({
+            phrase: "",
             brand: "",
             model: "",
             bodyType: "",
@@ -139,9 +151,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
         }
     };
 
-    const handleManageSearch = async () => {
+    const handleSearch = async () => {
         if (disabled) return;
-        setCurrentPage(0);
+        setDisabled(true);
         setFetched(false);
         const formattedFilter = Object.entries(filter).reduce((acc, [key, value]) => {
             if (value !== "") {
@@ -151,11 +163,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
             }
             return acc;
         }, {} as Record<string, string | number>);
-        const queryParams = new URLSearchParams(formattedFilter as never).toString();
+        const queryParams = new URLSearchParams({
+            ...formattedFilter,
+            page: String(currentPage),
+            size: String(itemsPerPage),
+            phrase: phrase,
+        } as never).toString();
         try {
             const offers = await fetchFilteredOffers(queryParams);
             if (offers.data) {
-                const formattedOffers: UpdatedOffer[] = offers.data.map((offer: FetchedOffer) => ({
+                const formattedOffers: UpdatedOffer[] = offers.data._embedded.partialOfferDtoList.map((offer: FetchedOffer) => ({
                     id: offer.id ?? "",
                     title: offer.title ?? "",
                     photoUrl: offer.photoUrl ?? "",
@@ -169,9 +186,14 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
                     year: String(offer.year ?? ""),
                 }));
                 setOffers(formattedOffers);
+                setTotalPages(offers.data.page.totalPages);
+                setTotalElements(offers.data.page.totalElements);
             }
         } catch (error) {
             console.error("Unexpected error occurred when searching offers:", error);
+            setOffers([]);
+            setTotalPages(0);
+            setTotalElements(0);
         } finally {
             setFetched(true);
             setDisabled(false);
@@ -179,8 +201,20 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, se
     };
 
     useEffect(() => {
-        handleManageSearch();
-    }, []);
+        handleSearch();
+    }, [currentPage, phrase]);
+
+    const handleManageSearch = () => {
+        setCurrentPage(0);
+        setSearchTrigger(true);
+    };
+
+    useEffect(() => {
+        if (searchTrigger) {
+            handleSearch();
+            setSearchTrigger(false);
+        }
+    }, [searchTrigger]);
 
     return (
         <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl">

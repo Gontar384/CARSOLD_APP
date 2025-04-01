@@ -5,8 +5,9 @@ export const ItemsProvider: React.FC<{ children: React.ReactNode }> = ({children
 
     const [messages, setMessages] = useState<number>(22);
     const [profilePicChange, setProfilePicChange] = useState<boolean>(false);  //to dynamically change profilePic in navbar
+    const [phrase, setPhrase] = useState<string>("");
 
-    return <ItemsContext.Provider value={{messages, setMessages, profilePicChange, setProfilePicChange}}>
+    return <ItemsContext.Provider value={{messages, setMessages, profilePicChange, setProfilePicChange, phrase, setPhrase}}>
         {children}
     </ItemsContext.Provider>
 }

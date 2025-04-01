@@ -10,15 +10,12 @@ const Search: React.FC = () => {
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const itemsPerPage = 8;
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedOffers = offers.slice(startIndex, endIndex);
+    const itemsPerPage = 10;
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const [totalElements, setTotalElements] = useState<number>(0);
 
     const nextPage = () => {
-        if (endIndex < offers.length) {
-            setCurrentPage(prev => prev + 1);
-        }
+        setCurrentPage(prev => prev + 1);
     };
 
     const prevPage = () => {
@@ -27,30 +24,43 @@ const Search: React.FC = () => {
         }
     };
 
+    const hasNextPage = currentPage < totalPages - 1;
+    const hasPrevPage = currentPage > 0;
+
     return (
         <LayOut>
             <div className="flex flex-col items-center -mt-12 m:-mt-14 -mb-[500px]">
                 <div className="flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px] h-full min-h-[1500px] pb-44 m:pb-48">
-                    <SearchFilters setOffers={setOffers} setFetched={setFetched} setCurrentPage={setCurrentPage}/>
+                    <SearchFilters setOffers={setOffers} setFetched={setFetched} setCurrentPage={setCurrentPage}
+                                   currentPage={currentPage} itemsPerPage={itemsPerPage} setTotalPages={setTotalPages}
+                                   setTotalElements={setTotalElements}/>
                     {fetched ?
                         <div className="flex flex-col items-center w-full max-w-[1200px]">
                             {offers.length > 0 ?
-                                <div className="w-[90%] m:w-[95%] max-w-[700px]">
-                                    {paginatedOffers.map((offer) => (
+                                <div className="w-[90%] m:w-[95%] max-w-[700px] relative">
+                                    <p className="absolute top-[5px] m:top-[7px] right-0 text-sm m:text-base ">
+                                        Results: {totalElements}
+                                    </p>
+                                    {offers.map((offer) => (
                                         <SmallOfferDisplay type="search" key={offer.id} offer={offer}/>
                                     ))}
-                                    {offers.length > itemsPerPage && (
-                                        <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
-                                            {currentPage > 0 && (
-                                                <button onClick={prevPage} className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md">
+                                    {(hasPrevPage || hasNextPage) && (
+                                        <div
+                                            className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
+                                            {hasPrevPage && (
+                                                <button
+                                                    className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md"
+                                                    onClick={prevPage}>
                                                     {currentPage}
                                                 </button>
                                             )}
-                                            <button className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md">
+                                            <button
+                                                className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default">
                                                 {currentPage + 1}
                                             </button>
-                                            {endIndex < offers.length && (
-                                                <button onClick={nextPage} className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md">
+                                            {hasNextPage && (
+                                                <button className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md"
+                                                    onClick={nextPage}>
                                                     {currentPage + 2}
                                                 </button>
                                             )}
@@ -61,7 +71,7 @@ const Search: React.FC = () => {
                             }
                         </div> :
                         <>
-                            {Array.from({length: 3}).map((_, index) => (
+                        {Array.from({length: 3}).map((_, index) => (
                                 <SearchOfferLoader key={index}/>
                             ))}
                         </>}

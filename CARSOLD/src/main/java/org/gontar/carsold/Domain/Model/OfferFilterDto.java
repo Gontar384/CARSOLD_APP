@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferFilterDto {
+    private String phrase;
     private String brand;
     private String model;
     private String bodyType;

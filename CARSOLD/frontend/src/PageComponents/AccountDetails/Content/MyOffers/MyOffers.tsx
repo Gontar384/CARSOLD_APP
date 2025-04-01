@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
-import UserOffersLoader from "../../../../Additional/Loading/UserOffersLoader.tsx";
+import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
 
 export interface FetchedOffer {
     id: number;
@@ -106,12 +106,12 @@ const MyOffers: React.FC = () => {
         <>
             {offerFetched ? (
                 offers.length > 0 ? (
-                    <div className="w-[90%] m:w-[95%] h-full max-w-[600px]">
+                    <div className="w-[90%] m:w-[95%] h-full max-w-[700px]">
                         {paginatedOffers.map((offer) => (
                             <SmallOfferDisplay type="myOffers" key={offer.id} offer={offer} setDeleted={setDeleted}/>
                         ))}
                         {offers.length > itemsPerPage &&
-                            <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
+                            <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base py-3 m:py-6">
                                 <button onClick={prevPage} disabled={currentPage === 0}
                                         className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
                                     rounded-md disabled:opacity-60">
@@ -144,7 +144,7 @@ const MyOffers: React.FC = () => {
             ) : (
                 <>
                     {Array.from({ length: 3 }).map((_, index) => (
-                        <UserOffersLoader key={index} type="myOffers"/>
+                        <UserOfferLoader key={index} type="myOffers"/>
                     ))}
                 </>
             )}

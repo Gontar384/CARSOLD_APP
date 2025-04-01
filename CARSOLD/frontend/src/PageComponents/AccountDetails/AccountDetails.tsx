@@ -10,9 +10,9 @@ const AccountDetails: React.FC = () => {
 
     return (
         <LayOut>
-            <div className={`flex flex-col items-center gap-8 m:gap-10`}>
+            <div className={`flex flex-col items-center gap-8 m:gap-10 -mb-48 m:mb-0`}>
                 <ImageAndUsername/>
-                <div className="flex flex-col items-center w-11/12 gap-8 m:gap-10">
+                <div className="flex flex-col items-center w-full gap-8 m:gap-10">
                     <ChoiceHeaders/>
                     <Content/>
                 </div>
