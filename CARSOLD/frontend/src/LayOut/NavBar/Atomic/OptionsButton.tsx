@@ -29,8 +29,8 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({excludedButtonRef, iconAni
     }   //activates and hides lower and mid-bar
 
     return (
-        <button onClick={mobileWidth ? () => handleBar(lowerBar, setLowerBar) : () => handleBar(midBar, setMidBar)}
-                className="text-xl m:text-2xl ml-4 m:px-2" ref={excludedButtonRef}>
+        <button className="text-xl m:text-2xl ml-4 m:px-2" ref={excludedButtonRef}
+                onClick={mobileWidth ? () => handleBar(lowerBar, setLowerBar) : () => handleBar(midBar, setMidBar)}>
             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
         </button>
     )

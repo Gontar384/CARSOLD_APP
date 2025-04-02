@@ -88,7 +88,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
-    const {phrase} = useItems();
+    const {phrase, setPhrase, trigger, setTrigger, setClicked} = useItems();
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -139,6 +139,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
             doors: "",
             sortBy: "",
         });
+        setPhrase("");
+        setClicked(false);
+        setTrigger(prev => !prev);
     };
 
     const handleMoreFilters = () => {
@@ -202,7 +205,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
 
     useEffect(() => {
         handleSearch();
-    }, [currentPage, phrase]);
+    }, [currentPage, trigger]);
 
     const handleManageSearch = () => {
         setCurrentPage(0);
