@@ -26,7 +26,6 @@ class AuthenticationControllerTest {
     @Mock
     private AuthenticationService authenticationService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll

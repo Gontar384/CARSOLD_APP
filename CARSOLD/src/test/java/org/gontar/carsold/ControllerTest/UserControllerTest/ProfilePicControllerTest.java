@@ -31,7 +31,6 @@ class ProfilePicControllerTest {
     @Mock
     private ProfilePicService profilePicService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll

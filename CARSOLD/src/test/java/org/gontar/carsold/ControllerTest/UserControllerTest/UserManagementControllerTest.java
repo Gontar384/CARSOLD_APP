@@ -34,7 +34,6 @@ class UserManagementControllerTest {
     @Mock
     private UserManagementService userManagementService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @Mock

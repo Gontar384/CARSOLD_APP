@@ -25,7 +25,6 @@ public class EmailControllerTest {
     @Mock
     private EmailService emailService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll

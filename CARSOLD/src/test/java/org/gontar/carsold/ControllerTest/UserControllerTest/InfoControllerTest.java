@@ -26,7 +26,6 @@ class InfoControllerTest {
     @Mock
     private InfoService infoService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll

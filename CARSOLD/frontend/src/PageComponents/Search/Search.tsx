@@ -38,7 +38,7 @@ const Search: React.FC = () => {
                         <div className="flex flex-col items-center w-full max-w-[1200px]">
                             {offers.length > 0 ?
                                 <div className="w-[90%] m:w-[95%] max-w-[700px] relative">
-                                    <p className="absolute top-[5px] m:top-[7px] right-0 text-sm m:text-base ">
+                                    <p className="absolute top-[5px] m:top-[7px] right-0 text-sm m:text-base underline">
                                         Results: {totalElements}
                                     </p>
                                     {offers.map((offer) => (

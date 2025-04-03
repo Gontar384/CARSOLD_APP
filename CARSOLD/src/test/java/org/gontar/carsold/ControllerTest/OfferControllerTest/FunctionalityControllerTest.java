@@ -31,7 +31,6 @@ public class FunctionalityControllerTest {
     @Mock
     private FunctionalityService functionalityService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeEach

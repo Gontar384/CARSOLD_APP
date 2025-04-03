@@ -38,7 +38,6 @@ class OfferManagementControllerTest {
     @Mock
     private Mapper<Offer, OfferDto> mapper;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll

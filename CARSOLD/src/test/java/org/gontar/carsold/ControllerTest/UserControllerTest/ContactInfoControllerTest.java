@@ -33,7 +33,6 @@ class ContactInfoControllerTest {
     @Mock
     private ContactInfoService contactInfoService;
 
-    @Mock
     private MockMvc mockMvc;
 
     @BeforeAll
