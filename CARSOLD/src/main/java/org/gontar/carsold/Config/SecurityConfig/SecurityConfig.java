@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 "/api/auth/getCsrfToken", "/api/auth/checkAuth", "/api/auth/keepSessionAlive",
                                 "/api/auth/activateAccount", "/api/auth/authenticate", "/api/auth/logout",
                                 "/api/registerUser","/api/sendPasswordRecoveryEmail","/api/changePasswordRecovery",
-                                "/api/checkLogin", "/api/checkInfo", "/ws/**", "/api/offer/fetchWithUser/**"
+                                "/api/checkLogin", "/api/checkInfo", "/ws/**", "/api/offer/fetchWithUser/**", "/api/offer/search**"
                         ).permitAll().anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

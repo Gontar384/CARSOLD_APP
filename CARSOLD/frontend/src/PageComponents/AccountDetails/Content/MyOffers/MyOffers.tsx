@@ -114,12 +114,12 @@ const MyOffers: React.FC = () => {
                             <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base py-3 m:py-6">
                                 <button onClick={prevPage} disabled={currentPage === 0}
                                         className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
-                                    rounded-md disabled:opacity-60">
+                                        rounded-md disabled:opacity-60">
                                     Previous
                                 </button>
                                 <button onClick={nextPage} disabled={endIndex >= offers.length}
                                         className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
-                                    rounded-md disabled:opacity-60">
+                                        rounded-md disabled:opacity-60">
                                     Next
                                 </button>
                             </div>

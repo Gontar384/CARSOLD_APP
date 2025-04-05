@@ -1,7 +1,7 @@
 import React from "react";
 import {faCity, faIdCard, faPhone} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {GoogleMap, LoadScript} from "@react-google-maps/api";
+import {GoogleMap} from "@react-google-maps/api";
 
 interface ContactInfoProps {
     name: string;
@@ -32,16 +32,13 @@ const UserContactInfo: React.FC<ContactInfoProps> = ({name, phone, city, coordin
                     ))}
                 </div>}
             {city &&
-                <LoadScript googleMapsApiKey={import.meta.env.VITE_MAPS_APIKEY}>
                     <GoogleMap mapContainerStyle={{
                         width: "90%",
                         height: "280px",
                         maxWidth: "400px",
                         border: "1px solid #777777",
                         borderRadius: "4px"
-                    }}
-                               center={position} zoom={11}/>
-                </LoadScript>
+                    }} center={position} zoom={11}/>
             }
         </div>
     )

@@ -8,16 +8,17 @@ import OfferDetails from "./BigContainer/OfferDetails/OfferDetails.tsx";
 import BaseInfo from "./SmallContainer/BaseInfo/BaseInfo.tsx";
 import OfferSmallLoader from "../../Additional/Loading/OfferSmallLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHeart} from "@fortawesome/free-solid-svg-icons";
+import {faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
+import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
     interface FetchedOffer {
-        id: number | null; //*
-        title: string; //
+        id: number | null;
+        title: string;
         brand: string;
         model: string;
         bodyType: string;
@@ -38,17 +39,18 @@ const OfferDisplay: React.FC = () => {
         plate: string;
         firstRegistration: string;
         description: string;
-        photos: string[]; //
-        createdOn: string; //
-        price: string; //
-        currency: string; //
-        username: string; //
-        profilePic: string; //
-        name: string; //
-        phone: string; //
-        city: string; //
-        permission: boolean; //*
-        coordinates: string; //
+        photos: string[];
+        createdOn: string;
+        price: string;
+        currency: string;
+        username: string;
+        profilePic: string;
+        name: string;
+        phone: string;
+        city: string;
+        permission: boolean;
+        coordinates: string;
+        role: string;
     }
     const {section} = useParams();
     const [id, setId] = useState<number | null>(null);
@@ -87,6 +89,7 @@ const OfferDisplay: React.FC = () => {
         city: "",
         permission: false,
         coordinates: "",
+        role: "",
     });
     const navigate = useNavigate();
     const {handleStart, handleEnd, buttonColor} = useButton();
@@ -142,6 +145,7 @@ const OfferDisplay: React.FC = () => {
                 city: data.city ?? "",
                 permission: data.permission ?? false,
                 coordinates: data.coordinates ?? "",
+                role: data.role ?? "",
             };
             setOffer(transformedOffer);
         };
@@ -166,6 +170,12 @@ const OfferDisplay: React.FC = () => {
         setTimeout(() => setDisabled(false), 500);
     };
 
+    //adminOnly
+    const [decision, setDecision] = useState<boolean>(false);
+    const handleDeleteOffer = () => {
+        console.log("test");
+    };
+
     return (
         <LayOut>
             <div className="flex flex-col items-center">
@@ -188,8 +198,15 @@ const OfferDisplay: React.FC = () => {
                                 <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl transition-colors duration-300
                                                  ${followed ? "text-coolRed" : "text-gray-800"} ${buttonColor && "brightness-[80%]"}`}/>
                             </button>}
+                        {offer.role === "ADMIN" &&
+                            <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
+                                    onClick={() => setDecision(true)}>
+                                <FontAwesomeIcon icon={faTrash} className="text-2xl m:text-3xl"/>
+                            </button>
+                        }
                     </div>
-                    <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
+                    <div
+                        className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
                         {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
@@ -199,6 +216,8 @@ const OfferDisplay: React.FC = () => {
                         }
                     </div>
                 </div>
+                {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
+                                                   onClick={handleDeleteOffer}/>)}
             </div>
         </LayOut>
     );

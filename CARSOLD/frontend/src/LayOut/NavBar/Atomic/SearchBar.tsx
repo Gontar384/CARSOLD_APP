@@ -52,6 +52,7 @@ const SearchBar: React.FC = () => {
             setSearched(false);
             setTrigger(prev => !prev);
         }
+        if (phrase !== "") setClicked(true);
     }, [phrase]);
 
     return (
@@ -59,8 +60,8 @@ const SearchBar: React.FC = () => {
             {!clicked && phrase === "" &&
                 <FontAwesomeIcon className={`absolute top-[5px] left-[6px] m:left-2 text-xl m:text-2xl z-30 ${magnifierAnimation}`}
                                  icon={faMagnifyingGlass}/>}
-            <input className={`w-full h-7 m:h-8 text-xl m:text-2xl p-[6px] m:p-2 border border-black relative z-10 
-            ${clicked ? 'bg-white rounded-sm outline-none border-opacity-0 ring-1 ring-blue-500/30 shadow-blue-500/50' : 'bg-lime rounded-full'}`}
+            <input className={`w-full h-7 m:h-8 text-xl m:text-2xl p-[6px] m:p-2 border border-black relative z-10 outline-none
+            ${clicked ? "bg-white rounded-sm border-opacity-0 ring-1 ring-blue-500/30 shadow-blue-500/50" : "bg-lime rounded-full"}`}
                    onClick={handleClick} value={phrase} onChange={e => setPhrase(e.target.value)}
                    onKeyDown={(e) => {if (e.key === "Enter") handleSearch()}}/>
             {!isMobile && clicked &&

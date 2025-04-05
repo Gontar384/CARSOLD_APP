@@ -3,6 +3,7 @@ package org.gontar.carsold.Domain.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.gontar.carsold.Domain.Entity.User.Role;
 
 @Data
 @AllArgsConstructor
@@ -41,4 +42,5 @@ public class OfferWithUserDto {
     private String city;
     private boolean permission;
     private String coordinates;
+    private Role role;
 }

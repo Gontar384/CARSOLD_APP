@@ -44,13 +44,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         try {
             await logout();
             await handleCheckAuth();
-            navigate("/authenticate/login");
         } catch (error: unknown) {
             if (error instanceof InternalServerError) {
                 console.error("Error during logout: ", error);
             } else {
                 console.error("Unexpected error during logout: ", error);
             }
+        } finally {
+            setTimeout(() => {
+                navigate("/authenticate/login");
+            }, 10);
         }
     };
 

@@ -115,7 +115,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setCreatedOn(offer.getCreatedOn());
         offerWithUserDto.setUsername(user.getUsername());
         offerWithUserDto.setProfilePic(user.getProfilePic());
-        offerWithUserDto.setPermission(fetchPermission(offer));
         if (user.getContactPublic()) {
             offerWithUserDto.setName(user.getName());
             offerWithUserDto.setPhone(user.getPhone());
@@ -124,6 +123,12 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                 String cords = fetchCordsFromApi(user.getCity());
                 offerWithUserDto.setCoordinates(cords);
             }
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && !"anonymousUser".equals(authentication.getPrincipal()) && authentication.isAuthenticated()) {
+            User currentUser = userDetailsService.loadUser();
+            offerWithUserDto.setPermission(offer.getUser().getId().equals(currentUser.getId()));
+            offerWithUserDto.setRole(currentUser.getRole());
         }
         offer.setViews(offer.getViews() + 1);
         repository.save(offer);
