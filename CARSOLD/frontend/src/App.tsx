@@ -18,8 +18,6 @@ import TokensManager from "./Config/TokensConfig/TokensManager.ts";
 import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
 import OfferDisplay from "./PageComponents/OfferDisplay/OfferDisplay.tsx";
 import OpenRoutes from "./Config/AuthConfig/OpenRoutes.tsx";
-import GoogleMapsWrapper
-    from "./PageComponents/OfferDisplay/SmallContainer/UserInformation/Atomic/GoogleMapsWrapper.tsx";
 
 const App: React.FC = () => {
 
@@ -28,7 +26,6 @@ const App: React.FC = () => {
             <UtilProvider> {/*provides util*/}
                 <AuthProvider> {/*manages authentication*/}
                     <ItemsProvider> {/*provides items*/}
-                        <GoogleMapsWrapper>
                             <Routes>
                                 <Route element={<PublicRoutes/>}>
                                     <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
@@ -51,7 +48,6 @@ const App: React.FC = () => {
 
                                 <Route path="*" element={<Navigate to="/search"/>}/>
                             </Routes>
-                        </GoogleMapsWrapper>
                         <TokensManager/> {/*manages tokens*/}
                         <CookieBanner/> {/*displays cookie banner*/}
                         <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
