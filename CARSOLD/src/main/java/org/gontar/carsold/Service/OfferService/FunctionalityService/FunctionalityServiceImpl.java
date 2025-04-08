@@ -1,5 +1,6 @@
 package org.gontar.carsold.Service.OfferService.FunctionalityService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.OfferStatsDto;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class FunctionalityServiceImpl implements FunctionalityService {
 
@@ -53,21 +55,26 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         for (String followedOfferId : followedOffersIds) {
             PartialOfferDto partialOfferDto = new PartialOfferDto();
             Offer offer = offerRepository.findById(Long.parseLong(followedOfferId))
-                    .orElseThrow(() -> new OfferNotFound("Offer not found"));
-            partialOfferDto.setId(offer.getId());
-            partialOfferDto.setTitle(offer.getTitle());
-            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+                    .orElseGet(() -> {
+                        log.info("Offer with ID {} not found", followedOfferId);
+                        return null;
+                    });
+            if (offer != null) {
+                partialOfferDto.setId(offer.getId());
+                partialOfferDto.setTitle(offer.getTitle());
+                if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+                    partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
+                }
+                partialOfferDto.setPrice(offer.getPrice());
+                partialOfferDto.setCurrency(offer.getCurrency());
+                partialOfferDto.setPower(offer.getPower());
+                partialOfferDto.setCapacity(offer.getCapacity());
+                partialOfferDto.setTransmission(offer.getTransmission());
+                partialOfferDto.setFuel(offer.getFuel());
+                partialOfferDto.setMileage(offer.getMileage());
+                partialOfferDto.setYear(offer.getYear());
+                partialOfferDtos.add(partialOfferDto);
             }
-            partialOfferDto.setPrice(offer.getPrice());
-            partialOfferDto.setCurrency(offer.getCurrency());
-            partialOfferDto.setPower(offer.getPower());
-            partialOfferDto.setCapacity(offer.getCapacity());
-            partialOfferDto.setTransmission(offer.getTransmission());
-            partialOfferDto.setFuel(offer.getFuel());
-            partialOfferDto.setMileage(offer.getMileage());
-            partialOfferDto.setYear(offer.getYear());
-            partialOfferDtos.add(partialOfferDto);
         }
         return partialOfferDtos;
     }

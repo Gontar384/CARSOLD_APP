@@ -3,7 +3,7 @@ import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface ChoiceButtonProps {
-    label: "My Offers" | "Followed" | "Messages" | "Settings" | "Info";
+    label: "My Offers" | "Followed" | "Messages" | "Settings" | "Info" | "Admin";
     onClick: () => void;
     active: boolean;
 }

@@ -5,6 +5,7 @@ interface AuthContextType {
     handleCheckAuth: () => Promise<void>;
     handleLogout: () => Promise<void>;
     loadingAuth: boolean;
+    preventFetch: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

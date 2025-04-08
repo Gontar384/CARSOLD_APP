@@ -118,7 +118,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                 <div className="w-[95%]">
                     <p className="mb-0.5 m:mb-1 text-base m:text-lg font-bold">Description</p>
                     <div className={`${!isExpanded && "max-h-[200px] m:max-h-[300px]"} p-1.5 m:p-2 text-sm m:text-base relative
-                    rounded border border-black border-opacity-10 whitespace-pre-line overflow-hidden`} ref={textRef}>
+                    rounded border border-black border-opacity-10 whitespace-pre-wrap break-words overflow-hidden`} ref={textRef}>
                         {description}
                         {!isExpanded && isOverflowing && <div className="absolute bottom-0 w-full h-8 m:h-10 bg-gradient-to-t from-white to-transparent"></div>}
                     </div>

@@ -81,7 +81,7 @@ export const useOfferUtil = () => {
             setFollowed(false);
             if (error instanceof AxiosError && error.response) {
                 if (error.response.status === 404) {
-                    console.log("Offer not found");
+                    console.error("Offer not found");
                 } else if (error.response.status === 405) {
                     console.error("User cannot follow his own offer");
                 } else {

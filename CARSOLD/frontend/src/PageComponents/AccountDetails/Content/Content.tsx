@@ -6,22 +6,23 @@ import Messages from "./Messages/Messages.tsx";
 import Settings from "./Settings/Settings.tsx";
 import Info from "./Info/Info.tsx";
 import ContentLoader from "../../../Additional/Loading/ContentLoader.tsx";
+import Admin from "./Admin/Admin.tsx";
 
 const Content: React.FC = () => {
 
     const {section} = useParams();
     const navigate = useNavigate();
 
-    const [choice, setChoice] = useState<"myOffers" | "followed" | "messages" | "settings" | "info">("myOffers");
+    const [choice, setChoice] = useState<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin">("myOffers");
     const [isLoading, setIsLoading] = useState<boolean>(true);  //prevents blinking
 
     useEffect(() => {
 
-        const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info"> = [
-            "myOffers", "followed", "messages", "settings", "info"];
+        const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin"> = [
+            "myOffers", "followed", "messages", "settings", "info", "admin"];
 
         if (section && validSections.includes(section as never)) {
-            setChoice(section as "myOffers" | "followed" | "messages" | "settings" | "info");
+            setChoice(section as "myOffers" | "followed" | "messages" | "settings" | "info" | "admin");
             setIsLoading(false);
         } else {
             navigate("/details/myOffers", {replace: true});
@@ -39,7 +40,8 @@ const Content: React.FC = () => {
             : choice === "followed" ? <Followed/>
             : choice === "messages" ? <Messages/>
             : choice === "settings" ? <Settings/>
-            : choice === "info" ? <Info/> : null}
+            : choice === "info" ? <Info/>
+            : choice === "admin" ? <Admin/> : null}
         </div>
     )
 }

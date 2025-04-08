@@ -10,10 +10,10 @@ export const useUserUtil = () => {
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
     const {setProfilePicChange} = useItems();
-    const {isAuthenticated} = useAuth();
+    const {isAuthenticated, preventFetch} = useAuth();
 
     const handleFetchUsername = async () => {
-        if (!isAuthenticated) return;
+        if (preventFetch || !isAuthenticated) return;
         try {
             const response = await fetchUsername();
             if (response.data.value) setUsername(response.data.value);
@@ -27,7 +27,7 @@ export const useUserUtil = () => {
     }
 
     const handleFetchProfilePic = async () => {
-        if (!isAuthenticated) return;
+        if (preventFetch || !isAuthenticated) return;
         try {
             const response = await fetchProfilePic();
             if (response.data.value) setProfilePic(response.data.value);

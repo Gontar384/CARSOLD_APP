@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import ChoiceButton from "./Atomic/ChoiceButton.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {useUserInfo} from "../../../CustomHooks/useUserInfo.ts";
 
 const ChoiceHeaders: React.FC = () => {
 
@@ -9,20 +10,30 @@ const ChoiceHeaders: React.FC = () => {
     const navigate = useNavigate();
     const {section} = useParams();
     const [choice, setChoice] = useState<number | null>(null);
-    const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info"> = [
-        "myOffers", "followed", "messages", "settings", "info"
+    const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin"> = [
+        "myOffers", "followed", "messages", "settings", "info", "admin"
     ];
     //sets true where index of validSections === choice, creates array of true and false
     const buttonState: boolean[] = validSections.map((_, index) => index === choice);
+    const {handleCheckAdmin} = useUserInfo();
+    const [admin, setAdmin] = useState<boolean>(false);
+
+    useEffect(() => {
+        const manageCheckAdmin = async () => {
+            const isAdmin = await handleCheckAdmin();
+            setAdmin(isAdmin);
+        };
+        manageCheckAdmin();
+    }, []); //checks if user is admin
 
     useEffect(() => {
         if (section && validSections.includes(section as never)) {
-            const choiceIndex = validSections.indexOf(section as "myOffers" | "followed" | "messages" | "settings" | "info");
+            const choiceIndex = validSections.indexOf(section as "myOffers" | "followed" | "messages" | "settings" | "info" | "admin");
             setChoice(choiceIndex);
         }
     }, [section, navigate]);  //sets index to choice
 
-    const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info") => {
+    const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info" | "admin") => {
         navigate(`/details/${destination}`);
     }
 
@@ -33,6 +44,7 @@ const ChoiceHeaders: React.FC = () => {
             <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
             <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
             <ChoiceButton label={"Info"} onClick={() => handleNavigation("info")} active={buttonState[4]}/>
+            {admin && <ChoiceButton label={"Admin"} onClick={() => handleNavigation("admin")} active={buttonState[5]}/>}
         </div>
     );
 
@@ -43,9 +55,10 @@ const ChoiceHeaders: React.FC = () => {
                 <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
                 <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
             </div>
-            <div className={`flex flex-row justify-evenly w-[67%] max-w-[400px]`}>
+            <div className={`flex flex-row justify-evenly ${admin ? "w-full max-w-[600px]" : "w-[67%] max-w-[400px]"}`}>
                 <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
                 <ChoiceButton label={"Info"} onClick={() => handleNavigation("info")} active={buttonState[4]}/>
+                {admin && <ChoiceButton label={"Admin"} onClick={() => handleNavigation("admin")} active={buttonState[5]}/>}
             </div>
         </div>
     );

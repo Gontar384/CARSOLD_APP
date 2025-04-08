@@ -52,6 +52,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
     const {handleFetchStats, handleFollowAndCheck} = useOfferUtil();
     const [views, setViews] = useState<number>(0);
     const [follows, setFollows] = useState<number>(0);
+    const [linkDisabled, setLinkDisabled] = useState<boolean>(true);
 
     useEffect(() => {
         const manageHandleFetchStats = async (id: number | null) => {
@@ -104,11 +105,17 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
         </div>
     );
 
+    useEffect(() => {
+        setTimeout(() => {
+            setLinkDisabled(false);
+        }, 150);
+    }, []);  //prevents bug, when user after login instantly clicked link
+
     return (
         <>
             <div className="relative mt-8 m:mt-10">
                 <Link className="flex flex-row bg-white border border-black border-opacity-50 p-1 m:p-2 rounded overflow-hidden cursor-pointer"
-                    to={`/displayOffer/${offer.id}`}>
+                    to={`/displayOffer/${offer.id}`} onClick={(e) => {if (linkDisabled) e.preventDefault()}}>
                     <div className="w-28 m:w-44 h-fit">
                         <div className="w-28 h-24 m:w-44 m:h-36 flex-shrink-0 rounded">
                             {offer.photoUrl !== "" && !photoError ?
@@ -158,7 +165,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                             onTouchStart={isMobile ? () => setHeartHovered(true) : undefined}
                             onTouchEnd={isMobile ? () => setHeartHovered(false) : undefined}>
                         <FontAwesomeIcon icon={faHeart}
-                                         className={`text-2xl m:text-3xl text-coolRed ${heartHovered && "brightness-[80%]"}`}/>
+                                         className={`text-2xl m:text-3xl text-coolRed ${heartHovered && "brightness-[115%]"}`}/>
                     </button>
                 }
             </div>

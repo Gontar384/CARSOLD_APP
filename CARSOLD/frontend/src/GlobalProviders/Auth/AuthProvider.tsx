@@ -8,6 +8,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
     const navigate = useNavigate();
+    const [preventFetch, setPreventFetch] = useState<boolean>(false);
 
     const handleCheckAuth = async () => {
         setLoadingAuth(true);
@@ -42,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const handleLogout = async () => {
         try {
+            setPreventFetch(true);
             await logout();
             await handleCheckAuth();
         } catch (error: unknown) {
@@ -53,12 +55,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         } finally {
             setTimeout(() => {
                 navigate("/authenticate/login");
+                setPreventFetch(false);
             }, 10);
         }
     };
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, handleCheckAuth, loadingAuth, handleLogout}}>
+        <AuthContext.Provider value={{isAuthenticated, handleCheckAuth, loadingAuth, handleLogout, preventFetch}}>
             {children}
         </AuthContext.Provider>
     );

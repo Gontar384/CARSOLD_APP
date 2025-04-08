@@ -1,6 +1,7 @@
 import {AxiosResponse} from "axios";
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {handleError} from "../Errors/ErrorHandler.ts";
+import {SelectedReason} from "../../PageComponents/OfferDisplay/BigContainer/OfferDetails/Admin/ReportOffer.tsx";
 
 //---Management---
 
@@ -76,6 +77,33 @@ export const fetchAllFollowed = async (): Promise<AxiosResponse> => {
 export const fetchFilteredOffers = async (queryParams: string | null): Promise<AxiosResponse> => {
     try {
         return await api.get(`api/offer/search?${queryParams}`);
+    } catch (error) {
+        handleError(error);
+        return Promise.reject();
+    }
+};
+
+//---Admin---
+
+export const adminDeleteOffer = async (id: number | null): Promise<void> => {
+    try {
+        await api.delete(`api/offer/adminDelete/${id}`);
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const reportOffer = async (reason: SelectedReason): Promise<void> => {
+    try {
+        await api.post("api/offer/report", reason);
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const fetchReports = async (): Promise<AxiosResponse> => {
+    try {
+        return await api.get("api/offer/report/fetchAll");
     } catch (error) {
         handleError(error);
         return Promise.reject();

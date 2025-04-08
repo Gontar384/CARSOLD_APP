@@ -8,11 +8,15 @@ import OfferDetails from "./BigContainer/OfferDetails/OfferDetails.tsx";
 import BaseInfo from "./SmallContainer/BaseInfo/BaseInfo.tsx";
 import OfferSmallLoader from "../../Additional/Loading/OfferSmallLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faFlag, faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
+import {adminDeleteOffer} from "../../ApiCalls/Services/OfferService.ts";
+import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import ReportOffer from "./BigContainer/OfferDetails/Admin/ReportOffer.tsx";
+import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -96,6 +100,9 @@ const OfferDisplay: React.FC = () => {
     const {isMobile} = useUtil();
     const {isAuthenticated} = useAuth();
     const [disabled, setDisabled] = useState<boolean>(false);
+    const [decision, setDecision] = useState<boolean>(false);
+    const [report, setReport] = useState<boolean>(false);
+    const [reported, setReported] = useState<boolean>(false);
 
     useEffect(() => {
         if (section) {
@@ -171,9 +178,24 @@ const OfferDisplay: React.FC = () => {
     };
 
     //adminOnly
-    const [decision, setDecision] = useState<boolean>(false);
-    const handleDeleteOffer = () => {
-        console.log("test");
+    const handleDeleteOffer = async (id: number | null) => {
+        if (disabled) return;
+        setDisabled(true);
+        try {
+            await adminDeleteOffer(id);
+            navigate("/search?page=0&size=10");
+        } catch(error: unknown) {
+            setDecision(false);
+            if (error instanceof NotFoundError) {
+                console.error("Offer with id = " + offer.id +  " not found: ", error);
+            } else if (error instanceof MethodNotAllowedError) {
+                console.error("User does not have permission: ", error);
+            } else {
+                console.error("Unexpected error occurred during admin offer deletion: ", error);
+            }
+        } finally {
+            setDisabled(false);
+        }
     };
 
     return (
@@ -195,19 +217,24 @@ const OfferDisplay: React.FC = () => {
                                 onTouchStart={isMobile ? handleStart : undefined}
                                 onTouchEnd={isMobile ? handleEnd : undefined}
                                 onClick={() => handleFollow(id, true)}>
-                                <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl transition-colors duration-300
-                                                 ${followed ? "text-coolRed" : "text-gray-800"} ${buttonColor && "brightness-[80%]"}`}/>
+                                <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl ${followed ? "text-coolRed" : "text-gray-600"}
+                                                                ${buttonColor && "brightness-[115%]"}`}/>
                             </button>}
                         {offer.role === "ADMIN" &&
                             <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
                                     onClick={() => setDecision(true)}>
-                                <FontAwesomeIcon icon={faTrash} className="text-2xl m:text-3xl"/>
+                                <FontAwesomeIcon icon={faTrash} className="text-xl m:text-2xl"/>
+                            </button>
+                        }
+                        {offer.role === "USER" && !offer.permission &&
+                            <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
+                                    onClick={() => setReport(true)}>
+                                <FontAwesomeIcon icon={faFlag} className="text-xl m:text-2xl"/>
                             </button>
                         }
                     </div>
-                    <div
-                        className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
-                        {offerFetched ?
+                    <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
+                    {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
                                 <UserInformation username={offer.username} profilePic={offer.profilePic} name={offer.name} phone={offer.phone}
@@ -217,7 +244,10 @@ const OfferDisplay: React.FC = () => {
                     </div>
                 </div>
                 {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
-                                                   onClick={handleDeleteOffer}/>)}
+                                                   onClick={() => handleDeleteOffer(offer.id)}/>)}
+                {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported}/>}
+                {reported && <AnimatedBanner text={"Offer reported"} onAnimationEnd={() => setReported(false)}
+                                                    delay={3000} color={"bg-gray-300"} z={"z-10"}/>}
             </div>
         </LayOut>
     );
