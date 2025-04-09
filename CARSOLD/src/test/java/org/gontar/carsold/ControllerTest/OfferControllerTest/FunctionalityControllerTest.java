@@ -17,9 +17,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +66,23 @@ public class FunctionalityControllerTest {
         mockMvc.perform(patch("/api/offer/followAndCheck/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"value\":true}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void reportOffer_shouldReturnOk() throws Exception {
+        String jsonBody = """
+        {
+            "offerId": 1,
+            "reason": "Scam listing"
+        }
+    """;
+
+        doNothing().when(functionalityService).reportOffer(1L, "Scam listing");
+
+        mockMvc.perform(post("/api/offer/report")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBody))
                 .andExpect(status().isOk());
     }
 }

@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportDto {
-    private Long id;
+public class PartialReportDto {
     private Long offerId;
     private String reason;
-    private String reportUsername;
 }

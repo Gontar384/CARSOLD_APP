@@ -15,7 +15,7 @@ import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
 import {adminDeleteOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
-import ReportOffer from "./BigContainer/OfferDetails/Admin/ReportOffer.tsx";
+import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 
 const OfferDisplay: React.FC = () => {

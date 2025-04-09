@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface AdminService {
     void adminDeleteOffer(Long id);
-    void reportOffer(Long id, String reason);
-    List<ReportDto> fetchReports();
+    List<ReportDto> adminFetchReports();
+    void adminDeleteReport(Long id);
 }

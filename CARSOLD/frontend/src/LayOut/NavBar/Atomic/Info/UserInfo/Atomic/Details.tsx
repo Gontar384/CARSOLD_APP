@@ -3,20 +3,25 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
+import {useNavigate} from "react-router-dom";
 
 interface DetailsProps {
     iconAnimation?: "animate-pop" | null;
     username: string;
     profilePic: string;
+    letClick?: boolean;
 }
 
-const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic}) => {
+const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic, letClick}) => {
     const {messages} = useItems();
     const {bigWidth} = useUtil();
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
+    const navigate = useNavigate();
+    const {isMobile} = useUtil();
 
     return (
-        <div className="flex flex-row items-center h-full gap-[5px] relative">
+        <div className="flex flex-row items-center h-full gap-[5px] relative cursor-pointer"
+             onClick={!isMobile || letClick ? () => navigate("/details/myOffers") : undefined}>
             <div className="w-7 h-7">
                 {profilePic !== "" && !imageError ? (
                     <img src={profilePic} alt="Profile Picture"

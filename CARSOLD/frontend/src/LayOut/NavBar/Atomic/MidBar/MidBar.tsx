@@ -57,7 +57,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     setMidBarActive(false);
                     setMidBar(false);
                     setBarAnimation(null)
-                }, 300)
+                }, 300);
             }
         };
 
@@ -74,13 +74,12 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     if (midBarActive) {
         return (
-            <div
-                className={`flex flex-col items-center w-[230px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50`}
+            <div className={`flex flex-col items-center w-[230px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
                         usernameFetched ? (
-                            <Details username={username} profilePic={profilePic}/>
+                            <Details username={username} profilePic={profilePic} letClick={true}/>
                         ) : (
                             <UserInfoLoader/>
                         )
@@ -89,7 +88,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     )}
                 </div>
                 <div className="flex flex-col items-start w-full">
-                    <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"} />
+                    <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
                     <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={messages}/>

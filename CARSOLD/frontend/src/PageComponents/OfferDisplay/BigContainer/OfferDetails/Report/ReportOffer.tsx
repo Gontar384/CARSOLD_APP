@@ -15,14 +15,14 @@ export interface SelectedReason {
 const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setReported }) => {
     const componentRef = useRef<HTMLDivElement | null>(null);
     const reportReasons = [
-        "Inappropriate Content",
-        "False or Misleading Information",
-        "Spam or Repetitive Content",
-        "Scam or Fraud",
+        "Inappropriate content",
+        "False or misleading information",
+        "Spam or repetitive content",
+        "Scam or fraud",
         "Impersonation",
-        "Prohibited Item or Service",
-        "Hate Speech or Harassment",
-        "Violates Copyright or Trademark",
+        "Prohibited item or service",
+        "Hate speech or harassment",
+        "Violates copyright or trademark",
         "Other",
     ];
     const [selectedReason, setSelectedReason] = useState<SelectedReason>({

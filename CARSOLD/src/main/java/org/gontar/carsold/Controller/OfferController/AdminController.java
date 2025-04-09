@@ -1,7 +1,6 @@
 package org.gontar.carsold.Controller.OfferController;
 
 import org.gontar.carsold.Domain.Model.ReportDto;
-import org.gontar.carsold.Domain.Model.SingleBooleanDto;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -28,15 +27,17 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/report")
-    public ResponseEntity<?> reportOffer(@RequestBody ReportDto reportDto) {
-        service.reportOffer(reportDto.getOfferId(), reportDto.getReason());
-        return ResponseEntity.ok().build();
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/adminFetchReports")
+    public ResponseEntity<List<ReportDto>> adminFetchReports() {
+        List<ReportDto> reportDtos = service.adminFetchReports();
+        return ResponseEntity.ok().body(reportDtos);
     }
 
-    @GetMapping("/report/fetchAll")
-    public ResponseEntity<List<ReportDto>> fetchReports() {
-        List<ReportDto> reportDtos = service.fetchReports();
-        return ResponseEntity.ok().body(reportDtos);
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/adminDeleteReport/{id}")
+    public ResponseEntity<?> adminDeleteReport(@PathVariable Long id) {
+        service.adminDeleteReport(id);
+        return ResponseEntity.ok().build();
     }
 }

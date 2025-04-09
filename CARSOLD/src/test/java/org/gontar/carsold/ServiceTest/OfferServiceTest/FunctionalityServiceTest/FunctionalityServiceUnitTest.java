@@ -8,6 +8,7 @@ import org.gontar.carsold.Exception.CustomException.InappropriateActionException
 import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
+import org.gontar.carsold.Repository.ReportRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityServiceImpl;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,9 @@ public class FunctionalityServiceUnitTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ReportRepository reportRepository;
 
     @Mock
     private OfferManagementService offerManagementService;
@@ -152,5 +158,38 @@ public class FunctionalityServiceUnitTest {
         when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
 
         assertThrows(InappropriateActionException.class, () -> functionalityService.followAndCheck(1L, true));
+    }
+
+    @Test
+    void reportOffer_shouldSaveReportWhenValidInput() {
+        Long offerId = 1L;
+        String reason = "Inappropriate content";
+
+        User user = new User();
+        user.setUsername("testUser");
+
+        Offer offer = new Offer();
+        offer.setId(offerId);
+
+        when(userDetailsService.loadUser()).thenReturn(user);
+        when(offerRepository.findById(offerId)).thenReturn(Optional.of(offer));
+
+        functionalityService.reportOffer(offerId, reason);
+
+        verify(reportRepository).save(argThat(report ->
+                report.getOffer().equals(offer) &&
+                        report.getReason().equals(reason) &&
+                        report.getReportUsername().equals("testUser")
+        ));
+    }
+
+    @Test
+    void reportOffer_shouldThrowExceptionWhenOfferNotFound() {
+        Long offerId = 999L;
+        String reason = "Scam listing";
+
+        when(offerRepository.findById(offerId)).thenReturn(Optional.empty());
+
+        assertThrows(OfferNotFound.class, () -> functionalityService.reportOffer(offerId, reason));
     }
 }

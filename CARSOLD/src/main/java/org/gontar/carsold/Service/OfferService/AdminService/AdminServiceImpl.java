@@ -51,25 +51,22 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void reportOffer(Long id, String reason) {
-        Objects.requireNonNull(id, "Id cannot be null");
-        Objects.requireNonNull(reason, "Reason cannot be null");
-        Report report = new Report();
-        report.setOfferId(id);
-        report.setReason(reason);
-        reportRepository.save(report);
-    }
-
-    @Override
-    public List<ReportDto> fetchReports() {
+    public List<ReportDto> adminFetchReports() {
         List<Report> allReports = reportRepository.findAll();
         List<ReportDto> reportDtos = new ArrayList<>();
         for (Report report : allReports) {
             ReportDto reportDto = new ReportDto();
-            reportDto.setOfferId(report.getOfferId());
+            reportDto.setId(report.getId());
+            reportDto.setOfferId(report.getOffer().getId());
             reportDto.setReason(report.getReason());
+            reportDto.setReportUsername(report.getReportUsername());
             reportDtos.add(reportDto);
         }
         return reportDtos;
+    }
+
+    @Override
+    public void adminDeleteReport(Long id) {
+        reportRepository.deleteById(id);
     }
 }

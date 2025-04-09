@@ -1,8 +1,6 @@
 package org.gontar.carsold.Controller.OfferController;
 
-import org.gontar.carsold.Domain.Model.OfferStatsDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
-import org.gontar.carsold.Domain.Model.SingleBooleanDto;
+import org.gontar.carsold.Domain.Model.*;
 import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +35,11 @@ public class FunctionalityController {
         boolean result = service.followAndCheck(id, follow);
         if (result) return ResponseEntity.ok().build();
         else return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/report")
+    public ResponseEntity<?> reportOffer(@RequestBody PartialReportDto partialReportDto) {
+        service.reportOffer(partialReportDto.getOfferId(), partialReportDto.getReason());
+        return ResponseEntity.ok().build();
     }
 }
