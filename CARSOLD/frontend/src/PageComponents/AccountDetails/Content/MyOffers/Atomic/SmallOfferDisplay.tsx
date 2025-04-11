@@ -113,7 +113,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
 
     return (
         <>
-            <div className="relative mt-8 m:mt-10">
+            <div className="relative mt-8 m:mt-10 w-full">
                 <Link className="flex flex-row bg-white border border-black border-opacity-50 p-1 m:p-2 rounded overflow-hidden cursor-pointer"
                     to={`/displayOffer/${offer.id}`} onClick={(e) => {if (linkDisabled) e.preventDefault()}}>
                     <div className="w-28 m:w-44 h-fit">

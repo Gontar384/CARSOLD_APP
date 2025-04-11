@@ -82,4 +82,10 @@ public class OfferManagementController {
         service.deleteOffer(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/fetchRandom")
+    public ResponseEntity<List<PartialOfferDto>> fetchRandomOffers() {
+        List<PartialOfferDto> partialOfferDtos = service.fetchRandomOffers();
+        return ResponseEntity.ok(partialOfferDtos);
+    }
 }

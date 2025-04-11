@@ -131,4 +131,18 @@ class OfferManagementControllerTest {
         mockMvc.perform(delete("/api/offer/delete/1"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void fetchRandomOffers_shouldReturnListOfOffers() throws Exception {
+        List<PartialOfferDto> mockOffers = List.of(
+                new PartialOfferDto(), new PartialOfferDto(), new PartialOfferDto()
+        );
+
+        when(offerManagementService.fetchRandomOffers()).thenReturn(mockOffers);
+
+        mockMvc.perform(get("/api/offer/fetchRandom"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(3));
+    }
 }

@@ -15,4 +15,5 @@ public interface OfferManagementService {
     Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos);
     void deleteOffer(Long id);
     boolean fetchPermission(Offer offer);
+    List<PartialOfferDto> fetchRandomOffers();
 }

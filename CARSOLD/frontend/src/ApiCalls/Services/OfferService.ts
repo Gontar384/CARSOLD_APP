@@ -48,6 +48,15 @@ export const deleteOffer = async (id: number | null): Promise<void> => {
     }
 };
 
+export const fetchRandomOffers = async ():Promise<AxiosResponse> => {
+    try {
+        return await api.get("api/offer/fetchRandom");
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
 //---Functionality---
 
 export const followAndCheck = async (id: number | null, follow: boolean): Promise<AxiosResponse> => {

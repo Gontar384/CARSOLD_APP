@@ -130,4 +130,45 @@
 
             verify(repository).findAllByUserId(mockUser.getId());
         }
+
+        @Test
+        public void fetchRandomOffers_shouldReturnMappedDtos_whenOffersExist() {
+            Offer offer1 = new Offer();
+            offer1.setTitle("Random Car 1");
+            offer1.setPrice(10000);
+
+            Offer offer2 = new Offer();
+            offer2.setTitle("Random Car 2");
+            offer2.setPrice(15000);
+
+            Offer offer3 = new Offer();
+            offer3.setTitle("Random Car 3");
+            offer3.setPrice(20000);
+
+            when(repository.findRandomOffers()).thenReturn(List.of(offer1, offer2, offer3));
+
+            List<PartialOfferDto> result = offerManagementService.fetchRandomOffers();
+
+            assertNotNull(result);
+            assertEquals(3, result.size());
+
+            assertEquals(offer1.getTitle(), result.get(0).getTitle());
+
+            assertEquals(offer2.getTitle(), result.get(1).getTitle());
+            assertEquals(offer3.getPrice(), result.get(2).getPrice());
+
+            verify(repository).findRandomOffers();
+        }
+
+        @Test
+        public void fetchRandomOffers_shouldReturnEmptyList_whenNoOffersExist() {
+            when(repository.findRandomOffers()).thenReturn(List.of());
+
+            List<PartialOfferDto> result = offerManagementService.fetchRandomOffers();
+
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+
+            verify(repository).findRandomOffers();
+        }
     }

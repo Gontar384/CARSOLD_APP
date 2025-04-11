@@ -173,6 +173,22 @@ export default {
                     '0%': {transform: "translateY(0)"},
                     '100%': {transform: "translateY(-100%)"},
                 },
+                appearLong: {
+                    '0%': {transform: "translateX(200%)"},
+                    '100%': {transform: "translateX(0)"},
+                },
+                appearFast: {
+                    '0%': {transform: "translateX(200%)"},
+                    '100%': {transform: "translateX(0)"},
+                },
+                appearLongRev: {
+                    '0%': {transform: "translateX(-200%)"},
+                    '100%': {transform: "translateX(0)"},
+                },
+                appearFastRev: {
+                    '0%': {transform: "translateX(-200%)"},
+                    '100%': {transform: "translateX(0)"},
+                }
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -209,6 +225,10 @@ export default {
                 underline: 'underline 0.2s linear forwards',
                 slideDownShow: 'slideDownShow 0.2s ease-in-out forwards',
                 slideUpShow: 'slideUpShow 0.2s ease-in-out forwards',
+                appearLong: 'appearLong 1s ease-in-out forwards',
+                appearFast: 'appearFast 0.5s ease-in-out forwards',
+                appearLongRev: 'appearLongRev 1s ease-in-out forwards',
+                appearFastRev: 'appearFastRev 0.5s ease-in-out forwards'
             },
         },
     },

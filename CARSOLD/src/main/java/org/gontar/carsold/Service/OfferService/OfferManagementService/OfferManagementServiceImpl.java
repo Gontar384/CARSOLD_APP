@@ -61,25 +61,27 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     public List<PartialOfferDto> fetchAllUserOffers() {
         User user = userDetailsService.loadUser();
         List<Offer> offers = repository.findAllByUserId(user.getId());
-        List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
-        for (Offer offer : offers) {
-            PartialOfferDto partialOfferDto = new PartialOfferDto();
-            partialOfferDto.setId(offer.getId());
-            partialOfferDto.setTitle(offer.getTitle());
-            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
-            }
-            partialOfferDto.setPrice(offer.getPrice());
-            partialOfferDto.setCurrency(offer.getCurrency());
-            partialOfferDto.setPower(offer.getPower());
-            partialOfferDto.setCapacity(offer.getCapacity());
-            partialOfferDto.setTransmission(offer.getTransmission());
-            partialOfferDto.setFuel(offer.getFuel());
-            partialOfferDto.setMileage(offer.getMileage());
-            partialOfferDto.setYear(offer.getYear());
-            partialOfferDtos.add(partialOfferDto);
+        return offers.stream()
+                .map(this::mapToPartialOfferDto)
+                .toList();
+    }
+
+    private PartialOfferDto mapToPartialOfferDto(Offer offer) {
+        PartialOfferDto dto = new PartialOfferDto();
+        dto.setId(offer.getId());
+        dto.setTitle(offer.getTitle());
+        if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+            dto.setPhotoUrl(offer.getPhotos().getFirst());
         }
-        return partialOfferDtos;
+        dto.setPrice(offer.getPrice());
+        dto.setCurrency(offer.getCurrency());
+        dto.setPower(offer.getPower());
+        dto.setCapacity(offer.getCapacity());
+        dto.setTransmission(offer.getTransmission());
+        dto.setFuel(offer.getFuel());
+        dto.setMileage(offer.getMileage());
+        dto.setYear(offer.getYear());
+        return dto;
     }
 
     @Override
@@ -379,5 +381,13 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         }
         User user = userDetailsService.loadUser();
         return offer.getUser().getId().equals(user.getId());
+    }
+
+    @Override
+    public List<PartialOfferDto> fetchRandomOffers() {
+        List<Offer> offers = repository.findRandomOffers();
+        return offers.stream()
+                .map(this::mapToPartialOfferDto)
+                .toList();
     }
 }
