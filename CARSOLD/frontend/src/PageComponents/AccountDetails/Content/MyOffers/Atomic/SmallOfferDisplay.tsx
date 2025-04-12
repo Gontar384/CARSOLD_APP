@@ -94,8 +94,8 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
         if (disabled) return;
         setDisabled(true);
         await handleFollowAndCheck(id, follow);
-        setTimeout(() => setDisabled(false), 500);
         setFollowed?.(true);
+        setTimeout(() => setDisabled(false), 500);
     };
 
     const PriceDiv = () => (

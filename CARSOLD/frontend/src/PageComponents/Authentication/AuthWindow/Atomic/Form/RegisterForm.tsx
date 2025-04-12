@@ -38,6 +38,7 @@ const RegisterForm: React.FC = () => {
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isRegistered, setIsRegistered] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
+    const [wrongData, setWrongData] = useState<boolean>(false);
 
     useEffect(() => {
         if (user.email.length < 5) {
@@ -197,7 +198,10 @@ const RegisterForm: React.FC = () => {
                 if (error.response.status === 422) {
                     setUsernameIcon(faCircleExclamation);
                     setUsernameInfo("Username is inappropriate!");
-                } else if (error.response.status !== 400) {
+                } else if (error.response.status === 400) {
+                    setWrongData(true);
+                    console.error("Wrong data provided:", error);
+                } else {
                     setWentWrong(true);
                     console.error("Unexpected error during registration: ", error);
                 }
@@ -223,6 +227,8 @@ const RegisterForm: React.FC = () => {
                 onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
                                           delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
+            {wrongData && <AnimatedBanner text={"Please check your details and try again"} onAnimationEnd={() => setWrongData(false)}
+                                          delay={5000} color={"bg-gray-300"} z={"z-40"}/>}
         </div>
     )
 }

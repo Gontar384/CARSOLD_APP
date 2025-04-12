@@ -75,17 +75,17 @@ const Home: React.FC = () => {
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full gap-8" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? "justify-end mr-5" : "justify-center"} -mt-8 m:-mt-10 animate-appearLong`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? <SmallOfferDisplay type="search" offer={offers[0]}/> : <HomeOfferLoading/>}
+                                {fetched ? (offers[0] ? <SmallOfferDisplay type="search" offer={offers[0]} /> : null) : (<HomeOfferLoading />)}
                             </div>
                         </div>
                         <div className={`flex justify-center ${bigWidth && "mr-5"} animate-appearLong`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? <SmallOfferDisplay type="search" offer={offers[1]}/> : <HomeOfferLoading/>}
+                                {fetched ? (offers[1] ? <SmallOfferDisplay type="search" offer={offers[1]} /> : null) : (<HomeOfferLoading />)}
                             </div>
                         </div>
                         <div className={`flex ${bigWidth ? "justify-end mr-5" : "justify-center"} animate-appearLong`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? <SmallOfferDisplay type="search" offer={offers[2]}/> : <HomeOfferLoading/>}
+                                {fetched ? (offers[2] ? <SmallOfferDisplay type="search" offer={offers[2]} /> : null) : (<HomeOfferLoading />)}
                             </div>
                         </div>
                     </div>

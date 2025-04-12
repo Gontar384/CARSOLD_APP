@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -386,6 +387,9 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Override
     public List<PartialOfferDto> fetchRandomOffers() {
         List<Offer> offers = repository.findRandomOffers();
+        if (offers == null || offers.isEmpty()) {
+            return Collections.emptyList();
+        }
         return offers.stream()
                 .map(this::mapToPartialOfferDto)
                 .toList();
