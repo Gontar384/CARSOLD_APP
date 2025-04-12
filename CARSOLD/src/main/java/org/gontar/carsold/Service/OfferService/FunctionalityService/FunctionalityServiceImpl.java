@@ -90,7 +90,6 @@ public class FunctionalityServiceImpl implements FunctionalityService {
             user.setFollowedOffers(followedOffersIds);
             userRepository.save(user);
         }
-
         return partialOfferDtos;
     }
 
