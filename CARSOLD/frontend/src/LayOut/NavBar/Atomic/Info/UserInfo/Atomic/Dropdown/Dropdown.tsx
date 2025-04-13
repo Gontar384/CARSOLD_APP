@@ -1,10 +1,9 @@
 import React from "react";
-import {useItems} from "../../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import DropdownButton from "./Atomic/DropdownButton.tsx";
 import DropdownFunctionButton from "./Atomic/DropdownFunctionButton.tsx";
-
+import {useMessages} from "../../../../../../../GlobalProviders/Messages/useMessages.ts";
 
 interface DropdownProps {
     barActive: boolean;
@@ -13,7 +12,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
 
-    const {messages} = useItems();
+    const {unseenMessages} = useMessages();
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
     const {handleLogout} = useAuth();
 
@@ -29,7 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
                      onTouchStart={isMobile ? handleDropdownInteraction : undefined}>
                     <DropdownButton label="MyOffers" path={"/details/myOffers"}/>
                     <DropdownButton label="Followed" path={"/details/followed"}/>
-                    <DropdownButton label="Messages" path={"/details/messages"} count={messages}/>
+                    <DropdownButton label="Messages" path={"/details/messages"} count={unseenMessages.length}/>
                     <DropdownButton label="Settings" path={"/details/settings"}/>
                     <DropdownFunctionButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode}/>
                     <DropdownFunctionButton label="Logout" onClick={handleLogout}/>

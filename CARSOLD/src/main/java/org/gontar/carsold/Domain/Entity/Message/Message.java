@@ -1,5 +1,6 @@
 package org.gontar.carsold.Domain.Entity.Message;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Message {
     private User sender;
 
     @ManyToOne
+    @JsonBackReference
     private User receiver;
 
     @Column(length = 1000, nullable = false)

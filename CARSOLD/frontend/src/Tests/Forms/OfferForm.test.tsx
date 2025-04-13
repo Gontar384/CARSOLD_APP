@@ -4,7 +4,7 @@ import {useOfferUtil} from '../../CustomHooks/useOfferUtil';
 import OfferForm from "../../PageComponents/AddingOffer/OfferForm.tsx";
 import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider.tsx";
 import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider.tsx";
-import {ItemsProvider} from "../../GlobalProviders/Items/ItemsProvider.tsx";
+import {SearchProvider} from "../../GlobalProviders/Search/SearchProvider.tsx";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -43,9 +43,9 @@ const renderComponent = () => {
         <MemoryRouter>
             <UtilProvider>
                 <AuthProvider>
-                    <ItemsProvider>
+                    <SearchProvider>
                         <OfferForm/>
-                    </ItemsProvider>
+                    </SearchProvider>
                 </AuthProvider>
             </UtilProvider>
         </MemoryRouter>

@@ -2,7 +2,6 @@ import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import Details from "../Info/UserInfo/Atomic/Details.tsx";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
-import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import LoginRegisterButton from "../Info/LoginRegisterButton/LoginRegisterButton.tsx";
 import BarButton from "./Atomic/BarButton.tsx";
 import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverWrench, faLightbulb, faArrowRightFromBracket} from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +9,7 @@ import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-i
 import BarFunctionButton from "./Atomic/BarFunctionButton.tsx";
 import UserInfoLoader from "../../../../Additional/Loading/UserInfoLoader.tsx";
 import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
+import {useMessages} from "../../../../GlobalProviders/Messages/useMessages.ts";
 
 interface MidBarProps {
     excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
@@ -21,7 +21,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
-    const {messages} = useItems();
+    const {unseenMessages} = useMessages();
     const {usernameFetched, profilePicFetched} = useUserUtil();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
@@ -85,7 +85,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
-                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={messages}/>
+                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessages.length}/>
                     <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&
                         <>

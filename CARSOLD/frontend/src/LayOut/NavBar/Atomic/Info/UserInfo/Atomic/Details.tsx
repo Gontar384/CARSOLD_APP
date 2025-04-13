@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
-import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 import {useNavigate} from "react-router-dom";
 import {useUserUtil} from "../../../../../../GlobalProviders/UserUtil/useUserUtil.ts";
+import {useMessages} from "../../../../../../GlobalProviders/Messages/useMessages.ts";
 
 interface DetailsProps {
     iconAnimation?: "animate-pop" | null;
@@ -13,7 +13,7 @@ interface DetailsProps {
 
 const Details: React.FC<DetailsProps> = ({iconAnimation, letClick}) => {
     const {username, profilePic} = useUserUtil();
-    const {messages} = useItems();
+    const {unseenMessages} = useMessages();
     const {bigWidth, isMobile} = useUtil();
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Details: React.FC<DetailsProps> = ({iconAnimation, letClick}) => {
             <div className="text-2xl whitespace-nowrap">
                 {username}
             </div>
-            {messages > 0 && bigWidth &&(
+            {unseenMessages.length > 0 && bigWidth &&(
                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
                                  className="absolute -right-4 top-6 text-[10px]"/>)}
         </div>

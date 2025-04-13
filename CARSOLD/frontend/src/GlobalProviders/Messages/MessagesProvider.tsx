@@ -1,48 +1,81 @@
-import React, {useEffect, useState} from "react";
-import {MessageDto, MessagesContext, MessagesContextType} from "./useMessages.ts";
-import * as Stomp from 'stompjs';
-import SockJS from 'sockjs-client';
+import React, { useEffect, useRef, useState } from "react";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import { MessagesContext } from "./useMessages";
+import {useUserUtil} from "../UserUtil/useUserUtil.ts";
+import {useAuth} from "../Auth/useAuth.ts";
+import {getUnseenMessages} from "../../ApiCalls/Services/MessageService.ts";
+
+export interface Message {
+    senderUsername: string;
+    receiverUsername: string;
+    content: string;
+    timestamp: string;
+    seen: boolean;
+}
 
 export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [stompClient, setStompClient] = useState<Stomp.Client | null>(null);
-    const [messages, setMessages] = useState<MessageDto[]>([]);
-    //
-    // useEffect(() => {
-    //     const socket = new SockJS('/ws');
-    //     const client = Stomp.over(socket);
-    //
-    //     client.connect({}, (frame) => {
-    //         console.log('Connected: ' + frame);
-    //         setStompClient(client);
-    //     });
-    //
-    //     return () => {
-    //         if (stompClient) {
-    //             stompClient.disconnect(() => {
-    //                 console.log('Disconnected');
-    //             });
-    //         }
-    //     };
-    // }, [stompClient]);
+    const [latestMessage, setLatestMessage] = useState<Message>({
+        senderUsername: "",
+        receiverUsername: "",
+        content: "",
+        timestamp: "",
+        seen: false
+    });
+    const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
+    const stompClientRef = useRef<Stomp.Client | null>(null);
+    const {username} = useUserUtil();
+    const {isAuthenticated} = useAuth();
 
-    const subscribeToUser = (username: string) => {
-        if (!stompClient) return;
+    useEffect(() => {
+        const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URL}ws`);
+        const stompClient = Stomp.over(socket);
+        stompClient.debug = () => {}; //switch off logs
 
         stompClient.connect({}, () => {
-            stompClient.subscribe(`/topic/messages/${username}`, (messageOutput) => {
-                const message: MessageDto = JSON.parse(messageOutput.body);
-                setMessages((prevMessages) => [...prevMessages, message]);
+            //console.log("✅ WebSocket connected");
+            stompClient.subscribe(`/topic/messages/${username}`, (message) => {
+                try {
+                    const parsed: Message = JSON.parse(message.body);
+                    //console.log("📩 New message received:", parsed);
+                    setLatestMessage(parsed);
+                } catch (error) {
+                    console.error("Failed to parse message: ", error);
+                }
             });
+            stompClientRef.current = stompClient;
+        }, (error) => {
+            console.error("WebSocket for messages connection error:", error);
         });
-    };
 
-    const sendMessage = (message: MessageDto) => {
-        if (!stompClient) return;
+        return () => {
+            if (stompClientRef.current?.connected) {
+                stompClientRef.current.disconnect(() => {
+                    //console.log("🧹 Disconnected from WebSocket");
+                });
+            }
+        };
+    }, [username]);
 
-        stompClient.send('/app/messages/john', {}, JSON.stringify(message));  // Adjust the endpoint as needed
-    };
+    useEffect(() => {
+        const handleGetUnseenMessages = async () => {
+            try {
+                const response= await getUnseenMessages();
+                if (response.data) {
+                    setUnseenMessages(response.data);
+                }
+            } catch (error) {
+                console.error("Unexpected error when fetching messages: ", error);
+            }
+        };
+        if (isAuthenticated) handleGetUnseenMessages();
+    }, [isAuthenticated, latestMessage]);
 
-    const value: MessagesContextType = {messages, sendMessage, subscribeToUser,};
+    console.log(latestMessage)
 
-    return <MessagesContext.Provider value={value}>{children}</MessagesContext.Provider>;
+    return (
+        <MessagesContext.Provider value={{ latestMessage, unseenMessages }}>
+            {children}
+        </MessagesContext.Provider>
+    );
 };

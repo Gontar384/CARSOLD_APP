@@ -4,18 +4,16 @@ import {faAddressCard, faHeart, faMessage, faRightFromBracket, faSquarePlus, faU
 import DarkModeButton from "./Atomic/DarkModeButton.tsx";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
-import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-
+import {useMessages} from "../../../../GlobalProviders/Messages/useMessages.ts";
 
 const LowerBar: React.FC = () => {
-
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
     const [lowerBarActive, setLowerBarActive] = useState<boolean>(false);
     const {lowerBar, mobileWidth} = useUtil();
     const {isAuthenticated, handleLogout} = useAuth();
     const navigate = useNavigate();
-    const {messages} = useItems();
+    const {unseenMessages} = useMessages();
 
     useEffect(() => {
         if (lowerBar) {
@@ -38,7 +36,7 @@ const LowerBar: React.FC = () => {
                 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
                 <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add Offer"/>
                 <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed"/>
-                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={messages}/>
+                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessages.length}/>
                 <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>
                 {isAuthenticated ? (
                     <>

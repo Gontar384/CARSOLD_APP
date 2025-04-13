@@ -1,7 +1,10 @@
 package org.gontar.carsold.Service.MessageService;
 
-import org.gontar.carsold.Domain.Entity.Message.Message;
+import org.gontar.carsold.Domain.Model.ReceivedMessageDto;
+
+import java.util.List;
 
 public interface MessageService {
-    Message sendMessage(String senderUsername, String receiverUsername, String content);
+    void sendMessage(String senderUsername, String receiverUsername, String content);
+    List<ReceivedMessageDto> getUnseenMessages();
 }

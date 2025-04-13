@@ -3,11 +3,11 @@ import {faMagnifyingGlass, faTableList} from "@fortawesome/free-solid-svg-icons"
 import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {Link, useNavigate} from "react-router-dom";
-import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
+import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {useButton} from "../../../CustomHooks/useButton.ts";
 
 const SearchBar: React.FC = () => {
-    const {phrase, setPhrase, setTrigger, clicked, setClicked, searched, setSearched} = useItems();
+    const {phrase, setPhrase, setTrigger, clicked, setClicked, searched, setSearched} = useSearch();
     const searchRef = useRef<string>("");
     const componentRef = useRef<HTMLDivElement | null>(null);
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null);

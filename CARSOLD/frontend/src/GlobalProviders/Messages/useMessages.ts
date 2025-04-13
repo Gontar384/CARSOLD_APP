@@ -1,22 +1,15 @@
 import {createContext, useContext} from "react";
-
-export interface MessageDto {
-    content: string;
-    sender: string;
-    timestamp: string;
-}
+import {Message} from "./MessagesProvider.tsx";
 
 export interface MessagesContextType {
-    messages: MessageDto[];
-    sendMessage: (message: MessageDto) => void;
-    subscribeToUser: (username: string) => void;
+    latestMessage: Message;
+    unseenMessages: Message[];
 }
 
 export const MessagesContext = createContext<MessagesContextType | undefined>(undefined);
 
 export const useMessages = (): MessagesContextType => {
     const context = useContext(MessagesContext);
-    if (context === undefined) throw new Error("useMessages must be used within an MessagesProvider");
-
+    if (!context) throw new Error("useMessages must be used within a MessagesProvider");
     return context;
-}
+};

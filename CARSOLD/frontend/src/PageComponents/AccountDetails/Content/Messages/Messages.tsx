@@ -15,7 +15,7 @@ const Messages: React.FC = () => {
         if (username) {
             setMessage({
                 senderUsername: username,
-                receiverUsername: "gontarek384",
+                receiverUsername: "gontar",
                 content: "testMessage"
             });
         }

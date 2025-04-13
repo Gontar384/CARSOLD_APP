@@ -1,8 +1,6 @@
 import React, {createContext, useContext} from "react";
 
-interface ItemsContextType {
-    messages: number,
-    setMessages: React.Dispatch<React.SetStateAction<number>>,
+interface SearchContextType {
     phrase: string;
     setPhrase: React.Dispatch<React.SetStateAction<string>>;
     trigger: boolean;
@@ -13,13 +11,13 @@ interface ItemsContextType {
     setSearched: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
+export const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-export const useItems = (): ItemsContextType => {
+export const useSearch = (): SearchContextType => {
 
-    const context = useContext(ItemsContext);
+    const context = useContext(SearchContext);
 
-    if (context === undefined) throw new Error("useItems must be used within an ItemsProvider");
+    if (context === undefined) throw new Error("useSearch must be used within an SearchProvider");
 
     return context;
 }

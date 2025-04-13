@@ -5,7 +5,7 @@ import AuthErrorManager from "./Config/AuthConfig/AuthErrorManager.tsx";
 import React from "react";
 import {AuthProvider} from "./GlobalProviders/Auth/AuthProvider.tsx";
 import {UtilProvider} from "./GlobalProviders/Util/UtilProvider.tsx";
-import {ItemsProvider} from "./GlobalProviders/Items/ItemsProvider.tsx";
+import {SearchProvider} from "./GlobalProviders/Search/SearchProvider.tsx";
 import AuthenticationPage from "./PageComponents/Authentication/Authentication.tsx";
 import AccountActivation from "./PageComponents/AccountActivation/AccountActivation.tsx";
 import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
@@ -28,7 +28,7 @@ const App: React.FC = () => {
         <BrowserRouter> {/*manages routes*/}
             <UtilProvider> {/*provides util*/}
                 <AuthProvider> {/*manages authentication*/}
-                    <ItemsProvider> {/*provides items*/}
+                    <SearchProvider> {/*provides search util*/}
                         <UserUtilProvider> {/*provides username and profilePic*/}
                             <MessagesProvider> {/*sending messages util*/}
                                 <Routes>
@@ -59,7 +59,7 @@ const App: React.FC = () => {
                                 <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
                             </MessagesProvider>
                         </UserUtilProvider>
-                    </ItemsProvider>
+                    </SearchProvider>
                 </AuthProvider>
             </UtilProvider>
         </BrowserRouter>

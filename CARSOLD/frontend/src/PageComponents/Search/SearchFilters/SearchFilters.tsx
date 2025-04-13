@@ -21,7 +21,7 @@ import {fetchFilteredOffers} from "../../../ApiCalls/Services/OfferService.ts";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {FetchedOffer, UpdatedOffer} from "../../AccountDetails/Content/MyOffers/MyOffers.tsx";
 import {sortBy} from "./AdditionalData/sortBy.ts";
-import {useItems} from "../../../GlobalProviders/Items/useItems.ts";
+import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 
 interface SearchFiltersProps {
     setOffers: React.Dispatch<React.SetStateAction<UpdatedOffer[]>>;
@@ -88,7 +88,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
-    const {phrase, setPhrase, trigger, setTrigger, setClicked} = useItems();
+    const {phrase, setPhrase, trigger, setTrigger, setClicked} = useSearch();
 
     useEffect(() => {
         const params = new URLSearchParams();
