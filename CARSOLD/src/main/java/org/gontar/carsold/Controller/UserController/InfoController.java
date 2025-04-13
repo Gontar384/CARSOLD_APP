@@ -4,14 +4,12 @@ import org.gontar.carsold.Domain.Model.SingleBooleanDto;
 import org.gontar.carsold.Domain.Model.UserInfoDto;
 import org.gontar.carsold.Service.UserService.InfoService.InfoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Validated
 @RequestMapping("/api")
 public class InfoController {
 

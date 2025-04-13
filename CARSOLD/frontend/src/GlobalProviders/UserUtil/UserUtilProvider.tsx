@@ -1,15 +1,14 @@
-import {useState} from "react";
-import {useAuth} from "../GlobalProviders/Auth/useAuth.ts";
-import {useItems} from "../GlobalProviders/Items/useItems.ts";
-import {fetchProfilePic, fetchUsername} from "../ApiCalls/Services/UserService.ts";
+import React, {useEffect, useState} from "react";
+import { UserUtilContext } from "./useUserUtil.ts";
+import {useAuth} from "../Auth/useAuth.ts";
+import {fetchProfilePic, fetchUsername} from "../../ApiCalls/Services/UserService.ts";
 
-export const useUserUtil = () => {
-
-    const [username, setUsername] = useState<string>("");   //username fetched
+export const UserUtilProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+    const [username, setUsername] = useState<string>(""); 
     const [usernameFetched, setUsernameFetched] = useState<boolean>(false);
     const [profilePic, setProfilePic] = useState<string>("");
     const [profilePicFetched, setProfilePicFetched] = useState<boolean>(false);
-    const {setProfilePicChange} = useItems();
+    const [profilePicChanged, setProfilePicChanged] = useState<boolean>(false);
     const {isAuthenticated, preventFetch} = useAuth();
 
     const handleFetchUsername = async () => {
@@ -37,9 +36,23 @@ export const useUserUtil = () => {
             console.error("Error fetching profilePic: ", error);
         } finally {
             setProfilePicFetched(true);
-            setProfilePicChange(false);
+            setProfilePicChanged(false);
         }
     }
 
-    return {username, usernameFetched, handleFetchUsername, profilePic, profilePicFetched, handleFetchProfilePic}
+    useEffect(() => {
+        if (isAuthenticated) {
+            handleFetchUsername();
+        }
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            handleFetchProfilePic();
+        }
+    }, [isAuthenticated, profilePicChanged]);
+
+    return <UserUtilContext.Provider value={{username, profilePic, usernameFetched, profilePicFetched, setProfilePicChanged}}>
+        {children}
+    </UserUtilContext.Provider>
 }

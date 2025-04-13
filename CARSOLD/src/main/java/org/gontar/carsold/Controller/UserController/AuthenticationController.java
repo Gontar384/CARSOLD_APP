@@ -8,12 +8,10 @@ import org.gontar.carsold.Service.UserService.AuthenticationService.Authenticati
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@Validated
 public class AuthenticationController {
 
     private final AuthenticationService service;

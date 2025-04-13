@@ -3,14 +3,12 @@ package org.gontar.carsold.Controller.OfferController;
 import org.gontar.carsold.Domain.Model.*;
 import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/offer")
-@Validated
 public class FunctionalityController {
 
     private final FunctionalityService service;

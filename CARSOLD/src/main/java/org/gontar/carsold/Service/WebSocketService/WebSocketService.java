@@ -1,6 +1,6 @@
 package org.gontar.carsold.Service.WebSocketService;
 
-import org.gontar.carsold.Domain.Model.MessageDto;
+import org.gontar.carsold.Domain.Entity.Message.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ public class WebSocketService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void sendMessageToUser(String username, MessageDto messageDto) {
-        messagingTemplate.convertAndSend("/topic/messages/" + username, messageDto);
+    public void sendMessageToUser(String username, Message message) {
+        messagingTemplate.convertAndSend("/topic/messages/" + username, message);
     }
 }

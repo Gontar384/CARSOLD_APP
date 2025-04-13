@@ -4,7 +4,7 @@ import {
     BadRequestError,
     ForbiddenError,
     InternalServerError, MethodNotAllowedError,
-    NotFoundError,
+    NotFoundError, PayloadTooLarge,
     UnauthorizedError,
     UnprocessableEntityError,
     UnsupportedMediaTypeError
@@ -40,6 +40,9 @@ export const handleError = (error: unknown): void => {
             case 500:
                 console.error("Internal Server Error:", message, error);
                 throw new InternalServerError(message, error.response);
+            case 413:
+                console.error("Payload Too Large:", message, error);
+                throw new PayloadTooLarge(message, error.response);
             default:
                 console.error(`Other API Error (Status: ${status}):`, message, error);
                 throw new ApiException(message, error.response);

@@ -2,17 +2,15 @@ import React, {useEffect, useRef, useState} from "react";
 import UserInfoLoader from "../../../../../Additional/Loading/UserInfoLoader.tsx";
 import LoginRegisterButton from "../LoginRegisterButton/LoginRegisterButton.tsx";
 import Dropdown from "./Atomic/Dropdown/Dropdown.tsx";
-import {useUserUtil} from "../../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
-import {useItems} from "../../../../../GlobalProviders/Items/useItems.ts";
 import Details from "./Atomic/Details.tsx";
+import {useUserUtil} from "../../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 
 const UserInfo: React.FC = () => {
 
     const {isAuthenticated, loadingAuth} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
-    const {profilePicChange} = useItems();
+    const {usernameFetched, profilePicFetched} = useUserUtil();
     const [iconAnimation, setIconAnimation] = useState<"animate-pop" | null>(null);
     const [barActive, setBarActive] = useState<boolean>(false);
     const [closing, setClosing] = useState<boolean>(false);
@@ -87,12 +85,6 @@ const UserInfo: React.FC = () => {
         return () => document.removeEventListener("touchstart", handleClickOutside);
     }, [barActive]);    //adds event listener for faster button deactivation for mobile
 
-    //fetches username and profile pic
-    useEffect(() => {
-        handleFetchUsername();
-        handleFetchProfilePic();
-    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
-
     if (loadingAuth) {
         return <UserInfoLoader/>
     }
@@ -101,14 +93,14 @@ const UserInfo: React.FC = () => {
         <div className="flex justify-center items-center h-full min-w-[220px]"
             ref={componentRef}>
             {isAuthenticated ? (
-                usernameFetched ? (
+                usernameFetched && profilePicFetched ? (
                     <div className="relative h-full flex justify-center items-center hover: cursor-pointer"
                          tabIndex={0} role="button"
                          onMouseEnter={!isMobile ? handleActivateBar : undefined}
                          onMouseLeave={!isMobile ? handleDeactivateBar : undefined}
                          onTouchStart={isMobile ? handleToggleBar : undefined}
                          onKeyDown={(event) => {if (event.key === "Enter") handleToggleBar()}}>
-                        <Details iconAnimation={iconAnimation} username={username} profilePic={profilePic}/>
+                        <Details iconAnimation={iconAnimation}/>
                         <Dropdown barActive={barActive} animation={dropdownAnimation}/>
                     </div>
                 ) : (

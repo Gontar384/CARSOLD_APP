@@ -1,7 +1,6 @@
 import React, {SetStateAction, useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import Details from "../Info/UserInfo/Atomic/Details.tsx";
-import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
 import LoginRegisterButton from "../Info/LoginRegisterButton/LoginRegisterButton.tsx";
@@ -10,6 +9,7 @@ import {faFileCirclePlus, faHeart, faMessage, faMoneyCheckDollar, faScrewdriverW
 import {faLightbulb as faLightBulbRegular} from "@fortawesome/free-regular-svg-icons";
 import BarFunctionButton from "./Atomic/BarFunctionButton.tsx";
 import UserInfoLoader from "../../../../Additional/Loading/UserInfoLoader.tsx";
+import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 
 interface MidBarProps {
     excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
@@ -21,8 +21,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
-    const {username, usernameFetched, handleFetchUsername, profilePic, handleFetchProfilePic} = useUserUtil();
-    const {profilePicChange, messages} = useItems();
+    const {messages} = useItems();
+    const {usernameFetched, profilePicFetched} = useUserUtil();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
     useEffect(() => {
@@ -38,12 +38,6 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
             return () => clearTimeout(timeout);
         }
     }, [midBar, midWidth]);   //activates/deactivates lower bar and resets animation
-
-    //fetches username and profile pic
-    useEffect(() => {
-        handleFetchUsername();
-        handleFetchProfilePic();
-    }, [handleFetchProfilePic, handleFetchUsername, isAuthenticated, profilePicChange]);
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
@@ -78,8 +72,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
-                        usernameFetched ? (
-                            <Details username={username} profilePic={profilePic} letClick={true}/>
+                        usernameFetched && profilePicFetched ? (
+                            <Details letClick={true}/>
                         ) : (
                             <UserInfoLoader/>
                         )

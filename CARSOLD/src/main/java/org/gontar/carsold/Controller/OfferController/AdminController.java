@@ -4,14 +4,12 @@ import org.gontar.carsold.Domain.Model.ReportDto;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/offer")
-@Validated
 public class AdminController {
 
     private final AdminService service;

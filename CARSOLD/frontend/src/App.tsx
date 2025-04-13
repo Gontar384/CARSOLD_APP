@@ -20,6 +20,7 @@ import OfferDisplay from "./PageComponents/OfferDisplay/OfferDisplay.tsx";
 import OpenRoutes from "./Config/AuthConfig/OpenRoutes.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import {MessagesProvider} from "./GlobalProviders/Messages/MessagesProvider.tsx";
+import {UserUtilProvider} from "./GlobalProviders/UserUtil/UserUtilProvider.tsx";
 
 const App: React.FC = () => {
 
@@ -28,34 +29,36 @@ const App: React.FC = () => {
             <UtilProvider> {/*provides util*/}
                 <AuthProvider> {/*manages authentication*/}
                     <ItemsProvider> {/*provides items*/}
-                        <MessagesProvider> {/*sending messages util*/}
-                            <Routes>
-                                <Route element={<PublicRoutes/>}>
-                                    <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
-                                    <Route path="/activate" element={<AccountActivation/>}/>
-                                    <Route path="/password-recovery" element={<PasswordRecovery/>}/>
-                                    <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>
-                                </Route>
+                        <UserUtilProvider> {/*provides username and profilePic*/}
+                            <MessagesProvider> {/*sending messages util*/}
+                                <Routes>
+                                    <Route element={<PublicRoutes/>}>
+                                        <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
+                                        <Route path="/activate" element={<AccountActivation/>}/>
+                                        <Route path="/password-recovery" element={<PasswordRecovery/>}/>
+                                        <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>
+                                    </Route>
 
-                                <Route element={<OpenRoutes/>}>
-                                    <Route path="/termsOfUse" element={<TermsOfUse/>}/>
-                                    <Route path="/search" element={<Search/>}/>
-                                    <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
-                                    <Route path="/home" element={<Home/>}/>
-                                </Route>
+                                    <Route element={<OpenRoutes/>}>
+                                        <Route path="/termsOfUse" element={<TermsOfUse/>}/>
+                                        <Route path="/search" element={<Search/>}/>
+                                        <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
+                                        <Route path="/home" element={<Home/>}/>
+                                    </Route>
 
-                                <Route element={<PrivateRoutes/>}>
-                                    <Route path="/details/:section?" element={<AccountDetails/>}/>
-                                    <Route path="/addingOffer" element={<OfferForm/>}/>
-                                    <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
-                                </Route>
+                                    <Route element={<PrivateRoutes/>}>
+                                        <Route path="/details/:section?" element={<AccountDetails/>}/>
+                                        <Route path="/addingOffer" element={<OfferForm/>}/>
+                                        <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
+                                    </Route>
 
-                                <Route path="*" element={<Navigate to="/search"/>}/>
-                            </Routes>
-                        <TokensManager/> {/*manages tokens*/}
-                        <CookieBanner/> {/*displays cookie banner*/}
-                        <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
-                        </MessagesProvider>
+                                    <Route path="*" element={<Navigate to="/search"/>}/>
+                                </Routes>
+                                <TokensManager/> {/*manages tokens*/}
+                                <CookieBanner/> {/*displays cookie banner*/}
+                                <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
+                            </MessagesProvider>
+                        </UserUtilProvider>
                     </ItemsProvider>
                 </AuthProvider>
             </UtilProvider>

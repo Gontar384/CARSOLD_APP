@@ -4,20 +4,19 @@ import {faCircle, faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import {useItems} from "../../../../../../GlobalProviders/Items/useItems.ts";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 import {useNavigate} from "react-router-dom";
+import {useUserUtil} from "../../../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 
 interface DetailsProps {
     iconAnimation?: "animate-pop" | null;
-    username: string;
-    profilePic: string;
     letClick?: boolean;
 }
 
-const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic, letClick}) => {
+const Details: React.FC<DetailsProps> = ({iconAnimation, letClick}) => {
+    const {username, profilePic} = useUserUtil();
     const {messages} = useItems();
-    const {bigWidth} = useUtil();
+    const {bigWidth, isMobile} = useUtil();
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const navigate = useNavigate();
-    const {isMobile} = useUtil();
 
     return (
         <div className="flex flex-row items-center h-full gap-[5px] relative cursor-pointer"
@@ -30,8 +29,7 @@ const Details: React.FC<DetailsProps> = ({iconAnimation, username, profilePic, l
                 ) : (
                     <FontAwesomeIcon icon={faCircleUser} className={`w-full h-full ${iconAnimation}`}/>)}
             </div>
-            <div
-                className="text-2xl whitespace-nowrap">
+            <div className="text-2xl whitespace-nowrap">
                 {username}
             </div>
             {messages > 0 && bigWidth &&(

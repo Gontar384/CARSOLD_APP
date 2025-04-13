@@ -190,6 +190,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
     }
 
+    @ExceptionHandler(MessageTooLargeException.class)
+    public ResponseEntity<?> handleMessageTooLongException(MessageTooLargeException ex) {
+        log.error("Message Too Long: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("Message Too Long");
+    }
+
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException ex) {
         log.error("IOException: {}", ex.getMessage(), ex);

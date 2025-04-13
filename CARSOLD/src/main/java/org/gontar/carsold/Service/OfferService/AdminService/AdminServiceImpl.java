@@ -67,6 +67,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void adminDeleteReport(Long id) {
+        Objects.requireNonNull(id, "Id cannot be null");
         reportRepository.deleteById(id);
     }
 }

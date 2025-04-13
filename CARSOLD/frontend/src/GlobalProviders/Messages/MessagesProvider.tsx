@@ -6,24 +6,24 @@ import SockJS from 'sockjs-client';
 export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [stompClient, setStompClient] = useState<Stomp.Client | null>(null);
     const [messages, setMessages] = useState<MessageDto[]>([]);
-
-    useEffect(() => {
-        const socket = new SockJS('/ws');
-        const client = Stomp.over(socket);
-
-        client.connect({}, (frame) => {
-            console.log('Connected: ' + frame);
-            setStompClient(client);
-        });
-
-        return () => {
-            if (stompClient) {
-                stompClient.disconnect(() => {
-                    console.log('Disconnected');
-                });
-            }
-        };
-    }, [stompClient]);
+    //
+    // useEffect(() => {
+    //     const socket = new SockJS('/ws');
+    //     const client = Stomp.over(socket);
+    //
+    //     client.connect({}, (frame) => {
+    //         console.log('Connected: ' + frame);
+    //         setStompClient(client);
+    //     });
+    //
+    //     return () => {
+    //         if (stompClient) {
+    //             stompClient.disconnect(() => {
+    //                 console.log('Disconnected');
+    //             });
+    //         }
+    //     };
+    // }, [stompClient]);
 
     const subscribeToUser = (username: string) => {
         if (!stompClient) return;

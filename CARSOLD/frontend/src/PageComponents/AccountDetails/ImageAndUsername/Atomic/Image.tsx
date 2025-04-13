@@ -1,21 +1,18 @@
 import React, {useEffect, useRef, useState} from "react";
 import {faCirclePlus, faCircleUser, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useUserUtil} from "../../../../CustomHooks/useUserUtil.ts";
 import ProfilePicLoader from "../../../../Additional/Loading/ProfilePicLoader.tsx";
 import LoadingPicAnimation from "../../../../Additional/Loading/LoadingPicAnimation.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
-import {useItems} from "../../../../GlobalProviders/Items/useItems.ts";
-import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Services/UserService.ts";
 import {InternalServerError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
+import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 
 interface ImageProps {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Image: React.FC<ImageProps> = ({setMessage}) => {
-
     const [inputActive, setInputActive] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [inputDisabled, setInputDisabled] = useState<boolean>(true);
@@ -24,9 +21,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [imageError, setImageError] = useState<boolean>(false);   //handles image display error
     const [picUploaded, setPicUploaded] = useState<boolean>(true);   //for loading animation
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const {setProfilePicChange} = useItems();
-    const {profilePic, profilePicFetched, handleFetchProfilePic} = useUserUtil();
-    const {isAuthenticated} = useAuth();
+    const {profilePic, profilePicFetched, setProfilePicChanged} = useUserUtil();
     const deactivationTimeout = useRef<NodeJS.Timeout | null>(null);  //for delays
 
     const handleActivateInput = () => {
@@ -92,7 +87,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         setIsDisabled(true);
         try {
             await uploadProfilePic(formData);
-            setProfilePicChange(true);
+            setProfilePicChanged(true);
         } catch (error: unknown) {
             if (error instanceof UnsupportedMediaTypeError) {
                 setMessage("Provided image is not supported.")  //fallback check
@@ -118,7 +113,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         setIsDisabled(true);
         try {
             await deleteProfilePic();
-            setProfilePicChange(true);
+            setProfilePicChanged(true);
         } catch (error: unknown) {
             setMessage("Couldn't delete image.")
             if (error instanceof InternalServerError) {
@@ -133,10 +128,6 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             setInputDisabled(true);
         }
     };
-
-    useEffect(() => {
-        handleFetchProfilePic();
-    }, [handleFetchProfilePic, isAuthenticated, picUploaded]);  //fetches pic
 
     return (
         <div className="absolute left-0 scale-125 rounded-full" ref={componentRef}

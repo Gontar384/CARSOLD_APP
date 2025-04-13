@@ -29,7 +29,7 @@ import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
 import {ForbiddenError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const OfferForm: React.FC = () => {
-    document.title = "CARSOLD | Adding Offer";
+    document.title = "CARSOLD | Add Offer";
     interface RawOffer {
         title: string;
         brand: string;

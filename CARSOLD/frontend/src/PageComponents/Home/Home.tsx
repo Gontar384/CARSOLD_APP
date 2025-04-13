@@ -10,6 +10,7 @@ import {Link} from "react-router-dom";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Home: React.FC = () => {
+    document.title = "CARSOLD | Home"
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const {bigWidth} = useUtil();

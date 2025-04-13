@@ -26,7 +26,7 @@ public class Message {
     @ManyToOne
     private User receiver;
 
-    @Column(length = 1000)
+    @Column(length = 1000, nullable = false)
     private String content;
 
     @Column(nullable = false)
