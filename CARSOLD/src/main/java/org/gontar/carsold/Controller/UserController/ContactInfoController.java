@@ -6,10 +6,12 @@ import org.gontar.carsold.Domain.Model.SingleBooleanDto;
 import org.gontar.carsold.Domain.Model.SingleStringDto;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@Validated
 public class ContactInfoController {
 
     private final ContactInfoService service;

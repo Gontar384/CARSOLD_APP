@@ -55,7 +55,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
     public List<PartialOfferDto> fetchAllFollowed() {
         User user = userDetailsService.loadUser();
         List<String> followedOffersIds = user.getFollowedOffers();
-        if (followedOffersIds.isEmpty()) return null;
+        if (followedOffersIds.isEmpty()) return List.of();
 
         List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
         List<String> offersToRemove = new ArrayList<>();

@@ -387,9 +387,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Override
     public List<PartialOfferDto> fetchRandomOffers() {
         List<Offer> offers = repository.findRandomOffers();
-        if (offers == null || offers.isEmpty()) {
-            return Collections.emptyList();
-        }
         return offers.stream()
                 .map(this::mapToPartialOfferDto)
                 .toList();

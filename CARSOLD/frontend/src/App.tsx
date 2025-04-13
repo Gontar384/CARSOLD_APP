@@ -19,6 +19,7 @@ import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
 import OfferDisplay from "./PageComponents/OfferDisplay/OfferDisplay.tsx";
 import OpenRoutes from "./Config/AuthConfig/OpenRoutes.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
+import {MessagesProvider} from "./GlobalProviders/Messages/MessagesProvider.tsx";
 
 const App: React.FC = () => {
 
@@ -27,6 +28,7 @@ const App: React.FC = () => {
             <UtilProvider> {/*provides util*/}
                 <AuthProvider> {/*manages authentication*/}
                     <ItemsProvider> {/*provides items*/}
+                        <MessagesProvider> {/*sending messages util*/}
                             <Routes>
                                 <Route element={<PublicRoutes/>}>
                                     <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
@@ -53,6 +55,7 @@ const App: React.FC = () => {
                         <TokensManager/> {/*manages tokens*/}
                         <CookieBanner/> {/*displays cookie banner*/}
                         <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
+                        </MessagesProvider>
                     </ItemsProvider>
                 </AuthProvider>
             </UtilProvider>

@@ -228,7 +228,7 @@ const RegisterForm: React.FC = () => {
             {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
                                           delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
             {wrongData && <AnimatedBanner text={"Please check your details and try again"} onAnimationEnd={() => setWrongData(false)}
-                                          delay={5000} color={"bg-gray-300"} z={"z-40"}/>}
+                                          delay={4000} color={"bg-gray-300"} z={"z-40"}/>}
         </div>
     )
 }

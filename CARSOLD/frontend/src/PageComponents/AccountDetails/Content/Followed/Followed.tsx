@@ -69,8 +69,6 @@ const Followed: React.FC = () => {
                     year: String(offer.year ?? ""),
                 }));
                 setOffers(formattedOffers);
-            } else {
-                setOffers([]);
             }
         };
         manageHandleFetchAllFollowed();
