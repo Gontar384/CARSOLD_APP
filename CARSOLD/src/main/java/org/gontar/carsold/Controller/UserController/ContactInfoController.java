@@ -1,9 +1,9 @@
 package org.gontar.carsold.Controller.UserController;
 
-import org.gontar.carsold.Domain.Model.CitySuggestionsDto;
-import org.gontar.carsold.Domain.Model.ContactInfoDto;
-import org.gontar.carsold.Domain.Model.SingleBooleanDto;
-import org.gontar.carsold.Domain.Model.SingleStringDto;
+import org.gontar.carsold.Domain.Model.User.CitySuggestionsDto;
+import org.gontar.carsold.Domain.Model.User.ContactInfoDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleBooleanDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

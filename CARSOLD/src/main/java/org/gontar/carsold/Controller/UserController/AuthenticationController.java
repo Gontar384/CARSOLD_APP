@@ -2,8 +2,8 @@ package org.gontar.carsold.Controller.UserController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.gontar.carsold.Domain.Model.AuthDto;
-import org.gontar.carsold.Domain.Model.SingleStringDto;
+import org.gontar.carsold.Domain.Model.User.AuthDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.UserService.AuthenticationService.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

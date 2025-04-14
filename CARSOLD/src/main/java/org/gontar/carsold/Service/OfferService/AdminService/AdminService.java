@@ -1,6 +1,6 @@
 package org.gontar.carsold.Service.OfferService.AdminService;
 
-import org.gontar.carsold.Domain.Model.ReportDto;
+import org.gontar.carsold.Domain.Model.Report.ReportDto;
 
 import java.util.List;
 

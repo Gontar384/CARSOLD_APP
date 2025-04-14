@@ -1,8 +1,8 @@
 package org.gontar.carsold.Service.OfferService.SearchService;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
-import org.gontar.carsold.Domain.Model.OfferFilterDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,7 +1,7 @@
 package org.gontar.carsold.Service.OfferService.FunctionalityService;
 
-import org.gontar.carsold.Domain.Model.OfferStatsDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferStatsDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 
 import java.util.List;
 

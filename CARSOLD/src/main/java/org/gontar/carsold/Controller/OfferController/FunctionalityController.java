@@ -1,6 +1,9 @@
 package org.gontar.carsold.Controller.OfferController;
 
-import org.gontar.carsold.Domain.Model.*;
+import org.gontar.carsold.Domain.Model.Offer.OfferStatsDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Report.PartialReportDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleBooleanDto;
 import org.gontar.carsold.Service.OfferService.FunctionalityService.FunctionalityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

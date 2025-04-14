@@ -8,7 +8,6 @@ import Details from "./Atomic/Details.tsx";
 import {useUserUtil} from "../../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 
 const UserInfo: React.FC = () => {
-
     const {isAuthenticated, loadingAuth} = useAuth();
     const {usernameFetched, profilePicFetched} = useUserUtil();
     const [iconAnimation, setIconAnimation] = useState<"animate-pop" | null>(null);

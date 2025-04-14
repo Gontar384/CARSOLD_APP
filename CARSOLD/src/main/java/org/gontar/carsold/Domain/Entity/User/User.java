@@ -9,9 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Data
 @AllArgsConstructor

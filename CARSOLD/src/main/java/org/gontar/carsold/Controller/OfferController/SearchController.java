@@ -1,7 +1,7 @@
 package org.gontar.carsold.Controller.OfferController;
 
-import org.gontar.carsold.Domain.Model.OfferFilterDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.SearchService.SearchService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;

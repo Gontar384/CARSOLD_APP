@@ -1,7 +1,7 @@
 package org.gontar.carsold.ControllerTest.UserControllerTest;
 
 import org.gontar.carsold.Controller.UserController.InfoController;
-import org.gontar.carsold.Domain.Model.UserInfoDto;
+import org.gontar.carsold.Domain.Model.User.UserInfoDto;
 import org.gontar.carsold.Service.UserService.InfoService.InfoService;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;

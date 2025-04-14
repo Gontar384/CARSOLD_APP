@@ -85,7 +85,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
-                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessages.length}/>
+                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessages}/>
                     <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&
                         <>

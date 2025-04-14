@@ -1,9 +1,10 @@
-import {createContext, useContext} from "react";
-import {Message} from "./MessagesProvider.tsx";
+import React, {createContext, useContext} from "react";
+import {Notification} from "./MessagesProvider.tsx";
 
 export interface MessagesContextType {
-    latestMessage: Message;
-    unseenMessages: Message[];
+    notification: Notification;
+    setNotification: React.Dispatch<React.SetStateAction<Notification>>;
+    unseenMessages: number;
 }
 
 export const MessagesContext = createContext<MessagesContextType | undefined>(undefined);

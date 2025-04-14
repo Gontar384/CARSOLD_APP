@@ -1,7 +1,7 @@
 package org.gontar.carsold.ControllerTest.OfferControllerTest;
 
 import org.gontar.carsold.Controller.OfferController.AdminController;
-import org.gontar.carsold.Domain.Model.ReportDto;
+import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

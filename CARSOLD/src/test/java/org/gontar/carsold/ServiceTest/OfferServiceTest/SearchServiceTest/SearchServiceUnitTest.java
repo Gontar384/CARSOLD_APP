@@ -1,8 +1,8 @@
 package org.gontar.carsold.ServiceTest.OfferServiceTest.SearchServiceTest;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
-import org.gontar.carsold.Domain.Model.OfferFilterDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.OfferService.SearchService.OfferSpecifications;
 import org.gontar.carsold.Service.OfferService.SearchService.SearchServiceImpl;

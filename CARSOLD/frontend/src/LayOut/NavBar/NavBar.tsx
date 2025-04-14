@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-
 import Logo from "./Atomic/Logo.tsx";
 import SearchBar from "./Atomic/SearchBar.tsx";
 import AddButton from "./Atomic/AddButton.tsx";
@@ -10,9 +9,9 @@ import LoadingNavBarLine from "../../Additional/Loading/LoadingNavBarLine.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import MidBar from "./Atomic/MidBar/MidBar.tsx";
+import MessageNotification from "./MessageNotification/MessageNotification.tsx";
 
 const NavBar: React.FC = () => {
-
     const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
     const excludedButtonRef = useRef<HTMLButtonElement | null>(null);  //excludes OptionsButton from MidBar closing effect
     const {mobileWidth, midWidth, bigWidth} = useUtil();
@@ -40,6 +39,7 @@ const NavBar: React.FC = () => {
             {mobileWidth && <LowerBar/>}
             {midWidth && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
             {loadingAuth && <LoadingNavBarLine/>}
+            <MessageNotification/>
         </>
     )
 }

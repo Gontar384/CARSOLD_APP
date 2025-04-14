@@ -6,7 +6,7 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.Report.Report;
-import org.gontar.carsold.Domain.Model.ReportDto;
+import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Exception.CustomException.ExternalDeleteException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;

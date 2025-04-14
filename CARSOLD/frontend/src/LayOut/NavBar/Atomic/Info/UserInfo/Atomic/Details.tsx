@@ -32,7 +32,7 @@ const Details: React.FC<DetailsProps> = ({iconAnimation, letClick}) => {
             <div className="text-2xl whitespace-nowrap">
                 {username}
             </div>
-            {unseenMessages.length > 0 && bigWidth &&(
+            {unseenMessages > 0 && bigWidth &&(
                 <FontAwesomeIcon icon={faCircle} style={{color: "#ff0000"}}
                                  className="absolute -right-4 top-6 text-[10px]"/>)}
         </div>

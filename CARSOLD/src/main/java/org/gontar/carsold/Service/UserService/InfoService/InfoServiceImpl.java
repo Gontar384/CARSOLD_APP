@@ -1,6 +1,6 @@
 package org.gontar.carsold.Service.UserService.InfoService;
 
-import org.gontar.carsold.Domain.Model.UserInfoDto;
+import org.gontar.carsold.Domain.Model.User.UserInfoDto;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;

@@ -4,8 +4,8 @@ import com.google.cloud.storage.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Domain.Model.OfferWithUserDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferWithUserDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 

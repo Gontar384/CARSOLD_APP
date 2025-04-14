@@ -28,7 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
                      onTouchStart={isMobile ? handleDropdownInteraction : undefined}>
                     <DropdownButton label="MyOffers" path={"/details/myOffers"}/>
                     <DropdownButton label="Followed" path={"/details/followed"}/>
-                    <DropdownButton label="Messages" path={"/details/messages"} count={unseenMessages.length}/>
+                    <DropdownButton label="Messages" path={"/details/messages"} count={unseenMessages}/>
                     <DropdownButton label="Settings" path={"/details/settings"}/>
                     <DropdownFunctionButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode}/>
                     <DropdownFunctionButton label="Logout" onClick={handleLogout}/>

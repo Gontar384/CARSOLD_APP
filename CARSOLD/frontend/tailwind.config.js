@@ -188,7 +188,15 @@ export default {
                 appearFastRev: {
                     '0%': {transform: "translateX(-200%)"},
                     '100%': {transform: "translateX(0)"},
-                }
+                },
+                slideUpAppear: {
+                    '0%': {transform: "translateY(100%)"},
+                    '100%': {transform: "translateY(0)"},
+                },
+                slideDownDisappear: {
+                    '0%': {transform: "translateY(0)"},
+                    '100%': {transform: "translateY(100%)"},
+                },
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -228,7 +236,9 @@ export default {
                 appearLong: 'appearLong 1s ease-in-out forwards',
                 appearFast: 'appearFast 0.5s ease-in-out forwards',
                 appearLongRev: 'appearLongRev 1s ease-in-out forwards',
-                appearFastRev: 'appearFastRev 0.5s ease-in-out forwards'
+                appearFastRev: 'appearFastRev 0.5s ease-in-out forwards',
+                slideUpAppear: 'slideUpAppear 0.3s ease-in-out forwards',
+                slideDownDisappear: 'slideDownDisappear 0.3s ease-in-out forwards',
             },
         },
     },

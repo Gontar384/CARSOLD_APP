@@ -2,7 +2,7 @@ package org.gontar.carsold.Config.MapperConfig.OfferMapper;
 
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
-import org.gontar.carsold.Domain.Model.OfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

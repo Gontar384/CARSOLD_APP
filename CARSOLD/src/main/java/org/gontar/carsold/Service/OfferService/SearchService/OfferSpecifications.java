@@ -2,7 +2,7 @@ package org.gontar.carsold.Service.OfferService.SearchService;
 
 import jakarta.persistence.criteria.Expression;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
-import org.gontar.carsold.Domain.Model.OfferFilterDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 

@@ -12,7 +12,6 @@ interface DropdownButtonProps {
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({ label, path, count }) => {
-
     const navigate = useNavigate();
     const {buttonColor, handleStart, handleEnd} = useButton();
     const {isMobile} = useUtil();

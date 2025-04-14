@@ -1,8 +1,8 @@
 package org.gontar.carsold.ControllerTest.OfferControllerTest;
 
 import org.gontar.carsold.Controller.OfferController.SearchController;
-import org.gontar.carsold.Domain.Model.OfferFilterDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Service.OfferService.SearchService.SearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

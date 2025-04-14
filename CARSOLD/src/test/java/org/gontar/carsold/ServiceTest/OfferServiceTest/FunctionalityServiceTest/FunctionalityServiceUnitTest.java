@@ -2,8 +2,8 @@ package org.gontar.carsold.ServiceTest.OfferServiceTest.FunctionalityServiceTest
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Domain.Model.OfferStatsDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferStatsDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateActionException;
 import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;

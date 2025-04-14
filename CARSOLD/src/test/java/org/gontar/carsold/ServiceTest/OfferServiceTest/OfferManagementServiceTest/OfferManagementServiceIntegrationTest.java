@@ -6,7 +6,7 @@ import jakarta.transaction.Transactional;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
-import org.gontar.carsold.Domain.Model.OfferWithUserDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferWithUserDto;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Repository.OfferRepository;

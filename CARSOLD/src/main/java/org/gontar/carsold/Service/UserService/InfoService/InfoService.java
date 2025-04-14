@@ -1,6 +1,6 @@
 package org.gontar.carsold.Service.UserService.InfoService;
 
-import org.gontar.carsold.Domain.Model.UserInfoDto;
+import org.gontar.carsold.Domain.Model.User.UserInfoDto;
 
 public interface InfoService {
     boolean checkLogin(String login);

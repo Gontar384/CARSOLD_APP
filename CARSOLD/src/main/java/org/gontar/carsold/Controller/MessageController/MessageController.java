@@ -1,12 +1,10 @@
 package org.gontar.carsold.Controller.MessageController;
 
-import org.gontar.carsold.Domain.Model.ReceivedMessageDto;
-import org.gontar.carsold.Domain.Model.SentMessageDto;
+import org.gontar.carsold.Domain.Model.Message.SentMessageDto;
+import org.gontar.carsold.Domain.Model.Message.UnseenMessagesDto;
 import org.gontar.carsold.Service.MessageService.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/message")
@@ -29,8 +27,7 @@ public class MessageController {
     }
 
     @GetMapping("/getUnseen")
-    public ResponseEntity<List<ReceivedMessageDto>> getUnseenMessages() {
-        List<ReceivedMessageDto> unseen = service.getUnseenMessages();
-        return ResponseEntity.ok(unseen);
+    public ResponseEntity<UnseenMessagesDto> getUnseenMessages() {
+        return ResponseEntity.ok(service.getUnseenMessages());
     }
 }

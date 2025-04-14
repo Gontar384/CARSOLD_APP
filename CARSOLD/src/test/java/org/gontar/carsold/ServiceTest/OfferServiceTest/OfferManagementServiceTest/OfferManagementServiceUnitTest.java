@@ -3,7 +3,7 @@
     import org.gontar.carsold.Domain.Entity.Offer.Offer;
     import org.gontar.carsold.Domain.Entity.User.User;
     import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
-    import org.gontar.carsold.Domain.Model.PartialOfferDto;
+    import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
     import org.gontar.carsold.Exception.CustomException.OfferNotFound;
     import org.gontar.carsold.Repository.OfferRepository;
     import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;

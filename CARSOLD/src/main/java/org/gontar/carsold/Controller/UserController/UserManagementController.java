@@ -2,11 +2,11 @@ package org.gontar.carsold.Controller.UserController;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
-import org.gontar.carsold.Domain.Model.PasswordChangeDto;
-import org.gontar.carsold.Domain.Model.RecoveryPasswordChangeDto;
-import org.gontar.carsold.Domain.Model.SingleStringDto;
+import org.gontar.carsold.Domain.Model.User.PasswordChangeDto;
+import org.gontar.carsold.Domain.Model.User.RecoveryPasswordChangeDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Domain.Model.UserDto;
+import org.gontar.carsold.Domain.Model.User.UserDto;
 import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

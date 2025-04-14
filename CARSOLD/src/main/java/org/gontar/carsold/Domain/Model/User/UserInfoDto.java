@@ -1,4 +1,4 @@
-package org.gontar.carsold.Domain.Model;
+package org.gontar.carsold.Domain.Model.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OfferStatsDto {
-    private Integer views;
-    private Integer follows;
+public class UserInfoDto {
+    private Boolean active;
+    private Boolean oauth2;
 }

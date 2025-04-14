@@ -6,28 +6,25 @@ import {useUserUtil} from "../UserUtil/useUserUtil.ts";
 import {useAuth} from "../Auth/useAuth.ts";
 import {getUnseenMessages} from "../../ApiCalls/Services/MessageService.ts";
 
-export interface Message {
+export interface Notification {
     senderUsername: string;
-    receiverUsername: string;
+    senderProfilePic: string;
     content: string;
-    timestamp: string;
-    seen: boolean;
 }
 
 export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [latestMessage, setLatestMessage] = useState<Message>({
+    const [notification, setNotification] = useState<Notification>({
         senderUsername: "",
-        receiverUsername: "",
-        content: "",
-        timestamp: "",
-        seen: false
+        senderProfilePic: "",
+        content: ""
     });
-    const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
+    const [unseenMessages, setUnseenMessages] = useState<number>(0);
     const stompClientRef = useRef<Stomp.Client | null>(null);
     const {username} = useUserUtil();
     const {isAuthenticated} = useAuth();
 
     useEffect(() => {
+        if (!isAuthenticated) return;
         const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URL}ws`);
         const stompClient = Stomp.over(socket);
         stompClient.debug = () => {}; //switch off logs
@@ -36,17 +33,15 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             //console.log("✅ WebSocket connected");
             stompClient.subscribe(`/topic/messages/${username}`, (message) => {
                 try {
-                    const parsed: Message = JSON.parse(message.body);
+                    const parsed: Notification = JSON.parse(message.body);
                     //console.log("📩 New message received:", parsed);
-                    setLatestMessage(parsed);
+                    setNotification(parsed);
                 } catch (error) {
                     console.error("Failed to parse message: ", error);
                 }
             });
             stompClientRef.current = stompClient;
-        }, (error) => {
-            console.error("WebSocket for messages connection error:", error);
-        });
+        }, () => {});
 
         return () => {
             if (stompClientRef.current?.connected) {
@@ -62,19 +57,17 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             try {
                 const response= await getUnseenMessages();
                 if (response.data) {
-                    setUnseenMessages(response.data);
+                    setUnseenMessages(response.data.unseenCount);
                 }
             } catch (error) {
                 console.error("Unexpected error when fetching messages: ", error);
             }
         };
         if (isAuthenticated) handleGetUnseenMessages();
-    }, [isAuthenticated, latestMessage]);
-
-    console.log(latestMessage)
+    }, [isAuthenticated, notification]);
 
     return (
-        <MessagesContext.Provider value={{ latestMessage, unseenMessages }}>
+        <MessagesContext.Provider value={{ notification, setNotification, unseenMessages }}>
             {children}
         </MessagesContext.Provider>
     );

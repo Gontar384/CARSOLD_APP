@@ -36,7 +36,7 @@ const LowerBar: React.FC = () => {
                 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
                 <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add Offer"/>
                 <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed"/>
-                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessages.length}/>
+                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessages}/>
                 <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>
                 {isAuthenticated ? (
                     <>

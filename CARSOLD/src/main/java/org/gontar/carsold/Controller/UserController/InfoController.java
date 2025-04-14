@@ -1,7 +1,7 @@
 package org.gontar.carsold.Controller.UserController;
 
-import org.gontar.carsold.Domain.Model.SingleBooleanDto;
-import org.gontar.carsold.Domain.Model.UserInfoDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleBooleanDto;
+import org.gontar.carsold.Domain.Model.User.UserInfoDto;
 import org.gontar.carsold.Service.UserService.InfoService.InfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

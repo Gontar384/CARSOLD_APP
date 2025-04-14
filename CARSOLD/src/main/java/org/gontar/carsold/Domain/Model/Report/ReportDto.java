@@ -1,4 +1,4 @@
-package org.gontar.carsold.Domain.Model;
+package org.gontar.carsold.Domain.Model.Report;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

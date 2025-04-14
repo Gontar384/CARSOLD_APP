@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import org.gontar.carsold.CarsoldApplication;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
-import org.gontar.carsold.Domain.Model.CitySuggestionsDto;
+import org.gontar.carsold.Domain.Model.User.CitySuggestionsDto;
 import org.gontar.carsold.Exception.CustomException.InvalidValueException;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.UserService.ContactInfoService.ContactInfoServiceImpl;

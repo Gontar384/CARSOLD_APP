@@ -2,7 +2,8 @@ package org.gontar.carsold.Service.MessageService;
 
 import org.gontar.carsold.Domain.Entity.Message.Message;
 import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Domain.Model.ReceivedMessageDto;
+import org.gontar.carsold.Domain.Model.Message.NotificationMessageDto;
+import org.gontar.carsold.Domain.Model.Message.UnseenMessagesDto;
 import org.gontar.carsold.Exception.CustomException.MessageTooLargeException;
 import org.gontar.carsold.Exception.CustomException.UserNotFoundException;
 import org.gontar.carsold.Repository.MessageRepository;
@@ -51,32 +52,18 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(message);
 
-        ReceivedMessageDto dto = new ReceivedMessageDto();
+        NotificationMessageDto dto = new NotificationMessageDto();
         dto.setSenderUsername(message.getSender().getUsername());
-        dto.setReceiverUsername(message.getReceiver().getUsername());
+        dto.setSenderProfilePic(message.getSender().getProfilePic());
         dto.setContent(message.getContent());
-        dto.setTimestamp(message.getTimestamp());
-        dto.setSeen(message.isSeen());
 
         webSocketService.sendMessageToUser(message.getReceiver().getUsername(), dto);
     }
 
     @Override
-    public List<ReceivedMessageDto> getUnseenMessages() {
+    public UnseenMessagesDto getUnseenMessages() {
         User user = userDetailsService.loadUser();
-        List<Message> unseenMessages = messageRepository
-                .findByReceiverUsernameAndSeenFalseOrderByTimestampDesc(user.getUsername());
-
-        return unseenMessages.stream()
-                .map(message -> {
-                    ReceivedMessageDto dto = new ReceivedMessageDto();
-                    dto.setSenderUsername(message.getSender().getUsername());
-                    dto.setReceiverUsername(message.getReceiver().getUsername());
-                    dto.setContent(message.getContent());
-                    dto.setTimestamp(message.getTimestamp());
-                    dto.setSeen(message.isSeen());
-                    return dto;
-                })
-                .toList();
+        int unseenCount = messageRepository.countByReceiverUsernameAndSeenFalse(user.getUsername());
+        return new UnseenMessagesDto(unseenCount);
     }
 }

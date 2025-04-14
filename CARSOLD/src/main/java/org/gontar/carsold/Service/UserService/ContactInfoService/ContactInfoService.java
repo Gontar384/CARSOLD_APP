@@ -1,7 +1,7 @@
 package org.gontar.carsold.Service.UserService.ContactInfoService;
 
-import org.gontar.carsold.Domain.Model.CitySuggestionsDto;
-import org.gontar.carsold.Domain.Model.ContactInfoDto;
+import org.gontar.carsold.Domain.Model.User.CitySuggestionsDto;
+import org.gontar.carsold.Domain.Model.User.ContactInfoDto;
 
 public interface ContactInfoService {
     void updateName(String name);

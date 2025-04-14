@@ -2,7 +2,7 @@ package org.gontar.carsold.ServiceTest.OfferServiceTest.AdminServiceTest;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.Report.Report;
-import org.gontar.carsold.Domain.Model.ReportDto;
+import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Repository.ReportRepository;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminServiceImpl;
 import org.junit.jupiter.api.Test;

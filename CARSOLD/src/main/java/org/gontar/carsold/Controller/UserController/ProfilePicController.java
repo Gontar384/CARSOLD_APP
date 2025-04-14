@@ -1,6 +1,6 @@
 package org.gontar.carsold.Controller.UserController;
 
-import org.gontar.carsold.Domain.Model.SingleStringDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.UserService.ProfilePicService.ProfilePicService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

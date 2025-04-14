@@ -1,6 +1,6 @@
 package org.gontar.carsold.Controller.OfferController;
 
-import org.gontar.carsold.Domain.Model.ReportDto;
+import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;

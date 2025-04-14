@@ -1,8 +1,8 @@
 package org.gontar.carsold.Service.OfferService.OfferManagementService;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
-import org.gontar.carsold.Domain.Model.OfferWithUserDto;
-import org.gontar.carsold.Domain.Model.PartialOfferDto;
+import org.gontar.carsold.Domain.Model.Offer.OfferWithUserDto;
+import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

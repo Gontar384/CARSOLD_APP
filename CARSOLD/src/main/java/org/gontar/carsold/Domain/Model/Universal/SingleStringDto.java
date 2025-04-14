@@ -1,4 +1,4 @@
-package org.gontar.carsold.Domain.Model;
+package org.gontar.carsold.Domain.Model.Universal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartialReportDto {
-    private Long offerId;
-    private String reason;
+public class SingleStringDto {
+    private String value;
 }
