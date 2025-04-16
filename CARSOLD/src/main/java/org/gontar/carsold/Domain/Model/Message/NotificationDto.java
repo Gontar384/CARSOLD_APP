@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UnseenMessagesDto {
-    private Integer unseenCount;
+public class NotificationDto {
+    private String senderUsername;
+    private String senderProfilePic;
+    private String content;
 }

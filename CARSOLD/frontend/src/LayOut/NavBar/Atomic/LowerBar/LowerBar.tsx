@@ -13,7 +13,7 @@ const LowerBar: React.FC = () => {
     const {lowerBar, mobileWidth} = useUtil();
     const {isAuthenticated, handleLogout} = useAuth();
     const navigate = useNavigate();
-    const {unseenMessages} = useMessages();
+    const {unseenMessagesCount} = useMessages();
 
     useEffect(() => {
         if (lowerBar) {
@@ -36,7 +36,7 @@ const LowerBar: React.FC = () => {
                 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
                 <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add Offer"/>
                 <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed"/>
-                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessages}/>
+                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessagesCount}/>
                 <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>
                 {isAuthenticated ? (
                     <>

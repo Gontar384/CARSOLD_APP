@@ -17,10 +17,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -58,7 +58,7 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(message);
 
-        NotificationMessageDto dto = new NotificationMessageDto();
+        NotificationDto dto = new NotificationDto();
         dto.setSenderUsername(message.getSender().getUsername());
         dto.setSenderProfilePic(message.getSender().getProfilePic());
         dto.setContent(message.getContent());
@@ -67,31 +67,37 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public UnseenMessagesDto getUnseenMessages() {
+    public UnseenMessagesCountDto getUnseenCount() {
         User user = userDetailsService.loadUser();
         int unseenCount = messageRepository.countByReceiverUsernameAndSeenFalse(user.getUsername());
-        return new UnseenMessagesDto(unseenCount);
+        return new UnseenMessagesCountDto(unseenCount);
     }
 
     @Override
-    public List<ConversationDto> getUserConversations() {
+    public List<ConversationDto> getAllConversations() {
         User user = userDetailsService.loadUser();
         Long userId = user.getId();
 
         List<Message> latestMessages = messageRepository.findLastMessagesForEachConversation(userId);
 
         return latestMessages.stream()
+                .filter(message -> {
+                    User otherUser = message.getSender().getId().equals(userId)
+                            ? message.getReceiver()
+                            : message.getSender();
+                    return !otherUser.getId().equals(userId);
+                })
                 .map(message -> {
                     User otherUser = message.getSender().getId().equals(userId)
                             ? message.getReceiver()
                             : message.getSender();
-
                     return new ConversationDto(
                             otherUser.getUsername(),
                             otherUser.getProfilePic(),
                             message.getContent(),
                             message.getTimestamp(),
-                            message.getReceiver().getId().equals(userId) && !message.isSeen()
+                            message.getReceiver().getId().equals(userId) && !message.isSeen(),
+                            message.getSender().getUsername()
                     );
                 })
                 .sorted((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()))
@@ -99,21 +105,27 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public WholeConversationDto getConversation(String username, int page, int size) {
+    public ConversationWithUserDto getConversationOnInitial(String username) {
         Objects.requireNonNull(username, "Username cannot be null");
         User user = userDetailsService.loadUser();
         User otherUser = userRepository.findByUsername(username);
         if (otherUser == null) throw new UserNotFoundException("User not found");
-        if (user.getUsername().equals(username)) throw new WrongActionException("You cannot have conversation with yourself");
+        if (user.getUsername().equals(username)) throw new WrongActionException("You cannot have a conversation with yourself");
 
-        Pageable pageable = PageRequest.of(Math.max(page, 0), size, Sort.by(Sort.Direction.DESC, "timestamp"));
+        Pageable pageable = PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "timestamp"));
         Page<Message> messagesPage = messageRepository.findConversationBetweenUsers(user, otherUser, pageable);
 
-        List<PartialMessageDto> messageDtos = messagesPage
+        List<MessageDto> messageDtos = messagesPage
                 .stream()
-                .map(m -> new PartialMessageDto(m.getContent(), m.getTimestamp(), m.isSeen()))
+                .map(m -> new MessageDto(
+                        m.getContent(),
+                        m.getTimestamp(),
+                        m.isSeen(),
+                        m.getSender().getUsername()))
                 .collect(Collectors.toList());
 
-        return new WholeConversationDto(otherUser.getUsername(), otherUser.getProfilePic(), messageDtos);
+        Collections.reverse(messageDtos);
+
+        return new ConversationWithUserDto(otherUser.getUsername(), otherUser.getProfilePic(), messageDtos);
     }
 }

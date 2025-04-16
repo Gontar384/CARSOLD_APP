@@ -4,7 +4,7 @@ import {Notification} from "./MessagesProvider.tsx";
 export interface MessagesContextType {
     notification: Notification;
     setNotification: React.Dispatch<React.SetStateAction<Notification>>;
-    unseenMessages: number;
+    unseenMessagesCount: number;
 }
 
 export const MessagesContext = createContext<MessagesContextType | undefined>(undefined);

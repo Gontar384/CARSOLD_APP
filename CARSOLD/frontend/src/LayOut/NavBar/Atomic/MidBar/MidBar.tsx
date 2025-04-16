@@ -21,7 +21,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const [barAnimation, setBarAnimation] = useState<"animate-slideShow" | "animate-slideHide" | null>(null);
     const componentRef = useRef<HTMLDivElement | null>(null);  //checks if clicked outside bar
     const {isAuthenticated, handleLogout} = useAuth();
-    const {unseenMessages} = useMessages();
+    const {unseenMessagesCount} = useMessages();
     const {usernameFetched, profilePicFetched} = useUserUtil();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
 
@@ -85,7 +85,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     <BarButton label="Add Offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
-                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessages}/>
+                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessagesCount}/>
                     <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&
                         <>

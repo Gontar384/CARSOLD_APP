@@ -4,7 +4,7 @@ import Stomp from "stompjs";
 import { MessagesContext } from "./useMessages";
 import {useUserUtil} from "../UserUtil/useUserUtil.ts";
 import {useAuth} from "../Auth/useAuth.ts";
-import {getUnseenMessages} from "../../ApiCalls/Services/MessageService.ts";
+import {getUnseenCount} from "../../ApiCalls/Services/MessageService.ts";
 
 export interface Notification {
     senderUsername: string;
@@ -18,11 +18,9 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         senderProfilePic: "",
         content: ""
     });
-    const [unseenMessages, setUnseenMessages] = useState<number>(0);
     const stompClientRef = useRef<Stomp.Client | null>(null);
     const {username} = useUserUtil();
     const {isAuthenticated} = useAuth();
-
     useEffect(() => {
         if (!isAuthenticated) return;
         const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URL}ws`);
@@ -50,12 +48,13 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 });
             }
         };
-    }, [username]);
+    }, [username]);  //connects to WebSocket, gets notification (last message)
 
+    const [unseenMessagesCount, setUnseenMessages] = useState<number>(0);
     useEffect(() => {
-        const handleGetUnseenMessages = async () => {
+        const handleGetUnseenCount = async () => {
             try {
-                const response= await getUnseenMessages();
+                const response= await getUnseenCount();
                 if (response.data) {
                     setUnseenMessages(response.data.unseenCount);
                 }
@@ -63,11 +62,11 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 console.error("Unexpected error when fetching messages: ", error);
             }
         };
-        if (isAuthenticated) handleGetUnseenMessages();
-    }, [isAuthenticated, notification]);
+        if (isAuthenticated) handleGetUnseenCount();
+    }, [isAuthenticated, notification]);  //fetches unseen messages count
 
     return (
-        <MessagesContext.Provider value={{ notification, setNotification, unseenMessages }}>
+        <MessagesContext.Provider value={{ notification, setNotification, unseenMessagesCount }}>
             {children}
         </MessagesContext.Provider>
     );

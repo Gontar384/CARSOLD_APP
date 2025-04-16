@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WholeConversationDto {
+public class ConversationWithUserDto {
     private String username;
     private String profilePic;
-    private List<PartialMessageDto> messages;
+    private List<MessageDto> messages;
 }
