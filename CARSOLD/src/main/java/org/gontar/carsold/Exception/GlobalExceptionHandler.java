@@ -104,6 +104,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Inappropriate Action");
     }
 
+    @ExceptionHandler(WrongActionException.class)
+    public ResponseEntity<?> handleWrongActionException(WrongActionException ex) {
+        log.error("Wrong Action: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong Action Exception");
+    }
+
     @ExceptionHandler(NoPermissionException.class)
     public ResponseEntity<?> handleNoPermissionException(NoPermissionException ex) {
         log.error("No Permission: {}", ex.getMessage(), ex);

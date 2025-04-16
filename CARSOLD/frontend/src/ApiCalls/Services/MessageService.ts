@@ -12,7 +12,27 @@ export const sendMessage = async (message: object | null): Promise<void> => {
 
 export const getUnseenMessages = async (): Promise<AxiosResponse> => {
     try {
-        return api.get("api/message/getUnseen");
+        return await api.get("api/message/getUnseen");
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
+export const getUserConversations = async (): Promise<AxiosResponse> => {
+    try {
+        return await api.get("api/message/getUserConversations");
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
+export const getConversation = async(username: string | null, page: number | null, size: number | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get(`api/message/getConversation/${username}`, {
+            params: {page, size}
+        });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
