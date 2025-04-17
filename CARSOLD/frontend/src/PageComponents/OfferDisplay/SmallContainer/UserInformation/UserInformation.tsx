@@ -27,7 +27,7 @@ const UserInformation: React.FC<UserInformationProps> = ({username, profilePic, 
                          className="w-10 h-10 m:w-12 m:h-12 object-cover rounded-full"/>
                     : <FontAwesomeIcon icon={faCircleUser} className="w-10 h-10 m:w-12 m:h-12"/>}
             </div>
-            <OfferButton permission={permission} id={id}/>
+            <OfferButton permission={permission} id={id} username={username}/>
             <UserContactInfo name={name} phone={phone} city={city} coordinates={coordinates}/>
         </div>
     )

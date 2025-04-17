@@ -214,6 +214,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Offer Not Found");
     }
 
+    @ExceptionHandler(ConversationNotFoundException.class)
+    public ResponseEntity<?> handleConversationNotFoundException(ConversationNotFoundException ex) {
+        log.error("Conversation Not Found: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conversation Not Found");
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("IllegalArgumentException: {}", ex.getMessage(), ex);

@@ -22,10 +22,11 @@ public class Message {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
     @ManyToOne
-    @JsonBackReference
+    @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
     @Column(length = 1000, nullable = false)
@@ -34,6 +35,7 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(nullable = false)
-    private boolean seen = false;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "conversation_id", nullable = false)
+    private Conversation conversation;
 }

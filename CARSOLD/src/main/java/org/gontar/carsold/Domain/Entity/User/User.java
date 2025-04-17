@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.gontar.carsold.Domain.Entity.Message.Conversation;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 
 import java.util.*;
@@ -85,4 +86,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Offer> offers;
+
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Conversation> conversationsAsUser1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Conversation> conversationsAsUser2 = new ArrayList<>();
 }

@@ -12,6 +12,5 @@ import java.time.LocalDateTime;
 public class MessageDto {
     private String content;
     private LocalDateTime timestamp;
-    private boolean seen;
     private String senderUsername;
 }

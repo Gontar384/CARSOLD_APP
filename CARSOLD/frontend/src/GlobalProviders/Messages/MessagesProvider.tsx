@@ -10,37 +10,47 @@ export interface Notification {
     senderUsername: string;
     senderProfilePic: string;
     content: string;
+    timestamp: string;
+    seen: boolean;
 }
 
 export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [notification, setNotification] = useState<Notification>({
         senderUsername: "",
         senderProfilePic: "",
-        content: ""
+        content: "",
+        timestamp: "",
+        seen: false,
     });
     const stompClientRef = useRef<Stomp.Client | null>(null);
     const {username} = useUserUtil();
     const {isAuthenticated} = useAuth();
+    const [unseenMessagesCount, setUnseenMessages] = useState<number>(0);
+
     useEffect(() => {
         if (!isAuthenticated) return;
         const socket = new SockJS(`${import.meta.env.VITE_BACKEND_URL}ws`);
         const stompClient = Stomp.over(socket);
         stompClient.debug = () => {}; //switch off logs
-
         stompClient.connect({}, () => {
             //console.log("✅ WebSocket connected");
             stompClient.subscribe(`/topic/messages/${username}`, (message) => {
                 try {
-                    const parsed: Notification = JSON.parse(message.body);
+                    const parsedMessage: Notification = JSON.parse(message.body);
                     //console.log("📩 New message received:", parsed);
-                    setNotification(parsed);
+                    setNotification({
+                        senderUsername: parsedMessage.senderUsername ?? "",
+                        senderProfilePic: parsedMessage.senderProfilePic ?? "",
+                        content: parsedMessage.content ?? "",
+                        timestamp: parsedMessage.timestamp ?? "",
+                        seen: parsedMessage.seen ?? false,
+                    });
                 } catch (error) {
                     console.error("Failed to parse message: ", error);
                 }
             });
             stompClientRef.current = stompClient;
         }, () => {});
-
         return () => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.disconnect(() => {
@@ -50,7 +60,6 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         };
     }, [username]);  //connects to WebSocket, gets notification (last message)
 
-    const [unseenMessagesCount, setUnseenMessages] = useState<number>(0);
     useEffect(() => {
         const handleGetUnseenCount = async () => {
             try {

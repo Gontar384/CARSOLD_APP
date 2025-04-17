@@ -4,22 +4,22 @@ import {getAllConversations} from "../../../../../ApiCalls/Services/MessageServi
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {Sent} from "../Messages.tsx";
 
 interface ChatsBarProps {
-    sent: Conversation;
-}
-export interface Conversation {
-    username: string;
-    profilePic: string;
-    lastMessage: string;
-    timestamp: string;
-    seen: boolean;
-    sentBy: string;
+    sent: Sent;
 }
 
-const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
+const ChatsBar: React.FC<ChatsBarProps> = ({sent}) => {
+    interface Conversation {
+        username: string;
+        profilePic: string;
+        lastMessage: string;
+        timestamp: string;
+        sentBy: string;
+    }
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const {notification} = useMessages();
@@ -27,9 +27,6 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
     const [hovered, setHovered] = useState<number | null>(null);
     const navigate = useNavigate();
     const {isMobile} = useUtil();
-    const [newConv, setNewConv] = useState<boolean>(false);
-    const [searchParams] = useSearchParams();
-    const receiverUsername: string = searchParams.get("username") ?? "";
 
     useEffect(() => {
         const handleGetAllConversations = async () => {
@@ -42,11 +39,9 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
                         profilePic: conv.profilePic ?? "",
                         lastMessage: conv.lastMessage ?? "",
                         timestamp: conv.timestamp ?? "",
-                        seen: receiverUsername === conv.username ? true : conv.seen ?? false,
                         sentBy: conv.sentBy ?? "",
                     }));
                     setConversations(formattedConversations);
-
                     // const extendedConversations = Array(10)
                     //     .fill(formattedConversations)
                     //     .flat()
@@ -57,17 +52,15 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
                     //     }));
                     //
                     // setConversations(extendedConversations);
-
                 }
             } catch (error) {
                 console.error("Unexpected error when fetching user conversations: ", error);
             } finally {
-                setNewConv(false);
                 setFetched(true);
             }
         };
         handleGetAllConversations();
-    }, [newConv, receiverUsername]); //fetching all conversations on initial and when notification doesn't match any conversation
+    }, []); //fetching all conversations on initial
 
     useEffect(() => {
         if (!notification || !notification.senderUsername) return;
@@ -78,15 +71,25 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
                     conv.username === notification.senderUsername
                         ? {
                             ...conv,
-                            username: notification.senderUsername,
-                            lastMessage: notification.content,
-                            sentBy: notification.senderUsername,
-                            seen: receiverUsername === notification.senderUsername,
+                            lastMessage: notification.content ?? "",
+                            sentBy: notification.senderUsername ?? "",
+                            timestamp: notification.timestamp ?? "",
+                            seen: notification.seen ?? "",
                         } : conv
                 )
             );
-        } else setNewConv(true);
-    }, [notification, receiverUsername]); //updates conversation first message, based on notification
+        } else {
+            const newConv = {
+                username: notification.senderUsername ?? "",
+                profilePic: notification.senderProfilePic ?? "",
+                lastMessage: notification.content ?? "",
+                sentBy: notification.senderUsername ?? "",
+                seen: notification.seen ?? "",
+                timestamp: notification.timestamp ?? "",
+            };
+            setConversations(prev => [newConv, ...prev]);
+        }
+    }, [notification]); //updates conversation first message, based on notification
 
     useEffect(() => {
         if (!sent || !sent.username) return;
@@ -97,14 +100,14 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
                     conv.username === sent.username
                         ? {
                             ...conv,
-                            lastMessage: sent.lastMessage,
-                            sentBy: sent.sentBy,
-                            seen: receiverUsername === sent.username ? true : sent.seen ?? false,
+                            lastMessage: sent.lastMessage ?? "",
+                            timestamp: sent.timestamp ?? "",
+                            sentBy: sent.sentBy ?? "",
                         } : conv
                 )
             );
         }
-    }, [sent, receiverUsername]); //updates conversation first message, based on sent message
+    }, [sent]); //updates conversation first message, based on sent message
 
     return (
         <>
@@ -125,14 +128,20 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent }) => {
                             <div className="flex flex-col w-full truncate">
                                 <div className="flex flex-row justify-between items-center gap-2">
                                     <span className="font-bold text-sm m:text-base">{conv.username}</span>
-                                    <span className="text-[10px] m:text-xs text-gray-500">
-                                        {new Date(conv.timestamp).toLocaleString()}
-                                    </span>
+                                    {conv.timestamp &&
+                                        <span className="text-[10px] m:text-xs text-gray-500">
+                                            {new Date(conv.timestamp).toLocaleString()}
+                                        </span>}
                                 </div>
                                 <div className={`flex flex-row items-center gap-0.5 m:gap-1 text-xs m:text-sm
-                                text-gray-700 ${!conv.seen ? "font-semibold" : ""}`}>
-                                    <span>{`${conv.sentBy}:`}</span>
-                                    <span>{conv.lastMessage}</span>
+                                text-gray-700`}>
+                                    {conv.sentBy && conv.lastMessage ?
+                                        <>
+                                            <span>{`${conv.sentBy}:`}</span>
+                                            <span>{conv.lastMessage}</span>
+                                        </>
+                                        : <span>No messages yet.</span>
+                                    }
                                 </div>
                             </div>
                         </div>

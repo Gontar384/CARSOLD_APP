@@ -7,6 +7,7 @@ import org.gontar.carsold.Domain.Model.Message.ConversationWithUserDto;
 import java.util.List;
 
 public interface MessageService {
+    void activateConversation(String username);
     void sendMessage(String senderUsername, String receiverUsername, String content);
     UnseenMessagesCountDto getUnseenCount();
     List<ConversationDto> getAllConversations();

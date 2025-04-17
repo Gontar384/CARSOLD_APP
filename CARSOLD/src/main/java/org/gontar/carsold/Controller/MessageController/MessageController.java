@@ -4,6 +4,7 @@ import org.gontar.carsold.Domain.Model.Message.ConversationDto;
 import org.gontar.carsold.Domain.Model.Message.SentMessageDto;
 import org.gontar.carsold.Domain.Model.Message.UnseenMessagesCountDto;
 import org.gontar.carsold.Domain.Model.Message.ConversationWithUserDto;
+import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.MessageService.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,12 @@ public class MessageController {
 
     public MessageController(MessageService service) {
         this.service = service;
+    }
+
+    @PostMapping("/activateConversation")
+    public ResponseEntity<?> activateConversation(@RequestBody SingleStringDto username) {
+        service.activateConversation(username.getValue());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/send")
