@@ -53,4 +53,10 @@ public class MessageController {
         ConversationWithUserDto conversation = service.getConversationOnInitial(username);
         return ResponseEntity.ok(conversation);
     }
+
+    @DeleteMapping("/deleteConversation/{username}")
+    public ResponseEntity<?> deleteConversation(@PathVariable String username) {
+        service.deleteConversation(username);
+        return ResponseEntity.ok().build();
+    }
 }

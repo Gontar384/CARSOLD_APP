@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
@@ -57,8 +56,14 @@ public class MessageServiceImpl implements MessageService {
 
         if (conversation.getUser1().getId().equals(user.getId())) {
             conversation.setActivatedByUser1(true);
+            if (conversation.isDeletedByUser1()) {
+                conversation.setDeletedByUser1(false);
+            }
         } else if (conversation.getUser2().getId().equals(user.getId())) {
             conversation.setActivatedByUser2(true);
+            if (conversation.isDeletedByUser2()) {
+                conversation.setDeletedByUser2(false);
+            }
         }
         conversationRepository.save(conversation);
     }
@@ -87,6 +92,12 @@ public class MessageServiceImpl implements MessageService {
 
         conversation.setActivatedByUser1(true);
         conversation.setActivatedByUser2(true);
+
+        if (conversation.getUser1().getId().equals(sender.getId())) {
+            conversation.setDeletedByUser2(false);
+        } else {
+            conversation.setDeletedByUser1(false);
+        }
 
         Message message = new Message();
         message.setSender(sender);
@@ -128,8 +139,7 @@ public class MessageServiceImpl implements MessageService {
     public List<ConversationDto> getAllConversations() {
         User user = userDetailsService.loadUser();
         Long userId = user.getId();
-
-        List<Conversation> conversations = conversationRepository.findActivatedConversationsForUser(user);
+        List<Conversation> conversations = conversationRepository.findVisibleConversationsForUser(user);
 
         return conversations.stream()
                 .map(conversation -> {
@@ -166,9 +176,10 @@ public class MessageServiceImpl implements MessageService {
 
         boolean isUser1 = conversation.getUser1().getId().equals(user.getId());
         boolean isActivatedForUser = isUser1 ? conversation.isActivatedByUser1() : conversation.isActivatedByUser2();
+        boolean isDeletedForUser = isUser1 ? conversation.isDeletedByUser1() : conversation.isDeletedByUser2();
 
-        if (!isActivatedForUser) {
-            throw new ConversationNotFoundException("Conversation is not activated for this user");
+        if (!isActivatedForUser || isDeletedForUser) {
+            throw new ConversationNotFoundException("Conversation is not available for this user");
         }
 
         List<MessageDto> messageDtos = conversation.getMessages().stream()
@@ -185,5 +196,26 @@ public class MessageServiceImpl implements MessageService {
                 otherUser.getProfilePic(),
                 messageDtos
         );
+    }
+
+    @Override
+    public void deleteConversation(String username) {
+        Objects.requireNonNull(username, "Username cannot be null");
+        User user = userDetailsService.loadUser();
+        User otherUser = userRepository.findByUsername(username);
+        if (otherUser == null) throw new UserNotFoundException("User not found");
+
+        Conversation conversation = conversationRepository.findByUsers(user.getId(), otherUser.getId())
+                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
+        if (conversation.getUser1().getId().equals(user.getId())) {
+            conversation.setDeletedByUser1(true);
+        } else {
+            conversation.setDeletedByUser2(true);
+        }
+        if (conversation.isDeletedByUser1() && conversation.isDeletedByUser2()) {
+            conversationRepository.delete(conversation);
+        } else {
+            conversationRepository.save(conversation);
+        }
     }
 }

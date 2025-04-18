@@ -12,4 +12,5 @@ public interface MessageService {
     UnseenMessagesCountDto getUnseenCount();
     List<ConversationDto> getAllConversations();
     ConversationWithUserDto getConversationOnInitial(String username);
+    void deleteConversation(String username);
 }

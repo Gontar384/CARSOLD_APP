@@ -36,4 +36,6 @@ public class Conversation {
     private boolean seenByUser2 = false;
     private boolean activatedByUser1 = false;
     private boolean activatedByUser2 = false;
+    private boolean deletedByUser1 = false;
+    private boolean deletedByUser2 = false;
 }

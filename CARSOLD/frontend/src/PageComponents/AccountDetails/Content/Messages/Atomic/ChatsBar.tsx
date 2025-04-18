@@ -10,9 +10,11 @@ import {Sent} from "../Messages.tsx";
 
 interface ChatsBarProps {
     sent: Sent;
+    deleted: string;
+    setDeleted: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatsBar: React.FC<ChatsBarProps> = ({sent}) => {
+const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
     interface Conversation {
         username: string;
         profilePic: string;
@@ -107,7 +109,15 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent}) => {
                 )
             );
         }
-    }, [sent]); //updates conversation first message, based on sent message
+    }, [sent]); //updates conversation first message, timestamp and sender, based on sent message
+
+    useEffect(() => {
+        if (!deleted) return;
+        setConversations(prev =>
+            prev.filter(conv => conv.username !== deleted)
+        );
+        setDeleted("");
+    }, [deleted]); //updates conversations, when conversation is deleted
 
     return (
         <>

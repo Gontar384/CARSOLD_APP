@@ -1,10 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {getConversationOnInitial, sendMessage} from "../../../../../ApiCalls/Services/MessageService.ts";
+import {
+    deleteConversation,
+    getConversationOnInitial,
+    sendMessage
+} from "../../../../../ApiCalls/Services/MessageService.ts";
 import {BadRequestError, NotFoundError, PayloadTooLarge} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleInfo, faCircleUser} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faCircleUser, faComments, faUser} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {useUserUtil} from "../../../../../GlobalProviders/UserUtil/useUserUtil.ts";
@@ -13,9 +17,10 @@ import {Sent} from "../Messages.tsx";
 
 interface ChatWindowProps {
     setSent: React.Dispatch<React.SetStateAction<Sent>>;
+    setDeleted: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted }) => {
     interface UserInfo {
         username: string;
         profilePic: string;
@@ -44,6 +49,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
     const {notification} = useMessages();
     const [interactionButton, setInteractionButton] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);
+    const componentRef1 = useRef<HTMLDivElement | null>(null);
     const [deleteDecision, setDeleteDecision] = useState<boolean>(false);
     const [blockDecision, setBlockDecision] = useState<boolean>(false);
 
@@ -95,21 +101,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
     }, [notification]); //adds notification message to chat
 
     const handleSendMessage = async () => {
-        if (disabled || username === "" || receiverUsername === "" || content.trim() === "") return;
+        if (disabled || username === "" || content.trim() === "") return;
+        if (receiverUsername === "") {
+            setUserInfo({ username: "", profilePic: "" });
+            setMessages([]);
+            return;
+        }
         if (content.length > 1000) return;
         setDisabled(true);
         const messageToSend = {senderUsername: username, receiverUsername: receiverUsername, content: content};
         try {
             await sendMessage(messageToSend);
-        } catch (error: unknown) {
-            if (error instanceof NotFoundError) {
-                console.error("Message receiver not found: ", error);
-            } else if (error instanceof PayloadTooLarge) {
-                console.error("Message is too long: ", error);
-            } else {
-                console.error("Unexpected error when sending message: ", error);
-            }
-        } finally {
             const messageToAdd: Message = {
                 senderUsername: messageToSend.senderUsername,
                 content: messageToSend.content,
@@ -124,6 +126,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
             }
             setSent(messageToChange);
             setContent("");
+        } catch (error: unknown) {
+            navigate("/details/messages");
+            if (error instanceof NotFoundError) {
+                console.error("Message receiver not found: ", error);
+            } else if (error instanceof PayloadTooLarge) {
+                console.error("Message is too long: ", error);
+            } else if (error instanceof BadRequestError) {
+                console.error("You cannot send message: ", error);
+            } else {
+                console.error("Unexpected error when sending message: ", error);
+            }
+        } finally {
             setTimeout(() => setDisabled(false), 500);
         }
     }; //sending message
@@ -149,9 +163,42 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
         }
     }, [interactionButton]) //offs interactionButton dropdown
 
-    const handleDeleteConversation = () => {
-        console.log("conversation deleted")
-        setDeleteDecision(false);
+    useEffect(() => {
+        const handleClickOutside1 = (event: MouseEvent | TouchEvent) => {
+            if ((deleteDecision || blockDecision) && componentRef1.current && !componentRef1.current.contains(event.target as Node)) {
+                setDeleteDecision(false);
+                setBlockDecision(false);
+            }
+        }
+        if (deleteDecision || blockDecision) {
+            document.addEventListener("mousedown", handleClickOutside1);
+            document.addEventListener("touchstart", handleClickOutside1);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside1);
+            document.removeEventListener("touchstart", handleClickOutside1);
+        }
+    }, [deleteDecision, blockDecision]) //offs delete/block decision window
+
+    const handleDeleteConversation = async () => {
+        if (disabled) return;
+        setDisabled(true);
+        try {
+            await deleteConversation(receiverUsername);
+            navigate("/details/messages");
+            setUserInfo({ username: "", profilePic: "" });
+            setMessages([]);
+            setDeleted(receiverUsername);
+        } catch (error: unknown) {
+             if (error instanceof NotFoundError) {
+                console.error("User or conversation not found: ", error);
+            } else {
+                console.error("Unexpected error when deleting conversation: ", error);
+            }
+        } finally {
+            setDisabled(false);
+            setDeleteDecision(false);
+        }
     };
 
     const handleBlockUser = () => {
@@ -178,7 +225,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
                                 </button>
                                 {interactionButton &&
                                     <div className="flex flex-col justify-center items-center w-[90px] h-[53px] m:h-[57px] shadow text-xs m:text-sm
-                                    divide-y bg-coolRed text-white absolute -bottom-[10px] m:-bottom-[12px] -left-[104px]">
+                                    divide-y bg-coolRed text-white absolute -bottom-[11px] m:-bottom-[12px] -left-[104px]">
                                         <button className={`w-full h-1/2 ${!isMobile && "hover:text-lowBlack"}`}
                                                 onClick={() => setDeleteDecision(true)}>
                                             Delete chat
@@ -227,7 +274,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
                         {(deleteDecision || blockDecision) &&
                             <div className="flex justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-40 z-50">
                                 <div className="flex flex-col items-center justify-center w-full max-w-[600px] text-white
-                                text-lg m:text-xl px-3 border-2 border-gray-300 rounded-sm bg-coolRed">
+                                text-lg m:text-xl px-3 border-2 border-gray-300 rounded-sm bg-coolRed"
+                                     ref={componentRef1}>
                                     <p className="text-center mt-12">
                                         {`Are you sure you want to ${deleteDecision ? " delete this conversation?" : "block this user?"}`}
                                     </p>
@@ -243,6 +291,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent }) => {
                                             No
                                         </button>
                                     </div>
+                                    <FontAwesomeIcon icon={deleteDecision ? faComments : faUser} className="absolute inset-0 m-auto text-xl m:text-2xl"/>
                                 </div>
                             </div>}
                     </div>

@@ -19,21 +19,23 @@ public interface ConversationRepository  extends JpaRepository<Conversation, Lon
     @Query("""
     SELECT COUNT(c) FROM Conversation c
     WHERE c.user1.id = :userId
-      AND c.seenByUser1 = false
-      AND c.activatedByUser1 = true
+    AND c.seenByUser1 = false
+    AND c.activatedByUser1 = true
+    AND c.deletedByUser1 = false
     """)
     int countUnseenAndActivatedByUser1(@Param("userId") Long userId);
     @Query("""
     SELECT COUNT(c) FROM Conversation c
     WHERE c.user2.id = :userId
-      AND c.seenByUser2 = false
-      AND c.activatedByUser2 = true
+    AND c.seenByUser2 = false
+    AND c.activatedByUser2 = true
+    AND c.deletedByUser2 = false
     """)
     int countUnseenAndActivatedByUser2(@Param("userId") Long userId);
     @Query("""
     SELECT c FROM Conversation c
-    WHERE (c.user1 = :user AND c.activatedByUser1 = true)
-    OR (c.user2 = :user AND c.activatedByUser2 = true)
+    WHERE (c.user1 = :user AND c.activatedByUser1 = true AND c.deletedByUser1 = false)
+    OR (c.user2 = :user AND c.activatedByUser2 = true AND c.deletedByUser2 = false)
     """)
-    List<Conversation> findActivatedConversationsForUser(@Param("user") User user);
+    List<Conversation> findVisibleConversationsForUser(@Param("user") User user);
 }

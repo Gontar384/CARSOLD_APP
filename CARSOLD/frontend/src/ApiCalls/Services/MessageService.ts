@@ -44,3 +44,11 @@ export const getConversationOnInitial = async(username: string | null): Promise<
         return Promise.reject(error);
     }
 };
+
+export const deleteConversation = async(username: string | null): Promise<void> => {
+    try {
+        await api.delete(`api/message/deleteConversation/${username}`);
+    } catch (error) {
+        handleError(error);
+    }
+};
