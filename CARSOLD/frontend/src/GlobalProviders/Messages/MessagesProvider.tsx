@@ -11,7 +11,7 @@ export interface Notification {
     senderProfilePic: string;
     content: string;
     timestamp: string;
-    seen: boolean;
+    unseenCount: number;
 }
 
 export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -20,12 +20,12 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         senderProfilePic: "",
         content: "",
         timestamp: "",
-        seen: false,
+        unseenCount: 0
     });
     const stompClientRef = useRef<Stomp.Client | null>(null);
     const {username} = useUserUtil();
     const {isAuthenticated} = useAuth();
-    const [unseenMessagesCount, setUnseenMessages] = useState<number>(0);
+    const [unseenMessagesCount, setUnseenMessagesCount] = useState<number>(0);
 
     useEffect(() => {
         if (!isAuthenticated) return;
@@ -43,7 +43,7 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                         senderProfilePic: parsedMessage.senderProfilePic ?? "",
                         content: parsedMessage.content ?? "",
                         timestamp: parsedMessage.timestamp ?? "",
-                        seen: parsedMessage.seen ?? false,
+                        unseenCount: parsedMessage.unseenCount ?? 0,
                     });
                 } catch (error) {
                     console.error("Failed to parse message: ", error);
@@ -65,17 +65,23 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             try {
                 const response= await getUnseenCount();
                 if (response.data) {
-                    setUnseenMessages(response.data.unseenCount);
+                    setUnseenMessagesCount(response.data.unseenCount);
                 }
             } catch (error) {
                 console.error("Unexpected error when fetching messages: ", error);
             }
         };
         if (isAuthenticated) handleGetUnseenCount();
-    }, [isAuthenticated, notification]);  //fetches unseen messages count
+    }, [isAuthenticated]);  //fetches unseen conversations count on initial
+
+    useEffect(() => {
+        if (notification.unseenCount) {
+            setUnseenMessagesCount(notification.unseenCount);
+        }
+    }, [notification]); //updates unseenMessagesCount when notification comes
 
     return (
-        <MessagesContext.Provider value={{ notification, setNotification, unseenMessagesCount }}>
+        <MessagesContext.Provider value={{ notification, setNotification, unseenMessagesCount, setUnseenMessagesCount }}>
             {children}
         </MessagesContext.Provider>
     );

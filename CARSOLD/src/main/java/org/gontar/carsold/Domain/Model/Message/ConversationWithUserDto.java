@@ -13,4 +13,7 @@ public class ConversationWithUserDto {
     private String username;
     private String profilePic;
     private List<MessageDto> messages;
+    private boolean blockedByUser;
+    private boolean blockedUser;
+    private boolean seenByUser;
 }

@@ -5,6 +5,7 @@ export interface MessagesContextType {
     notification: Notification;
     setNotification: React.Dispatch<React.SetStateAction<Notification>>;
     unseenMessagesCount: number;
+    setUnseenMessagesCount: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const MessagesContext = createContext<MessagesContextType | undefined>(undefined);

@@ -32,10 +32,12 @@ public class Conversation {
     @OneToMany(mappedBy = "conversation", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
 
-    private boolean seenByUser1 = false;
-    private boolean seenByUser2 = false;
+    private boolean seenByUser1 = true;
+    private boolean seenByUser2 = true;
     private boolean activatedByUser1 = false;
     private boolean activatedByUser2 = false;
     private boolean deletedByUser1 = false;
     private boolean deletedByUser2 = false;
+    private boolean blockedByUser1 = false;
+    private boolean blockedByUser2 = false;
 }

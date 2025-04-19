@@ -25,7 +25,7 @@ const MessageNotification: React.FC = () => {
         if (notification.content === "") return;
         if (blockDisplay) {
             setVisible(false);
-            setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", seen: false });
+            setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", unseenCount: 0 });
             setNotificationDismissed(true);
             return;
         }
@@ -39,7 +39,7 @@ const MessageNotification: React.FC = () => {
                 timeoutRef.current = setTimeout(() => {
                     setAnimation("animate-slideDownDisappear");
                     clearRef.current = setTimeout(() => {
-                        setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", seen: false });
+                        setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", unseenCount: 0 });
                     }, 300);
                 }, 6700);
             } else {
@@ -47,7 +47,7 @@ const MessageNotification: React.FC = () => {
                 timeoutRef.current = setTimeout(() => {
                     setAnimation1("animate-slideUpShow");
                     clearRef.current = setTimeout(() => {
-                        setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", seen: false });
+                        setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", unseenCount: 0 });
                     }, 200);
                 }, 6700);
             }

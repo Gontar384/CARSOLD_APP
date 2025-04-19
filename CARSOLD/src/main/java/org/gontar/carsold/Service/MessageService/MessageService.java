@@ -1,6 +1,7 @@
 package org.gontar.carsold.Service.MessageService;
 
 import org.gontar.carsold.Domain.Model.Message.ConversationDto;
+import org.gontar.carsold.Domain.Model.Message.MessageDto;
 import org.gontar.carsold.Domain.Model.Message.UnseenMessagesCountDto;
 import org.gontar.carsold.Domain.Model.Message.ConversationWithUserDto;
 
@@ -13,4 +14,7 @@ public interface MessageService {
     List<ConversationDto> getAllConversations();
     ConversationWithUserDto getConversationOnInitial(String username);
     void deleteConversation(String username);
+    void blockUnblockUser(String username);
+    void setSeen(String username);
+    List<MessageDto> getOlderMessages(String username, int page);
 }

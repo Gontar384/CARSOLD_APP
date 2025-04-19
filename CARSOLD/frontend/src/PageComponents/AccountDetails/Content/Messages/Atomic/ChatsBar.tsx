@@ -1,26 +1,29 @@
 import React, {useEffect, useState} from "react";
 import {useMessages} from "../../../../../GlobalProviders/Messages/useMessages.ts";
-import {getAllConversations} from "../../../../../ApiCalls/Services/MessageService.ts";
+import {getAllConversations, setSeen} from "../../../../../ApiCalls/Services/MessageService.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {Sent} from "../Messages.tsx";
+import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 
 interface ChatsBarProps {
     sent: Sent;
     deleted: string;
     setDeleted: React.Dispatch<React.SetStateAction<string>>;
+    markSeen: boolean;
 }
 
-const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
+const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen }) => {
     interface Conversation {
         username: string;
         profilePic: string;
         lastMessage: string;
         timestamp: string;
         sentBy: string;
+        seen: boolean;
     }
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
@@ -29,6 +32,9 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
     const [hovered, setHovered] = useState<number | null>(null);
     const navigate = useNavigate();
     const {isMobile} = useUtil();
+    const [searchParams] = useSearchParams();
+    const receiverUsername: string = searchParams.get("username") ?? "";
+    const {unseenMessagesCount, setUnseenMessagesCount} = useMessages();
 
     useEffect(() => {
         const handleGetAllConversations = async () => {
@@ -42,6 +48,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
                         lastMessage: conv.lastMessage ?? "",
                         timestamp: conv.timestamp ?? "",
                         sentBy: conv.sentBy ?? "",
+                        seen: conv.seen ?? true,
                     }));
                     setConversations(formattedConversations);
                     // const extendedConversations = Array(10)
@@ -76,7 +83,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
                             lastMessage: notification.content ?? "",
                             sentBy: notification.senderUsername ?? "",
                             timestamp: notification.timestamp ?? "",
-                            seen: notification.seen ?? "",
+                            seen: false,
                         } : conv
                 )
             );
@@ -86,8 +93,8 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
                 profilePic: notification.senderProfilePic ?? "",
                 lastMessage: notification.content ?? "",
                 sentBy: notification.senderUsername ?? "",
-                seen: notification.seen ?? "",
                 timestamp: notification.timestamp ?? "",
+                seen: false,
             };
             setConversations(prev => [newConv, ...prev]);
         }
@@ -105,6 +112,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
                             lastMessage: sent.lastMessage ?? "",
                             timestamp: sent.timestamp ?? "",
                             sentBy: sent.sentBy ?? "",
+                            seen: true,
                         } : conv
                 )
             );
@@ -118,6 +126,37 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
         );
         setDeleted("");
     }, [deleted]); //updates conversations, when conversation is deleted
+
+    useEffect(() => {
+        if (!markSeen) return;
+        const foundConv = conversations.find(conv => conv.username === receiverUsername);
+        if (!foundConv || foundConv.seen) return;
+        const handleSetSeen = async () => {
+            try {
+                await setSeen(receiverUsername);
+                if (conversations.some(conv => conv.username === receiverUsername)) {
+                    setConversations(prev =>
+                        prev.map(conv =>
+                            conv.username === receiverUsername
+                                ? {...conv,
+                                    seen: true,
+                                } : conv
+                        )
+                    );
+                    if (unseenMessagesCount > 0) {
+                        setUnseenMessagesCount(prev => prev - 1);
+                    }
+                }
+            } catch (error: unknown) {
+                if (error instanceof NotFoundError) {
+                    console.error("Conversation or user not found while setting message as seen: ", error);
+                } else {
+                    console.error("Unexpected error occurred while setting message as seen");
+                }
+            }
+        };
+        handleSetSeen();
+    }, [markSeen]);
 
     return (
         <>
@@ -146,10 +185,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted}) => {
                                 <div className={`flex flex-row items-center gap-0.5 m:gap-1 text-xs m:text-sm
                                 text-gray-700`}>
                                     {conv.sentBy && conv.lastMessage ?
-                                        <>
-                                            <span>{`${conv.sentBy}:`}</span>
-                                            <span>{conv.lastMessage}</span>
-                                        </>
+                                        <span className={`${!conv.seen && "font-semibold"}`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
                                         : <span>No messages yet.</span>
                                     }
                                 </div>

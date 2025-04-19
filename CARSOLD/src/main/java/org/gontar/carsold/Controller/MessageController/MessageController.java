@@ -1,9 +1,6 @@
 package org.gontar.carsold.Controller.MessageController;
 
-import org.gontar.carsold.Domain.Model.Message.ConversationDto;
-import org.gontar.carsold.Domain.Model.Message.SentMessageDto;
-import org.gontar.carsold.Domain.Model.Message.UnseenMessagesCountDto;
-import org.gontar.carsold.Domain.Model.Message.ConversationWithUserDto;
+import org.gontar.carsold.Domain.Model.Message.*;
 import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.MessageService.MessageService;
 import org.springframework.http.ResponseEntity;
@@ -58,5 +55,23 @@ public class MessageController {
     public ResponseEntity<?> deleteConversation(@PathVariable String username) {
         service.deleteConversation(username);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/blockUnblockUser/{username}")
+    public ResponseEntity<?> blockUnblockUser(@PathVariable String username) {
+        service.blockUnblockUser(username);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/setSeen/{username}")
+    public ResponseEntity<?> setSeen(@PathVariable String username) {
+        service.setSeen(username);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getOlderMessages/{username}/{page}")
+    public ResponseEntity<List<MessageDto>> getOlderMessages(@PathVariable String username, @PathVariable int page) {
+        List<MessageDto> olderMessages = service.getOlderMessages(username, page);
+        return ResponseEntity.ok(olderMessages);
     }
 }

@@ -52,3 +52,28 @@ export const deleteConversation = async(username: string | null): Promise<void> 
         handleError(error);
     }
 };
+
+export const blockUnblockUser = async(username: string | null): Promise<void> => {
+    try {
+        await api.patch(`api/message/blockUnblockUser/${username}`);
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const setSeen = async(username: string | null): Promise<void> => {
+    try {
+        await api.patch(`api/message/setSeen/${username}`);
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const getOlderMessages = async(username: string | null, page: number | null): Promise<AxiosResponse> => {
+    try {
+        return await api.get(`api/message/getOlderMessages/${username}/${page}`);
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};

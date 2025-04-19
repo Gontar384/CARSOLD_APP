@@ -15,4 +15,5 @@ public class ConversationDto {
     private String lastMessage;
     private LocalDateTime timestamp;
     private String sentBy;
+    private boolean seen;
 }

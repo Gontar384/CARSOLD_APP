@@ -14,4 +14,5 @@ public class NotificationDto {
     private String senderProfilePic;
     private String content;
     private LocalDateTime timestamp;
+    private Integer unseenCount;
 }
