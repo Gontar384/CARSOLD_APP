@@ -12,6 +12,6 @@ public interface MessageService {
     ConversationWithUserDto getConversationOnInitial(String username);
     void deleteConversation(String username);
     void blockUnblockUser(String username);
-    void setSeen(String username);
+    void makeSeen(String username);
     PagedMessagesDto getOlderMessages(String username, int page);
 }

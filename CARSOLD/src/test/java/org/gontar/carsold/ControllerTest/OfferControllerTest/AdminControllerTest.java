@@ -35,7 +35,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void adminDeleteOffer_shouldReturnOk() throws Exception {
+    public void adminDeleteOffer_shouldReturnOk() throws Exception {
         Long offerId = 1L;
         doNothing().when(adminService).adminDeleteOffer(offerId);
 
@@ -44,7 +44,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void adminFetchReports_shouldReturnOk() throws Exception {
+    public void adminFetchReports_shouldReturnOk() throws Exception {
         List<ReportDto> reportDtos = List.of(new ReportDto(1L, 1L, "Scam Listing", "Inappropriate content"));
         when(adminService.adminFetchReports()).thenReturn(reportDtos);
 
@@ -53,7 +53,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void adminDeleteReport_shouldReturnOk() throws Exception {
+    public void adminDeleteReport_shouldReturnOk() throws Exception {
         Long reportId = 1L;
         doNothing().when(adminService).adminDeleteReport(reportId);
 

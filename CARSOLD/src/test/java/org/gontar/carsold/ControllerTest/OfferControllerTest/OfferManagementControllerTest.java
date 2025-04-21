@@ -51,7 +51,7 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void createOffer() throws Exception {
+    public void createOffer() throws Exception {
         OfferDto offerDto = new OfferDto();
         Offer offer = new Offer();
         Offer createdOffer = new Offer();
@@ -71,7 +71,7 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void fetchOffer() throws Exception {
+    public void fetchOffer() throws Exception {
         Offer offer = new Offer();
         OfferDto offerDto = new OfferDto();
 
@@ -85,7 +85,7 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void updateOffer() throws Exception {
+    public void updateOffer() throws Exception {
         OfferDto offerDto = new OfferDto();
         Offer offer = new Offer();
         Offer updatedOffer = new Offer();
@@ -107,7 +107,7 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void fetchAllUserOffers() throws Exception {
+    public void fetchAllUserOffers() throws Exception {
         List<PartialOfferDto> partialOfferDtos = List.of(new PartialOfferDto(), new PartialOfferDto());
         when(offerManagementService.fetchAllUserOffers()).thenReturn(partialOfferDtos);
 
@@ -118,7 +118,7 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void fetchOfferWithUser() throws Exception {
+    public void fetchOfferWithUser() throws Exception {
         OfferWithUserDto offerWithUserDto = new OfferWithUserDto();
         when(offerManagementService.fetchOfferWithUser(1L)).thenReturn(offerWithUserDto);
 
@@ -127,13 +127,13 @@ class OfferManagementControllerTest {
     }
 
     @Test
-    void deleteOffer() throws Exception {
+    public void deleteOffer() throws Exception {
         mockMvc.perform(delete("/api/offer/delete/1"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void fetchRandomOffers_shouldReturnListOfOffers() throws Exception {
+    public void fetchRandomOffers_shouldReturnListOfOffers() throws Exception {
         List<PartialOfferDto> mockOffers = List.of(
                 new PartialOfferDto(), new PartialOfferDto(), new PartialOfferDto()
         );

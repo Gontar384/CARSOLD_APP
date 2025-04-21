@@ -27,7 +27,7 @@ public class AdminServiceUnitTest {
     private ReportRepository reportRepository;
 
     @Test
-    void adminFetchReports_shouldReturnListOfReportDtos() {
+    public void adminFetchReports_shouldReturnListOfReportDtos() {
         Offer offer = new Offer();
         offer.setId(100L);
 
@@ -66,7 +66,7 @@ public class AdminServiceUnitTest {
     }
 
     @Test
-    void adminFetchReports_shouldReturnEmptyListWhenNoReportsExist() {
+    public void adminFetchReports_shouldReturnEmptyListWhenNoReportsExist() {
         when(reportRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<ReportDto> result = adminService.adminFetchReports();
@@ -76,7 +76,7 @@ public class AdminServiceUnitTest {
     }
 
     @Test
-    void adminDeleteReport_shouldDeleteById() {
+    public void adminDeleteReport_shouldDeleteById() {
         Long reportId = 10L;
 
         adminService.adminDeleteReport(reportId);

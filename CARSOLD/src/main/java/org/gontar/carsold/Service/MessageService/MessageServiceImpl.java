@@ -214,7 +214,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void setSeen(String username) {
+    public void makeSeen(String username) {
         ConversationContext context = getConversationContext(username, false);
         if (context.isUser1) {
             context.conversation.setSeenByUser1(true);

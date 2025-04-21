@@ -61,9 +61,9 @@ export const blockUnblockUser = async(username: string | null): Promise<void> =>
     }
 };
 
-export const setSeen = async(username: string | null): Promise<void> => {
+export const makeSeen = async(username: string | null): Promise<void> => {
     try {
-        await api.patch(`api/message/setSeen/${username}`);
+        await api.patch(`api/message/makeSeen/${username}`);
     } catch (error) {
         handleError(error);
     }

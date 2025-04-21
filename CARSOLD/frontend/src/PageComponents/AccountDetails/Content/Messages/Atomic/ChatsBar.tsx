@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useMessages} from "../../../../../GlobalProviders/Messages/useMessages.ts";
-import {getAllConversations, setSeen} from "../../../../../ApiCalls/Services/MessageService.ts";
+import {getAllConversations, makeSeen} from "../../../../../ApiCalls/Services/MessageService.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
@@ -131,9 +131,9 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
         if (!markSeen) return;
         const foundConv = conversations.find(conv => conv.username === receiverUsername);
         if (!foundConv || foundConv.seen) return;
-        const handleSetSeen = async () => {
+        const handleMakeSeen = async () => {
             try {
-                await setSeen(receiverUsername);
+                await makeSeen(receiverUsername);
                 if (conversations.some(conv => conv.username === receiverUsername)) {
                     setConversations(prev =>
                         prev.map(conv =>
@@ -155,7 +155,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                 }
             }
         };
-        handleSetSeen();
+        handleMakeSeen();
     }, [markSeen]);
 
     return (

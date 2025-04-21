@@ -59,9 +59,9 @@ public class MessageController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/setSeen/{username}")
-    public ResponseEntity<?> setSeen(@PathVariable String username) {
-        service.setSeen(username);
+    @PatchMapping("/makeSeen/{username}")
+    public ResponseEntity<?> makeSeen(@PathVariable String username) {
+        service.makeSeen(username);
         return ResponseEntity.ok().build();
     }
 

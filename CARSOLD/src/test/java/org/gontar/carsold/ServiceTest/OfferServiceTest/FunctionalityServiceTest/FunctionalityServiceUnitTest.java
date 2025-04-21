@@ -50,7 +50,7 @@ public class FunctionalityServiceUnitTest {
     private MyUserDetailsService userDetailsService;
 
     @Test
-    void fetchStats_shouldReturnOfferStats() {
+    public void fetchStats_shouldReturnOfferStats() {
         Offer offer = new Offer();
         offer.setId(1L);
         offer.setViews(100);
@@ -67,14 +67,14 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void fetchStats_shouldThrowExceptionWhenOfferNotFound() {
+    public void fetchStats_shouldThrowExceptionWhenOfferNotFound() {
         when(offerRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(OfferNotFound.class, () -> functionalityService.fetchStats(1L));
     }
 
     @Test
-    void fetchStats_shouldThrowExceptionWhenNoPermission() {
+    public void fetchStats_shouldThrowExceptionWhenNoPermission() {
         Offer offer = new Offer();
         offer.setId(1L);
 
@@ -85,7 +85,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void fetchAllFollowed_shouldReturnFollowedOffers() {
+    public void fetchAllFollowed_shouldReturnFollowedOffers() {
         User user = new User();
         user.setFollowedOffers(List.of("1", "2"));
 
@@ -110,7 +110,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void followAndCheck_shouldFollowOffer() {
+    public void followAndCheck_shouldFollowOffer() {
         User user = new User();
         user.setOffers(new ArrayList<>());
         user.setFollowedOffers(new ArrayList<>());
@@ -129,7 +129,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void followAndCheck_shouldUnfollowOffer() {
+    public void followAndCheck_shouldUnfollowOffer() {
         User user = new User();
         user.setFollowedOffers(new ArrayList<>(List.of("1")));
         user.setOffers(new ArrayList<>());
@@ -148,7 +148,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void followAndCheck_shouldThrowExceptionIfUserOwnsOffer() {
+    public void followAndCheck_shouldThrowExceptionIfUserOwnsOffer() {
         User user = new User();
         Offer offer = new Offer();
         offer.setId(1L);
@@ -161,7 +161,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void reportOffer_shouldSaveReportWhenValidInput() {
+    public void reportOffer_shouldSaveReportWhenValidInput() {
         Long offerId = 1L;
         String reason = "Inappropriate content";
 
@@ -184,7 +184,7 @@ public class FunctionalityServiceUnitTest {
     }
 
     @Test
-    void reportOffer_shouldThrowExceptionWhenOfferNotFound() {
+    public void reportOffer_shouldThrowExceptionWhenOfferNotFound() {
         Long offerId = 999L;
         String reason = "Scam listing";
 

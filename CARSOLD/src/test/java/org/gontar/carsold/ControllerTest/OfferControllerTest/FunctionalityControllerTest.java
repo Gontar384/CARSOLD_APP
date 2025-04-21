@@ -39,7 +39,7 @@ public class FunctionalityControllerTest {
     }
 
     @Test
-    void fetchStats() throws Exception {
+    public void fetchStats() throws Exception {
         OfferStatsDto offerStatsDto = new OfferStatsDto();
         when(functionalityService.fetchStats(1L)).thenReturn(offerStatsDto);
 
@@ -48,7 +48,7 @@ public class FunctionalityControllerTest {
     }
 
     @Test
-    void fetchAllFollowed() throws Exception {
+    public void fetchAllFollowed() throws Exception {
         List<PartialOfferDto> followedOffers = List.of(new PartialOfferDto());
         when(functionalityService.fetchAllFollowed()).thenReturn(followedOffers);
 
@@ -57,7 +57,7 @@ public class FunctionalityControllerTest {
     }
 
     @Test
-    void followAndCheck() throws Exception {
+    public void followAndCheck() throws Exception {
         SingleBooleanDto requestBody = new SingleBooleanDto();
         requestBody.setValue(true);
 
@@ -70,14 +70,13 @@ public class FunctionalityControllerTest {
     }
 
     @Test
-    void reportOffer_shouldReturnOk() throws Exception {
+    public void reportOffer_shouldReturnOk() throws Exception {
         String jsonBody = """
         {
             "offerId": 1,
             "reason": "Scam listing"
         }
     """;
-
         doNothing().when(functionalityService).reportOffer(1L, "Scam listing");
 
         mockMvc.perform(post("/api/offer/report")

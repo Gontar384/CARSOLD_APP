@@ -46,7 +46,7 @@ public class SearchControllerTest {
     }
 
     @Test
-    void fetchFilteredOffers() throws Exception {
+    public void fetchFilteredOffers() throws Exception {
         List<PartialOfferDto> offersList = List.of(new PartialOfferDto());
         Page<PartialOfferDto> offersPage = new PageImpl<>(offersList);
         PagedModel<EntityModel<PartialOfferDto>> pagedModel = PagedModel.empty();
