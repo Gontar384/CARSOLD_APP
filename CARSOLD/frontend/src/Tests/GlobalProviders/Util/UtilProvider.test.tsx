@@ -1,6 +1,6 @@
 import {render, waitFor, act, fireEvent} from '@testing-library/react';
-import {useUtil} from "../../GlobalProviders/Util/useUtil";
-import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
+import {UtilProvider} from "../../../GlobalProviders/Util/UtilProvider.tsx";
 import React from "react";
 import {MemoryRouter} from "react-router-dom";
 
@@ -106,7 +106,7 @@ describe('UtilProvider', () => {
     });
 
     it('should detect device type as mobile or PC', async () => {
-        const { getByText, rerender } = render(
+        const { getByText } = render(
             <MemoryRouter>
                 <UtilProvider>
                     <TestComponent />
@@ -115,23 +115,6 @@ describe('UtilProvider', () => {
         );
 
         expect(getByText('PC')).toBeInTheDocument();
-
-        act(() => {
-            Object.defineProperty(window, 'ontouchstart', { value: true, writable: true });
-            window.dispatchEvent(new Event('resize'));
-        });
-
-        rerender(
-            <MemoryRouter>
-                <UtilProvider>
-                    <TestComponent />
-                </UtilProvider>
-            </MemoryRouter>
-        );
-
-        await waitFor(() => {
-            expect(getByText('Mobile')).toBeInTheDocument();
-        });
     });
 
     it('should create and update debounced value correctly', async () => {

@@ -3,6 +3,7 @@ import AuthErrorManager from "../../Config/AuthConfig/AuthErrorManager";
 import { api } from "../../Config/AxiosConfig/AxiosConfig";
 import { act } from "react";
 import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider";
+import {MemoryRouter} from "react-router-dom";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -36,9 +37,11 @@ const setupInterceptorMock = (status: number) => {
     });
 
     render(
-        <AuthProvider>
-            <AuthErrorManager />
-        </AuthProvider>
+        <MemoryRouter>
+            <AuthProvider>
+                <AuthErrorManager />
+            </AuthProvider>
+        </MemoryRouter>
     );
 
     return async () => {

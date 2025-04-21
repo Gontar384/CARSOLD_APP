@@ -5,6 +5,7 @@ import OfferForm from "../../PageComponents/AddingOffer/OfferForm.tsx";
 import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider.tsx";
 import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider.tsx";
 import {SearchProvider} from "../../GlobalProviders/Search/SearchProvider.tsx";
+import {UserUtilProvider} from "../../GlobalProviders/UserUtil/UserUtilProvider.tsx";
 
 jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     api: {
@@ -28,6 +29,12 @@ jest.mock('../../ApiCalls/Services/OfferService', () => ({
     addOffer: jest.fn(),
 }));
 
+jest.mock('../../GlobalProviders/Messages/useMessages', () => ({
+    useMessages: () => ({
+        addMessage: jest.fn(),
+    }),
+}));
+
 beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {
@@ -44,7 +51,9 @@ const renderComponent = () => {
             <UtilProvider>
                 <AuthProvider>
                     <SearchProvider>
-                        <OfferForm/>
+                        <UserUtilProvider>
+                            <OfferForm/>
+                        </UserUtilProvider>
                     </SearchProvider>
                 </AuthProvider>
             </UtilProvider>
@@ -55,9 +64,16 @@ const renderComponent = () => {
 describe('OfferForm', () => {
     const mockNavigate = jest.fn();
     const mockLocation = {pathname: '/addingOffer'};
+    const mockOfferData = {
+        content: 'Some mock content',
+    };
+
     const mockUseOfferUtil = (overrides = {}) => {
         (useOfferUtil as jest.Mock).mockReturnValue({
-            handleFetchOffer: jest.fn(() => Promise.resolve({offerData: {}, userPermission: false})),
+            handleFetchOffer: jest.fn().mockResolvedValue({
+                offerData: mockOfferData,
+                userPermission: true,
+            }),
             ...overrides,
         });
     };
@@ -70,10 +86,13 @@ describe('OfferForm', () => {
         mockUseOfferUtil();
     });
 
-    it('should render the form fields correctly', () => {
+    it('should render the form fields correctly', async () => {
         renderComponent();
 
-        screen.getByText('Title');
+        await waitFor(() => {
+            expect(screen.getByText('Title')).toBeInTheDocument();
+        });
+
         screen.getByText('Brand');
         screen.getByText('Model');
         screen.getByText('Body type');

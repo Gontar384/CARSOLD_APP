@@ -22,7 +22,7 @@ const MessageNotification: React.FC = () => {
     useEffect(() => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         if (clearRef.current) clearTimeout(clearRef.current);
-        if (notification.content === "") return;
+        if (!notification || notification.content === "") return;
         if (blockDisplay) {
             setVisible(false);
             setNotification({ senderUsername: "", senderProfilePic: "", content: "", timestamp: "", unseenCount: 0 });

@@ -1,10 +1,11 @@
 import { render, waitFor, act } from '@testing-library/react';
-import { useAuth } from "../../GlobalProviders/Auth/useAuth";
-import { AuthProvider } from "../../GlobalProviders/Auth/AuthProvider";
-import {checkAuth, logout} from "../../ApiCalls/Services/UserService";
-import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors";
+import { useAuth } from "../../../GlobalProviders/Auth/useAuth.ts";
+import { AuthProvider } from "../../../GlobalProviders/Auth/AuthProvider.tsx";
+import {checkAuth, logout} from "../../../ApiCalls/Services/UserService.ts";
+import {InternalServerError} from "../../../ApiCalls/Errors/CustomErrors.ts";
+import {MemoryRouter} from "react-router-dom";
 
-jest.mock("../../ApiCalls/Services/UserService", () => ({
+jest.mock("../../../ApiCalls/Services/UserService.ts", () => ({
     checkAuth: jest.fn(),
     logout: jest.fn()
 }));
@@ -39,9 +40,11 @@ const TestComponent = ({ showLoadingAuth = true }) => {
 
 const renderComponent = (showLoadingAuth = true) => {
     return render(
-        <AuthProvider>
-            <TestComponent showLoadingAuth={showLoadingAuth} />
-        </AuthProvider>
+        <MemoryRouter>
+            <AuthProvider>
+                <TestComponent showLoadingAuth={showLoadingAuth} />
+            </AuthProvider>
+        </MemoryRouter>
     );
 };
 
@@ -100,7 +103,7 @@ describe('AuthProvider', () => {
             window.dispatchEvent(new StorageEvent('storage', { key: 'Authenticated', newValue: 'true' }));
         });
 
-        rerender(<AuthProvider><TestComponent showLoadingAuth={false} /></AuthProvider>);
+        rerender(<MemoryRouter><AuthProvider><TestComponent showLoadingAuth={false} /></AuthProvider></MemoryRouter>);
 
         await waitFor(() => {
             expect(getByText('Authenticated')).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { AuthContext, useAuth } from "../../GlobalProviders/Auth/useAuth";
+import { AuthContext, useAuth } from "../../../GlobalProviders/Auth/useAuth.ts";
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -25,6 +25,7 @@ describe('useAuth', () => {
             handleCheckAuth: jest.fn(),
             handleLogout: jest.fn(),
             loadingAuth: false,
+            preventFetch: false,
         };
 
         const { result } = renderHook(() => useAuth(), {

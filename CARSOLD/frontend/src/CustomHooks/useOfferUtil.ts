@@ -1,11 +1,4 @@
-import {
-    fetchAllFollowed,
-    fetchAllUserOffers,
-    fetchOffer,
-    fetchOfferWithUser,
-    fetchStats,
-    followAndCheck
-} from "../ApiCalls/Services/OfferService.ts";
+import {fetchAllFollowed, fetchAllUserOffers, fetchOffer, fetchOfferWithUser, fetchStats, followAndCheck} from "../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../ApiCalls/Errors/CustomErrors.ts";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
