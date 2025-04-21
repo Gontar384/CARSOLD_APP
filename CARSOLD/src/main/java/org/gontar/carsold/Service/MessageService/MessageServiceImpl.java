@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -43,111 +44,71 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void activateConversation(String username) {
-        Objects.requireNonNull(username, "Username cannot be null");
-        User user = userDetailsService.loadUser();
-        User otherUser = userRepository.findByUsername(username);
-        if (otherUser == null) throw new UserNotFoundException("User not found");
-        if (user.getUsername().equals(username)) throw new WrongActionException("You cannot start a conversation with yourself");
-
-        Conversation conversation = conversationRepository
-                .findByUsers(user.getId(), otherUser.getId())
-                .orElseGet(() -> {
-                    Conversation newConv = new Conversation();
-                    newConv.setUser1(user);
-                    newConv.setUser2(otherUser);
-                    return conversationRepository.save(newConv);
-                });
-
-        if (conversation.getUser1().getId().equals(user.getId())) {
-            conversation.setActivatedByUser1(true);
-            if (conversation.isDeletedByUser1()) {
-                conversation.setDeletedByUser1(false);
+        ConversationContext context = getConversationContext(username, true);
+        if (context.conversation.getUser1().getId().equals(context.user.getId())) {
+            context.conversation.setActivatedByUser1(true);
+            if (context.conversation.isDeletedByUser1()) {
+                context.conversation.setDeletedByUser1(false);
             }
-        } else if (conversation.getUser2().getId().equals(user.getId())) {
-            conversation.setActivatedByUser2(true);
-            if (conversation.isDeletedByUser2()) {
-                conversation.setDeletedByUser2(false);
+        } else if (context.conversation.getUser2().getId().equals(context.user.getId())) {
+            context.conversation.setActivatedByUser2(true);
+            if (context.conversation.isDeletedByUser2()) {
+                context.conversation.setDeletedByUser2(false);
             }
         }
-        conversationRepository.save(conversation);
+        conversationRepository.save(context.conversation);
     }
 
     @Override
-    public void sendMessage(String senderUsername, String receiverUsername, String content) {
-        Objects.requireNonNull(senderUsername, "Sender username cannot be null");
-        Objects.requireNonNull(receiverUsername, "Receiver username cannot be null");
+    public void sendMessage(String username, String content) {
         Objects.requireNonNull(content, "Content cannot be null");
         if (content.length() > 1000) throw new MessageTooLargeException("Message is too long");
 
-        User sender = userRepository.findByUsername(senderUsername);
-        if (sender == null) throw new UserNotFoundException("Sender not found");
-        if (senderUsername.equals(receiverUsername)) throw new WrongActionException("You cannot have a conversation with yourself");
-        User receiver = userRepository.findByUsername(receiverUsername);
-        if (receiver == null) throw new UserNotFoundException("Receiver not found");
+        ConversationContext context = getConversationContext(username, true);
 
-        Conversation conversation = conversationRepository
-                .findByUsers(sender.getId(), receiver.getId())
-                .orElseGet(() -> {
-                    Conversation newConv = new Conversation();
-                    newConv.setUser1(sender);
-                    newConv.setUser2(receiver);
-                    return conversationRepository.save(newConv);
-                });
-
-        boolean isSenderUser1 = conversation.getUser1().getId().equals(sender.getId());
-
-        if ((isSenderUser1 && conversation.isBlockedByUser1()) ||
-                (!isSenderUser1 && conversation.isBlockedByUser2())) {
+        if ((context.isUser1 && context.conversation.isBlockedByUser1()) || (!context.isUser1 && context.conversation.isBlockedByUser2())) {
             throw new WrongActionException("You have blocked this user. Unblock to send messages.");
         }
-
-        if ((isSenderUser1 && conversation.isBlockedByUser2()) ||
-                (!isSenderUser1 && conversation.isBlockedByUser1())) {
+        if ((context.isUser1 && context.conversation.isBlockedByUser2()) || (!context.isUser1 && context.conversation.isBlockedByUser1())) {
             throw new WrongActionException("You cannot send messages to a user who has blocked you.");
         }
-
-        conversation.setActivatedByUser1(true);
-        conversation.setActivatedByUser2(true);
-
-        if (isSenderUser1) {
-            conversation.setDeletedByUser2(false);
+        if (context.isUser1) {
+            context.conversation.setSeenByUser2(false);
+            context.conversation.setSeenByUser1(true);
+            context.conversation.setDeletedByUser2(false);
         } else {
-            conversation.setDeletedByUser1(false);
+            context.conversation.setSeenByUser1(false);
+            context.conversation.setSeenByUser2(true);
+            context.conversation.setDeletedByUser1(false);
         }
+        context.conversation.setActivatedByUser1(true);
+        context.conversation.setActivatedByUser2(true);
 
         Message message = new Message();
-        message.setSender(sender);
-        message.setReceiver(receiver);
+        message.setSender(context.user);
+        message.setReceiver(context.otherUser);
         message.setContent(content);
         message.setTimestamp(LocalDateTime.now());
-        message.setConversation(conversation);
-
-        if (isSenderUser1) {
-            conversation.setSeenByUser2(false);
-            conversation.setSeenByUser1(true);
-        } else {
-            conversation.setSeenByUser1(false);
-            conversation.setSeenByUser2(true);
-        }
+        message.setConversation(context.conversation);
 
         messageRepository.save(message);
-        conversationRepository.save(conversation);
+        conversationRepository.save(context.conversation);
 
         int unseenCount;
-        if (receiver.getId().equals(conversation.getUser1().getId())) {
-            unseenCount = conversationRepository.countUnseenAndActivatedByUser1(receiver.getId());
+        if (context.otherUser.getId().equals(context.conversation.getUser1().getId())) {
+            unseenCount = conversationRepository.countUnseenAndActivatedByUser1(context.otherUser.getId());
         } else {
-            unseenCount = conversationRepository.countUnseenAndActivatedByUser2(receiver.getId());
+            unseenCount = conversationRepository.countUnseenAndActivatedByUser2(context.otherUser.getId());
         }
 
         NotificationDto dto = new NotificationDto();
-        dto.setSenderUsername(sender.getUsername());
-        dto.setSenderProfilePic(sender.getProfilePic());
+        dto.setSenderUsername(context.user.getUsername());
+        dto.setSenderProfilePic(context.user.getProfilePic());
         dto.setContent(content);
         dto.setTimestamp(message.getTimestamp());
         dto.setUnseenCount(unseenCount);
 
-        webSocketService.sendMessageToUser(receiver.getUsername(), dto);
+        webSocketService.sendMessageToUser(context.otherUser.getUsername(), dto);
     }
 
     @Override
@@ -190,30 +151,18 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ConversationWithUserDto getConversationOnInitial(String username) {
-        Objects.requireNonNull(username, "Username cannot be null");
-        User user = userDetailsService.loadUser();
-        User otherUser = userRepository.findByUsername(username);
+        ConversationContext context = getConversationContext(username, false);
 
-        if (otherUser == null) throw new UserNotFoundException("User not found");
-        if (user.getUsername().equals(username)) throw new WrongActionException("You cannot have a conversation with yourself");
+        boolean isActivatedForUser = context.isUser1 ? context.conversation.isActivatedByUser1() : context.conversation.isActivatedByUser2();
+        boolean isDeletedForUser = context.isUser1 ? context.conversation.isDeletedByUser1() : context.conversation.isDeletedByUser2();
 
-        Conversation conversation = conversationRepository
-                .findByUsers(user.getId(), otherUser.getId())
-                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
+        if (!isActivatedForUser || isDeletedForUser) throw new ConversationNotFoundException("Conversation is not available for this user");
 
-        boolean isUser1 = conversation.getUser1().getId().equals(user.getId());
-        boolean isActivatedForUser = isUser1 ? conversation.isActivatedByUser1() : conversation.isActivatedByUser2();
-        boolean isDeletedForUser = isUser1 ? conversation.isDeletedByUser1() : conversation.isDeletedByUser2();
+        boolean blockedByUser = context.isUser1 ? context.conversation.isBlockedByUser1() : context.conversation.isBlockedByUser2();
+        boolean blockedUser = context.isUser1 ? context.conversation.isBlockedByUser2() : context.conversation.isBlockedByUser1();
+        boolean isSeenByUser = context.isUser1 ? context.conversation.isSeenByUser2() : context.conversation.isSeenByUser1();
 
-        if (!isActivatedForUser || isDeletedForUser) {
-            throw new ConversationNotFoundException("Conversation is not available for this user");
-        }
-
-        boolean blockedByUser = isUser1 ? conversation.isBlockedByUser1() : conversation.isBlockedByUser2();
-        boolean blockedUser = isUser1 ? conversation.isBlockedByUser2() : conversation.isBlockedByUser1();
-        boolean isSeenByUser = isUser1 ? conversation.isSeenByUser2() : conversation.isSeenByUser1();
-
-        List<Message> latestMessages = messageRepository.findTop15ByConversationIdOrderByTimestampDesc(conversation.getId());
+        List<Message> latestMessages = messageRepository.findTop15ByConversationIdOrderByTimestampDesc(context.conversation.getId());
         List<MessageDto> messageDtos = latestMessages.stream()
                 .map(m -> new MessageDto(
                         m.getContent(),
@@ -221,10 +170,17 @@ public class MessageServiceImpl implements MessageService {
                         m.getSender().getUsername()))
                 .collect(Collectors.toList());
 
-        return new ConversationWithUserDto(
-                otherUser.getUsername(),
-                otherUser.getProfilePic(),
+        Collections.reverse(messageDtos);
+
+        PagedMessagesDto pagedMessages = new PagedMessagesDto(
                 messageDtos,
+                messageDtos.size() == 15
+        );
+
+        return new ConversationWithUserDto(
+                context.otherUser.getUsername(),
+                context.otherUser.getProfilePic(),
+                pagedMessages,
                 blockedByUser,
                 blockedUser,
                 isSeenByUser
@@ -233,7 +189,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void deleteConversation(String username) {
-        ConversationContext context = getConversationContext(username);
+        ConversationContext context = getConversationContext(username, false);
         if (context.isUser1) {
             context.conversation.setDeletedByUser1(true);
         } else {
@@ -248,7 +204,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void blockUnblockUser(String username) {
-        ConversationContext context = getConversationContext(username);
+        ConversationContext context = getConversationContext(username,false);
         if (context.isUser1) {
             context.conversation.setBlockedByUser1(!context.conversation.isBlockedByUser1());
         } else {
@@ -259,7 +215,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void setSeen(String username) {
-        ConversationContext context = getConversationContext(username);
+        ConversationContext context = getConversationContext(username, false);
         if (context.isUser1) {
             context.conversation.setSeenByUser1(true);
         } else {
@@ -276,60 +232,71 @@ public class MessageServiceImpl implements MessageService {
         );
     }
 
-    private ConversationContext getConversationContext(String username) {
-        Objects.requireNonNull(username, "Username cannot be null");
-        User user = userDetailsService.loadUser();
-        User otherUser = userRepository.findByUsername(username);
-        if (otherUser == null) throw new UserNotFoundException("User not found");
-
-        Conversation conversation = conversationRepository.findByUsers(user.getId(), otherUser.getId())
-                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
-
-        boolean isUser1 = conversation.getUser1().getId().equals(user.getId());
-        return new ConversationContext(conversation, isUser1);
-    }
-
-    private static class ConversationContext {
-        Conversation conversation;
-        boolean isUser1;
-        ConversationContext(Conversation conversation, boolean isUser1) {
-            this.conversation = conversation;
-            this.isUser1 = isUser1;
-        }
-    }
-
     @Override
-    public List<MessageDto> getOlderMessages(String username, int page) {
-        Objects.requireNonNull(username, "Username cannot be null");
-        User user = userDetailsService.loadUser();
-        User otherUser = userRepository.findByUsername(username);
-        if (otherUser == null) throw new UserNotFoundException("User not found");
-        if (user.getUsername().equals(username)) {
-            throw new WrongActionException("You cannot have a conversation with yourself");
-        }
+    public PagedMessagesDto getOlderMessages(String username, int page) {
+        ConversationContext context = getConversationContext(username, false);
 
-        Conversation conversation = conversationRepository
-                .findByUsers(user.getId(), otherUser.getId())
-                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
+        boolean isActivatedForUser = context.isUser1 ? context.conversation.isActivatedByUser1() : context.conversation.isActivatedByUser2();
+        boolean isDeletedForUser = context.isUser1 ? context.conversation.isDeletedByUser1() : context.conversation.isDeletedByUser2();
 
-        boolean isUser1 = conversation.getUser1().getId().equals(user.getId());
-        boolean isActivatedForUser = isUser1 ? conversation.isActivatedByUser1() : conversation.isActivatedByUser2();
-        boolean isDeletedForUser = isUser1 ? conversation.isDeletedByUser1() : conversation.isDeletedByUser2();
-
-        if (!isActivatedForUser || isDeletedForUser) {
-            throw new ConversationNotFoundException("Conversation is not available for this user");
-        }
+        if (!isActivatedForUser || isDeletedForUser) throw new ConversationNotFoundException("Conversation is not available for this user");
 
         int pageSize = 15;
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("timestamp").descending());
 
-        Page<Message> messagePage = messageRepository.findByConversationId(conversation.getId(), pageable);
+        Page<Message> messagePage = messageRepository.findByConversationId(context.conversation.getId(), pageable);
 
-        return messagePage.getContent().stream()
+        List<MessageDto> messageDtos = messagePage.getContent().stream()
                 .map(m -> new MessageDto(
                         m.getContent(),
                         m.getTimestamp(),
                         m.getSender().getUsername()))
                 .collect(Collectors.toList());
+
+        Collections.reverse(messageDtos);
+
+        boolean hasMore = messagePage.hasNext();
+
+        return new PagedMessagesDto(messageDtos, hasMore);
+    }
+
+    private ConversationContext getConversationContext(String username, boolean createNew) {
+        Objects.requireNonNull(username, "Username cannot be null");
+        User user = userDetailsService.loadUser();
+        User otherUser = userRepository.findByUsername(username);
+        if (otherUser == null) throw new UserNotFoundException("User not found");
+        if (user.getUsername().equals(username)) throw new WrongActionException("You cannot have a conversation with yourself");
+
+        Conversation conversation;
+        if (!createNew) {
+            conversation = conversationRepository
+                    .findByUsers(user.getId(), otherUser.getId())
+                    .orElseThrow(() -> new ConversationNotFoundException("Conversation not found"));
+        } else {
+            conversation = conversationRepository
+                    .findByUsers(user.getId(), otherUser.getId())
+                    .orElseGet(() -> {
+                        Conversation newConv = new Conversation();
+                        newConv.setUser1(user);
+                        newConv.setUser2(otherUser);
+                        return conversationRepository.save(newConv);
+                    });
+        }
+
+        boolean isUser1 = conversation.getUser1().getId().equals(user.getId());
+        return new ConversationContext(conversation, isUser1, user, otherUser);
+    }
+
+    private static class ConversationContext {
+        Conversation conversation;
+        boolean isUser1;
+        User user;
+        User otherUser;
+        ConversationContext(Conversation conversation, boolean isUser1, User user, User otherUser) {
+            this.conversation = conversation;
+            this.isUser1 = isUser1;
+            this.user = user;
+            this.otherUser = otherUser;
+        }
     }
 }

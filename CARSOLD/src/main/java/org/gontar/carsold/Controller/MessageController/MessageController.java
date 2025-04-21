@@ -26,11 +26,7 @@ public class MessageController {
 
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody SentMessageDto sentMessageDto) {
-        service.sendMessage(
-                sentMessageDto.getSenderUsername(),
-                sentMessageDto.getReceiverUsername(),
-                sentMessageDto.getContent());
-
+        service.sendMessage(sentMessageDto.getReceiverUsername(), sentMessageDto.getContent());
         return ResponseEntity.ok().build();
     }
 
@@ -70,8 +66,8 @@ public class MessageController {
     }
 
     @GetMapping("/getOlderMessages/{username}/{page}")
-    public ResponseEntity<List<MessageDto>> getOlderMessages(@PathVariable String username, @PathVariable int page) {
-        List<MessageDto> olderMessages = service.getOlderMessages(username, page);
+    public ResponseEntity<PagedMessagesDto> getOlderMessages(@PathVariable String username, @PathVariable int page) {
+        PagedMessagesDto olderMessages = service.getOlderMessages(username, page);
         return ResponseEntity.ok(olderMessages);
     }
 }

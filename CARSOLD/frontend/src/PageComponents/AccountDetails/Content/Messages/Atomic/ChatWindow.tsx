@@ -60,17 +60,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     const [blockUnblockDecision, setBlockUnblockDecision] = useState<boolean>(false);
     const stompClientRef = useRef<Stomp.Client | null>(null);
     const {isAuthenticated} = useAuth();
-    const [page, setPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
-    const [fetchedMore, setFetchedMore] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(0);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+    const [hasScrolled, setHasScrolled] = useState<boolean>(false);
+    const [initial, setInitial] = useState<boolean>(false);
+    const [msgAdded, setMsgAdded] = useState<boolean>(false);
 
     useEffect(() => {
-        const handleGetConversationOnInitial = async (username: string | null) => {
-            if (!username) return;
+        const handleGetConversationOnInitial = async () => {
+            if (!receiverUsername) return;
             setFetched(false);
             try {
-                const convWithUser = await getConversationOnInitial(username);
+                const convWithUser = await getConversationOnInitial(receiverUsername);
                 if (convWithUser.data) {
                     const formattedUserInfo: UserInfo = {
                         username: convWithUser.data.username ?? "",
@@ -79,18 +81,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                         blockedUser: convWithUser.data.blockedUser ?? false,
                         seenByUser: convWithUser.data.seenByUser ?? false,
                     };
-                    const formattedMessages = convWithUser.data.messages.map((message: Message) => ({
+                    const pagedMessages = convWithUser.data.messages;
+                    const formattedMessages = (pagedMessages?.messages ?? []).map((message: Message) => ({
                         senderUsername: message.senderUsername ?? "",
                         content: message.content ?? "",
                         timestamp: message.timestamp ?? "",
                     }));
                     setUserInfo(formattedUserInfo);
                     setMessages(formattedMessages);
+                    setHasMore(pagedMessages?.hasMore ?? false);
+                    setInitial(true);
                 }
             } catch (error: unknown) {
                 navigate("/details/messages");
                 setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
                 setMessages([]);
+                setHasMore(false);
                 if (error instanceof BadRequestError) {
                     console.error("Cannot display conversation: ", error);
                 } else if (error instanceof NotFoundError) {
@@ -102,7 +108,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 setFetched(true);
             }
         };
-        if (receiverUsername) handleGetConversationOnInitial(receiverUsername);
+        if (receiverUsername) handleGetConversationOnInitial();
     }, [receiverUsername]);  //fetching chosen conversation on initial
 
     useEffect(() => {
@@ -112,7 +118,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 content: notification.content,
                 timestamp: new Date().toLocaleString(),
             };
-            setMessages(prev => [messageToAdd, ...prev]);
+            setMessages(prev => [...prev, messageToAdd]);
+            setMsgAdded(true);
         }
     }, [notification]); //adds notification message to chat
 
@@ -126,24 +133,25 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         if (content.length > 1000) return;
         if (userInfo.blockedByUser || userInfo.blockedUser) return;
         setDisabled(true);
-        const messageToSend = {senderUsername: username, receiverUsername: receiverUsername, content: content};
+        const messageToSend = {receiverUsername: receiverUsername, content: content};
         try {
             await sendMessage(messageToSend);
             const messageToAdd: Message = {
-                senderUsername: messageToSend.senderUsername,
+                senderUsername: username,
                 content: messageToSend.content,
                 timestamp: new Date().toLocaleString(),
             };
-            setMessages(prev => [messageToAdd, ...prev,]);
+            setMessages(prev => [...prev, messageToAdd]);
             const messageToChange: Sent = {
                 username: messageToSend.receiverUsername,
                 lastMessage: messageToSend.content,
                 timestamp: new Date().toLocaleString(),
-                sentBy: messageToSend.senderUsername,
+                sentBy: username
             }
             setUserInfo(prev => ({...prev, seenByUser: false}));
             setSent(messageToChange);
             setContent("");
+            setMsgAdded(true);
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
                 navigate("/details/messages");
@@ -168,7 +176,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     useEffect(() => {
         const container = messageContainerRef.current;
         if (container) container.scrollTop = container.scrollHeight;
-    }, [messages]);  //bottom-oriented
+        if (msgAdded) setMsgAdded(false);
+    }, [initial, msgAdded]);  //orients container on bottom
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -234,6 +243,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 blockedByUser: !userInfo.blockedByUser
             }));
         } catch (error) {
+            navigate("/details/messages");
+            setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+            setMessages([]);
             if (error instanceof NotFoundError) {
                 console.error("User or conversation not found: ", error);
             } else {
@@ -258,7 +270,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                     const parsed = JSON.parse(message.body);
                     setUserInfo(prev => ({...prev, seenByUser: parsed}))
                 } catch (error) {
-                    console.error("❌ Failed to parse seen status:", error);
+                    console.error("Failed to parse seen status:", error);
                 }
             });
             stompClientRef.current = stompClient;
@@ -273,74 +285,70 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         };
     }, [username, receiverUsername, isAuthenticated]);  //WebSocket which updates if message was seen
 
-    useEffect(() => {
-        if (fetchedMore) return;
-        setHasMore(messages.length >= 15);
-    }, [messages]); //let fetch more messages, stops updating when second fetch is done
+    const handleScroll = () => {
+        const container = messageContainerRef.current;
+        if (container && container.scrollTop === 0 && !isLoadingMore && hasMore) {
+            setHasScrolled(true);
+        }
+    };  //detects when user scrolls up
 
     useEffect(() => {
         const container = messageContainerRef.current;
-        if (!container || messages.length < 15) return;
-        if (!container || messages.length < 15 || !receiverUsername || !hasMore) return;
+        if (!container) return;
+        container.addEventListener("scroll", handleScroll);
 
-        const sentinel = document.createElement('div');
-        sentinel.style.height = '1px';
-        sentinel.style.width = '100%';
-        container.append(sentinel);
+        return () => container.removeEventListener("scroll", handleScroll);
+    }, []);  //adds event listener to detect scroll up
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && !isLoadingMore) {
-                    setIsLoadingMore(true);
-                    const handleGetOlderMessages = async () => {
-                        try {
-                            const olderMessages = await getOlderMessages(receiverUsername, page + 1);
-                            if (olderMessages.data?.length > 0) {
-                                const prevScrollHeight = container?.scrollHeight ?? 0;
+    useEffect(() => {
+        if (!hasScrolled || !receiverUsername || !hasMore || isLoadingMore) return;
+        const handleGetOlderMessages = async () => {
+            setIsLoadingMore(true);
+            setTimeout(async () => {
+            try {
+                const pagedMessages = await getOlderMessages(receiverUsername, page + 1);
+                if (pagedMessages.data?.messages.length > 0) {
+                    const container = messageContainerRef.current;
+                    const prevScrollHeight = container?.scrollHeight ?? 0;
 
-                                const formattedMessages = olderMessages.data.map((message: Message) => ({
-                                    senderUsername: message.senderUsername ?? "",
-                                    content: message.content ?? "",
-                                    timestamp: message.timestamp ?? "",
-                                }));
+                    const formattedMessages = pagedMessages.data.messages.map((message: Message) => ({
+                        senderUsername: message.senderUsername ?? "",
+                        content: message.content ?? "",
+                        timestamp: message.timestamp ?? "",
+                    }));
 
-                                setMessages(prev => [...prev, ...formattedMessages]);
-                                setPage(prev => prev + 1);
-                                setFetchedMore(true);
-                                setHasMore(olderMessages.data.length >= 15);
+                    setMessages(prev => [...formattedMessages, ...prev,]);
+                    setPage(prev => prev + 1);
+                    setHasMore(pagedMessages.data.hasMore);
 
-                                requestAnimationFrame(() => {container.scrollTop = container.scrollHeight - prevScrollHeight;});
-                            } else {
-                                setHasMore(false);
-                            }
-                        } catch (error: unknown) {
-                            navigate("/details/messages");
-                            setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
-                            setMessages([]);
-                            if (error instanceof BadRequestError) {
-                                console.error("Cannot load more messages: ", error);
-                            } else if (error instanceof NotFoundError) {
-                                console.error("User or conversation not found: ", error);
-                            } else {
-                                console.error("Unexpected error when loading more messages: ", error);
-                            }
-                        } finally {
-                            setIsLoadingMore(false);
-                        }
-                    }
-                    handleGetOlderMessages();
+                    requestAnimationFrame(() => {
+                        if (container) {
+                            const offset = 3;
+                            container.scrollTop = container.scrollHeight - prevScrollHeight + offset;
+                        }});
+                } else {
+                    setHasMore(false);
                 }
-            }, {root: container, threshold: 0.1,}
-        );
-
-        observer.observe(sentinel);
-        return () => {
-            observer.unobserve(sentinel);
-            if (container.contains(sentinel)) {
-                container.removeChild(sentinel);
+            } catch (error) {
+                navigate("/details/messages");
+                setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
+                setMessages([]);
+                setHasMore(false);
+                if (error instanceof BadRequestError) {
+                    console.error("Cannot load more messages: ", error);
+                } else if (error instanceof NotFoundError) {
+                    console.error("User or conversation not found: ", error);
+                } else {
+                    console.error("Unexpected error when loading more messages: ", error);
+                }
+            } finally {
+                setIsLoadingMore(false);
+                setHasScrolled(false);
             }
+            }, 50);
         };
-    }, [receiverUsername, page, isLoadingMore, hasMore]); //fetching older messages
+        if (receiverUsername) handleGetOlderMessages();
+    }, [hasScrolled]);  //fetches older messages when user scrolls up
 
     return (
         <>
@@ -374,21 +382,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                     </div>}
                             </div>
                         </div>
-                        <div className="flex flex-col-reverse w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
-                             ref={messageContainerRef}>
+                        <div className="flex flex-col w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
+                             ref={messageContainerRef} onScroll={handleScroll}>
+                            {isLoadingMore &&
+                                <div className="flex justify-center items-center w-full sticky top-0 z-10 text-xs m:text-sm">
+                                    <span className="border border-gray-500 rounded px-1 bg-white shadow">Loading...</span>
+                                </div>}
                             {messages.map((message, index) => {
                                 const isOwn = message.senderUsername === username;
-                                const isSeen = index === 0 && isOwn && userInfo.seenByUser;
-                                const isSent = index === 0 && isOwn && !userInfo.seenByUser;
+                                const isLast = index === messages.length - 1;
+                                const isSeen = isLast && isOwn && userInfo.seenByUser;
+                                const isSent = isLast && isOwn && !userInfo.seenByUser;
                                 return (
-                                    <div key={index} className={`flex flex-row w-full p-1 m:p-1.5 
+                                    <div key={index} className={`flex flex-row w-full p-1 m:p-1.5 relative
                                     ${isOwn ? "justify-end" : "justify-start"}`}>
                                         <div className={`text-base m:text-lg p-1.5 m:p-2 rounded-lg max-w-[49%] break-words
-                                        ${isOwn ? "bg-gray-400" : "bg-gray-300"}`}>
+                                        ${isOwn ? "bg-gray-400" : "bg-gray-300"}`} title={new Date(message.timestamp).toLocaleString()}>
                                             {message.content}
                                             {(isSent || isSeen) &&
                                                 <div className="flex flex-row justify-center items-center text-xs m:text-sm
-                                                absolute bottom-0.5 right-2.5 gap-0.5">
+                                                absolute -bottom-3.5 right-2 gap-0.5">
                                                     <FontAwesomeIcon icon={isSent ? faArrowUp : faCheck}/>
                                                     <span>{isSent ? "Sent" : "Seen"}</span>
                                                 </div>
@@ -398,21 +411,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                 )
                             })}
                             {messages.length === 0 && (
-                                <div
-                                    className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
+                                <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
                                     No messages yet.
                                 </div>
                             )}
-                            {isLoadingMore &&
-                                <div className="flex justify-center items-center w-full sticky top-0 text-xs m:text-sm">
-                                    <span className="border border-gray-500 rounded px-1">Loading...</span>
-                                </div>}
                         </div>
                         <div className="flex flex-row items-center w-full h-11 m:h-12 text-lg m:text-xl border-t-2 border-gray-300 shadow-top-l relative">
                             <input className="w-[75%] h-full outline-none px-2" placeholder="Type in..." onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
                                    value={content} onChange={(e) => setContent(e.target.value)} disabled={userInfo.blockedByUser || userInfo.blockedUser}/>
                             {(userInfo.blockedByUser || userInfo.blockedUser) &&
-                                <div className="flex justify-center items-center truncate absolute top-0 left-0 w-[75%] h-full bg-coolRed text-white text-center">
+                                <div className="flex justify-center items-center truncate absolute top-0 left-0 w-[75%] h-full bg-coolRed text-white text-center"
+                                     onMouseDown={!isMobile ? () => setMarkSeen(true) : undefined}
+                                     onMouseUp={!isMobile ? () => setMarkSeen(false) : undefined}
+                                     onTouchStart={isMobile ? () => setMarkSeen(true) : undefined}
+                                     onTouchEnd={isMobile ? () => setMarkSeen(false) : undefined}>
                                     {userInfo.blockedByUser ? "You've blocked this user." : `You've been blocked by ${userInfo.username}`}
                                 </div>}
                             <button className={`w-[25%] h-full border-l-2 border-gray-300
