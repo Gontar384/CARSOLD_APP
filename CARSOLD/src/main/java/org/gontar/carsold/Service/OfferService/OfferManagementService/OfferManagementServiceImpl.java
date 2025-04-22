@@ -256,10 +256,11 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                     log.error("Failed to upload image: {} - Reason: {}", file.getOriginalFilename(), e.getMessage());
                 }
             }
-
             offer.setPhotos(photoUrls);
-            repository.save(offer);
+        } else {
+            offer.setPhotos(null);
         }
+        repository.save(offer);
     }
 
     private boolean isImageValid(MultipartFile file) throws IOException {
@@ -316,7 +317,11 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         }
 
         Offer updatedOffer = updateContent(existingOffer, offer);
-        processImages(updatedOffer, photos, updatedOffer.getUser().getUsername());
+        String username = updatedOffer.getUser().getUsername();
+        if (photos == null || photos.size() < existingOffer.getPhotos().size()) {
+            deleteImagesFromStorage(username, existingOffer.getId());
+        }
+        processImages(updatedOffer, photos, username);
 
         return updatedOffer;
     }
@@ -360,8 +365,13 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             throw new NoPermissionException("User has no permission to delete offer");
         }
         User user = userDetailsService.loadUser();
+        deleteImagesFromStorage(user.getUsername(), existingOffer.getId());
+        repository.delete(existingOffer);
+    }
+
+    private void deleteImagesFromStorage(String username, Long id) {
         try {
-            String folderPrefix = user.getUsername() + "/offer" + id + "/";
+            String folderPrefix = username + "/offer" + id + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();
             storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
                     .iterateAll()
@@ -369,7 +379,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         } catch (StorageException e) {
             throw new ExternalDeleteException("Failed to delete images for offer with id = " + id + " in Google Cloud: " + e.getMessage());
         }
-        repository.delete(existingOffer);
     }
 
     @Override

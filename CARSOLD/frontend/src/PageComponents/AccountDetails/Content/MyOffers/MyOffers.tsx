@@ -107,7 +107,7 @@ const MyOffers: React.FC = () => {
         <>
             {offerFetched ? (
                 offers.length > 0 ? (
-                    <div className="w-[90%] m:w-[95%] h-full max-w-[700px]">
+                    <div className="w-[90%] m:w-[95%] h-full max-w-[700px] pb-8">
                         {paginatedOffers.map((offer) => (
                             <SmallOfferDisplay type="myOffers" key={offer.id} offer={offer} setDeleted={setDeleted}/>
                         ))}

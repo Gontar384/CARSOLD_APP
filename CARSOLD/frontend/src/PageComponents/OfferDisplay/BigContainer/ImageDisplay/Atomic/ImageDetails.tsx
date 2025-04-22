@@ -10,12 +10,13 @@ interface ImageDetailsProps {
     fullScreen: boolean;
     setFullScreen: React.Dispatch<React.SetStateAction<boolean>>;
     offerFetched: boolean;
+    error: boolean;
+    setError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullScreen, offerFetched}) => {
+const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullScreen, offerFetched, error, setError}) => {
     const [photoHovered, setPhotoHovered] = useState<boolean>(false);
     const [photoIndex, setPhotoIndex] = useState<number>(0);
-    const [error, setError] = useState<boolean>(false);
     const [direction, setDirection] = useState<number>(0);
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();

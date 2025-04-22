@@ -282,7 +282,9 @@ const OfferForm: React.FC = () => {
                 plate: data.plate ?? "",
                 firstRegistration: String(data.firstRegistration ?? ""),
                 description: data.description ?? "",
-                photos: ((data.photos as unknown as string)?.split(",") || []).concat(Array(8).fill("").slice(0, 8 - (data.photos as unknown as string)?.split(",")?.length)),
+                photos: ((data.photos as unknown as string)?.split(",") || [])
+                    .concat(Array(8).fill(""))
+                    .slice(0, 8),
                 price: formatNumber(String(data.price ?? "")),
                 currency: data.currency ?? "",
             };
@@ -1076,7 +1078,7 @@ const OfferForm: React.FC = () => {
                 {inappropriateContentBanner &&
                     <AnimatedBanner text={"Title or description contains inappropriate content"}
                                     onAnimationEnd={() => setInappropriateContentBanner(false)} delay={4000} color={"bg-coolRed"} z={"z-10"}/>}
-                {waitBanner && <AnimatedBanner text={"You need to wait a while before modifying offer again"} onAnimationEnd={() => setWaitBanner(false)}
+                {waitBanner && <AnimatedBanner text={"You need to wait a bit, before modifying offer again"} onAnimationEnd={() => setWaitBanner(false)}
                                                delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
                                               delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
