@@ -4,6 +4,7 @@ import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx"
 import SmallOfferDisplay from "../MyOffers/Atomic/SmallOfferDisplay.tsx";
 
 const Followed: React.FC = () => {
+    document.title = "CARSOLD | Followed";
     interface FetchedOffer {
         id: number;
         title: string;

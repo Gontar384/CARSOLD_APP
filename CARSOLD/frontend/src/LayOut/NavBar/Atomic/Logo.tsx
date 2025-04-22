@@ -5,7 +5,7 @@ const Logo: React.FC = () => {
 
     return (
         <Link className="flex flex-row justify-center text-[26px] m:text-3xl mx-2"
-                to={"/home"}>
+                to={"/home"} title="Home">
             <p className="text-white">CAR</p>
             <p className="text-black">$</p>
             <p className="text-white">OLD</p>

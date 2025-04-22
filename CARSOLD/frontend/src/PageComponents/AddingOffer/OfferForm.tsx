@@ -29,7 +29,6 @@ import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
 import {ForbiddenError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const OfferForm: React.FC = () => {
-    document.title = "CARSOLD | Add Offer";
     interface RawOffer {
         title: string;
         brand: string;
@@ -167,6 +166,7 @@ const OfferForm: React.FC = () => {
     const [inappropriateContentBanner, setInappropriateContentBanner] = useState<boolean>(false);
     const [waitBanner, setWaitBanner] = useState<boolean>(false);
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
+    document.title = `CARSOLD | ${(id !== null && permission === true) ? "Modify offer" : "Add offer"}`
 
     //if user redirects from /modifyingOffer/{id} to /addingOffer, it resets all states
     useEffect(() => {
@@ -984,7 +984,7 @@ const OfferForm: React.FC = () => {
                 <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
                     <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
-                        {id !== null && permission === true ? "Modifying offer" : "Adding offer"}
+                        {id !== null && permission === true ? "Modify offer" : "Add offer"}
                     </p>
                     <div className="flex justify-center w-[90%] bg-white rounded-md border-2 border-gray-300">
                         <p className="w-full text-lg m:text-xl p-4 m:p-6">

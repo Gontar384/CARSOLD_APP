@@ -35,6 +35,7 @@ export interface UpdatedOffer {
 }
 
 const MyOffers: React.FC = () => {
+    document.title = "CARSOLD | My offers";
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offerDeleted, setOfferDeleted] = useState<boolean>(false);

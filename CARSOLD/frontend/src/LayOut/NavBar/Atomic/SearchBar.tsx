@@ -77,7 +77,7 @@ const SearchBar: React.FC = () => {
                         Search
                     </button>}
             </div>
-            <Link className="flex" to={"/search?page=0&size=10"}>
+            <Link className="flex" to={"/search?page=0&size=10"} title="Filters">
                 <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-0.5"/>
             </Link>
         </div>

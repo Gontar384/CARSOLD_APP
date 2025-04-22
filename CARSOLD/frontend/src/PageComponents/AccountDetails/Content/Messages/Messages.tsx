@@ -11,6 +11,7 @@ export interface Sent {
 }
 
 const Messages: React.FC = () => {
+    document.title = "CARSOLD | Messages";
     const {bigWidth} = useUtil();
     const [sent, setSent] = useState<Sent>({
         username: "",

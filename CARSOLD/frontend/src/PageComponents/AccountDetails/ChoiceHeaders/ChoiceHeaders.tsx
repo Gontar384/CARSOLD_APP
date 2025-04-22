@@ -39,7 +39,7 @@ const ChoiceHeaders: React.FC = () => {
 
     const LargeScreenLayout = () => (
         <div className="flex flex-row justify-evenly w-full">
-            <ChoiceButton label={"My Offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
+            <ChoiceButton label={"My offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
             <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
             <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
             <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
@@ -51,7 +51,7 @@ const ChoiceHeaders: React.FC = () => {
     const SmallScreenLayout = () => (
         <div className="flex flex-col w-full gap-3 m:gap-4 items-center">
             <div className={`flex flex-row justify-evenly w-full max-w-[600px]`}>
-                <ChoiceButton label={"My Offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
+                <ChoiceButton label={"My offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
                 <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
                 <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
             </div>

@@ -7,7 +7,7 @@ import DeleteAccountButton from "./Atomic/DeleteAccount/DeleteAccountButton.tsx"
 import Popup from "./Atomic/DeleteAccount/Popup/Popup.tsx";
 
 const Settings: React.FC = () => {
-
+    document.title = "CARSOLD | Settings";
     const {handleCheckGoogleAuth} = useUserInfo();
     const [googleAuth, setGoogleAuth] = useState<boolean | null>(null);
     const [popup, setPopup] = useState<boolean>(false);

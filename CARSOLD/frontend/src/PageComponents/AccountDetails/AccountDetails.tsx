@@ -6,8 +6,6 @@ import Content from "./Content/Content.tsx";
 
 const AccountDetails: React.FC = () => {
 
-    document.title = "CARSOLD | Account";
-
     return (
         <LayOut>
             <div className={`flex flex-col items-center gap-8 m:gap-10 -mb-48 m:mb-0`}>
