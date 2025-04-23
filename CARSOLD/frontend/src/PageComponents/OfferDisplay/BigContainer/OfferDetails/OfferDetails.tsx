@@ -34,7 +34,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
         {value: bodyType, icon: faCarSide}, {value: year, icon: faCalendar}, {value: mileage + " km", icon: faRoad}, {value: fuel, icon: faGasPump}
     ];
     const moreDetails = [
-        {label: "Capacity", value: capacity + " cm3"}, {label: "Power", value: power + " KM"}, {label: "Drive", value: drive.split("(")[0]},
+        {label: "Capacity", value: capacity + " cm3"}, {label: "Power", value: power + " HP"}, {label: "Drive", value: drive.split("(")[0]},
         {label: "Transmission", value: transmission}, {label: "Color ", value: color}, {label: "Condition ", value: condition}
     ];
     const additionalDetails = [
