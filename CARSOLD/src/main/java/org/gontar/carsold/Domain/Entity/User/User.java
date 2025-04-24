@@ -66,23 +66,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @Column
-    private String followedOffers;
-
-    public List<String> getFollowedOffers() {
-        if (followedOffers == null || followedOffers.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(Arrays.asList(followedOffers.split(",")));
-    }
-
-    public void setFollowedOffers(List<String> offers) {
-        if (offers != null && !offers.isEmpty()) {
-            this.followedOffers = String.join(",", offers);
-        } else {
-            this.followedOffers = null;
-        }
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_followed_offers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "offer_id"))
+    private Set<Offer> followedOffers = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Offer> offers;
@@ -92,4 +78,12 @@ public class User {
 
     @OneToMany(mappedBy = "user2", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Conversation> conversationsAsUser2 = new ArrayList<>();
+
+    @Override
+    public int hashCode() {
+        if (getId() == null) {
+            return super.hashCode();
+        }
+        return Objects.hash(getId());
+    }
 }

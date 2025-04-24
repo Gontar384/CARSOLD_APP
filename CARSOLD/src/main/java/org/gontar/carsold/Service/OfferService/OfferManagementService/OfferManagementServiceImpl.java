@@ -8,6 +8,7 @@ import org.gontar.carsold.Domain.Model.Offer.OfferWithUserDto;
 import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.OfferRepository;
+import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,25 +43,27 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Value("${PLACES_API_KEY}")
     private String placesApiKey;
 
-    private final OfferRepository repository;
+    private final OfferRepository offerRepository;
+    private final UserRepository userRepository;
     private final MyUserDetailsService userDetailsService;
 
-    public OfferManagementServiceImpl(OfferRepository repository, MyUserDetailsService userDetailsService) {
-        this.repository = repository;
+    public OfferManagementServiceImpl(OfferRepository offerRepository, UserRepository userRepository, MyUserDetailsService userDetailsService) {
+        this.offerRepository = offerRepository;
+        this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
     }
 
     @Override
     public Offer fetchOffer(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
-        return repository.findById(id)
+        return offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
     }
 
     @Override
     public List<PartialOfferDto> fetchAllUserOffers() {
         User user = userDetailsService.loadUser();
-        List<Offer> offers = repository.findAllByUserId(user.getId());
+        List<Offer> offers = offerRepository.findAllByUserId(user.getId());
         return offers.stream()
                 .map(this::mapToPartialOfferDto)
                 .toList();
@@ -113,7 +116,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setDescription(offer.getDescription());
         offerWithUserDto.setPrice(offer.getPrice());
         offerWithUserDto.setCurrency(offer.getCurrency());
-        offerWithUserDto.setPhotos(offer.getPhotosString());
+        offerWithUserDto.setPhotos(offer.getPhotos());
         offerWithUserDto.setCreatedOn(offer.getCreatedOn());
         offerWithUserDto.setUsername(user.getUsername());
         offerWithUserDto.setProfilePic(user.getProfilePic());
@@ -133,7 +136,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             offerWithUserDto.setRole(currentUser.getRole());
         }
         offer.setViews(offer.getViews() + 1);
-        repository.save(offer);
+        offerRepository.save(offer);
         return offerWithUserDto;
     }
 
@@ -177,7 +180,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
         User user = userDetailsService.loadUser();
         offer.setUser(user);
-        Offer savedOffer = repository.save(offer);
+        Offer savedOffer = offerRepository.save(offer);
         processImages(savedOffer, photos, user.getUsername());
 
         return savedOffer;
@@ -260,7 +263,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         } else {
             offer.setPhotos(null);
         }
-        repository.save(offer);
+        offerRepository.save(offer);
     }
 
     private boolean isImageValid(MultipartFile file) throws IOException {
@@ -303,7 +306,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     public Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(id, "Id cannot be null");
         Objects.requireNonNull(offer, "Offer cannot be null");
-        Offer existingOffer = repository.findById(id)
+        Offer existingOffer = offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
         if (!fetchPermission(existingOffer)) {
             throw new NoPermissionException("User has no permission to update offer");
@@ -351,7 +354,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         existingOffer.setPrice(offer.getPrice());
         existingOffer.setCurrency(offer.getCurrency());
         existingOffer.setLastUpdated(LocalDateTime.now());
-        repository.save(existingOffer);
+        offerRepository.save(existingOffer);
 
         return existingOffer;
     }
@@ -359,14 +362,23 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Override
     public void deleteOffer(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
-        Offer existingOffer = repository.findById(id)
+        Offer existingOffer = offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
         if (!fetchPermission(existingOffer)) {
             throw new NoPermissionException("User has no permission to delete offer");
         }
         User user = userDetailsService.loadUser();
+
+        List<User> followers = userRepository.findByFollowedOffersContaining(existingOffer);
+        followers.forEach(follower -> {
+            if (follower.getFollowedOffers() != null) {
+                follower.getFollowedOffers().removeIf(o -> o.getId().equals(id));
+                userRepository.save(follower);
+            }
+        });
+
         deleteImagesFromStorage(user.getUsername(), existingOffer.getId());
-        repository.delete(existingOffer);
+        offerRepository.delete(existingOffer);
     }
 
     private void deleteImagesFromStorage(String username, Long id) {
@@ -394,7 +406,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     @Override
     public List<PartialOfferDto> fetchRandomOffers() {
-        List<Offer> offers = repository.findRandomOffers();
+        List<Offer> offers = offerRepository.findRandomOffers();
         return offers.stream()
                 .map(this::mapToPartialOfferDto)
                 .toList();

@@ -5,7 +5,6 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +22,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;

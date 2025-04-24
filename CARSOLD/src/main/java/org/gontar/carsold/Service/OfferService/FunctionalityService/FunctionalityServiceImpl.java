@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -54,41 +55,25 @@ public class FunctionalityServiceImpl implements FunctionalityService {
     @Override
     public List<PartialOfferDto> fetchAllFollowed() {
         User user = userDetailsService.loadUser();
-        List<String> followedOffersIds = user.getFollowedOffers();
-        if (followedOffersIds.isEmpty()) return List.of();
-
+        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
         List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
-        List<String> offersToRemove = new ArrayList<>();
 
-        for (String followedOfferId : followedOffersIds) {
-            Offer offer = offerRepository.findById(Long.parseLong(followedOfferId))
-                    .orElseGet(() -> {
-                        log.info("Offer with ID {} not found", followedOfferId);
-                        offersToRemove.add(followedOfferId);
-                        return null;
-                    });
-            if (offer != null) {
-                PartialOfferDto partialOfferDto = new PartialOfferDto();
-                partialOfferDto.setId(offer.getId());
-                partialOfferDto.setTitle(offer.getTitle());
-                if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-                    partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
-                }
-                partialOfferDto.setPrice(offer.getPrice());
-                partialOfferDto.setCurrency(offer.getCurrency());
-                partialOfferDto.setPower(offer.getPower());
-                partialOfferDto.setCapacity(offer.getCapacity());
-                partialOfferDto.setTransmission(offer.getTransmission());
-                partialOfferDto.setFuel(offer.getFuel());
-                partialOfferDto.setMileage(offer.getMileage());
-                partialOfferDto.setYear(offer.getYear());
-                partialOfferDtos.add(partialOfferDto);
+        for (Offer offer : followedOffers) {
+            PartialOfferDto partialOfferDto = new PartialOfferDto();
+            partialOfferDto.setId(offer.getId());
+            partialOfferDto.setTitle(offer.getTitle());
+            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
             }
-        }
-        followedOffersIds.removeAll(offersToRemove);
-        if (!offersToRemove.isEmpty()) {
-            user.setFollowedOffers(followedOffersIds);
-            userRepository.save(user);
+            partialOfferDto.setPrice(offer.getPrice());
+            partialOfferDto.setCurrency(offer.getCurrency());
+            partialOfferDto.setPower(offer.getPower());
+            partialOfferDto.setCapacity(offer.getCapacity());
+            partialOfferDto.setTransmission(offer.getTransmission());
+            partialOfferDto.setFuel(offer.getFuel());
+            partialOfferDto.setMileage(offer.getMileage());
+            partialOfferDto.setYear(offer.getYear());
+            partialOfferDtos.add(partialOfferDto);
         }
         return partialOfferDtos;
     }
@@ -99,23 +84,28 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         User user = userDetailsService.loadUser();
         Offer offer = offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
-        if (user.getOffers().contains(offer)) {
+        if (user.getOffers().stream().anyMatch(o -> o.getId().equals(id))) {
             throw new InappropriateActionException("User cannot follow his own offer");
         }
+
+        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
+        boolean currentlyFollowing = followedOffers.stream()
+                .anyMatch(o -> o.getId().equals(id));
         if (follow) {
-            List<String> followedOffers = user.getFollowedOffers();
-            if (!followedOffers.contains(id.toString())) {
-                followedOffers.add(id.toString());
-                offer.setFollows(offer.getFollows() + 1);
-            } else {
-                followedOffers.remove(id.toString());
+            if (currentlyFollowing) {
+                currentlyFollowing = false;
+                followedOffers.removeIf(o -> o.getId().equals(id));
                 offer.setFollows(offer.getFollows() - 1);
+            } else {
+                currentlyFollowing = true;
+                followedOffers.add(offer);
+                offer.setFollows(offer.getFollows() + 1);
             }
-            offerRepository.save(offer);
             user.setFollowedOffers(followedOffers);
+            offerRepository.save(offer);
             userRepository.save(user);
         }
-        return user.getFollowedOffers().contains(id.toString());
+        return currentlyFollowing;
     }
 
     @Override

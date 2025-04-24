@@ -72,11 +72,11 @@ public class FunctionalityControllerTest {
     @Test
     public void reportOffer_shouldReturnOk() throws Exception {
         String jsonBody = """
-        {
+            {
             "offerId": 1,
             "reason": "Scam listing"
-        }
-    """;
+            }
+            """;
         doNothing().when(functionalityService).reportOffer(1L, "Scam listing");
 
         mockMvc.perform(post("/api/offer/report")

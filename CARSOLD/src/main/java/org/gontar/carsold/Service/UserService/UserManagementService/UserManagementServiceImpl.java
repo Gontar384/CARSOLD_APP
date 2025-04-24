@@ -2,8 +2,10 @@ package org.gontar.carsold.Service.UserService.UserManagementService;
 
 import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletResponse;
+import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
@@ -23,9 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
@@ -39,17 +39,19 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final OfferRepository offerRepository;
     private final MyUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
     private final EmailService emailService;
     private final CookieService cookieService;
 
-    public UserManagementServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
+    public UserManagementServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
                                      JwtService jwtService, EmailService emailService,
                                      CookieService cookieService) {
-        this.repository = repository;
+        this.userRepository = userRepository;
+        this.offerRepository = offerRepository;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
         this.jwtService = jwtService;
@@ -73,7 +75,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             updateUser(processedUser, user);
             sendActivationEmail(processedUser);
 
-            repository.save(processedUser);
+            userRepository.save(processedUser);
             return processedUser;
         } catch (UserDataException | EmailSendingException | RegisterUserException e) {
             throw new RegisterUserException("Registration process failed: " + e.getMessage());
@@ -129,8 +131,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private User findOrCreateUser(User user) {
-        User existingUserByEmail = repository.findByEmail(user.getEmail());
-        User existingUserByUsername = repository.findByUsername(user.getUsername());
+        User existingUserByEmail = userRepository.findByEmail(user.getEmail());
+        User existingUserByUsername = userRepository.findByUsername(user.getUsername());
 
         if (existingUserByEmail != null && existingUserByUsername != null && !existingUserByEmail.equals(existingUserByUsername)) {
             throw new UserDataException("Email and username belong to different existing accounts");
@@ -181,7 +183,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         if (!encoder.matches(oldPassword, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
 
         user.setPassword(encoder.encode(newPassword));
-        repository.save(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -191,7 +193,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         try {
             User user = jwtService.extractUserFromToken(token);
             user.setPassword(encoder.encode(password));
-            repository.save(user);
+            userRepository.save(user);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     user.getUsername(),
@@ -213,9 +215,29 @@ public class UserManagementServiceImpl implements UserManagementService {
             Objects.requireNonNull(password, "password cannot be null");
             if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
         }
+
+        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
+        if (followedOffers != null) {
+            followedOffers.forEach(offer -> {
+                offer.setFollows(offer.getFollows() - 1);
+                offerRepository.save(offer);
+            });
+        }
+
+        List<Offer> userOffers = user.getOffers() != null ? new ArrayList<>(user.getOffers()) : Collections.emptyList();
+        userOffers.forEach(offer -> {
+            List<User> followers = userRepository.findByFollowedOffersContaining(offer);
+            followers.forEach(follower -> {
+                if (follower.getFollowedOffers() != null) {
+                    follower.getFollowedOffers().removeIf(o -> o.getId().equals(offer.getId()));
+                    userRepository.save(follower);
+                }
+            });
+        });
+
         deleteUserInCloud(user.getUsername());
-        repository.flush();
-        repository.delete(user);
+        userRepository.flush();
+        userRepository.delete(user);
     }
 
     private void deleteUserInCloud(String username) {

@@ -9,9 +9,7 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -144,23 +142,10 @@ public class Offer {
     @Size(max = 5, message = "Currency must be or under 5 characters")
     private String currency;
 
-    @Column(name = "photos", length = 2000)
-    private String photosString;
-
-    public List<String> getPhotos() {
-        if (photosString == null || photosString.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(photosString.split(","));
-    }
-
-    public void setPhotos(List<String> photos) {
-        if (photos != null && !photos.isEmpty()) {
-            this.photosString = String.join(",", photos);
-        } else {
-            this.photosString = null;
-        }
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "offer_photos", joinColumns = @JoinColumn(name = "offer_id"))
+    @Column(name = "photo_url")
+    private List<String> photos = new ArrayList<>();
 
     @Column
     private LocalDateTime lastUpdated;
@@ -179,4 +164,12 @@ public class Offer {
 
     @Column(nullable = false)
     private Integer follows = 0;
+
+    @Override
+    public int hashCode() {
+        if (getId() == null) {
+            return super.hashCode();
+        }
+        return Objects.hash(getId());
+    }
 }

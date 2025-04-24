@@ -141,7 +141,7 @@ const OfferDisplay: React.FC = () => {
                 plate: data.plate ?? "",
                 firstRegistration: String(data.firstRegistration ?? ""),
                 description: data.description ?? "",
-                photos: ((data.photos)?.split(",")) ?? "",
+                photos: data.photos ?? "",
                 createdOn: data.createdOn ?? "",
                 price: formatNumber(String(data.price ?? "")),
                 currency: data.currency ?? "",

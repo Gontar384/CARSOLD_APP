@@ -282,7 +282,7 @@ const OfferForm: React.FC = () => {
                 plate: data.plate ?? "",
                 firstRegistration: String(data.firstRegistration ?? ""),
                 description: data.description ?? "",
-                photos: ((data.photos as unknown as string)?.split(",") || [])
+                photos: (data.photos || [])
                     .concat(Array(8).fill(""))
                     .slice(0, 8),
                 price: formatNumber(String(data.price ?? "")),

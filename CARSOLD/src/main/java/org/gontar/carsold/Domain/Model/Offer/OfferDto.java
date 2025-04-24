@@ -3,6 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,5 +33,5 @@ public class OfferDto {
     private String description;
     private Integer price;
     private String currency;
-    private String photos; //for response only
+    private List<String> photos; //for response only
 }

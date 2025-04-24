@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.User.Role;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +35,7 @@ public class OfferWithUserDto {
     private String description;
     private Integer price;
     private String currency;
-    private String photos;
+    private List<String> photos;
     private String createdOn;
     private String username;
     private String profilePic;
