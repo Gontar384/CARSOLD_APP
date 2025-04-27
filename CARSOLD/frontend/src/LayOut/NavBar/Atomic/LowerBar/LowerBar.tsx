@@ -31,10 +31,9 @@ const LowerBar: React.FC = () => {
 
     if (lowerBarActive) {
         return (
-            <div
-                className={`flex flex-row items-center justify-evenly h-14 fixed left-0 bottom-0 
+            <div className={`flex flex-row items-center justify-evenly h-14 fixed left-0 bottom-0 
                 right-0 bg-lime shadow-top z-50 ${barAnimation}`}>
-                <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add Offer"/>
+                <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add offer"/>
                 <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed"/>
                 <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessagesCount}/>
                 <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>

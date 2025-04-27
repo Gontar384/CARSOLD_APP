@@ -138,7 +138,7 @@ const MyOffers: React.FC = () => {
                                 onMouseLeave={!isMobile ? handleEnd : undefined}
                                 onTouchStart={isMobile ? handleStart : undefined}
                                 onTouchEnd={isMobile ? handleEnd : undefined}>
-                            Add Offer
+                            Add offer
                         </button>
                     </div>
                 )
