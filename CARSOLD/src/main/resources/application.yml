@@ -1,4 +1,3 @@
-
 # Database Connection Configuration
 spring:
   datasource:

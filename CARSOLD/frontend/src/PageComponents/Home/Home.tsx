@@ -50,8 +50,8 @@ const Home: React.FC = () => {
             w-full h-full min-h-[900px] -mb-[250px] -mt-4 overflow-hidden relative`}>
                 <div className={`flex flex-col h-fit bg-lowLime shadow-bottom overflow-hidden border-2 border-gray-300 animate-appearFastRev
                 ${bigWidth ? "rounded-r-[50%] w-[55%] min-h-[780px] z-10" : "rounded w-[90%] items-center min-h-[550px] px-5"}`}>
-                    <p className={`${bigWidth ? "ml-16 mt-44" : "mt-24"} text-2xl m:text-3xl animate-appearLongRev`}>Welcome
-                        to CAR$OLD!</p>
+                    <p className={`${bigWidth ? "ml-16 mt-44" : "mt-24"} text-2xl m:text-3xl animate-appearLongRev`}>
+                        Welcome to CAR$OLD!</p>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && "ml-16"} mt-6 animate-appearLongRev`}>
                         <p className="text-xl m:text-2xl">Place, where all the best cars are</p>
                         {bigWidth && <FontAwesomeIcon icon={faHouse} className="text-2xl m:text-3xl"/>}
@@ -64,8 +64,7 @@ const Home: React.FC = () => {
                         <Link to={"/search?page=0&size=10 "} className="text-xl m:text-2xl underline">Find your dream car</Link>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className="text-2xl m:text-3xl"/>
                     </div>
-                    <div
-                        className={`flex flex-row items-center gap-2 ${bigWidth && "ml-16"} mt-10 animate-appearLongRev`}>
+                    <div className={`flex flex-row items-center gap-2 ${bigWidth && "ml-16"} mt-10 animate-appearLongRev`}>
                         <Link to={"/addingOffer"} className="text-xl m:text-2xl underline">Sell your car</Link>
                         <FontAwesomeIcon icon={faMoneyBillWave} className="text-2xl m:text-3xl"/>
                     </div>
