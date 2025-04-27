@@ -1,14 +1,14 @@
 Hi Everyone!
 
 1.0 Overview
-CARSOLD is fullstack web-app, which I worked on for some time. It is basically car aucion portal, 
-where you can create your account (or log in via Google) and post your car offers and do some more!
-It's target group are Polish people, but from any other country can also use it.
-It has various funcitonality, works with some helper APIs (on Google Cloud Project), has solid security and manages data 
-in an advanced way!
-I use TypeScript with React (run with Vite) for frontend and Java with SpringBoot for backend. I also use PostgresSQL, 
-managed by JPA and Hibernate, but it is available to use othe DB.
-Let me walk you through:
+- CARSOLD is fullstack web-app, which I worked on for some time. It is basically car aucion portal, 
+  where you can create your account (or log in via Google) and post your car offers and do some more!
+  It's target group are Polish people, but from any other country can also use it.
+  It has various funcitonality, works with some helper APIs (on Google Cloud Project), has solid security and manages data 
+  in an advanced way!
+  I use TypeScript with React (run with Vite) for frontend and Java with SpringBoot for backend. I also use PostgresSQL, 
+  managed by JPA and Hibernate, but it is available to use othe DB.
+  Let me walk you through:
 
 1.1 Authentication
 - You can either create account, providing real email - which is being initially checked when providing
@@ -146,23 +146,22 @@ substracted. Of course when deleting offer or account, all conversations and mes
 course all images (profilePics, offerImages) are being deleted on Google Cloud Storage, according to specific folder names.  
 
 1.9 Request/Response flow
-On Frontend I use Services, which I have all of the API calls used. In here I use Error Handler, which based on status coming with 
-response, throws specific errors. Then, I use those service api calls on other components, custom hooks or global providers and 
-I log them here in catch blocks, looking for specific errors, that are being thrown by errorHandler. Sometimes I also ommit 
-errorHandler and base on plain statuses. 
-On Backend I use Controllers, which sent ResponseEntities with default, positive respose codes. If any exception is being thrown -
-I have well-configured GlobalExceptionHandler, which catch any exceptions thrown by services and then returns appropriate 
-error status code. I use a lot custom exceptions also. Overall logs in my app are well-maintainted and I put a lot of effort on
-them.
+- On Frontend I use Services, which I have all of the API calls used. In here I use Error Handler, which based on status coming with 
+  response, throws specific errors. Then, I use those service api calls on other components, custom hooks or global providers and 
+  I log them here in catch blocks, looking for specific errors, that are being thrown by errorHandler. Sometimes I also ommit 
+  errorHandler and base on plain statuses. 
+  On Backend I use Controllers, which sent ResponseEntities with default, positive respose codes. If any exception is being thrown -
+  I have well-configured GlobalExceptionHandler, which catch any exceptions thrown by services and then returns appropriate 
+  error status code. I use a lot custom exceptions also. Overall logs in my app are well-maintainted and I put a lot of effort on
+  them.
 
 2.0 Running App/Configuration
-If you want to run app locally, you need to clone repo. I used java 22, it should work on it with no problems.
-You need to have this type of configuration:
+- If you want to run app locally, you need to clone repo. I used java 22, it should work on it with no problems.
+  You need to have this type of configuration:
 
 2.1 Resources/application.yml:
 
-# Database Connection Configuration
-spring:
+#Database Connection Configuration spring:
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USER}
@@ -177,7 +176,7 @@ spring:
     show-sql: true
     open-in-view: false
 
-  # SMTP Server Configuration (email sending)
+  #SMTP Server Configuration (email sending)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -187,7 +186,7 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
-  # OAuth2 Configuration
+  #OAuth2 Configuration
   security:
     oauth2:
       client:
@@ -196,8 +195,7 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
-  # Google Cloud Storage and Vision Configuration
-  cloud:
+  #Google Cloud Storage and Vision Configuration cloud:
     gcp:
       project-id: ${GOOGLE_CLOUD_PROJECT}
   servlet:
@@ -205,7 +203,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-# Session Configuration (CSRF)
+#Session Configuration (CSRF)
 server:
   servlet:
     session:
@@ -213,7 +211,7 @@ server:
         name: CSRF
       timeout: PT${SESSION_TIME:24}H
 
-# Off DB Logs (broken ones)
+#Off DB Logs (broken ones)
 logging:
   level:
     org.hibernate: warn
@@ -303,8 +301,7 @@ That is it basically. I've shown most important details. For any questions, cont
 
 If you want to watch quick video overview, visit this video:
 
-I prohibit and don't agree on using CARSOLD App commercially by any other entity or under any other's name. I am the only author I and reserve only rights 
-to use CARSOLD App.
+# I prohibit and don't agree on using CARSOLD App commercially by any other entity or under any other's name. I am the only author I and reserve only rights to use CARSOLD App.
 
 
 
