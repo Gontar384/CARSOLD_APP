@@ -294,8 +294,12 @@ You will need to create configure OAuth2 Client (when running locally with http:
 
 And when done so, you need to fill those .env files with all needed credentials. 
 
+2.4 package.json
+- you'll need to run npm install to install all package.json dependencies
+
 When putting that on server, there will be some modifications needed also. For example you need to set Cookies Secure: true in CookieService and also change
 ws -> wss in WebSocket configuration. Also need to change configuration of OAuth2 in Google Cloud Project.
+There is also DockerFile, but its initially done and you'll need to modify configuration for your use.
 
 That is it basically. I've shown most important details. For any questions, contact me here or by mail: gontarek384@gmail.com
 
