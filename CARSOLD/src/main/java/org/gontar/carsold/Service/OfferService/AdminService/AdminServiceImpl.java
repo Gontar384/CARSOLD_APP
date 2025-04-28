@@ -6,11 +6,13 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.Report.Report;
+import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Exception.CustomException.ExternalDeleteException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.ReportRepository;
+import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,12 @@ public class AdminServiceImpl implements AdminService {
     private String bucketName;
 
     private final OfferRepository offerRepository;
+    private final UserRepository userRepository;
     private final ReportRepository reportRepository;
 
-    public AdminServiceImpl(OfferRepository offerRepository, ReportRepository reportRepository) {
+    public AdminServiceImpl(OfferRepository offerRepository, UserRepository userRepository, ReportRepository reportRepository) {
         this.offerRepository = offerRepository;
+        this.userRepository = userRepository;
         this.reportRepository = reportRepository;
     }
 
@@ -38,6 +42,15 @@ public class AdminServiceImpl implements AdminService {
         Offer existingOffer = offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFound("Offer not found"));
         String username = existingOffer.getUser().getUsername();
+
+        List<User> followers = userRepository.findByFollowedOffersContaining(existingOffer);
+        followers.forEach(follower -> {
+            if (follower.getFollowedOffers() != null) {
+                follower.getFollowedOffers().removeIf(o -> o.getId().equals(id));
+                userRepository.save(follower);
+            }
+        });
+
         try {
             String folderPrefix = username + "/offer" + id + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();
