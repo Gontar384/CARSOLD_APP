@@ -306,7 +306,7 @@ There is also DockerFile ready to use, but you have to provide .env properties w
 
 ### That is it basically. I've shown most important details. For any questions, contact me here or by e-mail: gontarek384@gmail.com
 
-### If you want to watch quick video overview, visit this:
+### If you want to watch quick video overview, visit this: https://www.youtube.com/watch?v=BRarojFofK8&ab_channel=Gontar
 
 # I don't agree on using CAR$OLD App commercially by or under any other entity. I am the only author and owner, and I reserve all rights-to-use and manage CAR$OLD App. I agree on using CAR$OLD App by anyone only as a viewer.
 
