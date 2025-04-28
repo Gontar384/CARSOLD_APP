@@ -47,9 +47,9 @@ const Home: React.FC = () => {
     return (
         <LayOut>
             <div className={`flex ${bigWidth ? "flex-row justify-between" : "flex-col items-center"} 
-            w-full h-full min-h-[900px] -mb-[250px] -mt-4 overflow-hidden relative`}>
-                <div className={`flex flex-col h-fit bg-lowLime shadow-bottom overflow-hidden border-2 border-gray-300 animate-appearFastRev
-                ${bigWidth ? "rounded-r-[50%] w-[55%] min-h-[780px] z-10" : "rounded w-[90%] items-center min-h-[550px] px-5"}`}>
+            w-full h-full -mb-[500px] -mt-[60px] pt-14 pb-96 overflow-hidden relative bg-gradient-to-l from-lime to-darkLime`}>
+                <div className={`flex flex-col h-fit bg-gradient-to-t from-lime to-darkLime shadow-bottom overflow-hidden animate-appearFastRev
+                ${bigWidth ? "rounded-r-[50%] w-[55%] min-h-[720px] z-10" : "rounded w-[90%] items-center min-h-[550px] px-5"}`}>
                     <p className={`${bigWidth ? "ml-16 mt-44" : "mt-24"} text-2xl m:text-3xl animate-appearLongRev`}>
                         Welcome to CAR$OLD!</p>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && "ml-16"} mt-6 animate-appearLongRev`}>
@@ -69,9 +69,8 @@ const Home: React.FC = () => {
                         <FontAwesomeIcon icon={faMoneyBillWave} className="text-2xl m:text-3xl"/>
                     </div>
                 </div>
-                <div className={`flex flex-col items-center justify-center h-fit bg-lowLime shadow-bottom overflow-hidden
-                ${bigWidth ? "rounded-l-[50%] w-[55%] absolute right-0 min-h-[780px] z-20" : "rounded w-[90%] min-h-[600px] m:min-h-[860px] mt-5"} 
-                border-2 border-gray-300 animate-appearFast`}>
+                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-b from-lime to-darkLime shadow-bottom overflow-hidden
+                ${bigWidth ? "rounded-l-[50%] w-[55%] absolute right-0 min-h-[720px] z-20" : "rounded w-[90%] min-h-[600px] m:min-h-[860px] mt-5"} animate-appearFast`}>
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full gap-8" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? "justify-end mr-5" : "justify-center"} -mt-8 m:-mt-10 animate-appearLong`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
