@@ -149,18 +149,65 @@ I've tried to use everything I could to make application and data maintance work
   and then returns appropriate error status code. Overall error loggin is so important for me and I put a lot of effort on them.
 
 ## Tests
-- I created unit and integration tests for backend services and controllers, using Mockito and SpringBootTest. When running a integration tests,
-  .env are being obtained using DotEnv, but for Google Cloud Service you'll need to provide its dir, so basically GOOGLE_APPLICATION_CREDENTIALS
-  on test run configuration;
-- on frontend I also tested some custom hooks, global providers and components, using jest.
+- I created unit and integration tests for backend services and controllers, using Mockito and SpringBootTest. When running integration tests,
+  .env are being obtained using DotEnv, but for Google Cloud Storage you'll need to provide its key path env: GOOGLE_APPLICATION_CREDENTIALS on test
+  run configuration, because since it's path, it is read differently by SpringBoot;
+- on frontend I also tested some custom hooks, global providers and components, using Jest.
 
 ## Running App/Configuration
 If you want to run app locally, you need to clone my repo. I used java 22, it should work on it fine. You need to have this configuration:
 
+### .env files
+
+-------------------------------------------Backend in root dir-------------------------------------------
+```
+#DATABASE
+DATASOURCE_URL=
+DATASOURCE_USER=
+DATASOURCE_PASSWORD=
+
+#FRONTEND
+FRONTEND_URL= #by default you would use http://localhost:5173/
+
+#SESSION LENGTH TIME IN HOURS
+SESSION_TIME=
+
+#JWT SECRET KEY
+JWT_SECRET_KEY=
+
+#EMAIL
+EMAIL=
+EMAIL_PASSWORD=
+
+#OAUTH2-GOOGLE
+GOOGLE_ID=
+GOOGLE_SECRET=
+
+#Google Cloud Storage and Vision
+GOOGLE_APPLICATION_CREDENTIALS=
+GOOGLE_CLOUD_PROJECT=
+GOOGLE_CLOUD_BUCKET_NAME=
+
+#Google Perspective API
+PERSPECTIVE_API_KEY=
+
+#Google Cloud Natural Language API
+CLOUD_NATURAL_LANGUAGE_API_KEY=
+
+#Google Places API
+PLACES_API_KEY=
+```
+-------------------------------------------Frontend in dir /frontend-------------------------------------------
+
+```
+VITE_BACKEND_URL= # by default you would put: http://localhost:8080/
+VITE_MAPS_APIKEY=
+```
+
 ### Resources/application.yml:
 
+```
 #Database Connection Configuration spring:
-
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USER}
@@ -176,7 +223,6 @@ If you want to run app locally, you need to clone my repo. I used java 22, it sh
     open-in-view: false
 
   #SMTP Server Configuration (email sending)
-  
   mail:
     host: smtp.gmail.com
     port: 587
@@ -187,7 +233,6 @@ If you want to run app locally, you need to clone my repo. I used java 22, it sh
       mail.smtp.starttls.enable: true
 
   #OAuth2 Configuration
-  
   security:
     oauth2:
       client:
@@ -197,7 +242,6 @@ If you want to run app locally, you need to clone my repo. I used java 22, it sh
             client-secret: ${GOOGLE_SECRET}
 
   #Google Cloud Storage and Vision Configuration cloud:
-  
   gcp:
     project-id: ${GOOGLE_CLOUD_PROJECT}
   servlet:
@@ -206,7 +250,6 @@ If you want to run app locally, you need to clone my repo. I used java 22, it sh
       max-request-size: 10MB
 
 #Session Configuration (CSRF)
-
 server:
   servlet:
     session:
@@ -215,68 +258,11 @@ server:
       timeout: PT${SESSION_TIME:24}H
 
 #Off DB Logs (broken ones)
-
 logging:
   level:
     org.hibernate: warn
     com.zaxxer.hikari: warn
-
-### .env files
-
--------------------------------------Backend in root dir (same dir as DockerFile is)-------------------------------------
-
-#DATABASE
-
-DATASOURCE_URL=;
-DATASOURCE_USER=;
-DATASOURCE_PASSWORD=;
-
-#FRONTEND
-
-FRONTEND_URL= #by default you would use http://localhost:5173/;
-
-#SESSION LENGTH TIME IN HOURS
-
-SESSION_TIME=;
-
-#JWT SECRET KEY
-
-JWT_SECRET_KEY=;
-
-#EMAIL
-
-EMAIL=;
-EMAIL_PASSWORD=;
-
-#OAUTH2-GOOGLE
-
-GOOGLE_ID=;
-GOOGLE_SECRET=;
-
-#Google Cloud Storage and Vision
-
-GOOGLE_APPLICATION_CREDENTIALS=;
-GOOGLE_CLOUD_PROJECT=;
-GOOGLE_CLOUD_BUCKET_NAME=;
-
-#Google Perspective API
-
-PERSPECTIVE_API_KEY=;
-
-#Google Cloud Natural Language API
-
-CLOUD_NATURAL_LANGUAGE_API_KEY=;
-
-#Google Places API
-
-PLACES_API_KEY=;
-
-
--------------------------------------Frontend in dir /frontend-------------------------------------
-
-VITE_BACKEND_URL=; # by default you would put: http://localhost:8080/
-VITE_MAPS_APIKEY=;
-
+```
 
 ### Google Cloud Project
 
@@ -294,6 +280,7 @@ For Cloud Storage you need to configure service account with proper roles (can b
 by users. You need to properly put its credentials file in app. I put them in resources.
 Also you will need to open Google Cloud Console and type in those commands for full functionality (it let user properly edit offer photos)
 
+```
 echo '[
   {
     "origin": ["*"], 
@@ -304,6 +291,7 @@ echo '[
 ]' > cors.json
 
 gsutil cors set cors.json gs://carsold_app_images
+```
 
 You'll need to create and configure OAuth2 Client (when running locally with http://localhost:5173 and http://localhost:8080/login/oauth2/code/google)
 
