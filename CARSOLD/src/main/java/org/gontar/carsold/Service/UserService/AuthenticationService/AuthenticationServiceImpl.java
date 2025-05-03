@@ -61,7 +61,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean checkAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+        return authentication != null && authentication.isAuthenticated() &&
+                !(authentication instanceof AnonymousAuthenticationToken) &&
+                repository.findByUsername(authentication.getName()) != null;
     }
 
     @Override

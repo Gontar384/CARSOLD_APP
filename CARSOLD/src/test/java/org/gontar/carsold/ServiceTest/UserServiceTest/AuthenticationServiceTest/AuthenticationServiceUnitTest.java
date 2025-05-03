@@ -72,6 +72,9 @@ public class AuthenticationServiceUnitTest {
         Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("testUser");
+        User mockUser = new User();
+        when(repository.findByUsername("testUser")).thenReturn(mockUser);
 
         assertTrue(authService.checkAuth());
     }

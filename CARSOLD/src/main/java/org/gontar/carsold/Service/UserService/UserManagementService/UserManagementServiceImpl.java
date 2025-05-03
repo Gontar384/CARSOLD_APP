@@ -233,9 +233,11 @@ public class UserManagementServiceImpl implements UserManagementService {
                     userRepository.save(follower);
                 }
             });
+
         });
 
         deleteUserInCloud(user.getUsername());
+
         offerRepository.flush();
         userRepository.flush();
         userRepository.delete(user);

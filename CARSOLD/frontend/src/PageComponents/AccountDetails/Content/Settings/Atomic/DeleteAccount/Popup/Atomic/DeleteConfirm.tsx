@@ -12,10 +12,11 @@ import {ForbiddenError, InternalServerError} from "../../../../../../../../ApiCa
 interface ConfirmProps {
     googleLogged: boolean;
     label: string;
+    setPopup: React.Dispatch<React.SetStateAction<boolean>>;
+    setWentWrong: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
-
+const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, setWentWrong}) => {
     const [password, setPassword] = useState<string>("");
     const [icon, setIcon] = useState<IconProp | null>(null);
     const [info, setInfo] = useState<string>("");
@@ -50,8 +51,12 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label}) => {
             if (error instanceof ForbiddenError) {
                 setInfo("Wrong password.")
             } else if (error instanceof InternalServerError) {
-                console.error("Error deleting account, problem with Google Cloud: ", error);
+                setWentWrong(true);
+                setPopup(false);
+                console.error("Error deleting account, problem with database or Google Cloud: ", error);
             } else {
+                setWentWrong(true);
+                setPopup(false);
                 console.error("Unexpected error: ", error);
             }
         } finally {

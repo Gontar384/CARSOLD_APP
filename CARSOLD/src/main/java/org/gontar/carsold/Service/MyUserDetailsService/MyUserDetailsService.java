@@ -36,7 +36,7 @@ public class MyUserDetailsService implements UserDetailsService {
         }
 
         if (authentication.getPrincipal() instanceof UserPrincipal(User user)) {
-            if (user == null) throw new UserDetailsException("User not found");
+            if (user == null || !repository.existsById(user.getId())) throw new UserDetailsException("User not found");
 
             return user;
         } else if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {

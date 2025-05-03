@@ -6,9 +6,10 @@ import ExitButton from "./Atomic/Atomic/ExitButton.tsx";
 interface PopupProps {
     setPopup: React.Dispatch<React.SetStateAction<boolean>>;
     googleLogged: boolean;
+    setWentWrong: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Popup: React.FC<PopupProps> = ({setPopup, googleLogged}) => {
+const Popup: React.FC<PopupProps> = ({setPopup, googleLogged, setWentWrong}) => {
     const [confirmed, setConfirmed] = useState<boolean>(false);
 
     return (
@@ -19,9 +20,11 @@ const Popup: React.FC<PopupProps> = ({setPopup, googleLogged}) => {
                     <Decision setConfirmed={setConfirmed} setPopup={setPopup}/>
                 ) : (
                     !googleLogged ? (
-                        <DeleteConfirm googleLogged={googleLogged} label="Please, provide your password:"/>
+                        <DeleteConfirm googleLogged={googleLogged} label="Please, provide your password:"
+                                       setPopup={setPopup} setWentWrong={setWentWrong}/>
                     ) : (
-                        <DeleteConfirm googleLogged={googleLogged} label="Type in 'delete_account' to confirm:"/>
+                        <DeleteConfirm googleLogged={googleLogged} label="Type in 'delete_account' to confirm:"
+                                       setPopup={setPopup} setWentWrong={setWentWrong}/>
                     ))}
                 <ExitButton onClick={() => setPopup(false)}/>
             </div>

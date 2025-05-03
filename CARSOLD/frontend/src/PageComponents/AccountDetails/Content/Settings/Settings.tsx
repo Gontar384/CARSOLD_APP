@@ -11,7 +11,8 @@ const Settings: React.FC = () => {
     const {handleCheckGoogleAuth} = useUserInfo();
     const [googleAuth, setGoogleAuth] = useState<boolean | null>(null);
     const [popup, setPopup] = useState<boolean>(false);
-    const [isChanged, setIsChanged] = useState<boolean>(false);   //banner
+    const [isChanged, setIsChanged] = useState<boolean>(false);
+    const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     useEffect(() => {
         const checkGoogleAuthentication = async () => {
@@ -33,7 +34,9 @@ const Settings: React.FC = () => {
             </div>
             {isChanged && <AnimatedBanner text={"Password changed successfully!"} color={"bg-lowLime"} z={"z-50"}
                                           onAnimationEnd={() => setIsChanged(false)} delay={3000}/>}
-            {popup && <Popup setPopup={setPopup} googleLogged={googleAuth}/>}
+            {popup && <Popup setPopup={setPopup} googleLogged={googleAuth} setWentWrong={setWentWrong}/>}
+            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+                                          delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )
 }

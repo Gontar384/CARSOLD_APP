@@ -17,7 +17,6 @@ const Content: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);  //prevents blinking
 
     useEffect(() => {
-
         const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin"> = [
             "myOffers", "followed", "messages", "settings", "info", "admin"];
 

@@ -21,7 +21,7 @@ public class Report {
     @SequenceGenerator(name = "my_report_seq", sequenceName = "my_report_sequence", allocationSize = 1)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull(message = "Offer cannot be null")

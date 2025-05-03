@@ -77,11 +77,23 @@ public class MyUserDetailsServiceUnitTest {
     }
 
     @Test
+    public void loadUser_shouldThrowException_whenUserIsNotFound() {
+        User user = mock(User.class);
+        Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(new UserPrincipal(user));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        assertThrows(UserDetailsException.class, () -> userDetailsService.loadUser(), "User not found");
+    }
+
+    @Test
     public void loadUser_shouldReturnUser_whenUserIsAuthenticated() {
         User user = mock(User.class);
         Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(new UserPrincipal(user));
+        when(repository.existsById(user.getId())).thenReturn(true);
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         assertEquals(user, userDetailsService.loadUser());

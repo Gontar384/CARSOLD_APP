@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -40,13 +41,12 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         Optional<String> token = jwtService.extractTokenFromCookie(request);
-
         if (token.isPresent()) {
             try {
                 String username = jwtService.extractUsername(token.get());
-
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (username != null) {
                     UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
+                    if (userDetails == null) throw new UsernameNotFoundException("Username not found" + username);
                     if (jwtService.validateToken(token.get(), userDetails)) {
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -58,7 +58,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
                 ResponseCookie deleteCookie = cookieService.createCookie("", 0);
                 response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-                throw new JwtServiceException("Problem in JWT filter: " + e.getMessage());
+                filterChain.doFilter(request, response);
+                return;
             }
         }
 

@@ -43,10 +43,10 @@ const AuthErrorManager: React.FC = () => {
                 } else if (status === 403) {
                     handleAuthError();
                     console.error("Forbidden, probably CSRF token expired (session expired): ", error);
-                } else if (error.message.includes('CORS')) {
-                    handleAuthError();
-                    console.error("CORS problem: ", error);
                 }
+            } else if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
+                handleAuthError();
+                console.error("Network/CORS error: possibly a CORS issue or server unreachable.", error);
             }
             return Promise.reject(error);
         });
