@@ -27,7 +27,7 @@ public class CookieService {
         try {
             return ResponseCookie.from("JWT", token)
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .path("/")
                     .sameSite("Lax")
                     .maxAge(Duration.ofHours(timeInHours))

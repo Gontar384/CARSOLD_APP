@@ -31,7 +31,7 @@ import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-//need to set GOOGLE_APPLICATION_CREDENTIALS env manually in Test Configuration
+//need to set GOOGLE_APPLICATION_CREDENTIALS and JWT_SECRET_KEY env manually in Test Run Configuration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = CarsoldApplication.class)
 @Transactional

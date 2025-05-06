@@ -10,6 +10,11 @@ jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     },
 }));
 
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
 jest.mock('../../ApiCalls/Services/OfferService');
 jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),

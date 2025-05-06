@@ -1,6 +1,5 @@
 package org.gontar.carsold.Service.JwtService;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -29,10 +28,9 @@ public class JwtService {
 
     @PostConstruct
     public void init() {
-        Dotenv dotenv = Dotenv.configure().load();
-        String jwtSecretKey = dotenv.get("JWT_SECRET_KEY");
+        String jwtSecretKey = System.getenv("JWT_SECRET_KEY");
         if (jwtSecretKey == null || jwtSecretKey.isEmpty()) {
-            throw new IllegalStateException("JWT_SECRET_KEY env is not set");
+            throw new IllegalStateException("JWT_SECRET_KEY environment variable is not set");
         }
         try {
             byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);

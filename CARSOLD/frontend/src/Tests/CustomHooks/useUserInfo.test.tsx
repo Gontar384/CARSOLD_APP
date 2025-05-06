@@ -8,6 +8,11 @@ jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
     },
 }));
 
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
 afterEach(() => {
     jest.restoreAllMocks();
 });

@@ -1,11 +1,28 @@
 import { render, renderHook, act } from '@testing-library/react';
 import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {SearchProvider} from "../../../GlobalProviders/Search/SearchProvider.tsx";
+import {AuthProvider} from "../../../GlobalProviders/Auth/AuthProvider.tsx";
+import {MemoryRouter} from "react-router-dom";
+
+jest.mock('../../../Config/AxiosConfig/AxiosConfig', () => ({
+    api: {
+        get: jest.fn(),
+    },
+}));
+
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterEach(() => {
+    jest.restoreAllMocks();
+});
 
 describe('SearchProvider', () => {
     it('provides the correct initial values', () => {
         const { result } = renderHook(() => useSearch(), {
-            wrapper: ({ children }) => <SearchProvider>{children}</SearchProvider>,
+            wrapper: ({ children }) => <MemoryRouter><AuthProvider><SearchProvider>{children}</SearchProvider></AuthProvider></MemoryRouter>,
         });
 
         expect(result.current.phrase).toBe("");
@@ -20,7 +37,7 @@ describe('SearchProvider', () => {
 
     it('updates phrase state correctly', () => {
         const { result } = renderHook(() => useSearch(), {
-            wrapper: ({ children }) => <SearchProvider>{children}</SearchProvider>,
+            wrapper: ({ children }) => <MemoryRouter><AuthProvider><SearchProvider>{children}</SearchProvider></AuthProvider></MemoryRouter>,
         });
 
         act(() => {
@@ -32,7 +49,7 @@ describe('SearchProvider', () => {
 
     it('updates trigger state correctly', () => {
         const { result } = renderHook(() => useSearch(), {
-            wrapper: ({ children }) => <SearchProvider>{children}</SearchProvider>,
+            wrapper: ({ children }) => <MemoryRouter><AuthProvider><SearchProvider>{children}</SearchProvider></AuthProvider></MemoryRouter>,
         });
 
         act(() => {
@@ -50,7 +67,7 @@ describe('SearchProvider', () => {
 
     it('updates clicked state correctly', () => {
         const { result } = renderHook(() => useSearch(), {
-            wrapper: ({ children }) => <SearchProvider>{children}</SearchProvider>,
+            wrapper: ({ children }) => <MemoryRouter><AuthProvider><SearchProvider>{children}</SearchProvider></AuthProvider></MemoryRouter>,
         });
 
         act(() => {
@@ -68,7 +85,7 @@ describe('SearchProvider', () => {
 
     it('updates searched state correctly', () => {
         const { result } = renderHook(() => useSearch(), {
-            wrapper: ({ children }) => <SearchProvider>{children}</SearchProvider>,
+            wrapper: ({ children }) => <MemoryRouter><AuthProvider><SearchProvider>{children}</SearchProvider></AuthProvider></MemoryRouter>,
         });
 
         act(() => {
@@ -102,9 +119,13 @@ describe('SearchProvider', () => {
         };
 
         const { getByTestId, getByText } = render(
-            <SearchProvider>
-                <TestConsumer />
-            </SearchProvider>
+            <MemoryRouter>
+                <AuthProvider>
+                    <SearchProvider>
+                        <TestConsumer />
+                    </SearchProvider>
+                </AuthProvider>
+            </MemoryRouter>
         );
 
         expect(getByTestId('phrase').textContent).toBe('');

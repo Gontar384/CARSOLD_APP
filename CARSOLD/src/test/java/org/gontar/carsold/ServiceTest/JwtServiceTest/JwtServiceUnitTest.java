@@ -1,7 +1,7 @@
 package org.gontar.carsold.ServiceTest.JwtServiceTest;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Exception.CustomException.JwtServiceException;
@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.crypto.SecretKey;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,12 +36,14 @@ public class JwtServiceUnitTest {
 
     @BeforeEach
     public void setup() {
-        Dotenv dotenv = Dotenv.configure().load();
-        String jwtSecretKey = dotenv.get("JWT_SECRET_KEY");
-        if (jwtSecretKey == null || jwtSecretKey.isEmpty()) {
-            throw new IllegalStateException("JWT_SECRET_KEY env is not set");
+        SecretKey testSecretKey = Jwts.SIG.HS256.key().build();
+        try {
+            java.lang.reflect.Field secretKeyField = JwtService.class.getDeclaredField("secretKey");
+            secretKeyField.setAccessible(true);
+            secretKeyField.set(jwtService, testSecretKey);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set test secret key", e);
         }
-        jwtService.init();
     }
 
     @Test

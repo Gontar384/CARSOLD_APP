@@ -42,7 +42,7 @@ public class CookieServiceUnitTest {
         assertNotNull(cookie);
         assertEquals("JWT", cookie.getName());
         assertTrue(cookie.isHttpOnly());
-        assertFalse(cookie.isSecure()); // Adjust if your setup requires secure cookies
+        assertTrue(cookie.isSecure());
         assertEquals("/", cookie.getPath());
         assertEquals("Lax", cookie.getSameSite());
         assertEquals(Duration.ofHours(timeInHours).getSeconds(), cookie.getMaxAge().getSeconds());
@@ -69,7 +69,7 @@ public class CookieServiceUnitTest {
         assert cookieHeader != null;
         assertTrue(cookieHeader.contains("JWT=" + token));
         assertTrue(cookieHeader.contains("HttpOnly"));
-        assertFalse(cookieHeader.contains("Secure"));
+        assertTrue(cookieHeader.contains("Secure"));
         assertTrue(cookieHeader.contains("Path=/"));
         assertTrue(cookieHeader.contains("SameSite=Lax"));
         assertTrue(cookieHeader.contains("Max-Age=" + Duration.ofHours(24).getSeconds()));

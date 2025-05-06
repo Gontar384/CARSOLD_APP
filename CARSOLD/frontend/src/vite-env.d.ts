@@ -1,7 +1,10 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
+import {ModuleRunnerImportMeta} from "vite/module-runner";
+
+interface ImportMetaEnv extends ModuleRunnerImportMeta{
     readonly VITE_BACKEND_URL: string;
+    readonly VITE_MAPS_APIKEY: string;
 }
 
 interface ImportMeta {
