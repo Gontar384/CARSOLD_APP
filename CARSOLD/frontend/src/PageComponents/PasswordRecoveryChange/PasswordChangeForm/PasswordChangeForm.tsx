@@ -17,7 +17,6 @@ interface PasswordChangeFormProps {
 }
 
 const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, setWentWrong, loggedIn}) => {
-
     const [password, setPassword] = useState<string>("");
     const [passwordRep, setPasswordRep] = useState<string>("");
     const [oldPassword, setOldPassword] = useState<string>("");

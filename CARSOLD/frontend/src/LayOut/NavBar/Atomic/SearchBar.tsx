@@ -2,7 +2,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass, faTableList} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {useButton} from "../../../CustomHooks/useButton.ts";
 
@@ -13,7 +13,9 @@ const SearchBar: React.FC = () => {
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null);
     const {isMobile} = useUtil();
     const navigate = useNavigate();
-    const {buttonColor, handleStart, handleEnd} = useButton();
+    const {buttonColor, bindHoverHandlers} = useButton();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [loading, setLoading] = useState<boolean>(true);
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -41,19 +43,37 @@ const SearchBar: React.FC = () => {
     }, [clicked])   //adds event listener to off input backlight
 
     const handleSearch = () => {
-        navigate(`/search?page=0&size=10&phrase=${phrase}`);
-        setSearched(true);
-        setTrigger(prev => !prev);
+        if (phrase !== "") {
+            navigate(`/search?phrase=${phrase}&page=0&size=10`);
+            setSearched(true);
+            setTrigger(prev => !prev);
+        }
     };
 
     useEffect(() => {
         searchRef.current = phrase;
+        const newParams = new URLSearchParams(searchParams.toString());
         if (phrase === "" && searched) {
+            if (searchParams.has("phrase")) {
+                newParams.delete("phrase");
+                setSearchParams(newParams);
+            }
             setSearched(false);
             setTrigger(prev => !prev);
         }
-        if (phrase !== "") setClicked(true);
+        if (newParams.has("phrase") || phrase !== "") setClicked(true);
     }, [phrase]);
+
+    useEffect(() => {
+        const hasPhrase = searchParams.has("phrase") || phrase !== "";
+        if (hasPhrase) {
+            setLoading(true);
+            const timeout = setTimeout(() => setLoading(false), 50);
+            return () => clearTimeout(timeout);
+        } else {
+            setLoading(false);
+        }
+    }, []); //loading
 
     return (
         <div className="flex flex-row items-center justify-center gap-1 m:gap-1.5 mr-2">
@@ -69,13 +89,10 @@ const SearchBar: React.FC = () => {
                        }}/>
                 {!isMobile && clicked &&
                     <button className={`h-7 m:h-8 absolute top-0 right-0 px-1 m:px-2 text-lg m:text-xl rounded-sm bg-lime z-20 ${buttonColor && "brightness-[97%]"}`}
-                            onClick={handleSearch}
-                            onTouchStart={isMobile ? handleStart : undefined}
-                            onTouchEnd={isMobile ? handleEnd : undefined}
-                            onMouseEnter={!isMobile ? handleStart : undefined}
-                            onMouseLeave={!isMobile ? handleEnd : undefined}>
+                            onClick={handleSearch} {...bindHoverHandlers()}>
                         Search
                     </button>}
+                {loading && <div className="w-full h-full absolute inset-0 m-auto bg-lime rounded-sm z-40"></div>}
             </div>
             <Link className="flex" to={"/search?page=0&size=10"} title="Filters">
                 <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-0.5"/>

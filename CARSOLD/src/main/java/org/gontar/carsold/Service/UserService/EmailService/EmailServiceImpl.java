@@ -78,7 +78,7 @@ public class EmailServiceImpl implements EmailService {
         if (user.getOauth2()) throw new UserDataException("Account \"" + user.getUsername() + "\" is OAuth2 account");
 
         String token = jwtService.generateToken(user.getUsername(), 10);
-        String link = frontendUrl + "very3secret8password4change?token=" + token;
+        String link = frontendUrl + "/very3secret8password4change?token=" + token;
         try {
             String subject = "CAR$OLD Password Recovery";
             String content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +

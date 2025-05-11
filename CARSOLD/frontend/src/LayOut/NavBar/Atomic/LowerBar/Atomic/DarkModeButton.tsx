@@ -9,8 +9,8 @@ const DarkModeButton: React.FC = () => {
 
     const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);   //dark mode icons animations
     const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
-    const {darkMode, toggleDarkMode, lowerBar, isMobile} = useUtil();
-    const {buttonColor, handleStart, handleEnd} = useButton();
+    const {darkMode, toggleDarkMode, lowerBar} = useUtil();
+    const {buttonColor, bindHoverHandlers} = useButton();
 
     const handleDarkMode = () => {
         toggleDarkMode();
@@ -24,13 +24,8 @@ const DarkModeButton: React.FC = () => {
     }, [lowerBar]);   //resets animations
 
     return (
-        <button
-            className="flex flex-col items-center w-1/6 h-full pt-[7px] relative"
-            onClick={handleDarkMode}
-            onTouchStart={isMobile ?handleStart : undefined}
-            onTouchEnd={isMobile ? handleEnd : undefined}
-            onMouseEnter={!isMobile ?handleStart : undefined}
-            onMouseLeave={!isMobile ?handleEnd : undefined}>
+        <button className="flex flex-col items-center w-1/6 h-full pt-[7px] relative"
+            onClick={handleDarkMode} {...bindHoverHandlers()}>
             <FontAwesomeIcon icon={faMoon} style={{color: buttonColor ? "white" : "black"}}
                              className={`text-[20px] top-[11px] ${darkMode ? "" : "opacity-0"} ${modeIconAnimation} absolute`}/>
             <FontAwesomeIcon icon={faSun} style={{color: buttonColor ? "white" : "black"}}

@@ -26,7 +26,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import AddingOfferLoader from "../../Additional/Loading/AddingOfferLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
-import {ForbiddenError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 
 const OfferForm: React.FC = () => {
     interface RawOffer {
@@ -245,9 +245,9 @@ const OfferForm: React.FC = () => {
 
     useEffect(() => {
         const handleFetchOfferData = async (id: number) => {
-            const { offerData, userPermission } = await handleFetchOffer(id);
+            const offerData = await handleFetchOffer(id);
             setData(offerData);
-            setPermission(userPermission);
+            setPermission(offerData.permission ?? false);
         };
         if (id !== null) {
             handleFetchOfferData(id);
@@ -917,6 +917,10 @@ const OfferForm: React.FC = () => {
 
     const handleUpdateOffer = async () => {
         if (isDisabled) return;
+        if (!permission) {
+            navigate("/details/myOffers");
+            return;
+        }
 
         if (!checkValues()) {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -939,9 +943,6 @@ const OfferForm: React.FC = () => {
                     setInappropriateContentBanner(true);
                 } else if (error.response.status === 405) {
                     setWaitBanner(true);
-                }  else if (error.response.status === 403) {
-                    console.error("User has no permission to update offer");
-                    navigate("/addingOffer");
                 } else if (error.response.status === 404) {
                     console.error("Offer not found");
                     navigate("/addingOffer");
@@ -958,18 +959,20 @@ const OfferForm: React.FC = () => {
 
     const handleDeleteOffer = async () => {
         if (isDisabled) return;
+        if (!permission) {
+            navigate("/details/myOffers");
+            return;
+        }
+
         setIsDisabled(true);
         setLoading(true);
-
         try {
             await deleteOffer(id);
             sessionStorage.setItem("offerDeleted", "true");
             navigate("/details/myOffers");
         } catch (error: unknown) {
             setWentWrongBanner(true);
-            if (error instanceof ForbiddenError) {
-                console.error("User has not permission to delete offer", error);
-            } else if (error instanceof NotFoundError) {
+            if (error instanceof NotFoundError) {
                 console.error("Offer not found", error);
             } else {
                 console.error("Unexpected error during offer removal", error);

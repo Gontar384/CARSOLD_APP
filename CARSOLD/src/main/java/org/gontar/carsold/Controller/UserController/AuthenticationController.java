@@ -7,7 +7,6 @@ import org.gontar.carsold.Domain.Model.Universal.SingleStringDto;
 import org.gontar.carsold.Service.UserService.AuthenticationService.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,32 +19,22 @@ public class AuthenticationController {
         this.service = service;
     }
 
-    @GetMapping("/auth/getCsrfToken")
-    public CsrfToken getCsrfToken(CsrfToken token) {
-        return token;
-    }
-
     @GetMapping("/auth/checkAuth")
     public ResponseEntity<?> checkAuth() {
         if (service.checkAuth()) return ResponseEntity.ok().build();
         else return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/auth/refreshJwt")
-    public ResponseEntity<?> refreshJwt(HttpServletResponse response) {
-        service.refreshJwt(response);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/auth/keepSessionAlive")
-    public ResponseEntity<?> keepSessionAlive() {
+    @GetMapping("/auth/fetchJwt")
+    public ResponseEntity<?> fetchJwt(HttpServletResponse response) {
+        service.fetchJwt(response);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/auth/activateAccount")
-    public ResponseEntity<?> activateAccount(@RequestBody SingleStringDto singleStringDto, HttpServletResponse response) {
+    public ResponseEntity<?> activateAccount(@RequestBody SingleStringDto singleStringDto, HttpServletRequest request, HttpServletResponse response) {
         String token = singleStringDto.getValue();
-        service.activateAccount(token, response);
+        service.activateAccount(token, request, response);
         return ResponseEntity.ok().build();
     }
 

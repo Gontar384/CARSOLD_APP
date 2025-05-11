@@ -3,7 +3,6 @@ import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 import SmallOfferDisplay from "./Atomic/SmallOfferDisplay.tsx";
 import {useNavigate} from "react-router-dom";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
 
@@ -46,8 +45,7 @@ const MyOffers: React.FC = () => {
     const endIndex = startIndex + itemsPerPage;
     const paginatedOffers = offers.slice(startIndex, endIndex);
     const navigate = useNavigate();
-    const {buttonColor, handleStart, handleEnd} = useButton();
-    const {isMobile} = useUtil();
+    const {buttonColor, bindHoverHandlers} = useButton();
     const {handleFetchAllUserOffers, offerFetched} = useOfferUtil();
     const [deleted, setDeleted] = useState<boolean>(false);
 
@@ -132,12 +130,8 @@ const MyOffers: React.FC = () => {
                             You don't have any offers added yet. Click here to add one:
                         </p>
                         <button className={`mt-8 m:mt-10 text-xl m:text-2xl p-2 m:p-3 border-2 border-black border-opacity-40 rounded
-                        ${buttonColor ? "bg-white" : "bg-lime"}`}
-                                onClick={() => navigate("/addingOffer")}
-                                onMouseEnter={!isMobile ? handleStart : undefined}
-                                onMouseLeave={!isMobile ? handleEnd : undefined}
-                                onTouchStart={isMobile ? handleStart : undefined}
-                                onTouchEnd={isMobile ? handleEnd : undefined}>
+                                ${buttonColor ? "bg-white" : "bg-lime"}`}
+                                onClick={() => navigate("/addingOffer")} {...bindHoverHandlers()}>
                             Add offer
                         </button>
                     </div>

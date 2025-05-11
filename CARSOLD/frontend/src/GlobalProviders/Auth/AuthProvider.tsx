@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {AuthContext} from './useAuth.ts';
 import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
-import {checkAuth, logout} from "../../ApiCalls/Services/UserService.ts";
+import {checkAuth, fetchJwt, logout} from "../../ApiCalls/Services/UserService.ts";
 import {useNavigate} from "react-router-dom";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -19,13 +19,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
             setIsAuthenticated(authState);
         } catch (error) {
             console.error("Error checking authentication: ", error);
+            localStorage.setItem('Authenticated', 'false');
             setIsAuthenticated(false);
         } finally {
             setLoadingAuth(false);
         }
     };
 
-    //updates auth state
+    //checks Auth on initial and listens for Auth change on different Tabs (localStorage)
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
             if (event.key === 'Authenticated') {
@@ -40,6 +41,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
+
+    //fetches JWT on initial and refreshes every 5 minutes
+    useEffect(() => {
+        const handleFetchJwt = async () => {
+            if (isAuthenticated) {
+                try {
+                    await fetchJwt();
+                } catch (error) {
+                    console.error("Error refreshing JWT token: ", error);
+                }
+            }
+        };
+
+        let interval = null;
+        if (isAuthenticated) {
+            handleFetchJwt();
+            interval = setInterval(handleFetchJwt, 5 * 60 * 1000);
+        }
+
+        return () => {
+            if (interval) clearInterval(interval)
+        };
+    }, [isAuthenticated]);
 
     const handleLogout = async () => {
         try {

@@ -8,9 +8,8 @@ const TermsOfUse: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center">
-                <div className="flex flex-col w-11/12 max-w-[1200px] bg-lowLime
-                p-5 m:p-7 rounded-sm">
+            <div className="flex flex-col items-center -mb-[200px] m:-mb-[100px]">
+                <div className="flex flex-col w-11/12 max-w-[1200px] p-5 m:p-7 bg-lowLime border border-gray-300 rounded">
                     <h1 className="text-2xl m:text-3xl text-center font-bold">
                         Terms of Use
                     </h1>

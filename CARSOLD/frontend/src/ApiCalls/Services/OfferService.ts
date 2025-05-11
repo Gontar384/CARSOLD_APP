@@ -33,7 +33,7 @@ export const updateOffer = async (id: number | null, offer: object): Promise<Axi
 
 export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/offer/fetchAllUser');
+        return await api.get('api/offer/fetchAllForUser');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

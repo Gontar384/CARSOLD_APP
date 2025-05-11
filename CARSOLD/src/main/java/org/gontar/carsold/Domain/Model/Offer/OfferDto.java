@@ -34,4 +34,5 @@ public class OfferDto {
     private Integer price;
     private String currency;
     private List<String> photos; //for response only
+    private boolean permission; //for response only
 }

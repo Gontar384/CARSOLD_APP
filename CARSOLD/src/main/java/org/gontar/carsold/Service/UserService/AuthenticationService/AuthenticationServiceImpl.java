@@ -2,11 +2,10 @@ package org.gontar.carsold.Service.UserService.AuthenticationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.springframework.http.HttpHeaders;
@@ -19,18 +18,19 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,19 +42,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final OAuth2AuthorizedClientService authorizedClientService;
-    private final CookieService cookieService;
     private final BCryptPasswordEncoder encoder;
 
     public AuthenticationServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, JwtService jwtService,
-                                     AuthenticationManager authenticationManager,
-                                     OAuth2AuthorizedClientService authorizedClientService,
-                                     CookieService cookieService, BCryptPasswordEncoder encoder) {
+                                     AuthenticationManager authenticationManager, OAuth2AuthorizedClientService authorizedClientService,
+                                     BCryptPasswordEncoder encoder) {
         this.repository = repository;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.authorizedClientService = authorizedClientService;
-        this.cookieService = cookieService;
         this.encoder = encoder;
     }
 
@@ -63,31 +60,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null && authentication.isAuthenticated() &&
                 !(authentication instanceof AnonymousAuthenticationToken) &&
-                repository.findByUsername(authentication.getName()) != null;
+                repository.existsByUsername(authentication.getName());
     }
 
     @Override
-    public void refreshJwt(HttpServletResponse response) {
+    public void fetchJwt(HttpServletResponse response) {
         User user = userDetailsService.loadUser();
-        cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+        jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
     }
 
     @Override
-    public void activateAccount(String token, HttpServletResponse response) {
+    public void activateAccount(String token, HttpServletRequest request, HttpServletResponse response) {
         Objects.requireNonNull(token, "JWT cannot be null");
         try {
-            User user = jwtService.extractUserFromToken(token);
+            String username = jwtService.extractUsername(token);
+            User user = repository.findByUsername(username);
+            if (user == null) throw new UsernameNotFoundException("User not found");
             user.setActive(true);
             repository.save(user);
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    null,
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
+            UserDetails userDetails = new UserPrincipal(user);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+            jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
         } catch (JwtServiceException | AuthenticationException e) {
             throw new AccountActivationException("Account activation process failed: " + e.getMessage());
         }
@@ -106,7 +104,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
 
-            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+            jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
         } catch (AuthenticationException e) {
             throw new AuthFailedException("Authentication process failed: " + e.getMessage());
         }
@@ -131,11 +129,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
         }
         try {
-            HttpSession session = request.getSession(false);
-            if (session != null) session.invalidate();
-
             SecurityContextHolder.clearContext();
-            ResponseCookie deleteCookie = cookieService.createCookie("", 0);
+            ResponseCookie deleteCookie = jwtService.createCookie("", 0);
             response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
         } catch (AuthenticationException e) {
             throw new LogoutFailedException("Logout process failed: " + e.getMessage());

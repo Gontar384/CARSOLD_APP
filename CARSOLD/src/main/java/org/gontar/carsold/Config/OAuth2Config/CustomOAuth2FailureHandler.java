@@ -15,8 +15,15 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
 
+    private final CustomOAuth2AuthorizationRequestRepository customOAuth2AuthorizationRequestRepository;
+
+    public CustomOAuth2FailureHandler(CustomOAuth2AuthorizationRequestRepository customOAuth2AuthorizationRequestRepository) {
+        this.customOAuth2AuthorizationRequestRepository = customOAuth2AuthorizationRequestRepository;
+    }
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        response.sendRedirect(frontendUrl + "authenticate/login");
+        customOAuth2AuthorizationRequestRepository.deleteCookie(response);
+        response.sendRedirect(frontendUrl + "/authenticate/login");
     }
 }

@@ -1,5 +1,6 @@
 package org.gontar.carsold.Controller.UserController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Model.User.PasswordChangeDto;
@@ -56,10 +57,11 @@ public class UserManagementController {
     }
 
     @PatchMapping("/changePasswordRecovery")
-    public ResponseEntity<?> changePasswordRecovery(@RequestBody RecoveryPasswordChangeDto recoveryPasswordChangeDto, HttpServletResponse response) {
+    public ResponseEntity<?> changePasswordRecovery(@RequestBody RecoveryPasswordChangeDto recoveryPasswordChangeDto,
+                                                    HttpServletRequest request, HttpServletResponse response) {
         String token = recoveryPasswordChangeDto.getToken();
         String password = recoveryPasswordChangeDto.getPassword();
-        service.changePasswordRecovery(token, password, response);
+        service.changePasswordRecovery(token, password,request, response);
         return ResponseEntity.ok().build();
     }
 

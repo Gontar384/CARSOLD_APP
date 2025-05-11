@@ -1,18 +1,20 @@
 import React, {useEffect, useRef, useState} from "react";
 import {reportOffer} from "../../../../../ApiCalls/Services/OfferService.ts";
+import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 
 interface ReportOfferProps {
     id: number | null;
     report: boolean;
     setReport: React.Dispatch<React.SetStateAction<boolean>>;
     setReported: React.Dispatch<React.SetStateAction<boolean>>;
+    setHasReported: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export interface SelectedReason {
     offerId: number | null;
     reason: string | null;
 }
 
-const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setReported }) => {
+const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setReported, setHasReported }) => {
     const componentRef = useRef<HTMLDivElement | null>(null);
     const reportReasons = [
         "Inappropriate content",
@@ -30,6 +32,8 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
         reason: "",
     });
     const [disabled, setDisabled] = useState<boolean>(false);
+    const [hovered, setHovered] = useState<boolean[]>(Array(9).fill(false));
+    const {isMobile} = useUtil();
 
     const handleSubmit = async () => {
         if (selectedReason.reason === "" || disabled) return;
@@ -41,6 +45,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
         } finally {
             setDisabled(false);
             setReported(true);
+            setHasReported(true);
             setReport(false);
         }
     };
@@ -61,14 +66,38 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
         }
     }, [report])   //offs report window when clicked outside
 
+    const handleHover = (index: number, val: boolean) => {
+        setHovered(prev => {
+            const copy = [...prev];
+            copy[index] = val;
+            return copy;
+        });
+    };
+
+    const bindHoverHandlers = (index: number) => {
+        if (isMobile) {
+            return {
+                onTouchStart: () => handleHover(index, true),
+                onTouchEnd: () => handleHover(index, false)
+            };
+        } else {
+            return {
+                onMouseEnter: () => handleHover(index, true),
+                onMouseLeave: () => handleHover(index, false)
+            };
+        }
+    };
+
     return (
         <div className="flex justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-40 z-50">
-            <div className="flex flex-col items-center w-[95%] h-[95%] max-w-[800px] bg-lowLime rounded overflow-hidden"
+            <div className="flex flex-col items-center w-[95%] h-[95%] max-w-[800px] bg-lowLime rounded overflow-hidden border border-gray-300"
                  ref={componentRef}>
                 <h2 className="text-2xl m:text-3xl font-semibold my-12 m:my-14">Report Offer</h2>
                 <div className="space-y-6 m:space-y-8">
                     {reportReasons.map((reportReason, index) => (
-                        <label key={index} className="flex items-center space-x-2 m:space-x-3 cursor-pointer">
+                        <label key={index} className={`flex items-center space-x-2 m:space-x-3 cursor-pointer ${hovered[index] && "underline"}
+                        ${selectedReason.reason === reportReason && "underline"}`}
+                            {...bindHoverHandlers(index)}>
                             <input type="radio" className="w-3 h-3 m:w-4 m:h-4"
                                    value={reportReason} checked={selectedReason.reason === reportReason}
                                    onChange={() => setSelectedReason(prev => ({...prev, reason: reportReason}) )}/>

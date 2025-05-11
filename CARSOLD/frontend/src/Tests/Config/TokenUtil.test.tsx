@@ -1,6 +1,6 @@
 import {render, waitFor} from '@testing-library/react';
 import {useAuth} from "../../GlobalProviders/Auth/useAuth";
-import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "../../Config/TokensConfig/TokensUtil";
+import {useFetchCsrf, useRefreshJwt, useTrackUserActivity} from "../../Config/JWTConfig/JWTConfig.ts";
 import {api} from "../../Config/AxiosConfig/AxiosConfig";
 
 jest.mock("../../GlobalProviders/Auth/useAuth", () => ({

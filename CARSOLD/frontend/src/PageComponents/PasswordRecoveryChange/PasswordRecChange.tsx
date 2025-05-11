@@ -12,7 +12,8 @@ const PasswordRecChange: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col items-center w-11/12 max-w-[850px] mt-28 py-10 m:py-11 bg-lime rounded-sm">
+                <div className="flex flex-col items-center w-11/12 max-w-[850px] mt-28 py-10 m:py-11 bg-lime
+                    border border-gray-300 rounded">
                     <p className="w-11/12 text-center text-lg m:text-xl mb-8 m:mb-9">
                         Now, you can change your password.
                     </p>

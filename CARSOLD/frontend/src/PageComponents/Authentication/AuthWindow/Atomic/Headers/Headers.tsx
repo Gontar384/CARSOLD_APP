@@ -3,7 +3,6 @@ import {useNavigate} from "react-router-dom";
 import HeaderButton from "./Atomic/HeaderButton.tsx";
 
 const Headers: React.FC = () => {
-
     const navigate = useNavigate();
 
     const handleNavigation = (destination: "login" | "register") => {
@@ -16,7 +15,7 @@ const Headers: React.FC = () => {
         } catch (error) {
             console.error('Error during google authentication:', error);
         }
-    };   //for Google auth
+    };
 
     return (
         <div className="flex flex-col w-11/12 gap-2">

@@ -42,16 +42,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-# Session Configuration (CSRF)
-server:
-  port: ${PORT:8080}
-  servlet:
-    session:
-      cookie:
-        name: CSRF
-      timeout: PT${SESSION_TIME:24}H
-
-# Off DB Logs (broken ones)
+# Off DB Logs
 logging:
   level:
     org.hibernate: warn

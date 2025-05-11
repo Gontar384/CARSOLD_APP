@@ -45,7 +45,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     const [messages, setMessages] = useState<Message[]>([]);
     const [fetched, setFetched] = useState<boolean>(true);
     const [imageError, setImageError] = useState<boolean>(false);
-    const {buttonColor, handleStart, handleEnd} = useButton();
+    const {buttonColor, bindHoverHandlers} = useButton();
     const {isMobile} = useUtil();
     const navigate = useNavigate();
     const {username} = useUserUtil();
@@ -433,11 +433,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                             <button className={`w-[25%] h-full border-l-2 border-gray-300
                             bg-lime ${buttonColor ? "brightness-95 text-gray-800" : "text-gray-500"}`}
                                     disabled={userInfo.blockedByUser || userInfo.blockedUser}
-                                    onClick={handleSendMessage}
-                                    onMouseEnter={!isMobile ? handleStart : undefined}
-                                    onMouseLeave={!isMobile ? handleEnd : undefined}
-                                    onTouchStart={isMobile ? handleStart : undefined}
-                                    onTouchEnd={isMobile ? handleEnd : undefined}>
+                                    onClick={handleSendMessage}  {...bindHoverHandlers()}>
                                 Send
                             </button>
                             {content.length > 1000 &&

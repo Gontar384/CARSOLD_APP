@@ -4,15 +4,6 @@ import {AxiosResponse} from "axios";
 
 //---Authentication---
 
-export const getCsrfToken = async (): Promise<AxiosResponse> => {
-    try {
-        return await api.get(`api/auth/getCsrfToken`);
-    } catch (error) {
-        handleError(error);
-        return Promise.reject(error);
-    }
-};
-
 export const checkAuth = async (): Promise<AxiosResponse> => {
     try {
         return await api.get(`api/auth/checkAuth`);
@@ -22,17 +13,9 @@ export const checkAuth = async (): Promise<AxiosResponse> => {
     }
 };
 
-export const refreshJwt = async (): Promise<void> => {
+export const fetchJwt = async (): Promise<void> => {
     try {
-        await api.get('api/auth/refreshJwt');
-    } catch (error) {
-        handleError(error);
-    }
-};
-
-export const keepSessionAlive = async (): Promise<void> => {
-    try {
-        await api.get(`api/auth/keepSessionAlive`);
+        await api.get('api/auth/fetchJwt');
     } catch (error) {
         handleError(error);
     }

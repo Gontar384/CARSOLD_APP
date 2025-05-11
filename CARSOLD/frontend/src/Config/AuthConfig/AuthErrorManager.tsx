@@ -11,14 +11,13 @@ const AuthErrorManager: React.FC = () => {
 
     const isAuthenticationRequest = (url: string | undefined): boolean => {
         if (!url) return false;
-        const paths = ['api/auth/authenticate', 'api/deleteUser', 'api/changePassword', 'api/offer/update', 'api/offer/delete'];
+        const paths = ['api/auth/authenticate', 'api/deleteUser', 'api/changePassword'];
 
         return paths.some(path => url.startsWith(path))
     };
 
     const handleAuthError = () => {
         setShowSessionExpired(true);
-
         setTimeout(async () => {
             try {
                 await handleLogout();
@@ -37,12 +36,9 @@ const AuthErrorManager: React.FC = () => {
 
                 if (isAuthenticationRequest(requestUrl)) return Promise.reject(error);
 
-                if (status === 401) {
+                if (status === 401 || status === 403) {
                     handleAuthError();
                     console.error("Unauthorized, problem with request, cookie or JWT: ", error);
-                } else if (status === 403) {
-                    handleAuthError();
-                    console.error("Forbidden, probably CSRF token expired (session expired): ", error);
                 }
             } else if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
                 handleAuthError();

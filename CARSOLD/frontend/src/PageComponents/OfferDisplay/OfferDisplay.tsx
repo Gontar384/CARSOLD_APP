@@ -10,7 +10,6 @@ import OfferSmallLoader from "../../Additional/Loading/OfferSmallLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFlag, faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
 import {adminDeleteOffer} from "../../ApiCalls/Services/OfferService.ts";
@@ -96,13 +95,13 @@ const OfferDisplay: React.FC = () => {
         role: "",
     });
     const navigate = useNavigate();
-    const {handleStart, handleEnd, buttonColor} = useButton();
-    const {isMobile} = useUtil();
+    const {bindHoverHandlers, buttonColor} = useButton();
     const {isAuthenticated} = useAuth();
     const [disabled, setDisabled] = useState<boolean>(false);
     const [decision, setDecision] = useState<boolean>(false);
     const [report, setReport] = useState<boolean>(false);
     const [reported, setReported] = useState<boolean>(false);
+    const [hasReported, setHasReported] = useState<boolean>(false);
 
     useEffect(() => {
         if (section) {
@@ -212,11 +211,7 @@ const OfferDisplay: React.FC = () => {
                         }
                         {offerFetched && !offer.permission &&
                             <button className="absolute right-2.5 top-1.5 m:right-3 m:top-2"
-                                onMouseEnter={!isMobile ? handleStart : undefined}
-                                onMouseLeave={!isMobile ? handleEnd : undefined}
-                                onTouchStart={isMobile ? handleStart : undefined}
-                                onTouchEnd={isMobile ? handleEnd : undefined}
-                                onClick={() => handleFollow(id, true)}>
+                                    {...bindHoverHandlers()} onClick={() => handleFollow(id, true)}>
                                 <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl ${followed ? "text-coolRed" : "text-gray-600"}
                                                                 ${buttonColor && "brightness-[115%]"}`}/>
                             </button>}
@@ -226,7 +221,7 @@ const OfferDisplay: React.FC = () => {
                                 <FontAwesomeIcon icon={faTrash} className="text-xl m:text-2xl"/>
                             </button>
                         }
-                        {offer.role === "USER" && !offer.permission &&
+                        {offer.role === "USER" && !offer.permission && !hasReported &&
                             <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
                                     onClick={() => setReport(true)}>
                                 <FontAwesomeIcon icon={faFlag} className="text-xl m:text-2xl"/>
@@ -245,7 +240,7 @@ const OfferDisplay: React.FC = () => {
                 </div>
                 {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
                                                    onClick={() => handleDeleteOffer(offer.id)}/>)}
-                {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported}/>}
+                {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported} setHasReported={setHasReported}/>}
                 {reported && <AnimatedBanner text={"Offer reported"} onAnimationEnd={() => setReported(false)}
                                                     delay={3000} color={"bg-gray-300"} z={"z-10"}/>}
             </div>

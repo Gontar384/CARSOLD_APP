@@ -27,8 +27,8 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     const [invalidInput, setInvalidInput] = useState<boolean>(false);
     const [additionalInfo, setAdditionalInfo] = useState<string | null>(null);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const {buttonColor, handleStart, handleEnd} = useButton();
-    const {isMobile, CreateDebouncedValue} = useUtil();
+    const {buttonColor, bindHoverHandlers} = useButton();
+    const {CreateDebouncedValue} = useUtil();
     const debouncedValue: string | null = isCityInput ? CreateDebouncedValue(value, 300) : null;
     const [citySuggestions, setCitySuggestions] = useState<string[] | null>(isCityInput ? [] : null)
     const [clickedSuggestion, setClickedSuggestion] = useState<string | null>(isCityInput ? "" : null);
@@ -65,7 +65,6 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             setButtonLabel("Edit");
             setInvalidInput(false);
             setCitySuggestions(null);
-            handleEnd();
         } catch (error: unknown) {
             if (error instanceof AxiosError && error.response) {
                 if (error.response.status === 422) {
@@ -186,10 +185,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                 <button className={`w-14 m:w-16 h-9 m:h-10 border border-black border-opacity-40 bg-lime rounded-sm
                         ${buttonColor ? "text-white" : ""}`}
                         onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
-                        onMouseEnter={!isMobile ? handleStart : undefined}
-                        onMouseLeave={!isMobile ? handleEnd : undefined}
-                        onTouchStart={isMobile ? handleStart : undefined}
-                        onTouchEnd={isMobile ? handleEnd : undefined}>
+                        {...bindHoverHandlers()}>
                     {buttonLabel}
                 </button>
             </div>

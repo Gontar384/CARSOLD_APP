@@ -25,7 +25,6 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         User user = repository.findByUsername(username);
         if (user == null) throw new UsernameNotFoundException("User not found");
-
         return new UserPrincipal(user);
     }
 
@@ -36,7 +35,7 @@ public class MyUserDetailsService implements UserDetailsService {
         }
 
         if (authentication.getPrincipal() instanceof UserPrincipal(User user)) {
-            if (user == null || !repository.existsById(user.getId())) throw new UserDetailsException("User not found");
+            if (!repository.existsById(user.getId())) throw new UserDetailsException("User not found");
 
             return user;
         } else if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {

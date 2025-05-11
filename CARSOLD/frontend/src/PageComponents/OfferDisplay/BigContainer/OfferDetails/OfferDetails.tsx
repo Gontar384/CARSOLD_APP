@@ -50,7 +50,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const textRef = useRef<HTMLDivElement>(null);
-    const {buttonColor, handleStart, handleEnd} = useButton();
+    const {buttonColor, bindHoverHandlers} = useButton();
     const {isMobile} = useUtil();
 
     useEffect(() => {
@@ -124,11 +124,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                     </div>
                     {isOverflowing && (
                         <button className={`text-sm m:text-base mt-2 ${buttonColor && "underline"}`}
-                                onClick={toggleExpand}
-                                onMouseEnter={!isMobile ? handleStart : undefined}
-                                onMouseLeave={!isMobile ? handleEnd : undefined}
-                                onTouchStart={isMobile ? handleStart : undefined}
-                                onTouchEnd={isMobile ? handleEnd :undefined}>
+                                onClick={toggleExpand} {...bindHoverHandlers()}>
                             {isExpanded ? "Show Less" : "Show More"}
                         </button>
                     )}

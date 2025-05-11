@@ -1,13 +1,14 @@
 package org.gontar.carsold.Service.UserService.UserManagementService;
 
 import com.google.cloud.storage.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.gontar.carsold.Service.UserService.EmailService.EmailService;
@@ -17,11 +18,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,18 +47,15 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
     private final EmailService emailService;
-    private final CookieService cookieService;
 
     public UserManagementServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
-                                     JwtService jwtService, EmailService emailService,
-                                     CookieService cookieService) {
+                                     JwtService jwtService, EmailService emailService) {
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.emailService = emailService;
-        this.cookieService = cookieService;
     }
 
     @Override
@@ -164,7 +163,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     private void sendActivationEmail(User user) {
         String token = jwtService.generateToken(user.getUsername(), 30);
-        String link = frontendUrl + "activate?token=" + token;
+        String link = frontendUrl + "/activate?token=" + token;
 
         emailService.sendAccountActivationEmail(user.getEmail(), user.getUsername(), link);
     }
@@ -187,22 +186,23 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void changePasswordRecovery(String token, String password, HttpServletResponse response) {
+    public void changePasswordRecovery(String token, String password, HttpServletRequest request, HttpServletResponse response) {
         Objects.requireNonNull(token, "token cannot be null");
         Objects.requireNonNull(password, "password cannot be null");
         try {
-            User user = jwtService.extractUserFromToken(token);
+            String username = jwtService.extractUsername(token);
+            User user = userRepository.findByUsername(username);
+            if (user == null) throw new UsernameNotFoundException("User not found");
             user.setPassword(encoder.encode(password));
             userRepository.save(user);
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    null,
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
+            UserDetails userDetails = new UserPrincipal(user);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+            jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
         } catch (JwtServiceException | AuthenticationException e) {
             throw new PasswordRecoveryChangeException("Changing password failed: " + e.getMessage());
         }

@@ -13,45 +13,31 @@ export const useOfferUtil = () => {
     const handleFetchOffer = async (id: number) => {
         try {
             const response = await fetchOffer(id);
-            const userPermission = response.headers["user-permission"] === "true";
-            if (response.data) {
-                return {
-                    offerData: response.data,
-                    userPermission
-                };
-            }
+            if (response.data) return response.data;
         } catch (error: unknown) {
+            navigate('/home');
             if (error instanceof NotFoundError) {
                 console.error("Offer not found: ", error);
-                navigate('/home');
             } else {
                 console.error("Unexpected error when fetching offer: ", error);
-                navigate('/home');
             }
         }
-
-        return { offerData: null, userPermission: false };
     };
 
     const handleFetchOfferWithUser = async (id: number) => {
         try {
             const response = await fetchOfferWithUser(id);
-            if (response.data) {
-                return response.data;
-            }
+            if (response.data) return response.data;
         } catch (error: unknown) {
+            navigate('/home');
             if (error instanceof NotFoundError) {
                 console.error("Offer not found: ", error);
-                navigate('/home');
             } else {
                 console.error("Unexpected error when fetching offer with user's contact info: ", error);
-                navigate('/home');
             }
         } finally {
             setOfferFetched(true);
         }
-
-        return { offerWithContactData: null, userPermission: false };
     };
 
     const handleFetchAllUserOffers = async () => {

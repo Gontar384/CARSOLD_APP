@@ -12,7 +12,7 @@ const Decision: React.FC<DecisionProps> = ({setPopup, setConfirmed}) => {
         <div className="flex flex-col items-center w-full h-full mb-8 m:mb-10">
             <p className="w-10/12 text-center mt-8 m:mt-10">
                 Are you sure you want to delete your account?</p>
-            <div className="flex flex-row items-center justify-center mt-5 m:mt-7 gap-8 m:gap-10">
+            <div className="flex flex-row items-center justify-center mt-5 m:mt-7 gap-10 m:gap-12">
                 <ConfirmButton label="Yes" type="choice" onClick={() => setConfirmed(true)}/>
                 <ConfirmButton label="No" type="choice" onClick={() => setPopup(false)}/>
             </div>

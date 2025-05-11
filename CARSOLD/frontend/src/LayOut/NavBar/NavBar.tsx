@@ -35,10 +35,10 @@ const NavBar: React.FC = () => {
                         <AddButton/>
                         <UserInfo/>
                     </>}
+                {loadingAuth && <LoadingNavBarLine/>}
             </div>
             {mobileWidth && <LowerBar/>}
             {midWidth && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
-            {loadingAuth && <LoadingNavBarLine/>}
             <MessageNotification/>
         </>
     )

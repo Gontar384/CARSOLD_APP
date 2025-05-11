@@ -33,13 +33,12 @@ public class OfferManagementController {
         Offer offer = service.fetchOffer(id);
         boolean permission = service.fetchPermission(offer);
         OfferDto offerDto = mapper.mapToDto(offer);
+        offerDto.setPermission(permission);
 
-        return ResponseEntity.ok()
-                .header("user-permission", permission ? "true" : "false")
-                .body(offerDto);
+        return ResponseEntity.ok().body(offerDto);
     }
 
-    @GetMapping("/fetchAllUser")
+    @GetMapping("/fetchAllForUser")
     public ResponseEntity<List<PartialOfferDto>> fetchAllUserOffers() {
         List<PartialOfferDto> partialOfferDtos = service.fetchAllUserOffers();
         return ResponseEntity.ok(partialOfferDtos);

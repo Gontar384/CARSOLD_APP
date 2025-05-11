@@ -3,9 +3,9 @@ package org.gontar.carsold.Config.OAuth2Config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.UserRepository;
+import org.gontar.carsold.Service.JwtService.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -22,11 +22,13 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private String frontendUrl;
 
     private final UserRepository repository;
-    private final CookieService cookieService;
+    private final JwtService jwtService;
+    private final CustomOAuth2AuthorizationRequestRepository customOAuth2AuthorizationRequestRepository;
 
-    public CustomOAuth2SuccessHandler(UserRepository repository, CookieService cookieService) {
+    public CustomOAuth2SuccessHandler(UserRepository repository, JwtService jwtService, CustomOAuth2AuthorizationRequestRepository customOAuth2AuthorizationRequestRepository) {
         this.repository = repository;
-        this.cookieService = cookieService;
+        this.jwtService = jwtService;
+        this.customOAuth2AuthorizationRequestRepository = customOAuth2AuthorizationRequestRepository;
     }
 
     @Override
@@ -39,8 +41,9 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             if (user == null) user = createNewOAuth2User(email);
             else if (!user.getOauth2()) updateUserToOAuth2(user);
 
-            cookieService.addCookieWithNewTokenToResponse(user.getUsername(), response);
-            response.sendRedirect(frontendUrl + "details/myOffers");
+            jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
+            customOAuth2AuthorizationRequestRepository.deleteCookie(response);
+            response.sendRedirect(frontendUrl + "/details/myOffers");
         }
     }
 

@@ -14,7 +14,6 @@ import PasswordRecChange from "./PageComponents/PasswordRecoveryChange/PasswordR
 import CookieBanner from "./Additional/Banners/CookieBanner.tsx";
 import Search from "./PageComponents/Search/Search.tsx";
 import AccountDetails from "./PageComponents/AccountDetails/AccountDetails.tsx";
-import TokensManager from "./Config/TokensConfig/TokensManager.ts";
 import OfferForm from "./PageComponents/AddingOffer/OfferForm.tsx";
 import OfferDisplay from "./PageComponents/OfferDisplay/OfferDisplay.tsx";
 import OpenRoutes from "./Config/AuthConfig/OpenRoutes.tsx";
@@ -38,23 +37,19 @@ const App: React.FC = () => {
                                         <Route path="/password-recovery" element={<PasswordRecovery/>}/>
                                         <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>
                                     </Route>
-
                                     <Route element={<OpenRoutes/>}>
                                         <Route path="/termsOfUse" element={<TermsOfUse/>}/>
                                         <Route path="/search" element={<Search/>}/>
                                         <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
                                         <Route path="/home" element={<Home/>}/>
                                     </Route>
-
                                     <Route element={<PrivateRoutes/>}>
                                         <Route path="/details/:section?" element={<AccountDetails/>}/>
                                         <Route path="/addingOffer" element={<OfferForm/>}/>
                                         <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
                                     </Route>
-
                                     <Route path="*" element={<Navigate to="/search"/>}/>
                                 </Routes>
-                                <TokensManager/> {/*manages tokens*/}
                                 <CookieBanner/> {/*displays cookie banner*/}
                                 <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
                             </MessagesProvider>

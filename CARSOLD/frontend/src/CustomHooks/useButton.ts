@@ -1,18 +1,24 @@
 import {useState} from "react";
+import {useUtil} from "../GlobalProviders/Util/useUtil.ts";
 
-
-//changes color of button, highlights etc.
 export const useButton = () => {
+    const {isMobile} = useUtil();
+    const [buttonColor, setButtonsColor] = useState<boolean>(false);
 
-    const [buttonColor, setButtonsColor] = useState<boolean>(false);  //changes lower bar buttons colors
+    const handleStart = () => setButtonsColor(true);
+    const handleEnd = () => setButtonsColor(false);
 
-    const handleStart = () => {
-        setButtonsColor(true);
-    };
+    const bindHoverHandlers = () => ({
+        ...(isMobile
+            ? {
+                onTouchStart: handleStart,
+                onTouchEnd: handleEnd,
+            }
+            : {
+                onMouseEnter: handleStart,
+                onMouseLeave: handleEnd,
+            }),
+    });
 
-    const handleEnd = () => {
-        setButtonsColor(false);
-    };
-
-    return {buttonColor, handleStart, handleEnd}
+    return {buttonColor, bindHoverHandlers}
 }

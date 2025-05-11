@@ -109,6 +109,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         };
 
     useEffect(() => {
+        setFilter(prev => ({...prev, phrase: phrase}));
+    }, [phrase]); //updates filter with phrase
+
+    useEffect(() => {
         if (!carModels[filter.brand]?.includes(filter.model)) {
             setFilter(prev => ({...prev, model: ""}));
         }
@@ -168,14 +172,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         }, {} as Record<string, string | number>);
         const queryParams = new URLSearchParams({
             ...formattedFilter,
+            ...(phrase !== "" && { phrase }),
             page: String(currentPage),
             size: String(itemsPerPage),
-            phrase: phrase,
         } as never).toString();
+        setSearchParams(queryParams);
         try {
             const offers = await fetchFilteredOffers(queryParams);
             if (offers.data) {
-                const formattedOffers: UpdatedOffer[] = offers.data._embedded.partialOfferDtoList.map((offer: FetchedOffer) => ({
+                const partialList = offers.data._embedded?.partialOfferDtoList ?? [];
+                const formattedOffers: UpdatedOffer[] = partialList.map((offer: FetchedOffer) => ({
                     id: offer.id ?? "",
                     title: offer.title ?? "",
                     photoUrl: offer.photoUrl ?? "",

@@ -7,7 +7,7 @@ import MyOfferButton from "./Atomic/MyOfferButton.tsx";
 import ConfirmDeleteWindow from "../../../../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
 import MyOfferDetail from "./Atomic/MyOfferDetail.tsx";
 import {deleteOffer} from "../../../../../ApiCalls/Services/OfferService.ts";
-import {ForbiddenError, NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 import AddingOfferLoader from "../../../../../Additional/Loading/AddingOfferLoader.tsx";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useOfferUtil} from "../../../../../CustomHooks/useOfferUtil.ts";
@@ -67,18 +67,16 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
 
     const handleDeleteOffer = async () => {
         if (disabled) return;
+
         setDisabled(true);
         setLoading(true);
         setDecision(false);
-
         try {
             await deleteOffer(offer.id);
             sessionStorage.setItem("offerDeleted", "true");
         } catch (error: unknown) {
             setWentWrong(true);
-            if (error instanceof ForbiddenError) {
-                console.error("User has not permission to delete offer");
-            } else if (error instanceof NotFoundError) {
+            if (error instanceof NotFoundError) {
                 console.error("Offer not found");
             } else {
                 console.error("Unexpected error during offer removal");

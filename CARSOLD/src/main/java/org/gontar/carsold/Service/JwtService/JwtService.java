@@ -8,23 +8,23 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Exception.CustomException.*;
-import org.gontar.carsold.Domain.Entity.User.User;
-import org.gontar.carsold.Repository.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.*;
 
 @Service
 public class JwtService {
 
-    private final UserRepository repository;
-    private SecretKey secretKey;
+    @Value("${SESSION_TIME:24}")
+    private int sessionTime;
 
-    public JwtService(UserRepository repository) {
-        this.repository = repository;
-    }
+    private SecretKey secretKey;
 
     @PostConstruct
     public void init() {
@@ -45,11 +45,9 @@ public class JwtService {
     }
 
     public String generateToken(String username, int timeInMinutes) {
-        Objects.requireNonNull(username, "Username cannot be null");
         try {
             Map<String, Object> claims = new HashMap<>();
             long expirationTime = System.currentTimeMillis() + (1000L * 60 * (long) timeInMinutes);
-
             return Jwts.builder()
                     .claims()
                     .add(claims)
@@ -65,7 +63,6 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
-        Objects.requireNonNull(token, "Token cannot be null");
         try {
             return Jwts.parser()
                     .verifyWith(getKey())
@@ -73,40 +70,51 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException e) {
-            throw new JwtServiceException("Error during claims extraction: " + e.getMessage());
+            throw new JwtServiceException("Error when extracting JWT claims: " + e.getMessage());
         }
-    }  //checks validity (e.g. expiration time)
+    }
 
     public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
+        String username = extractAllClaims(token).getSubject();
+        if (username == null) throw new JwtServiceException("No username found in JWT");
+        return username;
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) { //checks if user with this username exists
-        Claims claims = extractAllClaims(token);
-        return claims.getSubject().equals(userDetails.getUsername());
-    }
-
-    public Optional<String> extractTokenFromCookie(HttpServletRequest request) {
+    public String extractTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) return Optional.empty();
-
-        Optional<Cookie> jwtCookie = Arrays.stream(cookies)
-                .filter(cookie -> "JWT".equals(cookie.getName()))
-                .findFirst();
-
-        if (jwtCookie.isEmpty()) return Optional.empty();
-
-        String jwt = jwtCookie.get().getValue();
-        if (jwt == null || jwt.isBlank()) throw new JwtServiceException("Token is missing in cookie");
-
-        return Optional.of(jwt);
+        if (cookies == null) return null;
+        for (Cookie cookie : cookies) {
+            if ("AUTH".equals(cookie.getName())) {
+                String jwt = cookie.getValue();
+                if (jwt != null && !jwt.isBlank()) {
+                    return jwt;
+                }
+            }
+        }
+        return null;
     }
 
-    public User extractUserFromToken(String token) {
-        String username = extractUsername(token);
-        User user = repository.findByUsername(username);
-        if (user == null) throw new JwtServiceException("User not found for username " + username);
+    public ResponseCookie createCookie(String token, int timeInHours) {
+        try {
+            return ResponseCookie.from("AUTH", token)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .sameSite("Lax")
+                    .maxAge(Duration.ofHours(timeInHours))
+                    .build();
+        }  catch (IllegalArgumentException | IllegalStateException e) {
+            throw new CookieServiceException("Cookie creation failed: " + e.getMessage());
+        }
+    }
 
-        return user;
+    public void addCookieWithNewTokenToResponse(String username, HttpServletResponse response) {
+        try {
+            String newToken = generateToken(username, sessionTime * 60);
+            ResponseCookie jwtCookie = createCookie(newToken, sessionTime);
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        }  catch (CookieServiceException | JwtServiceException e) {
+            throw new CookieServiceException("Response not sent: " + e.getMessage());
+        }
     }
 }

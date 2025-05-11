@@ -6,60 +6,45 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import org.gontar.carsold.Exception.CustomException.JwtServiceException;
-import org.gontar.carsold.Service.CookieService.CookieService;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Configuration
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MyUserDetailsService myUserDetailsService;
-    private final CookieService cookieService;
 
-    public JwtFilter(JwtService jwtService, MyUserDetailsService myUserDetailsService, CookieService cookieService) {
+    public JwtFilter(JwtService jwtService, MyUserDetailsService myUserDetailsService) {
         this.jwtService = jwtService;
         this.myUserDetailsService = myUserDetailsService;
-        this.cookieService = cookieService;
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
-
-        Optional<String> token = jwtService.extractTokenFromCookie(request);
-        if (token.isPresent()) {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        String token = jwtService.extractTokenFromCookie(request);
+        if (token != null) {
             try {
-                String username = jwtService.extractUsername(token.get());
-                if (username != null) {
-                    UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
-                    if (userDetails == null) throw new UsernameNotFoundException("Username not found" + username);
-                    if (jwtService.validateToken(token.get(), userDetails)) {
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    }
-                }
+                String username = jwtService.extractUsername(token);
+                UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
+
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (JwtServiceException | AuthenticationException e) {
                 SecurityContextHolder.clearContext();
-                ResponseCookie deleteCookie = cookieService.createCookie("", 0);
-                response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
-                filterChain.doFilter(request, response);
-                return;
+                response.addHeader(HttpHeaders.SET_COOKIE, jwtService.createCookie("", 0).toString());
+                throw new JwtServiceException("JWT authentication failed: " + e.getMessage());
             }
         }
 
