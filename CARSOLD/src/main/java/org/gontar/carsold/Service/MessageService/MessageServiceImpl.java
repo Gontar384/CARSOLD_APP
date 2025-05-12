@@ -233,7 +233,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public PagedMessagesDto getOlderMessages(String username, int page) {
+    public PagedMessagesDto getPreviousMessages(String username, int page) {
         ConversationContext context = getConversationContext(username, false);
 
         boolean isActivatedForUser = context.isUser1 ? context.conversation.isActivatedByUser1() : context.conversation.isActivatedByUser2();

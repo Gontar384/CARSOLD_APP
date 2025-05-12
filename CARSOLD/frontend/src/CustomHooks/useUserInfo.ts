@@ -1,4 +1,4 @@
-import {checkAdmin, checkGoogleAuth, checkInfo, checkLogin, checkOldPassword} from "../ApiCalls/Services/UserService.ts";
+import {checkAccount, checkAdmin, checkGoogleAuth, checkLogin, checkOldPassword} from "../ApiCalls/Services/UserService.ts";
 
 export const useUserInfo = () => {
 
@@ -13,9 +13,9 @@ export const useUserInfo = () => {
         }
     };
 
-    const handleCheckInfo = async (login: string | null) => {
+    const handleCheckAccount = async (login: string | null) => {
         try {
-            const response = await checkInfo(login);
+            const response = await checkAccount(login);
             if (response.data) {
                 return response.data;
             }
@@ -64,5 +64,5 @@ export const useUserInfo = () => {
         return !(!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password));
     };
 
-    return {handleCheckLogin, handleCheckInfo, handleCheckGoogleAuth, handleCheckOldPassword, handleCheckAdmin, handleCheckPassword}
+    return {handleCheckLogin, handleCheckAccount, handleCheckGoogleAuth, handleCheckOldPassword, handleCheckAdmin, handleCheckPassword}
 }

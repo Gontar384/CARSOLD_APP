@@ -28,7 +28,7 @@ public class UserManagementController {
         this.mapper = mapper;
     }
 
-    @PostMapping("/registerUser")
+    @PostMapping("/public/user/register")
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
         User user = mapper.mapToEntity(userDto);
         User createdUser = service.registerUser(user);
@@ -41,14 +41,14 @@ public class UserManagementController {
         return ResponseEntity.created(location).body(createdUserDto);
     }
 
-    @GetMapping("/fetchUsername")
+    @GetMapping("/private/user/fetchUsername")
     public ResponseEntity<SingleStringDto> fetchUsername() {
         String username = service.fetchUsername();
         SingleStringDto response = new SingleStringDto(username);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/changePassword")
+    @PatchMapping("/private/user/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) {
         String newPassword = passwordChangeDto.getNewPassword();
         String oldPassword = passwordChangeDto.getOldPassword();
@@ -56,7 +56,7 @@ public class UserManagementController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/changePasswordRecovery")
+    @PatchMapping("/public/user/changePasswordRecovery")
     public ResponseEntity<?> changePasswordRecovery(@RequestBody RecoveryPasswordChangeDto recoveryPasswordChangeDto,
                                                     HttpServletRequest request, HttpServletResponse response) {
         String token = recoveryPasswordChangeDto.getToken();
@@ -65,7 +65,7 @@ public class UserManagementController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/deleteUser")
+    @DeleteMapping("/private/user/delete")
     public ResponseEntity<?> deleteUser(@RequestParam("password") String password) {
         service.deleteUser(password);
         return ResponseEntity.ok().build();

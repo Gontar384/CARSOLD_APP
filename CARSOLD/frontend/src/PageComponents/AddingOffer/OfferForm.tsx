@@ -166,6 +166,7 @@ const OfferForm: React.FC = () => {
     const [inappropriateContentBanner, setInappropriateContentBanner] = useState<boolean>(false);
     const [waitBanner, setWaitBanner] = useState<boolean>(false);
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
+    const [tooManyBanner, setTooManyBanner] = useState<boolean>(false);
     document.title = `CARSOLD | ${(id !== null && permission === true) ? "Modify offer" : "Add offer"}`
 
     //if user redirects from /modifyingOffer/{id} to /addingOffer, it resets all states
@@ -903,15 +904,18 @@ const OfferForm: React.FC = () => {
                 if (error.response.status === 422) {
                     window.scrollTo({ top: 0, behavior: "smooth" });
                     setInappropriateContentBanner(true);
-                    console.error("Provided details are inappropriate")
+                    console.error("Provided details are inappropriate: ", error);
+                } else if (error.response.status === 405) {
+                    setTooManyBanner(true);
+                    console.error("Couldn't add, you've added too many offers yet: ", error);
                 } else {
                     setWentWrongBanner(true);
-                    console.error("Unexpected error during processing offer: ", error);
+                    console.error("Unexpected error when processing offer: ", error);
                 }
             }
         } finally {
             setLoading(false);
-            setIsDisabled(false);
+            setTimeout(() => setIsDisabled(false), 500);
         }
     };
 
@@ -1085,6 +1089,8 @@ const OfferForm: React.FC = () => {
                                                delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
                                               delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
+                {tooManyBanner && <AnimatedBanner text={"Couldn't add, you've added too many offers yet"} onAnimationEnd={() => setTooManyBanner(false)}
+                                                    delay={6000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}
             </div>
         </LayOut>

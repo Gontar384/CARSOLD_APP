@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom";
 import {AxiosError} from "axios";
 
 export const useOfferUtil = () => {
-
     const [offerFetched, setOfferFetched] = useState<boolean>(false);
     const [followed, setFollowed] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -25,6 +24,7 @@ export const useOfferUtil = () => {
     };
 
     const handleFetchOfferWithUser = async (id: number) => {
+        setOfferFetched(false);
         try {
             const response = await fetchOfferWithUser(id);
             if (response.data) return response.data;
@@ -40,9 +40,10 @@ export const useOfferUtil = () => {
         }
     };
 
-    const handleFetchAllUserOffers = async () => {
+    const handleFetchAllUserOffers = async (page: number, size: number) => {
+        setOfferFetched(false);
         try {
-            const response = await fetchAllUserOffers();
+            const response = await fetchAllUserOffers(page, size);
             if (response.data) return response.data;
         } catch (error) {
             console.error("Unexpected error occurred during offers fetch: ", error);
@@ -83,9 +84,10 @@ export const useOfferUtil = () => {
       }
     };
 
-    const handleFetchAllFollowed = async () => {
+    const handleFetchAllFollowed = async (page: number, size: number) => {
+        setOfferFetched(false);
         try {
-            const response = await fetchAllFollowed();
+            const response = await fetchAllFollowed(page, size);
             if (response.data) return response.data;
         } catch (error) {
             console.error("Unexpected error fetching all followed offers: ", error)

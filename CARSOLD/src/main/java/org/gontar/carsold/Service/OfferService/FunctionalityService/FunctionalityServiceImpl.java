@@ -14,9 +14,10 @@ import org.gontar.carsold.Repository.ReportRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -53,29 +54,30 @@ public class FunctionalityServiceImpl implements FunctionalityService {
     }
 
     @Override
-    public List<PartialOfferDto> fetchAllFollowed() {
+    public Page<PartialOfferDto> fetchAllFollowed(int page, int size) {
         User user = userDetailsService.loadUser();
-        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
-        List<PartialOfferDto> partialOfferDtos = new ArrayList<>();
+        Pageable pageable = PageRequest.of(Math.max(page, 0), size > 0 ? size : 3);
+        Page<Offer> offers = userRepository.findFollowedOffersByUserIdPageable(user.getId(), pageable);
 
-        for (Offer offer : followedOffers) {
-            PartialOfferDto partialOfferDto = new PartialOfferDto();
-            partialOfferDto.setId(offer.getId());
-            partialOfferDto.setTitle(offer.getTitle());
-            if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-                partialOfferDto.setPhotoUrl(offer.getPhotos().getFirst());
-            }
-            partialOfferDto.setPrice(offer.getPrice());
-            partialOfferDto.setCurrency(offer.getCurrency());
-            partialOfferDto.setPower(offer.getPower());
-            partialOfferDto.setCapacity(offer.getCapacity());
-            partialOfferDto.setTransmission(offer.getTransmission());
-            partialOfferDto.setFuel(offer.getFuel());
-            partialOfferDto.setMileage(offer.getMileage());
-            partialOfferDto.setYear(offer.getYear());
-            partialOfferDtos.add(partialOfferDto);
+        return offers.map(this::mapToPartialOfferDto);
+    }
+
+    private PartialOfferDto mapToPartialOfferDto(Offer offer) {
+        PartialOfferDto dto = new PartialOfferDto();
+        dto.setId(offer.getId());
+        dto.setTitle(offer.getTitle());
+        if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
+            dto.setPhotoUrl(offer.getPhotos().getFirst());
         }
-        return partialOfferDtos;
+        dto.setPrice(offer.getPrice());
+        dto.setCurrency(offer.getCurrency());
+        dto.setPower(offer.getPower());
+        dto.setCapacity(offer.getCapacity());
+        dto.setTransmission(offer.getTransmission());
+        dto.setFuel(offer.getFuel());
+        dto.setMileage(offer.getMileage());
+        dto.setYear(offer.getYear());
+        return dto;
     }
 
     @Override

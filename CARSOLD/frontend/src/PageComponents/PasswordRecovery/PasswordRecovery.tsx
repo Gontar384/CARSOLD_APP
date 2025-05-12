@@ -17,7 +17,7 @@ const PasswordRecovery: React.FC = () => {
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
     const {CreateDebouncedValue} = useUtil();
     const debouncedEmail: string = CreateDebouncedValue(email, 300);
-    const {handleCheckLogin, handleCheckInfo} = useUserInfo();
+    const {handleCheckLogin, handleCheckAccount} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
 
@@ -35,7 +35,7 @@ const PasswordRecovery: React.FC = () => {
         const checkEmail = async () => {
             const present = await handleCheckLogin(email);
             if (present) {
-                const account = await handleCheckInfo(email);
+                const account = await handleCheckAccount(email);
                 if (account.active) {
                     if (account.oauth2) {
                         setEmailIcon(faCircleExclamation);

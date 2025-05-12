@@ -2,6 +2,8 @@ package org.gontar.carsold.Repository;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByFollowedOffersContaining(Offer offer);
     @Query("SELECT o FROM User u JOIN u.followedOffers o WHERE u.id = :userId")
     Set<Offer> findFollowedOffersByUserId(@Param("userId") Long userId);
+    @Query(value = "SELECT o FROM User u JOIN u.followedOffers o WHERE u.id = :userId",
+            countQuery = "SELECT COUNT(o) FROM User u JOIN u.followedOffers o WHERE u.id = :userId")
+    Page<Offer> findFollowedOffersByUserIdPageable(@Param("userId") Long userId, Pageable pageable);
 }

@@ -21,7 +21,7 @@ const LoginForm: React.FC = () => {
     const {CreateDebouncedValue} = useUtil();
     const debouncedLogin: string = CreateDebouncedValue(login, 300);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
-    const {handleCheckLogin, handleCheckInfo} = useUserInfo();
+    const {handleCheckLogin, handleCheckAccount} = useUserInfo();
     const {handleCheckAuth} = useAuth();
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
         const checkLogin = async () => {
             const present = await handleCheckLogin(login);
             if (present) {
-                const account = await handleCheckInfo(login);
+                const account = await handleCheckAccount(login);
                 if (!account.active) {
                     setLoginInfo("Please confirm your account via email.");
                     setLoginIcon(faCircleExclamation);

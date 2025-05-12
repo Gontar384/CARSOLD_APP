@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import SearchFilters from "./SearchFilters/SearchFilters.tsx";
 import {UpdatedOffer} from "../AccountDetails/Content/MyOffers/MyOffers.tsx";
 import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOfferDisplay.tsx";
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Search: React.FC = () => {
     document.title = "CARSOLD | Search";
@@ -13,6 +14,10 @@ const Search: React.FC = () => {
     const itemsPerPage = 10;
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalElements, setTotalElements] = useState<number>(0);
+    const hasNextPage = currentPage < totalPages - 1;
+    const hasPrevPage = currentPage > 0;
+    const [hovered, setHovered] = useState<boolean[]>(Array(2).fill(false));
+    const {isMobile} = useUtil();
 
     const nextPage = () => {
         setCurrentPage(prev => prev + 1);
@@ -24,8 +29,31 @@ const Search: React.FC = () => {
         }
     };
 
-    const hasNextPage = currentPage < totalPages - 1;
-    const hasPrevPage = currentPage > 0;
+    const handleHover = (index: number, val: boolean) => {
+        setHovered(prev => {
+            const copy = [...prev];
+            copy[index] = val;
+            return copy;
+        });
+    };
+
+    const bindHoverButtons = (index: number) => {
+        if (isMobile) {
+            return {
+                onTouchStart: () => handleHover(index, true),
+                onTouchEnd: () => handleHover(index, false)
+            };
+        } else {
+            return {
+                onMouseEnter: () => handleHover(index, true),
+                onMouseLeave: () => handleHover(index, false)
+            };
+        }
+    };
+
+    useEffect(() => {
+        setHovered([false, false]);
+    }, [currentPage]);
 
     return (
         <LayOut>
@@ -45,22 +73,21 @@ const Search: React.FC = () => {
                                         <SmallOfferDisplay type="search" key={offer.id} offer={offer}/>
                                     ))}
                                     {(hasPrevPage || hasNextPage) && (
-                                        <div
-                                            className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
+                                        <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                                             {hasPrevPage && (
-                                                <button
-                                                    className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md"
-                                                    onClick={prevPage}>
+                                                <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
+                                                ${hovered[0] && "ring ring-white"}`}
+                                                        {...bindHoverButtons(0)} onClick={prevPage}>
                                                     {currentPage}
                                                 </button>
                                             )}
-                                            <button
-                                                className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default">
+                                            <button className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default">
                                                 {currentPage + 1}
                                             </button>
                                             {hasNextPage && (
-                                                <button className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md"
-                                                    onClick={nextPage}>
+                                                <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
+                                                ${hovered[1] && "ring ring-white"}`}
+                                                        {...bindHoverButtons(1)} onClick={nextPage}>
                                                     {currentPage + 2}
                                                 </button>
                                             )}

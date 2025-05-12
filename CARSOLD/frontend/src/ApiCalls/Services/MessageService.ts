@@ -4,7 +4,7 @@ import {AxiosResponse} from "axios";
 
 export const activateConversation = async (username: string | null): Promise<void> => {
     try {
-        await api.post("api/message/activateConversation", { value: username });
+        await api.post("api/private/message/activateConversation", { value: username });
     } catch (error) {
         handleError(error);
     }
@@ -12,7 +12,7 @@ export const activateConversation = async (username: string | null): Promise<voi
 
 export const sendMessage = async (message: object | null): Promise<void> => {
     try {
-        await api.post("api/message/send", message);
+        await api.post("api/private/message/send", message);
     } catch (error) {
         handleError(error);
     }
@@ -20,7 +20,7 @@ export const sendMessage = async (message: object | null): Promise<void> => {
 
 export const getUnseenCount = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get("api/message/getUnseenCount");
+        return await api.get("api/private/message/getUnseenCount");
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -29,7 +29,7 @@ export const getUnseenCount = async (): Promise<AxiosResponse> => {
 
 export const getAllConversations = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get("api/message/getAllConversations");
+        return await api.get("api/private/message/getAllConversations");
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -38,7 +38,7 @@ export const getAllConversations = async (): Promise<AxiosResponse> => {
 
 export const getConversationOnInitial = async(username: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get(`api/message/getConversationOnInitial/${username}`);
+        return await api.get(`api/private/message/getConversationOnInitial/${username}`);
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -47,7 +47,7 @@ export const getConversationOnInitial = async(username: string | null): Promise<
 
 export const deleteConversation = async(username: string | null): Promise<void> => {
     try {
-        await api.delete(`api/message/deleteConversation/${username}`);
+        await api.delete(`api/private/message/deleteConversation/${username}`);
     } catch (error) {
         handleError(error);
     }
@@ -55,7 +55,7 @@ export const deleteConversation = async(username: string | null): Promise<void> 
 
 export const blockUnblockUser = async(username: string | null): Promise<void> => {
     try {
-        await api.patch(`api/message/blockUnblockUser/${username}`);
+        await api.patch(`api/private/message/blockUnblockUser/${username}`);
     } catch (error) {
         handleError(error);
     }
@@ -63,15 +63,15 @@ export const blockUnblockUser = async(username: string | null): Promise<void> =>
 
 export const makeSeen = async(username: string | null): Promise<void> => {
     try {
-        await api.patch(`api/message/makeSeen/${username}`);
+        await api.patch(`api/private/message/makeSeen/${username}`);
     } catch (error) {
         handleError(error);
     }
 };
 
-export const getOlderMessages = async(username: string | null, page: number | null): Promise<AxiosResponse> => {
+export const getPreviousMessages = async(username: string | null, page: number | null): Promise<AxiosResponse> => {
     try {
-        return await api.get(`api/message/getOlderMessages/${username}/${page}`);
+        return await api.get(`api/private/message/getPreviousMessages/${username}/${page}`);
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

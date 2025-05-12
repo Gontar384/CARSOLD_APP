@@ -4,6 +4,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {adminDeleteReport, adminFetchReports} from "../../../../ApiCalls/Services/OfferService.ts";
 import {faCar, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface Report {
     id: number | null;
@@ -17,17 +18,18 @@ const Admin: React.FC = () => {
     const {handleCheckAdmin} = useUserInfo();
     const navigate = useNavigate();
     const [reports, setReports] = useState<Report[]>([]);
-    const [currentPage, setCurrentPage] = useState<number>(0);
-    const itemsPerPage = 5;
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedReports = reports.slice(startIndex, endIndex);
     const [deleted, setDeleted] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const itemsPerPage = 6;
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const hasNextPage = currentPage < totalPages - 1;
+    const hasPrevPage = currentPage > 0;
+    const [fetched, setFetched] = useState<boolean>(false);
+    const [hovered, setHovered] = useState<boolean[]>(Array(2).fill(false));
+    const {isMobile} = useUtil();
 
     const nextPage = () => {
-        if (endIndex < reports.length) {
-            setCurrentPage(prev => prev + 1);
-        }
+        setCurrentPage(prev => prev + 1);
     };
 
     const prevPage = () => {
@@ -43,15 +45,26 @@ const Admin: React.FC = () => {
             else setAdmin(isAdmin);
         };
         manageCheckAdmin();
-    }, []);
+    }, []); //initial check for admin
 
     useEffect(() => {
         const manageFetchReports = async () => {
-            const reports = await adminFetchReports();
-            setReports(reports.data);
+            setFetched(false);
+            try {
+                const reports = await adminFetchReports(currentPage, itemsPerPage);
+                setReports(reports.data._embedded.reportDtoList);
+                setTotalPages(reports.data.page.totalPages);
+            } catch (error) {
+                console.error("Unexpected error while fetching reports: ", error);
+                setReports([]);
+                setTotalPages(0);
+                setCurrentPage(0);
+            } finally {
+                setFetched(true);
+            }
         }
         if (admin) manageFetchReports();
-    }, [admin, deleted]);
+    }, [admin, deleted, currentPage]); //fetches reports
 
     const handleDeleteReport = async (id: number | null) => {
         try {
@@ -62,10 +75,38 @@ const Admin: React.FC = () => {
         }
     };
 
+    const handleHover = (index: number, val: boolean) => {
+        setHovered(prev => {
+            const copy = [...prev];
+            copy[index] = val;
+            return copy;
+        });
+    };
+
+    const bindHoverHandlers = (index: number) => {
+        if (isMobile) {
+            return {
+                onTouchStart: () => handleHover(index, true),
+                onTouchEnd: () => handleHover(index, false)
+            };
+        } else {
+            return {
+                onMouseEnter: () => handleHover(index, true),
+                onMouseLeave: () => handleHover(index, false)
+            };
+        }
+    };
+
+    useEffect(() => {
+        setHovered([false, false]);
+    }, [currentPage]);
+
+    if (!fetched) return null;
+
     return (
         <div className="w-[90%] m:w-[95%] h-full max-w-[700px] mt-10 m:mt-12">
             {reports.length > 0 ? (
-            paginatedReports.map((report, key) => (
+                reports.map((report, key) => (
                 <div key={key} className="flex flex-col mb-6 m:mb-8">
                     <div className="flex flex-row items-center justify-between gap-1.5 m:gap-2 p-3 m:p-4 bg-white rounded-md">
                         <p className="text-base m:text-lg">{report.reason}</p>
@@ -86,20 +127,27 @@ const Admin: React.FC = () => {
                     <p className="text-xs m:text-sm ml-3 m:ml-4">reported by {report.reportUsername}</p>
                 </div>
             ))) : <p className="text-xl m:text-2xl text-center mt-32 m:mt-36">No reports to display!</p> }
-            {reports.length > itemsPerPage &&
-                <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base py-3 m:py-6">
-                    <button onClick={prevPage} disabled={currentPage === 0}
-                            className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
-                            rounded-md disabled:opacity-60">
-                        Previous
+            {reports.length > 0 && (hasPrevPage || hasNextPage) && (
+                <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
+                    {hasPrevPage && (
+                        <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
+                        ${hovered[0] && "ring ring-white"}`}
+                                {...bindHoverHandlers(0)} onClick={prevPage}>
+                            {currentPage}
+                        </button>
+                    )}
+                    <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default`}>
+                        {currentPage + 1}
                     </button>
-                    <button onClick={nextPage} disabled={endIndex >= reports.length}
-                            className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white
-                            rounded-md disabled:opacity-60">
-                        Next
-                    </button>
+                    {hasNextPage && (
+                        <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
+                        ${hovered[1] && "ring ring-white"}`}
+                                {...bindHoverHandlers(1)} onClick={nextPage}>
+                            {currentPage + 2}
+                        </button>
+                    )}
                 </div>
-            }
+            )}
         </div>
     )
 };

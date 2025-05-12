@@ -14,9 +14,11 @@ import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.ReportRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,18 +66,19 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<ReportDto> adminFetchReports() {
-        List<Report> allReports = reportRepository.findAll();
-        List<ReportDto> reportDtos = new ArrayList<>();
-        for (Report report : allReports) {
-            ReportDto reportDto = new ReportDto();
-            reportDto.setId(report.getId());
-            reportDto.setOfferId(report.getOffer().getId());
-            reportDto.setReason(report.getReason());
-            reportDto.setReportUsername(report.getReportUsername());
-            reportDtos.add(reportDto);
-        }
-        return reportDtos;
+    public Page<ReportDto> adminFetchReports(int page, int size) {
+        Pageable pageable = PageRequest.of(Math.max(page, 0), size > 0 ? size : 6);
+        Page<Report> reportPage = reportRepository.findAll(pageable);
+        return reportPage.map(this::convertToReportDto);
+    }
+
+    private ReportDto convertToReportDto(Report report) {
+        ReportDto reportDto = new ReportDto();
+        reportDto.setId(report.getId());
+        reportDto.setOfferId(report.getOffer().getId());
+        reportDto.setReason(report.getReason());
+        reportDto.setReportUsername(report.getReportUsername());
+        return reportDto;
     }
 
     @Override

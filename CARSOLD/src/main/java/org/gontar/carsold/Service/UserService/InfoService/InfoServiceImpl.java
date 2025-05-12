@@ -26,7 +26,7 @@ public class InfoServiceImpl implements InfoService {
     }
 
     @Override
-    public UserInfoDto checkInfo(String login) {
+    public UserInfoDto checkAccount(String login) {
         UserInfoDto userInfoDto = new UserInfoDto();
         if (login == null) {
             userInfoDto.setActive(false);

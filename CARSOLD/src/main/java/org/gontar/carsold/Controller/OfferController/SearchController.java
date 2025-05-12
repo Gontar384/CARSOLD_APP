@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/offer")
+@RequestMapping("/api")
 public class SearchController {
 
     private final SearchService service;
@@ -23,13 +23,10 @@ public class SearchController {
         this.service = service;
     }
 
-    @GetMapping("/search")
+    @GetMapping("/public/offer/search")
     public ResponseEntity<PagedModel<EntityModel<PartialOfferDto>>> fetchFilteredOffers(
-            OfferFilterDto filter,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
+            OfferFilterDto filter, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "8") int size,
             PagedResourcesAssembler<PartialOfferDto> assembler) {
-
         Page<PartialOfferDto> offers = service.fetchFilteredOffers(filter, page, size);
         PagedModel<EntityModel<PartialOfferDto>> pagedModel = assembler.toModel(offers);
         return ResponseEntity.ok(pagedModel);

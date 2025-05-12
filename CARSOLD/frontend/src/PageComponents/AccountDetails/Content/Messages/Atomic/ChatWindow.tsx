@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {blockUnblockUser, deleteConversation, getConversationOnInitial, getOlderMessages, sendMessage} from "../../../../../ApiCalls/Services/MessageService.ts";
+import {blockUnblockUser, deleteConversation, getConversationOnInitial, getPreviousMessages, sendMessage} from "../../../../../ApiCalls/Services/MessageService.ts";
 import {BadRequestError, NotFoundError, PayloadTooLarge} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -309,7 +309,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
             setIsLoadingMore(true);
             setTimeout(async () => {
             try {
-                const pagedMessages = await getOlderMessages(receiverUsername, page + 1);
+                const pagedMessages = await getPreviousMessages(receiverUsername, page + 1);
                 if (pagedMessages.data?.messages.length > 0) {
                     const container = messageContainerRef.current;
                     const prevScrollHeight = container?.scrollHeight ?? 0;

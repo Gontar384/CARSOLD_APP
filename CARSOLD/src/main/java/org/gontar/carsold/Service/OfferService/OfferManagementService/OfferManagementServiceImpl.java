@@ -12,6 +12,9 @@ import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -61,12 +64,11 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     @Override
-    public List<PartialOfferDto> fetchAllUserOffers() {
+    public Page<PartialOfferDto> fetchAllUserOffers(int page, int size) {
         User user = userDetailsService.loadUser();
-        List<Offer> offers = offerRepository.findAllByUserId(user.getId());
-        return offers.stream()
-                .map(this::mapToPartialOfferDto)
-                .toList();
+        Pageable pageable = PageRequest.of(Math.max(page, 0), size > 0 ? size : 3);
+        Page<Offer> offers = offerRepository.findAllByUserId(user.getId(), pageable);
+        return offers.map(this::mapToPartialOfferDto);
     }
 
     private PartialOfferDto mapToPartialOfferDto(Offer offer) {
@@ -174,11 +176,9 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     @Override
     public Offer createOffer(Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(offer, "Offer cannot be null");
-        if (isContentToxic(offer.getTitle(), offer.getDescription())) {
-            throw new InappropriateContentException("Title or description are inappropriate");
-        }
-
         User user = userDetailsService.loadUser();
+        if (offerRepository.countByUserId(user.getId()) >= 50) throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
+        if (isContentToxic(offer.getTitle(), offer.getDescription())) throw new InappropriateContentException("Title or description are inappropriate");
         offer.setUser(user);
         Offer savedOffer = offerRepository.save(offer);
         processImages(savedOffer, photos, user.getUsername());

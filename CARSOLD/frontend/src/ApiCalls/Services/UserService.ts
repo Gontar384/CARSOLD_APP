@@ -6,7 +6,7 @@ import {AxiosResponse} from "axios";
 
 export const checkAuth = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get(`api/auth/checkAuth`);
+        return await api.get(`api/public/auth/checkAuth`);
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -15,7 +15,7 @@ export const checkAuth = async (): Promise<AxiosResponse> => {
 
 export const fetchJwt = async (): Promise<void> => {
     try {
-        await api.get('api/auth/fetchJwt');
+        await api.get('api/private/auth/fetchJwt');
     } catch (error) {
         handleError(error);
     }
@@ -23,19 +23,19 @@ export const fetchJwt = async (): Promise<void> => {
 
 export const activateAccount = async (token: string | null): Promise<void> => {
     try {
-        await api.patch(`api/auth/activateAccount`, { value: token });
+        await api.patch(`api/public/auth/activateAccount`, { value: token });
     } catch (error) {
         handleError(error);
     }
 };
 
 export const authenticate = async (login: string | null, password: string | null): Promise<AxiosResponse> => {
-    return await api.post(`api/auth/authenticate`, { login: login, password: password}); //manually handling errors in main function
+    return await api.post(`api/public/auth/authenticate`, { login: login, password: password}); //manually handling errors in main function
 };
 
 export const logout = async (): Promise<void> => {
     try {
-        await api.post(`api/auth/logout`);
+        await api.post(`api/public/auth/logout`);
     } catch (error) {
         handleError(error);
     }
@@ -44,12 +44,12 @@ export const logout = async (): Promise<void> => {
 //---Management---
 
 export const registerUser = async (user: object): Promise<AxiosResponse> => {
-    return await api.post('api/registerUser', user); //manually handling errors in main function
+    return await api.post('api/public/user/register', user); //manually handling errors in main function
 };
 
 export const fetchUsername = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/fetchUsername');
+        return await api.get('api/private/user/fetchUsername');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -58,7 +58,7 @@ export const fetchUsername = async (): Promise<AxiosResponse> => {
 
 export const changePassword = async (oldPassword: string | null, newPassword: string | null): Promise<void> => {
     try {
-        await api.patch("api/changePassword", { oldPassword: oldPassword, newPassword: newPassword });
+        await api.patch("api/private/user/changePassword", { oldPassword: oldPassword, newPassword: newPassword });
     } catch (error) {
         handleError(error);
     }
@@ -66,7 +66,7 @@ export const changePassword = async (oldPassword: string | null, newPassword: st
 
 export const changePasswordRecovery = async (token: string | null, password: string | null): Promise<void> => {
     try {
-        await api.patch('api/changePasswordRecovery', { token: token, password: password });
+        await api.patch('api/public/user/changePasswordRecovery', { token: token, password: password });
     } catch (error) {
         handleError(error);
     }
@@ -74,36 +74,36 @@ export const changePasswordRecovery = async (token: string | null, password: str
 
 export const deleteUser = async (password: string | null): Promise<void> => {
     try {
-        await api.delete('api/deleteUser', { params: { password: password } });
+        await api.delete('api/private/user/delete', { params: { password: password } });
     } catch (error) {
         handleError(error);
     }
-}
+};
 
 //---EmailNotification---
 
 export const sendPasswordRecoveryEmail = async (email: string | null): Promise<void> => {
     try {
-        await api.get('api/sendPasswordRecoveryEmail', { params: { email: email } });
+        await api.get('api/public/email/sendPasswordRecoveryEmail', { params: { email: email } });
     } catch (error) {
         handleError(error);
     }
-}
+};
 
 //---Info---
 
 export const checkLogin = async (login: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/checkLogin', { params : { login: login } });
+        return await api.get('api/public/userInfo/checkLogin', { params : { login: login } });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
     }
 };
 
-export const checkInfo = async (login: string | null): Promise<AxiosResponse> => {
+export const checkAccount = async (login: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/checkInfo', { params: { login: login } });
+        return await api.get('api/public/userInfo/checkAccount', { params: { login: login } });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -112,36 +112,36 @@ export const checkInfo = async (login: string | null): Promise<AxiosResponse> =>
 
 export const checkGoogleAuth = async (): Promise<AxiosResponse> => {
     try{
-        return await api.get('api/checkGoogleAuth');
+        return await api.get('api/private/userInfo/checkGoogleAuth');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
     }
-}
+};
 
 export const checkOldPassword = async (password: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/checkOldPassword', { params: { password: password } });
+        return await api.get('api/private/userInfo/checkOldPassword', { params: { password: password } });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
     }
-}
+};
 
 export const checkAdmin = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/checkAdmin');
+        return await api.get('api/private/userInfo/checkAdmin');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
     }
-}
+};
 
 //---ProfilePic---
 
 export const fetchProfilePic = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/fetchProfilePic');
+        return await api.get('api/private/userProfilePic/fetch');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -150,7 +150,7 @@ export const fetchProfilePic = async (): Promise<AxiosResponse> => {
 
 export const uploadProfilePic = async (formData: FormData): Promise<void> => {
     try {
-        await api.patch('api/uploadProfilePic', formData);
+        await api.patch('api/private/userProfilePic/upload', formData);
     } catch (error) {
         handleError(error);
     }
@@ -158,7 +158,7 @@ export const uploadProfilePic = async (formData: FormData): Promise<void> => {
 
 export const deleteProfilePic = async (): Promise<void> => {
     try {
-        await api.delete('api/deleteProfilePic');
+        await api.delete('api/private/userProfilePic/delete');
     } catch (error) {
         handleError(error);
     }
@@ -167,20 +167,20 @@ export const deleteProfilePic = async (): Promise<void> => {
 //---UserContactInfo---
 
 export const updateName = async (name: string | null): Promise<AxiosResponse> => {
-    return await api.patch('api/updateName', { value: name }); //manually handling errors in main function
+    return await api.patch('api/private/userContactInfo/updateName', { value: name }); //manually handling errors in main function
 };
 
 export const updatePhone = async (phone: string | null): Promise<AxiosResponse> => {
-    return await api.patch('api/updatePhone', { value: phone }); //manually handling errors in main function
+    return await api.patch('api/private/userContactInfo/updatePhone', { value: phone }); //manually handling errors in main function
 };
 
 export const updateCity = async (city: string | null): Promise<AxiosResponse> => {
-    return await api.patch('api/updateCity', { value: city }); //manually handling errors in main function
+    return await api.patch('api/private/userContactInfo/updateCity', { value: city }); //manually handling errors in main function
 };
 
 export const fetchCitySuggestions = async (value: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/fetchCitySuggestions', { params: { value: value } });
+        return await api.get('api/private/userContactInfo/fetchCitySuggestions', { params: { value: value } });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -189,7 +189,7 @@ export const fetchCitySuggestions = async (value: string | null): Promise<AxiosR
 
 export const updateAndFetchContactPublic = async (isPublic: boolean | null): Promise<AxiosResponse> => {
     try {
-        return await api.patch('api/updateAndFetchContactPublic', { value: isPublic });
+        return await api.patch('api/private/userContactInfo/updateAndFetchContactPublic', { value: isPublic });
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -198,7 +198,7 @@ export const updateAndFetchContactPublic = async (isPublic: boolean | null): Pro
 
 export const fetchContactInfo = async (): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/fetchContactInfo');
+        return await api.get('api/private/userContactInfo/fetch');
     } catch (error) {
         handleError(error);
         return Promise.reject(error);

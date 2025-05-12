@@ -19,26 +19,26 @@ public class AuthenticationController {
         this.service = service;
     }
 
-    @GetMapping("/auth/checkAuth")
+    @GetMapping("/public/auth/checkAuth")
     public ResponseEntity<?> checkAuth() {
         if (service.checkAuth()) return ResponseEntity.ok().build();
         else return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/auth/fetchJwt")
+    @GetMapping("/private/auth/fetchJwt")
     public ResponseEntity<?> fetchJwt(HttpServletResponse response) {
         service.fetchJwt(response);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/auth/activateAccount")
+    @PatchMapping("/public/auth/activateAccount")
     public ResponseEntity<?> activateAccount(@RequestBody SingleStringDto singleStringDto, HttpServletRequest request, HttpServletResponse response) {
         String token = singleStringDto.getValue();
         service.activateAccount(token, request, response);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/auth/authenticate")
+    @PostMapping("/public/auth/authenticate")
     public ResponseEntity<?> authenticate(@RequestBody AuthDto authDto, HttpServletResponse response) {
         String password = authDto.getPassword();
         String login = authDto.getLogin();
@@ -46,7 +46,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/public/auth/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         service.logout(request, response, authentication);
         return ResponseEntity.ok().build();

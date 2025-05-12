@@ -5,44 +5,44 @@ import {SelectedReason} from "../../PageComponents/OfferDisplay/BigContainer/Off
 
 //---Management---
 
-export const addOffer = async (offer: object): Promise<AxiosResponse> => {
-    return await api.post('api/offer/add', offer);  //manually handling errors in main function
-}
-
 export const fetchOffer = async (id: number | null): Promise<AxiosResponse> => {
     try {
-        return await api.get(`api/offer/fetch/${id}`);
+        return await api.get(`api/private/offer/fetch/${id}`);
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
     }
-}
+};
+
+export const fetchAllUserOffers = async (page: number, size: number): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/private/offer/fetchAllForUser', { params: { page: page, size: size } });
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
 
 export const fetchOfferWithUser = async (id: number | null): Promise<AxiosResponse> => {
-  try {
-      return await api.get(`api/offer/fetchWithUser/${id}`);
-  }  catch (error) {
-      handleError(error);
-      return Promise.reject(error);
-  }
+    try {
+        return await api.get(`api/public/offer/fetchWithUser/${id}`);
+    }  catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
+export const addOffer = async (offer: object): Promise<AxiosResponse> => {
+    return await api.post('api/private/offer/add', offer);  //manually handling errors in main function
 };
 
 export const updateOffer = async (id: number | null, offer: object): Promise<AxiosResponse> => {
-    return await api.put(`api/offer/update/${id}`, offer); //manually handling errors in main function
-}
-
-export const fetchAllUserOffers = async (): Promise<AxiosResponse> => {
-    try {
-        return await api.get('api/offer/fetchAllForUser');
-    } catch (error) {
-        handleError(error);
-        return Promise.reject(error);
-    }
-}
+    return await api.put(`api/private/offer/update/${id}`, offer); //manually handling errors in main function
+};
 
 export const deleteOffer = async (id: number | null): Promise<void> => {
     try {
-        await api.delete(`api/offer/delete/${id}`)
+        await api.delete(`api/private/offer/delete/${id}`)
     } catch (error) {
         handleError(error);
     }
@@ -50,7 +50,7 @@ export const deleteOffer = async (id: number | null): Promise<void> => {
 
 export const fetchRandomOffers = async ():Promise<AxiosResponse> => {
     try {
-        return await api.get("api/offer/fetchRandom");
+        return await api.get("api/public/offer/fetchRandom");
     } catch (error) {
         handleError(error);
         return Promise.reject(error);
@@ -59,31 +59,31 @@ export const fetchRandomOffers = async ():Promise<AxiosResponse> => {
 
 //---Functionality---
 
-export const followAndCheck = async (id: number | null, follow: boolean): Promise<AxiosResponse> => {
-    return await api.patch(`api/offer/followAndCheck/${id}`, { value: follow }); //manually handling errors in main function
-};
-
 export const fetchStats = async (id: number | null): Promise<AxiosResponse> => {
-  try {
-      return await api.get(`api/offer/fetchStats/${id}`);
-  } catch (error) {
-      handleError(error);
-      return Promise.reject(error);
-  }
+    try {
+        return await api.get(`api/private/offer/fetchStats/${id}`);
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
 };
 
-export const fetchAllFollowed = async (): Promise<AxiosResponse> => {
+export const fetchAllFollowed = async (page: number, size: number): Promise<AxiosResponse> => {
     try {
-        return await api.get('api/offer/fetchAllFollowed');
+        return await api.get('api/private/offer/fetchAllFollowed', { params: { page: page, size: size } });
     } catch (error) {
         handleError(error);
         return Promise.reject();
     }
 };
 
+export const followAndCheck = async (id: number | null, follow: boolean): Promise<AxiosResponse> => {
+    return await api.patch(`api/private/offer/followAndCheck/${id}`, { value: follow }); //manually handling errors in main function
+};
+
 export const reportOffer = async (reason: SelectedReason): Promise<void> => {
     try {
-        await api.post("api/offer/report", reason);
+        await api.post("api/private/offer/report", reason);
     } catch (error) {
         handleError(error);
     }
@@ -93,7 +93,7 @@ export const reportOffer = async (reason: SelectedReason): Promise<void> => {
 
 export const fetchFilteredOffers = async (queryParams: string | null): Promise<AxiosResponse> => {
     try {
-        return await api.get(`api/offer/search?${queryParams}`);
+        return await api.get(`api/public/offer/search?${queryParams}`);
     } catch (error) {
         handleError(error);
         return Promise.reject();
@@ -104,15 +104,15 @@ export const fetchFilteredOffers = async (queryParams: string | null): Promise<A
 
 export const adminDeleteOffer = async (id: number | null): Promise<void> => {
     try {
-        await api.delete(`api/offer/adminDelete/${id}`);
+        await api.delete(`api/private/admin/deleteOffer/${id}`);
     } catch (error) {
         handleError(error);
     }
 };
 
-export const adminFetchReports = async (): Promise<AxiosResponse> => {
+export const adminFetchReports = async (page: number, size: number): Promise<AxiosResponse> => {
     try {
-        return await api.get("api/offer/adminFetchReports");
+        return await api.get("api/private/admin/fetchReports", { params: { page: page, size: size } });
     } catch (error) {
         handleError(error);
         return Promise.reject();
@@ -121,7 +121,7 @@ export const adminFetchReports = async (): Promise<AxiosResponse> => {
 
 export const adminDeleteReport = async (id: number | null): Promise<void> => {
     try {
-        await api.delete(`api/offer/adminDeleteReport/${id}`);
+        await api.delete(`api/private/admin/deleteReport/${id}`);
     } catch (error) {
         handleError(error);
     }

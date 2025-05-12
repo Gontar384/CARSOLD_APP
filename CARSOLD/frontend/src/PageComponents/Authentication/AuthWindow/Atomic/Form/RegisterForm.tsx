@@ -32,7 +32,7 @@ const RegisterForm: React.FC = () => {
     const [passwordInfo, setPasswordInfo] = useState<string>("");
     const [passwordRepIcon, setPasswordRepIcon] = useState<IconProp | null>(null);
     const [inputType, setInputType] = useState<"text" | "password">("password");
-    const {handleCheckLogin, handleCheckInfo, handleCheckPassword} = useUserInfo();
+    const {handleCheckLogin, handleCheckAccount, handleCheckPassword} = useUserInfo();
     const [termsCheck, setTermsCheck] = useState<boolean>(false);
     const [mark, setMark] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -60,7 +60,7 @@ const RegisterForm: React.FC = () => {
         const checkEmail = async () => {
             const taken = await handleCheckLogin(user.email);
             if (taken) {
-                const account = await handleCheckInfo(user.email);
+                const account = await handleCheckAccount(user.email);
                 if (account.active) {
                     setEmailIcon(faCircleExclamation);
                     setEmailInfo("Email is already taken.");
@@ -102,7 +102,7 @@ const RegisterForm: React.FC = () => {
         const checkUsername = async () => {
             const taken = await handleCheckLogin(user.username);
             if (taken) {
-                const account = await handleCheckInfo(user.username);
+                const account = await handleCheckAccount(user.username);
                 if (account.active) {
                     setUsernameIcon(faCircleExclamation);
                     setUsernameInfo("Username is already taken.");

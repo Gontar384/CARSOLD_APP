@@ -53,19 +53,13 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(
-                                "/api/auth/checkAuth", "/api/authViaOAuth2",
-                                "/api/auth/activateAccount", "/api/auth/authenticate", "/api/auth/logout",
-                                "/api/registerUser","/api/sendPasswordRecoveryEmail","/api/changePasswordRecovery",
-                                "/api/checkLogin", "/api/checkInfo", "/api/offer/fetchWithUser/**",
-                                "/api/offer/search**", "/api/offer/fetchRandom"
-                        ).permitAll().anyRequest().authenticated())
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/private/**", "/ws/**").authenticated())
                 .oauth2Login(oath2 -> oath2
                         .authorizationEndpoint(authorization -> authorization
                                 .authorizationRequestRepository(customOAuth2AuthorizationRequestRepository))
                         .successHandler(customOAuth2SuccessHandler)
-                        .failureHandler(customOAuth2FailureHandler)
-                )
+                        .failureHandler(customOAuth2FailureHandler))
                 .build();
     }
 

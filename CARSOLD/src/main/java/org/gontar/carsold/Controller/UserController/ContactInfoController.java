@@ -18,34 +18,34 @@ public class ContactInfoController {
         this.service = service;
     }
 
-    @PatchMapping("/updateName")
+    @PatchMapping("/private/userContactInfo/updateName")
     public ResponseEntity<?> updateName(@RequestBody SingleStringDto singleStringDto) {
         String name = singleStringDto.getValue();
         service.updateName(name);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/updatePhone")
+    @PatchMapping("/private/userContactInfo/updatePhone")
     public ResponseEntity<?> updatePhone(@RequestBody SingleStringDto singleStringDto) {
         String phone = singleStringDto.getValue();
         service.updatePhone(phone);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/updateCity")
+    @PatchMapping("/private/userContactInfo/updateCity")
     public ResponseEntity<?> updateCity(@RequestBody SingleStringDto singleStringDto) {
         String city = singleStringDto.getValue();
         service.updateCity(city);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/fetchCitySuggestions")
+    @GetMapping("/private/userContactInfo/fetchCitySuggestions")
     public ResponseEntity<CitySuggestionsDto> fetchCitySuggestions(@RequestParam("value") String value) {
         CitySuggestionsDto response = service.fetchCitySuggestions(value);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/updateAndFetchContactPublic")
+    @PatchMapping("/private/userContactInfo/updateAndFetchContactPublic")
     public ResponseEntity<SingleBooleanDto> updateAndFetchContactPublic(@RequestBody SingleBooleanDto singleBooleanDto) {
         Boolean isPublic = singleBooleanDto.getValue();
         boolean changedValue = service.updateAndFetchContactPublic(isPublic);
@@ -53,7 +53,7 @@ public class ContactInfoController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/fetchContactInfo")
+    @GetMapping("/private/userContactInfo/fetch")
     public ResponseEntity<ContactInfoDto> fetchContactInfo() {
         ContactInfoDto response = service.fetchContactInfo();
         return ResponseEntity.ok(response);

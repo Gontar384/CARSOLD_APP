@@ -16,20 +16,20 @@ public class ProfilePicController {
         this.service = service;
     }
 
-    @GetMapping("/fetchProfilePic")
+    @GetMapping("/private/userProfilePic/fetch")
     public ResponseEntity<SingleStringDto> fetchProfilePic() {
         String profilePic = service.fetchProfilePic();
         SingleStringDto response = new SingleStringDto(profilePic);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/uploadProfilePic")
+    @PatchMapping("/private/userProfilePic/upload")
     public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile file) {
         service.uploadProfilePic(file);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/deleteProfilePic")
+    @DeleteMapping("/private/userProfilePic/delete")
     public ResponseEntity<String> deleteProfilePic() {
         service.deleteProfilePic();
         return ResponseEntity.ok().build();

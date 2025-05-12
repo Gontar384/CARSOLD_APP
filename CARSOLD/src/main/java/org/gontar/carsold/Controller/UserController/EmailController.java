@@ -17,7 +17,7 @@ public class EmailController {
         this.service = service;
     }
 
-    @GetMapping("/sendPasswordRecoveryEmail")
+    @GetMapping("/public/email/sendPasswordRecoveryEmail")
     public ResponseEntity<?> sendPasswordRecoveryEmail(@RequestParam("email") String email) {
         service.sendPasswordRecoveryEmail(email);
         return ResponseEntity.ok().build();
