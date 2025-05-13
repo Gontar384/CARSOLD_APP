@@ -24,13 +24,13 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     const debouncedPassword = CreateDebouncedValue(password, 300);
     const {handleCheckOldPassword} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const {handleLogout} = useAuth();
+    const {handleCheckAuth} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
 
     useEffect(() => {
         const checkPassword = async () => {
             setInfo("");
-            if (password.length < 8 || password.length > 50) {
+            if (password.length < 5 || password.length > 50) {
                 setIcon(null);
                 return;
             }
@@ -42,10 +42,11 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     }, [debouncedPassword]);
 
     const deleteAccount = async () => {
+        if (isDisabled) return;
         setIsDisabled(true);
         try {
             await deleteUser(password);
-            await handleLogout();
+            await handleCheckAuth();
             sessionStorage.setItem("isAccountDeleted", "true");
         } catch (error: unknown) {
             if (error instanceof ForbiddenError) {
@@ -65,14 +66,21 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     }
 
     const handleDeleteAccount = async () => {
-        if (password.length < 8 || password.length > 50) return;
+        if (password.length < 5 || password.length > 50) return;
         await deleteAccount();
     };
 
     const handleDeleteGoogleAccount = async () => {
-        if (confirmation !== "delete_account") return;
+        if (confirmation !== "delete_account") {
+            setInfo("Type in correctly.")
+            return;
+        }
         await deleteAccount();
     };
+
+    useEffect(() => {
+        setInfo("");
+    }, [confirmation]);
 
     return (
         <div className="flex flex-col items-center mb-8 m:mb-10">
@@ -80,10 +88,9 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
                 {label}</p>
             <div className="flex w-full justify-center mt-5 m:mt-7 mb-2 m:mb-3">
                 {!googleLogged ? (
-                    <Input placeholder="Password" inputType="password" value={password} setValue={setPassword}
-                           icon={icon} info={info}/>
+                    <Input placeholder="Password" inputType="password" value={password} setValue={setPassword} icon={icon} info={info}/>
                 ) : (
-                    <Input placeholder="" inputType="text" value={confirmation} setValue={setConfirmation}/>
+                    <Input placeholder="" inputType="text" value={confirmation} setValue={setConfirmation} info={info}/>
                 )
                 }
             </div>

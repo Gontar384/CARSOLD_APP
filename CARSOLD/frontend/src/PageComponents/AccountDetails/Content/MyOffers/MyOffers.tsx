@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 
 export interface FetchedOffer {
     id: number;
@@ -44,23 +44,8 @@ const MyOffers: React.FC = () => {
     const {buttonColor, bindHoverHandlers} = useButton();
     const {handleFetchAllUserOffers, offerFetched} = useOfferUtil();
     const [deleted, setDeleted] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState<number>(0);
     const itemsPerPage = 3;
-    const [totalPages, setTotalPages] = useState<number>(0);
-    const hasNextPage = currentPage < totalPages - 1;
-    const hasPrevPage = currentPage > 0;
-    const [hovered, setHovered] = useState<boolean[]>(Array(2).fill(false));
-    const {isMobile} = useUtil();
-
-    const nextPage = () => {
-        setCurrentPage(prev => prev + 1);
-    };
-
-    const prevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
+    const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
 
     useEffect(() => {
         if (sessionStorage.getItem("offerAdded") === "true") {
@@ -107,32 +92,6 @@ const MyOffers: React.FC = () => {
         manageHandleFetchAllUserOffers();
         setDeleted(false);
     }, [deleted, currentPage]); //fetch offers
-
-    const handleHover = (index: number, val: boolean) => {
-        setHovered(prev => {
-            const copy = [...prev];
-            copy[index] = val;
-            return copy;
-        });
-    };
-
-    const bindHoverButtons = (index: number) => {
-        if (isMobile) {
-            return {
-                onTouchStart: () => handleHover(index, true),
-                onTouchEnd: () => handleHover(index, false)
-            };
-        } else {
-            return {
-                onMouseEnter: () => handleHover(index, true),
-                onMouseLeave: () => handleHover(index, false)
-            };
-        }
-    };
-
-    useEffect(() => {
-        setHovered([false, false]);
-    }, [currentPage]);
 
     return (
         <>

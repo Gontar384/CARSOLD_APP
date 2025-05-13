@@ -4,7 +4,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {adminDeleteReport, adminFetchReports} from "../../../../ApiCalls/Services/OfferService.ts";
 import {faCar, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 
 interface Report {
     id: number | null;
@@ -19,24 +19,9 @@ const Admin: React.FC = () => {
     const navigate = useNavigate();
     const [reports, setReports] = useState<Report[]>([]);
     const [deleted, setDeleted] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState<number>(0);
-    const itemsPerPage = 6;
-    const [totalPages, setTotalPages] = useState<number>(0);
-    const hasNextPage = currentPage < totalPages - 1;
-    const hasPrevPage = currentPage > 0;
     const [fetched, setFetched] = useState<boolean>(false);
-    const [hovered, setHovered] = useState<boolean[]>(Array(2).fill(false));
-    const {isMobile} = useUtil();
-
-    const nextPage = () => {
-        setCurrentPage(prev => prev + 1);
-    };
-
-    const prevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
+    const itemsPerPage = 6;
+    const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -75,32 +60,6 @@ const Admin: React.FC = () => {
         }
     };
 
-    const handleHover = (index: number, val: boolean) => {
-        setHovered(prev => {
-            const copy = [...prev];
-            copy[index] = val;
-            return copy;
-        });
-    };
-
-    const bindHoverHandlers = (index: number) => {
-        if (isMobile) {
-            return {
-                onTouchStart: () => handleHover(index, true),
-                onTouchEnd: () => handleHover(index, false)
-            };
-        } else {
-            return {
-                onMouseEnter: () => handleHover(index, true),
-                onMouseLeave: () => handleHover(index, false)
-            };
-        }
-    };
-
-    useEffect(() => {
-        setHovered([false, false]);
-    }, [currentPage]);
-
     if (!fetched) return null;
 
     return (
@@ -132,7 +91,7 @@ const Admin: React.FC = () => {
                     {hasPrevPage && (
                         <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
                         ${hovered[0] && "ring ring-white"}`}
-                                {...bindHoverHandlers(0)} onClick={prevPage}>
+                                {...bindHoverButtons(0)} onClick={prevPage}>
                             {currentPage}
                         </button>
                     )}
@@ -142,7 +101,7 @@ const Admin: React.FC = () => {
                     {hasNextPage && (
                         <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
                         ${hovered[1] && "ring ring-white"}`}
-                                {...bindHoverHandlers(1)} onClick={nextPage}>
+                                {...bindHoverButtons(1)} onClick={nextPage}>
                             {currentPage + 2}
                         </button>
                     )}

@@ -11,6 +11,7 @@ import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.JwtService.JwtService;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.gontar.carsold.Service.UserService.AuthenticationService.AuthenticationService;
 import org.gontar.carsold.Service.UserService.EmailService.EmailService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,15 +49,17 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
     private final EmailService emailService;
+    private final AuthenticationService authenticationService;
 
     public UserManagementServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
-                                     JwtService jwtService, EmailService emailService) {
+                                     JwtService jwtService, EmailService emailService, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.userDetailsService = userDetailsService;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.emailService = emailService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -209,7 +213,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void deleteUser(String password) {
+    public void deleteUser(String password, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         User user = userDetailsService.loadUser();
         if (!user.getOauth2()) {
             Objects.requireNonNull(password, "password cannot be null");
@@ -241,6 +245,8 @@ public class UserManagementServiceImpl implements UserManagementService {
         offerRepository.flush();
         userRepository.flush();
         userRepository.delete(user);
+
+        authenticationService.logout(request, response, authentication);
     }
 
     private void deleteUserInCloud(String username) {

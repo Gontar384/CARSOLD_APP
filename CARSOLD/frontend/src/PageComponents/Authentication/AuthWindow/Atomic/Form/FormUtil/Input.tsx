@@ -24,7 +24,6 @@ const Input = <T extends string | number | object>({placeholder, inputType, setI
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value.trim();
-
         if (setValue) {
             if (field) {
                 setValue((prev: T) => ({

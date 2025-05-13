@@ -1,59 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import SearchFilters from "./SearchFilters/SearchFilters.tsx";
 import {UpdatedOffer} from "../AccountDetails/Content/MyOffers/MyOffers.tsx";
 import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOfferDisplay.tsx";
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {usePagination} from "../../CustomHooks/usePagination.ts";
 
 const Search: React.FC = () => {
     document.title = "CARSOLD | Search";
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState<number>(0);
     const itemsPerPage = 10;
-    const [totalPages, setTotalPages] = useState<number>(0);
     const [totalElements, setTotalElements] = useState<number>(0);
-    const hasNextPage = currentPage < totalPages - 1;
-    const hasPrevPage = currentPage > 0;
-    const [hovered, setHovered] = useState<boolean[]>(Array(2).fill(false));
-    const {isMobile} = useUtil();
-
-    const nextPage = () => {
-        setCurrentPage(prev => prev + 1);
-    };
-
-    const prevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
-
-    const handleHover = (index: number, val: boolean) => {
-        setHovered(prev => {
-            const copy = [...prev];
-            copy[index] = val;
-            return copy;
-        });
-    };
-
-    const bindHoverButtons = (index: number) => {
-        if (isMobile) {
-            return {
-                onTouchStart: () => handleHover(index, true),
-                onTouchEnd: () => handleHover(index, false)
-            };
-        } else {
-            return {
-                onMouseEnter: () => handleHover(index, true),
-                onMouseLeave: () => handleHover(index, false)
-            };
-        }
-    };
-
-    useEffect(() => {
-        setHovered([false, false]);
-    }, [currentPage]);
+    const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
 
     return (
         <LayOut>

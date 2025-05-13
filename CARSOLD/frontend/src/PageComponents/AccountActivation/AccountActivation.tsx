@@ -17,19 +17,19 @@ const AccountActivation: React.FC = () => {
         setActivationMessage(message);
         setColor("bg-coolYellow");
         setLoaded(true);
-        setTimeout(() => navigate("/authenticate/register"), 3500);
+        setTimeout(() => navigate("/authenticate/register"), 2700);
     };
 
     useEffect(() => {
         const token = new URLSearchParams(window.location.search).get('token');
 
-        const handleActivateAccount = async (token: string | null) => { // Rename for clarity
+        const handleActivateAccount = async (token: string | null) => {
             try {
                 await activateAccount(token);
                 setActivationMessage("Account activation success.");
                 setColor("bg-lime");
                 setLoaded(true);
-                setTimeout(async () => await handleCheckAuth(), 3500);
+                setTimeout(async () => await handleCheckAuth(), 2700);
             } catch (error: unknown) {
                 if (error instanceof BadRequestError) {
                     console.error("Token is invalid or has expired: ", error.message, error.response);

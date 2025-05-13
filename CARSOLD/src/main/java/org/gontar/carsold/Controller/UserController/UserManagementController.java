@@ -10,6 +10,7 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.User.UserDto;
 import org.gontar.carsold.Service.UserService.UserManagementService.UserManagementService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.validation.annotation.Validated;
@@ -66,8 +67,8 @@ public class UserManagementController {
     }
 
     @DeleteMapping("/private/user/delete")
-    public ResponseEntity<?> deleteUser(@RequestParam("password") String password) {
-        service.deleteUser(password);
+    public ResponseEntity<?> deleteUser(@RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        service.deleteUser(password, request, response, authentication);
         return ResponseEntity.ok().build();
     }
 }
