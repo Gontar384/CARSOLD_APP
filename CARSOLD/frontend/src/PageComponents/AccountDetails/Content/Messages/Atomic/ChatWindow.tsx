@@ -260,8 +260,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     useEffect(() => {
         if (!isAuthenticated || !username || !receiverUsername) return;
         const socketUrl = import.meta.env.VITE_BACKEND_URL.startsWith("https://")
-            ? `${import.meta.env.VITE_BACKEND_URL.replace(/^http:/, 'https:')}ws`
-            : `${import.meta.env.VITE_BACKEND_URL}ws`;
+            ? `${import.meta.env.VITE_BACKEND_URL.replace(/^http:/, 'https:')}/ws`
+            : `${import.meta.env.VITE_BACKEND_URL}/ws`;
         const socket = new SockJS(socketUrl);
         const stompClient = Stomp.over(socket);
         stompClient.debug = () => {};

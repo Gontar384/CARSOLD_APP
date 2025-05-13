@@ -1,14 +1,5 @@
 import {AxiosError} from "axios";
-import {
-    ApiException,
-    BadRequestError,
-    ForbiddenError,
-    InternalServerError, MethodNotAllowedError,
-    NotFoundError, PayloadTooLarge,
-    UnauthorizedError,
-    UnprocessableEntityError,
-    UnsupportedMediaTypeError
-} from "./CustomErrors.ts";
+import {ApiException, BadRequestError, ForbiddenError, InternalServerError, MethodNotAllowedError, NotFoundError, PayloadTooLarge, UnauthorizedError, UnprocessableEntityError, UnsupportedMediaTypeError} from "./CustomErrors.ts";
 
 export const handleError = (error: unknown): void => {
     if (error instanceof AxiosError) {
