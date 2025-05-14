@@ -42,7 +42,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             else if (!user.getOauth2()) updateUserToOAuth2(user);
 
             jwtService.addCookieWithNewTokenToResponse(user.getUsername(), response);
-            customOAuth2AuthorizationRequestRepository.deleteCookie(response);
+            customOAuth2AuthorizationRequestRepository.createCookie(response, "", 0);
             response.sendRedirect(frontendUrl + "/details/myOffers");
         }
     }

@@ -14,15 +14,15 @@ const MobileButton: React.FC<MobileButtonProps> = ({onClick, icon, label, count}
     const {buttonColor, bindHoverHandlers} = useButton();
 
     return (
-        <button className="flex flex-col items-center w-1/6 h-full pt-[7px] relative"
+        <button className="flex flex-col items-center w-1/6 h-full pt-[7px] m:pt-[9px] relative"
                 onClick={onClick} {...bindHoverHandlers()}>
-            <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-[28px]"/>
+            <FontAwesomeIcon icon={icon} style={{color: buttonColor ? "white" : "black"}} className="text-[28px] m:text-[31px]"/>
             {count && count > 0 ? (
-                <p className="text-xs top-2.5 text-white absolute">
+                <p className="text-xs m:text-sm top-2.5 text-white absolute">
                     {count}
                 </p>
             ) : null}
-            <p className="text-xs">{label}</p>
+            <p className="text-xs m:text-sm">{label}</p>
         </button>
     )
 }

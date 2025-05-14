@@ -5,6 +5,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Exception.CustomException.CookieServiceException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -28,34 +30,18 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
     }
 
     @Override
-    public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request,
-                                         HttpServletResponse response) {
+    public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         if (authorizationRequest == null) {
-            deleteCookie(response);
+            createCookie(response, "", 0);
             return;
         }
         String serializedAuthorizationRequest = serialize(authorizationRequest);
-        addCookie(response, serializedAuthorizationRequest);
+        createCookie(response, serializedAuthorizationRequest, 1);
     }
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
         return loadAuthorizationRequest(request);
-    }
-
-    private void addCookie(HttpServletResponse response, String value) {
-        try {
-            ResponseCookie cookie = ResponseCookie.from(CustomOAuth2AuthorizationRequestRepository.COOKIE_NAME, value)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .sameSite("Lax")
-                    .maxAge(Duration.ofMinutes(1))
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new CookieServiceException("OAuth2 cookie creation failed: " + e.getMessage());
-        }
     }
 
     private Optional<String> getCookie(HttpServletRequest request) {
@@ -80,18 +66,18 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
         return new Gson().fromJson(json, OAuth2AuthorizationRequest.class);
     }
 
-    public void deleteCookie(HttpServletResponse response) {
+    public void createCookie(HttpServletResponse response, String value, int timeInMinutes) {
         try {
-            ResponseCookie cookie = ResponseCookie.from(CustomOAuth2AuthorizationRequestRepository.COOKIE_NAME, "")
+            ResponseCookie cookie = ResponseCookie.from(CustomOAuth2AuthorizationRequestRepository.COOKIE_NAME, value)
                     .httpOnly(true)
                     .secure(true)
                     .path("/")
                     .sameSite("Lax")
-                    .maxAge(0)
+                    .maxAge(Duration.ofMinutes(timeInMinutes))
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new CookieServiceException("OAuth2 cookie deletion failed: " + e.getMessage());
+            throw new CookieServiceException("OAuth2 cookie creation failed: " + e.getMessage());
         }
     }
 }

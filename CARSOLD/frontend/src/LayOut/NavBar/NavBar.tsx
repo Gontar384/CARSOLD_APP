@@ -14,7 +14,7 @@ import MessageNotification from "./MessageNotification/MessageNotification.tsx";
 const NavBar: React.FC = () => {
     const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
     const excludedButtonRef = useRef<HTMLButtonElement | null>(null);  //excludes OptionsButton from MidBar closing effect
-    const {mobileWidth, midWidth, bigWidth} = useUtil();
+    const {mobileWidth, midWidth, bigWidth, isMobile} = useUtil();
     const {loadingAuth} = useAuth();
 
     useEffect(() => {
@@ -37,8 +37,8 @@ const NavBar: React.FC = () => {
                     </>}
                 {loadingAuth && <LoadingNavBarLine/>}
             </div>
-            {mobileWidth && <LowerBar/>}
-            {midWidth && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
+            {(mobileWidth || isMobile) && !bigWidth && <LowerBar/>}
+            {midWidth && !isMobile && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
             <MessageNotification/>
         </>
     )

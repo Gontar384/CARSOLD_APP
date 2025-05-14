@@ -78,7 +78,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                 {details.map((item, index) => (
                     <div className="flex flex-col items-center justify-center gap-1.5 m:gap-2" key={index}>
                         <FontAwesomeIcon icon={item.icon} className="text-3xl m:text-4xl"/>
-                        <p className="text-lg m:text-xl">{item.value}</p>
+                        <p className="text-lg m:text-xl text-center">{item.value}</p>
                     </div>
                 ))}
             </div>

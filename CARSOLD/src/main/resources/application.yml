@@ -14,7 +14,7 @@ spring:
     show-sql: true
     open-in-view: false
 
-  # SMTP Server Configuration (email sending)
+# SMTP Server Configuration (email sending)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -24,7 +24,7 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
-  # OAuth2 Configuration
+# OAuth2 Configuration
   security:
     oauth2:
       client:
@@ -33,7 +33,7 @@ spring:
             client-id: ${GOOGLE_ID}
             client-secret: ${GOOGLE_SECRET}
 
-  # Google Cloud Storage and Vision Configuration
+# Google Cloud Storage and Vision Configuration
   cloud:
     gcp:
       project-id: ${GOOGLE_CLOUD_PROJECT}

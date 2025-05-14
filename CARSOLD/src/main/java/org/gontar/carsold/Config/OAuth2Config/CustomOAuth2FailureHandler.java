@@ -23,7 +23,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        customOAuth2AuthorizationRequestRepository.deleteCookie(response);
+        customOAuth2AuthorizationRequestRepository.createCookie(response, "", 0);
         response.sendRedirect(frontendUrl + "/authenticate/login");
     }
 }
