@@ -73,6 +73,7 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
                     .secure(true)
                     .path("/")
                     .sameSite("Lax")
+                    .domain(".onrender.com")
                     .maxAge(Duration.ofMinutes(timeInMinutes))
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
