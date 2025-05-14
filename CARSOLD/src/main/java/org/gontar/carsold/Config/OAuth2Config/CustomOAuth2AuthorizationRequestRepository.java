@@ -5,7 +5,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Exception.CustomException.CookieServiceException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -73,7 +71,6 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
                     .secure(true)
                     .path("/")
                     .sameSite("Lax")
-                    .domain(".onrender.com")
                     .maxAge(Duration.ofMinutes(timeInMinutes))
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

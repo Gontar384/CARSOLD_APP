@@ -102,7 +102,6 @@ public class JwtService {
                     .path("/")
                     .sameSite("Lax")
                     .maxAge(Duration.ofHours(timeInHours))
-                    .domain(".onrender.com")
                     .build();
         }  catch (IllegalArgumentException | IllegalStateException e) {
             throw new CookieServiceException("Cookie creation failed: " + e.getMessage());
