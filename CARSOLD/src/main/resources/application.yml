@@ -14,7 +14,7 @@ spring:
     show-sql: true
     open-in-view: false
 
-# SMTP Server Configuration (email sending)
+  # SMTP Server Configuration (email sending)
   mail:
     host: smtp.gmail.com
     port: 587

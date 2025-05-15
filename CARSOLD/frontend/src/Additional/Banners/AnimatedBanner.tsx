@@ -12,7 +12,7 @@ interface AnimatedBannerProps {
 const AnimatedBanner: React.FC<AnimatedBannerProps> = ({ text, onAnimationEnd, delay, color, z }) => {
 
     const [animation, setAnimation] = useState<string>('animate-slideIn');
-    const {mobileWidth, isMobile, bigWidth, lowerBar} = useUtil();
+    const {lowerBar, mobileWidth} = useUtil();
 
     useEffect(() => {
         if (delay && onAnimationEnd) {
@@ -32,7 +32,7 @@ const AnimatedBanner: React.FC<AnimatedBannerProps> = ({ text, onAnimationEnd, d
 
     return (
         <div className={`flex justify-center items-center fixed 
-        ${(mobileWidth || isMobile) && !bigWidth && lowerBar ? "bottom-14 m:bottom-16 transition-all duration-300 ease-out" : "bottom-0"} 
+        ${lowerBar && mobileWidth ? "bottom-14 transition-all duration-300 ease-out" : "bottom-0"} 
             left-0 right-0 ${text.length > 30 ? "h-24 m:h-20" : "h-12 m:h-14"} ${color} rounded-t-2xl ${z} shadow-top ${animation}`}>
             <p className="p-4 text-xl m:text-[22px] text-center">
                 {text}

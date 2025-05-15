@@ -37,7 +37,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
             return () => clearTimeout(timeout);
         }
-    }, [midBar, midWidth]);   //activates/deactivates lower bar and resets animation
+    }, [midBar, midWidth]);   //activates/deactivates bar and resets animation
 
     useEffect(() => {
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
@@ -68,7 +68,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     if (midBarActive) {
         return (
-            <div className={`flex flex-col items-center w-[230px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50`}
+            <div className={`flex flex-col items-center w-[230px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
+            overflow-auto overscroll-contain`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
                     {isAuthenticated ? (
@@ -81,7 +82,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                         <LoginRegisterButton/>
                     )}
                 </div>
-                <div className="flex flex-col items-start w-full">
+                <div className="flex flex-col items-start w-full pb-14">
                     <BarButton label="Add offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
