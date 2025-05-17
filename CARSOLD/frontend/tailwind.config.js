@@ -173,7 +173,7 @@ export default {
                     '0%': {transform: "translateY(0)"},
                     '100%': {transform: "translateY(-100%)"},
                 },
-                appearLong: {
+                appearSlow: {
                     '0%': {transform: "translateX(200%)"},
                     '100%': {transform: "translateX(0)"},
                 },
@@ -181,7 +181,7 @@ export default {
                     '0%': {transform: "translateX(200%)"},
                     '100%': {transform: "translateX(0)"},
                 },
-                appearLongRev: {
+                appearSlowRev: {
                     '0%': {transform: "translateX(-200%)"},
                     '100%': {transform: "translateX(0)"},
                 },
@@ -233,9 +233,9 @@ export default {
                 underline: 'underline 0.2s linear forwards',
                 slideDownShow: 'slideDownShow 0.2s ease-in-out forwards',
                 slideUpShow: 'slideUpShow 0.2s ease-in-out forwards',
-                appearLong: 'appearLong 1s ease-in-out forwards',
+                appearSlow: 'appearSlow 1s ease-in-out forwards',
                 appearFast: 'appearFast 0.5s ease-in-out forwards',
-                appearLongRev: 'appearLongRev 1s ease-in-out forwards',
+                appearSlowRev: 'appearSlowRev 1s ease-in-out forwards',
                 appearFastRev: 'appearFastRev 0.5s ease-in-out forwards',
                 slideUpAppear: 'slideUpAppear 0.3s ease-in-out forwards',
                 slideDownDisappear: 'slideDownDisappear 0.3s ease-in-out forwards',
