@@ -3,6 +3,7 @@ import React, {createContext, useContext} from "react";
 interface UtilContextType {
     darkMode: boolean;
     toggleDarkMode: () => void;
+    disableDarkMode: () => void;
     lowerBar: boolean;
     setLowerBar: React.Dispatch<React.SetStateAction<boolean>>;
     midBar: boolean;

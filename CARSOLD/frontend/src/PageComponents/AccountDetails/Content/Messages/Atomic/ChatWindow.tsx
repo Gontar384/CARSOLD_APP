@@ -421,7 +421,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                         </div>
                         <div className="flex flex-row items-center w-full h-11 m:h-12 text-lg m:text-xl border-t-2 border-gray-300 shadow-top-l relative">
                             <input className="w-[75%] h-full outline-none px-2" placeholder="Type in..." onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
-                                   value={content} onChange={(e) => setContent(e.target.value)} disabled={userInfo.blockedByUser || userInfo.blockedUser}/>
+                                   value={content} onChange={(e) => setContent(e.target.value)} disabled={userInfo.blockedByUser || userInfo.blockedUser}
+                                   onKeyDown={e => e.key === "Enter" && handleSendMessage()}/>
                             {(userInfo.blockedByUser || userInfo.blockedUser) &&
                                 <div className="flex justify-center items-center truncate absolute top-0 left-0 w-[75%] h-full bg-coolRed text-white text-center"
                                      onMouseDown={!isMobile ? () => setMarkSeen(true) : undefined}

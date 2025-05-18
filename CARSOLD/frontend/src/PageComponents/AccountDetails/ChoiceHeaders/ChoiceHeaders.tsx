@@ -3,6 +3,7 @@ import ChoiceButton from "./Atomic/ChoiceButton.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {useUserInfo} from "../../../CustomHooks/useUserInfo.ts";
+import {useMessages} from "../../../GlobalProviders/Messages/useMessages.ts";
 
 const ChoiceHeaders: React.FC = () => {
 
@@ -17,6 +18,7 @@ const ChoiceHeaders: React.FC = () => {
     const buttonState: boolean[] = validSections.map((_, index) => index === choice);
     const {handleCheckAdmin} = useUserInfo();
     const [admin, setAdmin] = useState<boolean>(false);
+    const {unseenMessagesCount} = useMessages();
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -41,7 +43,7 @@ const ChoiceHeaders: React.FC = () => {
         <div className="flex flex-row justify-evenly w-full">
             <ChoiceButton label={"My offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
             <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
-            <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
+            <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]} count={unseenMessagesCount}/>
             <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
             <ChoiceButton label={"Info"} onClick={() => handleNavigation("info")} active={buttonState[4]}/>
             {admin && <ChoiceButton label={"Admin"} onClick={() => handleNavigation("admin")} active={buttonState[5]}/>}
@@ -53,7 +55,7 @@ const ChoiceHeaders: React.FC = () => {
             <div className={`flex flex-row justify-evenly w-full max-w-[600px]`}>
                 <ChoiceButton label={"My offers"} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
                 <ChoiceButton label={"Followed"} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
-                <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]}/>
+                <ChoiceButton label={"Messages"} onClick={() => handleNavigation("messages")} active={buttonState[2]} count={unseenMessagesCount}/>
             </div>
             <div className={`flex flex-row justify-evenly ${admin ? "w-full max-w-[600px]" : "w-[67%] max-w-[400px]"}`}>
                 <ChoiceButton label={"Settings"} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>

@@ -20,43 +20,46 @@ import OpenRoutes from "./Config/AuthConfig/OpenRoutes.tsx";
 import Home from "./PageComponents/Home/Home.tsx";
 import {MessagesProvider} from "./GlobalProviders/Messages/MessagesProvider.tsx";
 import {UserUtilProvider} from "./GlobalProviders/UserUtil/UserUtilProvider.tsx";
+import {LanguageProvider} from "./GlobalProviders/Language/LanguageProvider.tsx";
 
 const App: React.FC = () => {
 
     return (
         <BrowserRouter> {/*manages routes*/}
-            <UtilProvider> {/*provides util*/}
-                <AuthProvider> {/*manages authentication*/}
-                    <SearchProvider> {/*provides search util*/}
-                        <UserUtilProvider> {/*provides username and profilePic*/}
-                            <MessagesProvider> {/*sending messages util*/}
-                                <Routes>
-                                    <Route element={<PublicRoutes/>}>
-                                        <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
-                                        <Route path="/activate" element={<AccountActivation/>}/>
-                                        <Route path="/password-recovery" element={<PasswordRecovery/>}/>
-                                        <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>
-                                    </Route>
-                                    <Route element={<OpenRoutes/>}>
-                                        <Route path="/termsOfUse" element={<TermsOfUse/>}/>
-                                        <Route path="/search" element={<Search/>}/>
-                                        <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
-                                        <Route path="/home" element={<Home/>}/>
-                                    </Route>
-                                    <Route element={<PrivateRoutes/>}>
-                                        <Route path="/details/:section?" element={<AccountDetails/>}/>
-                                        <Route path="/addingOffer" element={<OfferForm/>}/>
-                                        <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
-                                    </Route>
-                                    <Route path="*" element={<Navigate to="/search"/>}/>
-                                </Routes>
-                                <CookieBanner/> {/*displays cookie banner*/}
-                                <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
-                            </MessagesProvider>
-                        </UserUtilProvider>
-                    </SearchProvider>
-                </AuthProvider>
-            </UtilProvider>
+            <LanguageProvider> {/*manages language*/}
+                <UtilProvider> {/*provides util*/}
+                    <AuthProvider> {/*manages authentication*/}
+                        <SearchProvider> {/*provides search util*/}
+                            <UserUtilProvider> {/*provides username and profilePic*/}
+                                <MessagesProvider> {/*sending messages util*/}
+                                    <Routes>
+                                        <Route element={<PublicRoutes/>}>
+                                            <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
+                                            <Route path="/activate" element={<AccountActivation/>}/>
+                                            <Route path="/password-recovery" element={<PasswordRecovery/>}/>
+                                            <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>
+                                        </Route>
+                                        <Route element={<OpenRoutes/>}>
+                                            <Route path="/termsOfUse" element={<TermsOfUse/>}/>
+                                            <Route path="/search" element={<Search/>}/>
+                                            <Route path="/displayOffer/:section?" element={<OfferDisplay/>}/>
+                                            <Route path="/home" element={<Home/>}/>
+                                        </Route>
+                                        <Route element={<PrivateRoutes/>}>
+                                            <Route path="/details/:section?" element={<AccountDetails/>}/>
+                                            <Route path="/addingOffer" element={<OfferForm/>}/>
+                                            <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
+                                        </Route>
+                                        <Route path="*" element={<Navigate to="/search"/>}/>
+                                    </Routes>
+                                    <CookieBanner/> {/*displays cookie banner*/}
+                                    <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}
+                                </MessagesProvider>
+                            </UserUtilProvider>
+                        </SearchProvider>
+                    </AuthProvider>
+                </UtilProvider>
+            </LanguageProvider>
         </BrowserRouter>
     )
 };

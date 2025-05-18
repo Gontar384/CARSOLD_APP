@@ -38,9 +38,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
             if (event.key === 'theme') {
-
                 const newMode: string | null = event.newValue;
-
                 if (newMode === 'dark') {
                     setDarkMode(true);
                     document.body.style.backgroundColor = '#191a18';
@@ -50,19 +48,20 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
                 }
             }
         }
-
         if (darkMode) {
             document.body.style.backgroundColor = '#191a18';
         } else {
             document.body.style.backgroundColor = 'white';
         }
-
         window.addEventListener('storage', handleStorageChange);
 
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, [darkMode]);  //manages dark mode on initial load
+
+    const disableDarkMode = () => {
+        localStorage.setItem('theme', 'light');
+        setDarkMode(false);
+    }; //used on logout
 
     useEffect(() => {
         const handleResize = () => {
@@ -137,7 +136,7 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     return (
         <UtilContext.Provider
-            value={{darkMode, toggleDarkMode, lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth, bigWidth, CreateDebouncedValue, isMobile}}>
+            value={{darkMode, toggleDarkMode, disableDarkMode, lowerBar, setLowerBar, midBar, setMidBar, mobileWidth, midWidth, bigWidth, CreateDebouncedValue, isMobile}}>
             {children}
         </UtilContext.Provider>
     );

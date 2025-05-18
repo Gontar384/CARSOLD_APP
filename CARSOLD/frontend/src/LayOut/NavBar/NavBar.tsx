@@ -10,6 +10,7 @@ import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import MidBar from "./Atomic/MidBar/MidBar.tsx";
 import MessageNotification from "./MessageNotification/MessageNotification.tsx";
+import LanguageDropdown from "./Atomic/LanguageDropdown.tsx";
 
 const NavBar: React.FC = () => {
     const [iconAnimation, setIconAnimation] = useState<"animate-flip" | "animate-flipRev" | null>(null);  //OptionsButton animations
@@ -29,6 +30,7 @@ const NavBar: React.FC = () => {
                     <OptionsButton excludedButtonRef={excludedButtonRef}
                                    iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
                 <Logo/>
+                <LanguageDropdown/>
                 <SearchBar/>
                 {bigWidth &&
                     <>

@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 const Logo: React.FC = () => {
 
     return (
-        <Link className="flex flex-row justify-center text-[26px] m:text-3xl mx-2"
+        <Link className="flex flex-row justify-center text-[22px] m:text-[26px]"
                 to={"/home"} title="Home">
             <p className="text-white">CAR</p>
             <p className="text-black">$</p>

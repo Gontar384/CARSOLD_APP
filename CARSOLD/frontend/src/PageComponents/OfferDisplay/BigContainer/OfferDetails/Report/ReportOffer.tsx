@@ -93,7 +93,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
             <div className="flex flex-col items-center w-[95%] h-[95%] max-w-[800px] bg-lowLime rounded overflow-hidden border border-gray-300"
                  ref={componentRef}>
                 <h2 className="text-2xl m:text-3xl font-semibold my-12 m:my-14">Report Offer</h2>
-                <div className="space-y-6 m:space-y-8">
+                <div className="space-y-6 m:space-y-8 overflow-auto px-2">
                     {reportReasons.map((reportReason, index) => (
                         <label key={index} className={`flex items-center space-x-2 m:space-x-3 cursor-pointer ${hovered[index] && "underline"}
                         ${selectedReason.reason === reportReason && "underline"}`}
@@ -105,7 +105,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
                         </label>
                     ))}
                 </div>
-                <div className="flex justify-end mt-14 m:mt-16 space-x-10 text-lg m:text-xl">
+                <div className="flex justify-end mt-14 m:mt-16 space-x-10 text-lg m:text-xl pb-6 m:pb-8">
                     <button className={`px-4 py-2 bg-red-600 text-white rounded disabled:opacity-60
                             ${selectedReason !== null && "hover:ring-2 ring-black"}`}
                             onClick={handleSubmit} disabled={!selectedReason}>

@@ -3,12 +3,14 @@ import {AuthContext} from './useAuth.ts';
 import {InternalServerError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import {checkAuth, fetchJwt, logout} from "../../ApiCalls/Services/UserService.ts";
 import {useNavigate} from "react-router-dom";
+import {useUtil} from "../Util/useUtil.ts";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
     const navigate = useNavigate();
     const [preventFetch, setPreventFetch] = useState<boolean>(false);
+    const {disableDarkMode} = useUtil();
 
     const handleCheckAuth = async () => {
         setLoadingAuth(true);
@@ -70,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
             setPreventFetch(true);
             await logout();
             await handleCheckAuth();
+            disableDarkMode();
         } catch (error: unknown) {
             if (error instanceof InternalServerError) {
                 console.error("Error during logout: ", error);
