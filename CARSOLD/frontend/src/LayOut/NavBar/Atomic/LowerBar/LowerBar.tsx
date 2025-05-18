@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../GlobalProviders/Auth/useAuth.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useMessages} from "../../../../GlobalProviders/Messages/useMessages.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 const LowerBar: React.FC = () => {
     const [barAnimation, setBarAnimation] = useState<"animate-slideDown" | "animate-slideUp" | null>(null);
@@ -14,6 +15,7 @@ const LowerBar: React.FC = () => {
     const {isAuthenticated, handleLogout} = useAuth();
     const navigate = useNavigate();
     const {unseenMessagesCount} = useMessages();
+    const {t} = useLanguage();
 
     useEffect(() => {
         if (lowerBar) {
@@ -33,17 +35,17 @@ const LowerBar: React.FC = () => {
         return (
             <div className={`flex flex-row items-center justify-evenly h-14 fixed left-0 bottom-0 
                 right-0 bg-lime shadow-top z-50 ${barAnimation} touch-none`}>
-                <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label="Add offer"/>
-                <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label="Followed"/>
-                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label="Messages" count={unseenMessagesCount}/>
-                <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={"Account"}/>
+                <MobileButton onClick={() => navigate("/addingOffer")} icon={faSquarePlus} label={t("mobileButton1")}/>
+                <MobileButton onClick={() => navigate("/details/followed")} icon={faHeart} label={t("mobileButton2")}/>
+                <MobileButton onClick={() => navigate("/details/messages")} icon={faMessage} label={t("mobileButton3")} count={unseenMessagesCount}/>
+                <MobileButton onClick={() => navigate("/details/myOffers")} icon={faUser} label={t("mobileButton4")}/>
                 {isAuthenticated ? (
                     <>
                         <DarkModeButton/>
-                        <MobileButton onClick={handleLogout} icon={faRightFromBracket} label="Logout"/>
+                        <MobileButton onClick={handleLogout} icon={faRightFromBracket} label={t("mobileButton6")}/>
                     </>
                 ) : (
-                    <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label="Login"/>
+                    <MobileButton onClick={() => navigate("/authenticate/login")} icon={faAddressCard} label={t("mobileButton7")}/>
                 )}
             </div>
         )

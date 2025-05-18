@@ -20,7 +20,6 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
             const newMode = !prev;
-
             if (newMode) {
                 document.body.style.transition = 'background-color 0.7s ease-in-out';
                 document.body.style.backgroundColor = '#191a18';
@@ -61,12 +60,11 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const disableDarkMode = () => {
         localStorage.setItem('theme', 'light');
         setDarkMode(false);
-    }; //used on logout
+    }; //used in logout
 
     useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
-
             setMobileWidth(width < 450);
             setMidWidth(width >= 450 && width <= 1024);
             setBigWidth(width > 1024);

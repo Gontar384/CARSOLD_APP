@@ -5,7 +5,7 @@ import {dictionary, DictionaryKey, Language} from "./dictionary.ts";
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [language, setLanguage] = useState<Language>(() => {
         const stored = localStorage.getItem("app_language");
-        return (stored as Language) || "pl";
+        return (stored as Language) || "POL";
     });
 
     useEffect(() => {
@@ -26,8 +26,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({child
     const t = useCallback((key: DictionaryKey): string => {
         return dictionary[language][key] || key;
     }, [language]);
-
-    console.log(language)
 
     return (
         <LanguageContext.Provider value={{ language, changeLanguage, t }}>

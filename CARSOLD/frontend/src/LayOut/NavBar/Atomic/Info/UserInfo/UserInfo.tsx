@@ -89,7 +89,7 @@ const UserInfo: React.FC = () => {
     }
 
     return (
-        <div className="flex justify-center items-center h-full min-w-[220px]"
+        <div className="flex justify-center items-center h-full min-w-[265px]"
             ref={componentRef}>
             {isAuthenticated ? (
                 usernameFetched && profilePicFetched ? (

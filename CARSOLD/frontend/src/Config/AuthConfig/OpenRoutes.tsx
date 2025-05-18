@@ -7,7 +7,6 @@ const OpenRoutes: React.FC = () => {
     const {loadingAuth} = useAuth();
 
     if (loadingAuth) return <NavBar/>
-
     return <Outlet />;
 };
 

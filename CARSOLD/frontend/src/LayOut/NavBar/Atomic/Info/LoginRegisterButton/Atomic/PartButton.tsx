@@ -3,7 +3,7 @@ import {useButton} from "../../../../../../CustomHooks/useButton.ts";
 import {Link} from "react-router-dom";
 
 interface PartButtonProps {
-    title: "Login" | "Register";
+    title: string;
     path: "login" | "register"
 }
 

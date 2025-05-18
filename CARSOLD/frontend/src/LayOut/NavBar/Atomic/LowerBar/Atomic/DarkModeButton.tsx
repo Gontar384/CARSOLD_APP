@@ -4,13 +4,14 @@ import {faMoon, faSun} from "@fortawesome/free-solid-svg-icons";
 import {faCircle as faRegularCircle} from '@fortawesome/free-regular-svg-icons';
 import {useButton} from "../../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 const DarkModeButton: React.FC = () => {
-
     const [modeIconAnimation, setModeIconAnimation] = useState<"animate-fill" | "animate-empty" | null>(null);   //dark mode icons animations
     const [modeIcon1Animation, setModeIcon1Animation] = useState<"animate-fill" | "animate-empty" | null>(null);
     const {darkMode, toggleDarkMode, lowerBar} = useUtil();
     const {buttonColor, bindHoverHandlers} = useButton();
+    const {t} = useLanguage();
 
     const handleDarkMode = () => {
         toggleDarkMode();
@@ -31,7 +32,7 @@ const DarkModeButton: React.FC = () => {
             <FontAwesomeIcon icon={faSun} style={{color: buttonColor ? "white" : "black"}}
                              className={`text-[18px] top-[12px] ${darkMode ? "opacity-0" : ""} ${modeIcon1Animation} absolute`}/>
             <FontAwesomeIcon icon={faRegularCircle} style={{color: buttonColor ? "white" : "black"}} className="text-[28px]"/>
-            <p className="text-xs">Mode</p>
+            <p className="text-xs">{t("mobileButton5")}</p>
         </button>
     )
 }

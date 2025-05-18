@@ -80,9 +80,10 @@ const Home: React.FC = () => {
         <LayOut>
             <div className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
                 <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime animate-appearFastRev border-gray-300
-                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 z-10" : "rounded w-[90%] items-center min-h-[500px] px-5 border"}`}>
+                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 z-10" : "rounded w-[90%] items-center min-h-[500px] px-5 border text-center"}`}>
                     <p className={`${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"} text-2xl m:text-3xl`}>
-                        Welcome to CAR$OLD!</p>
+                        Welcome to CAR$OLD!
+                    </p>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-6`}>
                         <p className="text-[20px] m:text-[26px]">A world of cars</p>
                         <FontAwesomeIcon icon={faEarthAmericas} className="text-2xl m:text-3xl"/>

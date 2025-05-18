@@ -7,7 +7,6 @@ const PublicRoutes: React.FC = () => {
     const { isAuthenticated, loadingAuth } = useAuth();
 
     if (loadingAuth) return <NavBar/>
-
     return isAuthenticated ? <Navigate to="/details/myOffers"/> : <Outlet />;
 };
 

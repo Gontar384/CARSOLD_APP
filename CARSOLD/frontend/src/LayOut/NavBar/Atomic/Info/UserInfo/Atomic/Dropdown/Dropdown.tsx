@@ -4,6 +4,7 @@ import {useAuth} from "../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import DropdownButton from "./Atomic/DropdownButton.tsx";
 import DropdownFunctionButton from "./Atomic/DropdownFunctionButton.tsx";
 import {useMessages} from "../../../../../../../GlobalProviders/Messages/useMessages.ts";
+import {useLanguage} from "../../../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface DropdownProps {
     barActive: boolean;
@@ -11,10 +12,10 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
-
     const {unseenMessagesCount} = useMessages();
     const {isMobile, toggleDarkMode, darkMode} = useUtil();
     const {handleLogout} = useAuth();
+    const {t} = useLanguage();
 
     const handleDropdownInteraction = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -23,15 +24,15 @@ const Dropdown: React.FC<DropdownProps> = ({ barActive, animation }) => {
     return (
         <>
             {barActive &&
-                <div className={`flex flex-col items-center justify-center w-[130px] absolute top-14
+                <div className={`flex flex-col items-center justify-center w-[140px] absolute top-14
                 bg-lime shadow-bottom ${animation}`}
                      onTouchStart={isMobile ? handleDropdownInteraction : undefined}>
-                    <DropdownButton label="My offers" path={"/details/myOffers"}/>
-                    <DropdownButton label="Followed" path={"/details/followed"}/>
-                    <DropdownButton label="Messages" path={"/details/messages"} count={unseenMessagesCount}/>
-                    <DropdownButton label="Settings" path={"/details/settings"}/>
-                    <DropdownFunctionButton label={`${darkMode ? "Light" : "Dark"} mode`} onClick={toggleDarkMode}/>
-                    <DropdownFunctionButton label="Logout" onClick={handleLogout}/>
+                    <DropdownButton label={t("dropdownButton1")} path={"/details/myOffers"}/>
+                    <DropdownButton label={t("dropdownButton2")} path={"/details/followed"}/>
+                    <DropdownButton label={t("dropdownButton3")} path={"/details/messages"} count={unseenMessagesCount}/>
+                    <DropdownButton label={t("dropdownButton4")} path={"/details/settings"}/>
+                    <DropdownFunctionButton label={`${darkMode ? t("dropdownButton5") : t("dropdownButton6")}`} onClick={toggleDarkMode}/>
+                    <DropdownFunctionButton label={t("dropdownButton7")} onClick={handleLogout}/>
                 </div>}
         </>
     )

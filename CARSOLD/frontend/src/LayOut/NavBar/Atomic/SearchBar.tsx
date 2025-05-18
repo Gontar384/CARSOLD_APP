@@ -5,6 +5,7 @@ import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {useButton} from "../../../CustomHooks/useButton.ts";
+import {useLanguage} from "../../../GlobalProviders/Language/useLanguage.ts";
 
 const SearchBar: React.FC = () => {
     const {phrase, setPhrase, setTrigger, clicked, setClicked, searched, setSearched} = useSearch();
@@ -16,6 +17,7 @@ const SearchBar: React.FC = () => {
     const {buttonColor, bindHoverHandlers} = useButton();
     const [searchParams, setSearchParams] = useSearchParams();
     const [loading, setLoading] = useState<boolean>(true);
+    const {t} = useLanguage();
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -88,11 +90,11 @@ const SearchBar: React.FC = () => {
                 {!isMobile && clicked &&
                     <button className={`h-7 m:h-8 absolute top-0 right-0 px-1 m:px-2 text-lg m:text-xl rounded-sm bg-lime z-20 ${buttonColor && "brightness-[97%]"}`}
                             onClick={handleSearch} {...bindHoverHandlers()}>
-                        Search
+                        {t("searchBar1")}
                     </button>}
                 {loading && <div className="w-full h-full absolute inset-0 m-auto bg-lime rounded-sm z-40"></div>}
             </div>
-            <Link className="flex" to={"/search?page=0&size=10"} title="Filters">
+            <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")}>
                 <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-0.5"/>
             </Link>
         </div>

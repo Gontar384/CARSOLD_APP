@@ -7,7 +7,6 @@ const PrivateRoutes: React.FC = () => {
     const { isAuthenticated, loadingAuth } = useAuth();
 
     if (loadingAuth) return <NavBar/>
-
     return isAuthenticated ? <Outlet /> : <Navigate to="/authenticate/login"/>;
 };
 

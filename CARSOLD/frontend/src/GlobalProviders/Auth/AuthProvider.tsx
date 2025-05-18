@@ -36,7 +36,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
                 setIsAuthenticated(newAuthState);
             }
         };
-
         window.addEventListener('storage', handleStorageChange);
 
         handleCheckAuth();
@@ -55,7 +54,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
                 }
             }
         };
-
         let interval = null;
         if (isAuthenticated) {
             handleFetchJwt();

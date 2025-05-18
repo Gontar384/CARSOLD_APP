@@ -10,6 +10,7 @@ import BarFunctionButton from "./Atomic/BarFunctionButton.tsx";
 import UserInfoLoader from "../../../../Additional/Loading/UserInfoLoader.tsx";
 import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 import {useMessages} from "../../../../GlobalProviders/Messages/useMessages.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface MidBarProps {
     excludedButtonRef: React.RefObject<HTMLButtonElement | null>;
@@ -24,6 +25,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
     const {unseenMessagesCount} = useMessages();
     const {usernameFetched, profilePicFetched} = useUserUtil();
     const {setMidBar, darkMode, toggleDarkMode, midBar, midWidth} = useUtil();
+    const {t} = useLanguage();
 
     useEffect(() => {
         if (midBar) {
@@ -68,7 +70,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     if (midBarActive) {
         return (
-            <div className={`flex flex-col items-center w-[230px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
+            <div className={`flex flex-col items-center w-[265px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
             overflow-auto overscroll-contain`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
@@ -83,15 +85,15 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     )}
                 </div>
                 <div className="flex flex-col items-start w-full pb-14">
-                    <BarButton label="Add offer" icon={faFileCirclePlus} path={"/addingOffer"}/>
-                    <BarButton label="My offers" icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
-                    <BarButton label="Followed" icon={faHeart} path={"/details/followed"}/>
-                    <BarButton label="Messages" icon={faMessage} path={"/details/messages"} count={unseenMessagesCount}/>
-                    <BarButton label="Settings" icon={faScrewdriverWrench} path={"/details/settings"} />
+                    <BarButton label={t("dropdownButton8")} icon={faFileCirclePlus} path={"/addingOffer"}/>
+                    <BarButton label={t("dropdownButton1")} icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
+                    <BarButton label={t("dropdownButton2")} icon={faHeart} path={"/details/followed"}/>
+                    <BarButton label={t("dropdownButton3")} icon={faMessage} path={"/details/messages"} count={unseenMessagesCount}/>
+                    <BarButton label={t("dropdownButton4")} icon={faScrewdriverWrench} path={"/details/settings"} />
                     {isAuthenticated &&
                         <>
-                            <BarFunctionButton label={`${!darkMode ? "Dark" : "Light"} mode`} icon={darkMode ? faLightbulb : faLightBulbRegular} onClick={toggleDarkMode}/>
-                            <BarFunctionButton label="Logout" icon={faArrowRightFromBracket} onClick={handleLogout}/>
+                            <BarFunctionButton label={`${!darkMode ? t("dropdownButton6") : t("dropdownButton5")}`} icon={darkMode ? faLightbulb : faLightBulbRegular} onClick={toggleDarkMode}/>
+                            <BarFunctionButton label={t("dropdownButton7")} icon={faArrowRightFromBracket} onClick={handleLogout}/>
                         </>}
                 </div>
             </div>

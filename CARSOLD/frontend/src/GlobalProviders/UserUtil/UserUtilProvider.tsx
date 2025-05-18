@@ -41,15 +41,11 @@ export const UserUtilProvider: React.FC<{ children: React.ReactNode }> = ({child
     }
 
     useEffect(() => {
-        if (isAuthenticated) {
-            handleFetchUsername();
-        }
+        if (isAuthenticated) handleFetchUsername();
     }, [isAuthenticated]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            handleFetchProfilePic();
-        }
+        if (isAuthenticated) handleFetchProfilePic();
     }, [isAuthenticated, profilePicChanged]);
 
     return <UserUtilContext.Provider value={{username, profilePic, usernameFetched, profilePicFetched, setProfilePicChanged}}>
