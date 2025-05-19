@@ -8,15 +8,14 @@ import {useUserInfo} from "../../../../../CustomHooks/useUserInfo.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 const RegisterForm: React.FC = () => {
-
     interface User {
         email: string,
         username: string,
         password: string
     }
-
     const [user, setUser] = useState<User>({
         email: "", username: "", password: ""
     })
@@ -39,6 +38,13 @@ const RegisterForm: React.FC = () => {
     const [isRegistered, setIsRegistered] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const [wrongData, setWrongData] = useState<boolean>(false);
+    const {t, language} = useLanguage();
+
+    useEffect(() => {
+        setEmailInfo("");
+        setUsernameInfo("");
+        setPasswordInfo("");
+    }, [language]); //resets info when language changes
 
     useEffect(() => {
         if (user.email.length < 5) {
@@ -48,12 +54,12 @@ const RegisterForm: React.FC = () => {
         }
         if (user.email.length > 50) {
             setEmailIcon(faCircleExclamation);
-            setEmailInfo("Email is too long.");
+            setEmailInfo(t("register1"));
             return;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
             setEmailIcon(faCircleExclamation);
-            setEmailInfo("It doesn't look like an email...");
+            setEmailInfo(t("register2"));
             return;
         }
 
@@ -63,7 +69,7 @@ const RegisterForm: React.FC = () => {
                 const account = await handleCheckAccount(user.email);
                 if (account.active) {
                     setEmailIcon(faCircleExclamation);
-                    setEmailInfo("Email is already taken.");
+                    setEmailInfo(t("register3"));
                 } else {
                     setEmailIcon(faCircleCheck);
                     setEmailInfo("");
@@ -85,17 +91,17 @@ const RegisterForm: React.FC = () => {
         }
         if (!/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/.test(user.username)) {
             setUsernameIcon(faCircleExclamation);
-            setUsernameInfo("Username has not allowed characters.");
+            setUsernameInfo(t("register4"));
             return;
         }
         if (user.username.length < 3) {
             setUsernameIcon(faCircleExclamation);
-            setUsernameInfo("Username is too short.");
+            setUsernameInfo(t("register5"));
             return;
         }
         if (user.username.length > 15) {
             setUsernameIcon(faCircleExclamation);
-            setUsernameInfo("Username is too long.");
+            setUsernameInfo(t("register6"));
             return;
         }
 
@@ -105,7 +111,7 @@ const RegisterForm: React.FC = () => {
                 const account = await handleCheckAccount(user.username);
                 if (account.active) {
                     setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Username is already taken.");
+                    setUsernameInfo(t("register7"));
                 } else {
                     setUsernameIcon(faCircleCheck);
                     setUsernameInfo("");
@@ -128,12 +134,12 @@ const RegisterForm: React.FC = () => {
         }
         if (user.password.length < 8) {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Password is too short.");
+            setPasswordInfo(t("register8"));
             return;
         }
         if (user.password.length > 50) {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Password is too long.");
+            setPasswordInfo(t("register9"));
             return;
         }
         if (/[A-Z]/.test(user.password) && /[a-z]/.test(user.password) && /\d/.test(user.password)) {
@@ -141,7 +147,7 @@ const RegisterForm: React.FC = () => {
             setPasswordInfo("");
         } else {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Must include lowercase, uppercase and number.");
+            setPasswordInfo(t("register10"));
         }
     }, [user.password]);  //checks if password is strong enough
 
@@ -197,7 +203,7 @@ const RegisterForm: React.FC = () => {
             if (error instanceof AxiosError && error.response) {
                 if (error.response.status === 422) {
                     setUsernameIcon(faCircleExclamation);
-                    setUsernameInfo("Username is inappropriate!");
+                    setUsernameInfo(t("register11"));
                 } else if (error.response.status === 400) {
                     setWrongData(true);
                     console.error("Wrong data provided:", error);
@@ -214,20 +220,20 @@ const RegisterForm: React.FC = () => {
         <div className="flex flex-col items-center w-11/12 py-8 mt-3 rounded-sm shadow-2xl">
             <Input placeholder={"E-mail"} inputType={"text"} value={user.email} field={"email"} setValue={setUser}
                    icon={emailIcon} info={emailInfo}/>
-            <Input placeholder={"Username"} inputType={"text"} value={user.username} field={"username"}
+            <Input placeholder={t("register12")} inputType={"text"} value={user.username} field={"username"}
                    setValue={setUser} icon={usernameIcon} info={usernameInfo}/>
-            <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={user.password}
+            <Input placeholder={t("register13")} inputType={inputType} setInputType={setInputType} value={user.password}
                    field={"password"} setValue={setUser} icon={passwordIcon} info={passwordInfo}/>
-            <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
+            <Input placeholder={t("register14")} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} hasEye={true} whichForm={"register"} termsCheck={termsCheck}
                    setTermsCheck={setTermsCheck} icon={passwordRepIcon} mark={mark}/>
-            <SubmitButton label={"Register"} onClick={handleRegisterUser} disabled={isDisabled}/>
+            <SubmitButton label={t("register15")} onClick={handleRegisterUser} disabled={isDisabled}/>
             {isRegistered && <AnimatedBanner
-                text={"Registered successfully! We've sent you e-mail with confirmation link. Check it out!"}
+                text={t("animatedBanner9")}
                 onAnimationEnd={() => setIsRegistered(false)} delay={5000} color={"bg-lowLime"} z={"z-50"}/>}
-            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+            {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
                                           delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
-            {wrongData && <AnimatedBanner text={"Please check your details and try again"} onAnimationEnd={() => setWrongData(false)}
+            {wrongData && <AnimatedBanner text={t("animatedBanner10")} onAnimationEnd={() => setWrongData(false)}
                                           delay={4000} color={"bg-gray-300"} z={"z-40"}/>}
         </div>
     )

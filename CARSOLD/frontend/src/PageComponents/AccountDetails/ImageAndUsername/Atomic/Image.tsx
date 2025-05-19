@@ -7,6 +7,7 @@ import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Services/UserService.ts";
 import {InternalServerError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
 import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ImageProps {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -23,6 +24,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const {profilePic, profilePicFetched, setProfilePicChanged} = useUserUtil();
     const deactivationTimeout = useRef<NodeJS.Timeout | null>(null);  //for delays
+    const {t} = useLanguage();
 
     const handleActivateInput = () => {
         if (!inputActive) {
@@ -73,11 +75,11 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         const file = event.target.files?.[0];
         if (!file) return;
         if (!file.type.startsWith('image/')) {
-            setMessage("This is not an image!");
+            setMessage(t("profilePic1"));
             return;
         }
         if (file.size > 3 * 1024 * 1024) {
-            setMessage("Couldn't upload, image is too large.");
+            setMessage(t("profilePic2"));
             return;
         }
         const formData = new FormData();
@@ -90,11 +92,11 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             setProfilePicChanged(true);
         } catch (error: unknown) {
             if (error instanceof UnsupportedMediaTypeError) {
-                setMessage("Provided image is not supported.")  //fallback check
+                setMessage(t("profilePic3"))
             } else if (error instanceof UnprocessableEntityError) {
-                setMessage("Couldn't upload, image is inappropriate.");
+                setMessage(t("profilePic4"));
             } else if (error instanceof InternalServerError) {
-                setMessage("Couldn't upload image.")
+                setMessage(t("profilePic5"));
             } else {
                 console.error("Unexpected error during image upload occurred: ", error);
             }
@@ -115,7 +117,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             await deleteProfilePic();
             setProfilePicChanged(true);
         } catch (error: unknown) {
-            setMessage("Couldn't delete image.")
+            setMessage(t("profilePic6"))
             if (error instanceof InternalServerError) {
                 console.error("Problem with external cloud: ", error);
             } else {

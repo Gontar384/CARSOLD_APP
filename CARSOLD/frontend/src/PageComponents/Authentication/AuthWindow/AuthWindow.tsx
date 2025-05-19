@@ -7,10 +7,9 @@ import AuthWindowLoader from "../../../Additional/Loading/AuthWindowLoader.tsx";
 
 
 const AuthWindow: React.FC = () => {
-
-    const [choice, setChoice] = useState<"login" | "register">("login");  //sets display: login or register form
+    const [choice, setChoice] = useState<"login" | "register">("login");
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const {section} = useParams();   //retrieves params from url
+    const {section} = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,7 +24,7 @@ const AuthWindow: React.FC = () => {
         }
     }, [section, navigate])       //checks for section change
 
-    if (isLoading) return <AuthWindowLoader choice={choice}/>  //prevents /login blinking
+    if (isLoading) return <AuthWindowLoader choice={choice}/>
 
     return (
         <div className="flex flex-col items-center w-11/12 h-full bg-lime py-6 max-w-[460px] rounded-sm">

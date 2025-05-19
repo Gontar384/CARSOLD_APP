@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDoorOpen, faEarthAmericas, faMagnifyingGlass, faMoneyBillWave} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const Home: React.FC = () => {
     document.title = "CARSOLD | Home"
@@ -16,6 +17,7 @@ const Home: React.FC = () => {
     const [hovered, setHovered] = useState<boolean[]>(Array(3).fill(false));
     const [initial, setInitial] = useState<boolean>(true);
     const {bigWidth, isMobile} = useUtil();
+    const {t} = useLanguage();
 
     useEffect(() => {
         const handleFetchRandomOffers = async () => {
@@ -47,9 +49,7 @@ const Home: React.FC = () => {
     }, []); //fetches random offers
 
     useEffect(() => {
-        const animationDone = setTimeout(() => {
-            setInitial(false);
-        }, 1000);
+        const animationDone = setTimeout(() => setInitial(false), 1000);
 
         return () => clearTimeout(animationDone);
     }, []); //offs animations
@@ -82,30 +82,32 @@ const Home: React.FC = () => {
                 <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime animate-appearFastRev border-gray-300
                 ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 z-10" : "rounded w-[90%] items-center min-h-[500px] px-5 border text-center"}`}>
                     <p className={`${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"} text-2xl m:text-3xl`}>
-                        Welcome to CAR$OLD!
+                        {t("home1")}
                     </p>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-6`}>
-                        <p className="text-[20px] m:text-[26px]">A world of cars</p>
+                        <p className="text-[20px] m:text-[26px]">
+                            {t("home2")}
+                        </p>
                         <FontAwesomeIcon icon={faEarthAmericas} className="text-2xl m:text-3xl"/>
                     </div>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
                          {...bindHoverHandlers(0)}>
                         <Link to={"/authenticate/login"} className={`text-xl m:text-2xl ${hovered[0] ? "underline" : "no-underline"}`}>
-                            Join us here
+                            {t("home3")}
                         </Link>
                         <FontAwesomeIcon icon={faDoorOpen} className={`text-2xl m:text-3xl ${hovered[0] && "scale-110"}`}/>
                     </div>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
                          {...bindHoverHandlers(1)}>
                         <Link to={"/search?page=0&size=10 "} className={`text-xl m:text-2xl ${hovered[1] ? "underline" : "no-underline"}`}>
-                            Find your dream car
+                            {t("home4")}
                         </Link>
                         <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-2xl m:text-3xl ${hovered[1] && "scale-110"}`}/>
                     </div>
                     <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
                          {...bindHoverHandlers(2)}>
                         <Link to={"/addingOffer"} className={`text-xl m:text-2xl underline ${hovered[2] ? "underline" : "no-underline"}`}>
-                            Sell your car
+                            {t("home5")}
                         </Link>
                         <FontAwesomeIcon icon={faMoneyBillWave} className={`text-2xl m:text-3xl ${hovered[2] && "scale-110"}`}/>
                     </div>

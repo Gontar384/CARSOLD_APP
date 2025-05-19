@@ -6,6 +6,7 @@ import {useButton} from "../../../../../../../../CustomHooks/useButton.ts";
 import {fetchCitySuggestions, updateCity, updateName, updatePhone} from "../../../../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../../../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface InputFieldProps {
     label: string,
@@ -19,9 +20,9 @@ interface InputFieldProps {
 }
 
 const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueType, setFetch, isLoading, errorInfo, isCityInput}) => {
-
+    const {t, language} = useLanguage();
     const [inputActive, setInputActive] = useState<boolean>(false);
-    const [buttonLabel, setButtonLabel] = useState<"Edit" | "Save">("Edit");
+    const [buttonLabel, setButtonLabel] = useState<string>(t("contactInfo8"));
     const componentRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [invalidInput, setInvalidInput] = useState<boolean>(false);
@@ -33,9 +34,13 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
     const [citySuggestions, setCitySuggestions] = useState<string[] | null>(isCityInput ? [] : null)
     const [clickedSuggestion, setClickedSuggestion] = useState<string | null>(isCityInput ? "" : null);
 
+    useEffect(() => {
+        setButtonLabel(t("contactInfo8"));
+    }, [language]); //updates save/edit buttons display when changing language
+
     const handleEditButtonClick = () => {
         setInputActive(true);
-        setButtonLabel("Save");
+        setButtonLabel(t("contactInfo9"));
     }
 
     const handleSaveButtonClick = async () => {
@@ -45,12 +50,12 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
         setCitySuggestions(null);
         if (value.length < 3 && value.length !== 0) {
             setInvalidInput(false);
-            setAdditionalInfo("Provided value is too short.");
+            setAdditionalInfo(t("contactInfo10"));
             return;
         }
         if (value.length > 100 || valueType !== "city" && value.length > 20) {
             setInvalidInput(false);
-            setAdditionalInfo("Provided value is too long.");
+            setAdditionalInfo(t("contactInfo11"));
             return;
         }
 
@@ -62,7 +67,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
             setFetch(prev => !prev);
             setInputActive(false);
-            setButtonLabel("Edit");
+            setButtonLabel(t("contactInfo8"));
             setInvalidInput(false);
             setCitySuggestions(null);
         } catch (error: unknown) {
@@ -83,18 +88,16 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
 
     //focus input when edit button is clicked and deactivates when clicked away
     useEffect(() => {
-        //put focus on input
         if (inputActive && inputRef.current) {
             inputRef.current.focus();
         }
-
         const handleClickOutside = (event: TouchEvent | MouseEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
-                if (buttonLabel === "Save") {
+                if (buttonLabel === t("contactInfo9")) {
                     setFetch(prev => !prev);
                 }
                 setInputActive(false);
-                setButtonLabel("Edit");
+                setButtonLabel(t("contactInfo8"));
                 setInvalidInput(false);
                 setAdditionalInfo(null);
                 setCitySuggestions(null);
@@ -159,7 +162,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
             <label className="text-lg m:text-xl">
                 {label}
             </label>
-            <div className="flex flex-row justify-between w-[290px] m:w-[380px] h-fit text-xl m:text-2xl"
+            <div className="flex flex-row justify-between w-[300px] m:w-[395px] h-fit text-xl m:text-2xl"
                  ref={componentRef}>
                 <div className="w-[230px] m:w-[310px] h-9 m:h-10 relative z-20">
                     {!isLoading ?
@@ -168,8 +171,7 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                             {value}
                         </div> : <ContactInputLoader/>}
                     {inputActive &&
-                        <input
-                            className={`w-full h-full absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
+                        <input className={`w-full h-full absolute inset-0 focus:outline-none rounded-sm px-1 m:px-[6px]`}
                             ref={inputRef} type={valueType === "phone" ? "tel" : "text"}
                             value={value}
                             onChange={valueType === "name" ? (e) => setValue(e.target.value.trim())
@@ -182,9 +184,9 @@ const InputField: React.FC<InputFieldProps> = ({label, value, setValue, valueTyp
                         <SuggestionsBar citySuggestions={citySuggestions} setCitySuggestions={setCitySuggestions}
                                         setValue={setValue} setClickedSuggestion={setClickedSuggestion}/>}
                 </div>
-                <button className={`w-14 m:w-16 h-9 m:h-10 border border-black border-opacity-40 bg-lime rounded-sm
+                <button className={`w-16 m:w-[76px] h-9 m:h-10 border border-black border-opacity-40 bg-lime rounded-sm
                         ${buttonColor ? "text-white" : ""}`}
-                        onClick={buttonLabel === "Edit" ? handleEditButtonClick : handleSaveButtonClick}
+                        onClick={buttonLabel === t("contactInfo8") ? handleEditButtonClick : handleSaveButtonClick}
                         {...bindHoverHandlers()}>
                     {buttonLabel}
                 </button>

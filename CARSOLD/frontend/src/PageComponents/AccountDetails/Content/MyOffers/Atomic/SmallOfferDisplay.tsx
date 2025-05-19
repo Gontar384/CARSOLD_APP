@@ -11,6 +11,7 @@ import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 import AddingOfferLoader from "../../../../../Additional/Loading/AddingOfferLoader.tsx";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useOfferUtil} from "../../../../../CustomHooks/useOfferUtil.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface SmallOfferDisplayProps {
     offer: {
@@ -36,11 +37,12 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
     const formatNumber = (value: string) => {
         return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
+    const {t, translateBackend} = useLanguage();
     const offerDetails = [
-        {label: formatNumber(offer.power) + " KM"},
+        {label: formatNumber(offer.power) + t("smallOfferDisplay1")},
         {label: formatNumber(offer.capacity) + " cm3"},
-        {label: offer.transmission},
-        {label: offer.fuel},
+        {label: translateBackend("transmission", offer.transmission)},
+        {label: translateBackend("fuel", offer.fuel)},
     ];
     const {isMobile} = useUtil();
     const [heartHovered, setHeartHovered] = useState<boolean>(false);
@@ -120,8 +122,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                                 <img src={offer.photoUrl} alt={"Offer image"}
                                      className="object-cover w-full h-full rounded"
                                      onError={() => setPhotoError(true)}/> :
-                                <div
-                                    className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
+                                <div className="flex justify-center items-center w-full h-full border border-black border-opacity-40 rounded">
                                     <FontAwesomeIcon icon={faImage} className="text-3xl m:text-4xl"/>
                                 </div>}
                         </div>
@@ -171,12 +172,12 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                 <>
                     <div className="flex flex-row justify-between gap-2 mt-1 m:mt-1.5">
                         <div className="flex flex-row flex-wrap gap-2 m:gap-3">
-                            <MyOfferButton label="Edit" onClick={() => navigate(`/modifyingOffer/${offer.id}`)}/>
-                            <MyOfferButton label="Delete" onClick={() => setDecision(true)}/>
+                            <MyOfferButton label={t("smallOfferDisplay2")} onClick={() => navigate(`/modifyingOffer/${offer.id}`)}/>
+                            <MyOfferButton label={t("smallOfferDisplay3")} onClick={() => setDecision(true)}/>
                         </div>
                         <div className="flex flex-row flex-wrap gap-3 m:gap-4">
-                            <MyOfferDetail label="Views" icon={faEye} count={views}/>
-                            <MyOfferDetail label="Follows" icon={faHeart} count={follows}/>
+                            <MyOfferDetail label={t("smallOfferDisplay4")} icon={faEye} count={views}/>
+                            <MyOfferDetail label={t("smallOfferDisplay5")} icon={faHeart} count={follows}/>
                         </div>
                     </div>
                     {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
@@ -184,7 +185,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                 </>
             }
             {loading && <AddingOfferLoader/>}
-            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+            {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
                                           delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
         </>
     );

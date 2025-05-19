@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useUtil} from "../../../../../../GlobalProviders/Util/useUtil.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDeleteLeft} from "@fortawesome/free-solid-svg-icons";
+import {useLanguage} from "../../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface DeleteAccountButtonProps {
     setPopup: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,6 +11,7 @@ interface DeleteAccountButtonProps {
 const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => {
     const [buttonAnimation, setButtonAnimation] = useState<"animate-swing" | null>(null);
     const {isMobile} = useUtil();
+    const {t} = useLanguage();
 
     const handleActivateAnimation = () => {
         setButtonAnimation("animate-swing");
@@ -29,7 +31,7 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => 
             <FontAwesomeIcon icon={faDeleteLeft} className={`text-3xl m:text-4xl ${buttonAnimation}`}
                              style={{color: "red", transform: "rotate(-180deg)"}}/>
             <p className="text-lg m:text-xl whitespace-nowrap">
-                Delete Account
+                {t("deleteAccount1")}
             </p>
         </button>
     )

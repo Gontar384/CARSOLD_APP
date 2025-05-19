@@ -1,96 +1,86 @@
 import React from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import Section from "./Atomic/Section.tsx";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const TermsOfUse: React.FC = () => {
-
     document.title = "CARSOLD | Terms Of Use";
+    const {t} = useLanguage();
 
     return (
         <LayOut>
             <div className="flex flex-col items-center -mb-[200px] m:-mb-[100px]">
                 <div className="flex flex-col w-11/12 max-w-[1200px] p-5 m:p-7 bg-lowLime border border-gray-300 rounded">
                     <h1 className="text-2xl m:text-3xl text-center font-bold">
-                        Terms of Use
+                        {t("termsOfUse1")}
                     </h1>
-
                     <Section
-                        title="1. General"
+                        title={t("termsOfUse2")}
                         content={[
-                            "1.1 CARSOLD is a platform where users can post car offers, search for vehicles, and contact other users.",
-                            "1.2 These Terms of Use govern your access and use of our website and services.",
-                            "1.3 By registering or using the platform, you agree to these Terms.",
-                        ]}
-                    />
+                            t("termsOfUse3"),
+                            t("termsOfUse4"),
+                            t("termsOfUse5"),
+                        ]}/>
                     <Section
-                        title="2. User Accounts"
+                        title={t("termsOfUse6")}
                         content={[
-                            "2.1 You must create an account to post offers or contact other users.",
-                            "2.2 You are responsible for maintaining the confidentiality of your account credentials.",
-                            "2.3 CARSOLD reserves the right to suspend or terminate accounts for violations of these Terms or fraudulent activity.",
-                        ]}
-                    />
+                            t("termsOfUse7"),
+                            t("termsOfUse8"),
+                            t("termsOfUse9"),
+                        ]}/>
                     <Section
-                        title="3. Posting Offers"
+                        title={t("termsOfUse10")}
                         content={[
-                            "3.1 Users can post offers to sell vehicles. All information provided must be accurate and up-to-date.",
-                            "3.2 Misleading or fraudulent postings are strictly prohibited.",
-                            "3.3 CARSOLD is not responsible for the accuracy of user-provided information.",
-                        ]}
-                    />
+                            t("termsOfUse11"),
+                            t("termsOfUse12"),
+                            t("termsOfUse13"),
+                        ]}/>
                     <Section
-                        title="4. Buying and Selling"
+                        title={t("termsOfUse14")}
                         content={[
-                            "4.1 CARSOLD does not directly participate in transactions between buyers and sellers.",
-                            "4.2 Users are responsible for verifying the authenticity and condition of vehicles before completing a transaction.",
-                            "4.3 Disputes arising from transactions are solely between the involved parties.",
-                        ]}
-                    />
+                            t("termsOfUse15"),
+                            t("termsOfUse16"),
+                            t("termsOfUse17"),
+                        ]}/>
                     <Section
-                        title="5. Prohibited Activities"
+                        title={t("termsOfUse18")}
                         content={[
-                            "You agree not to:",
-                            "5.1 Post false, misleading, or offensive content.",
-                            "5.2 Use the platform for illegal activities or scams.",
-                            "5.3 Interfere with the functionality of the platform or harm other users.",
-                        ]}
-                    />
+                            t("termsOfUse19"),
+                            t("termsOfUse20"),
+                            t("termsOfUse21"),
+                            t("termsOfUse22"),
+                        ]}/>
                     <Section
-                        title="6. Content and Intellectual Property"
+                        title={t("termsOfUse23")}
                         content={[
-                            "6.1 By posting content, you grant CARSOLD a non-exclusive license to display and share your content.",
-                            "6.2 Users must not post copyrighted materials without proper authorization.",
-                        ]}
-                    />
+                            t("termsOfUse24"),
+                            t("termsOfUse25"),
+                        ]}/>
                     <Section
-                        title="7. Limitation of Liability"
+                        title={t("termsOfUse26")}
                         content={[
-                            "7.1 CARSOLD is not responsible for the quality, safety, or legality of vehicles listed.",
-                            "7.2 We are not liable for any loss, damages, or disputes resulting from transactions.",
-                        ]}
-                    />
+                            t("termsOfUse27"),
+                            t("termsOfUse28"),
+                        ]}/>
                     <Section
-                        title="8. Termination"
+                        title={t("termsOfUse29")}
                         content={[
-                            "8.1 We reserve the right to terminate or restrict access to the platform for violations of these Terms.",
-                            "8.2 Users may delete their accounts at any time.",
-                        ]}
-                    />
+                            t("termsOfUse30"),
+                            t("termsOfUse31"),
+                        ]}/>
                     <Section
-                        title="9. Changes to Terms"
+                        title={t("termsOfUse32")}
                         content={[
-                            "9.1 CARSOLD reserves the right to update these Terms at any time.",
-                            "9.2 Continued use of the platform after changes constitutes acceptance of the updated Terms.",
-                        ]}
-                    />
+                            t("termsOfUse33"),
+                            t("termsOfUse34"),
+                        ]}/>
                     <Section
-                        title="Contact Us"
+                        title={t("termsOfUse35")}
                         content={[
-                            "For questions or support, please contact us at:",
-                            "carsold384@gmail.com",
-                            "By using CARSOLD, you acknowledge that you have read, understood, and agree to these Terms of use.",
-                        ]}
-                    />
+                            t("termsOfUse36"),
+                            t("termsOfUse37"),
+                            t("termsOfUse38"),
+                        ]}/>
                 </div>
             </div>
         </LayOut>

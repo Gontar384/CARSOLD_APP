@@ -8,7 +8,6 @@ interface CreatorLinkProps {
 }
 
 const SocialLink: React.FC<CreatorLinkProps> = ({link, imageUrl, name}) => {
-
     const [animation, setAnimation] = useState<"animate-pop" | null>(null);
     const {isMobile} = useUtil();
 

@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import {activateAccount} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const AccountActivation: React.FC = () => {
     document.title = "CARSOLD | Account Activation";
@@ -12,6 +13,7 @@ const AccountActivation: React.FC = () => {
     const [loaded, setLoaded] = useState<boolean>(false);
     const navigate = useNavigate();
     const {handleCheckAuth} = useAuth();
+    const {t} = useLanguage();
 
     const handleErrorResult = (message: string) => {
         setActivationMessage(message);
@@ -22,21 +24,20 @@ const AccountActivation: React.FC = () => {
 
     useEffect(() => {
         const token = new URLSearchParams(window.location.search).get('token');
-
         const handleActivateAccount = async (token: string | null) => {
             try {
                 await activateAccount(token);
-                setActivationMessage("Account activation success.");
+                setActivationMessage(t("accountActivation2"));
                 setColor("bg-lime");
                 setLoaded(true);
                 setTimeout(async () => await handleCheckAuth(), 2700);
             } catch (error: unknown) {
                 if (error instanceof BadRequestError) {
                     console.error("Token is invalid or has expired: ", error.message, error.response);
-                    handleErrorResult("Your link is invalid or has expired.");
+                    handleErrorResult(t("accountActivation3"));
                 } else { 
                     console.error("Unexpected error during account activation:", error);
-                    handleErrorResult("An unexpected error occurred.");
+                    handleErrorResult(t("accountActivation4"));
                 }
             }
         };
@@ -67,7 +68,7 @@ const AccountActivation: React.FC = () => {
                 <div className="flex justify-center items-center w-20 h-20 m:w-24 m:h-24 bg-lowBlack rounded-xl">
                     <p className="text-white text-6xl m:text-7xl font-bold font-mono">{count}</p>
                 </div>
-                <p>Redirecting...</p>
+                <p>{t("accountActivation1")}</p>
             </div>
         </div>
     );

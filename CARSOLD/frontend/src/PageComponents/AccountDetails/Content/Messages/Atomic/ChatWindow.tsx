@@ -13,6 +13,7 @@ import {Sent} from "../Messages.tsx";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ChatWindowProps {
     setSent: React.Dispatch<React.SetStateAction<Sent>>;
@@ -66,6 +67,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     const [hasScrolled, setHasScrolled] = useState<boolean>(false);
     const [initial, setInitial] = useState<boolean>(false);
     const [msgAdded, setMsgAdded] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     useEffect(() => {
         const handleGetConversationOnInitial = async () => {
@@ -375,12 +377,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                     divide-y text-white absolute -bottom-[11px] m:-bottom-[12px] -left-[104px]">
                                         <button className={`w-full h-1/2 bg-coolRed ${!isMobile && "hover:text-lowBlack"}`}
                                                 onClick={() => setDeleteDecision(true)}>
-                                            Delete chat
+                                            {t("chatWindow1")}
                                         </button>
                                         <button className={`w-full h-1/2 ${userInfo.blockedByUser ? "bg-green-400" : "bg-coolRed"}
                                         ${!isMobile && "hover:text-lowBlack"}`}
                                                 onClick={() => setBlockUnblockDecision(true)}>
-                                            {userInfo.blockedByUser ? "Unblock user" : "Block user"}
+                                            {userInfo.blockedByUser ? t("chatWindow3") : t("chatWindow2")}
                                         </button>
                                     </div>}
                             </div>
@@ -389,7 +391,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                              ref={messageContainerRef} onScroll={handleScroll}>
                             {isLoadingMore &&
                                 <div className="flex justify-center items-center w-full sticky top-0 z-10 text-xs m:text-sm">
-                                    <span className="border border-gray-500 rounded px-1 bg-white shadow">Loading...</span>
+                                    <span className="border border-gray-500 rounded px-1 bg-white shadow">{t("chatWindow4")}</span>
                                 </div>}
                             {messages.map((message, index) => {
                                 const isOwn = message.senderUsername === username;
@@ -406,7 +408,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                                 <div className="flex flex-row justify-center items-center text-xs m:text-sm
                                                 absolute -bottom-3.5 right-2 gap-0.5">
                                                     <FontAwesomeIcon icon={isSent ? faArrowUp : faCheck}/>
-                                                    <span>{isSent ? "Sent" : "Seen"}</span>
+                                                    <span>{isSent ? t("chatWindow5") : t("chatWindow6")}</span>
                                                 </div>
                                             }
                                         </div>
@@ -415,12 +417,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                             })}
                             {messages.length === 0 && (
                                 <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
-                                    No messages yet.
+                                    {t("chatWindow7")}
                                 </div>
                             )}
                         </div>
                         <div className="flex flex-row items-center w-full h-11 m:h-12 text-lg m:text-xl border-t-2 border-gray-300 shadow-top-l relative">
-                            <input className="w-[75%] h-full outline-none px-2" placeholder="Type in..." onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
+                            <input className="w-[75%] h-full outline-none px-2" placeholder={t("chatWindow8")} onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
                                    value={content} onChange={(e) => setContent(e.target.value)} disabled={userInfo.blockedByUser || userInfo.blockedUser}
                                    onKeyDown={e => e.key === "Enter" && handleSendMessage()}/>
                             {(userInfo.blockedByUser || userInfo.blockedUser) &&
@@ -429,17 +431,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                      onMouseUp={!isMobile ? () => setMarkSeen(false) : undefined}
                                      onTouchStart={isMobile ? () => setMarkSeen(true) : undefined}
                                      onTouchEnd={isMobile ? () => setMarkSeen(false) : undefined}>
-                                    {userInfo.blockedByUser ? "You've blocked this user." : `You've been blocked by ${userInfo.username}`}
+                                    {userInfo.blockedByUser ? t("chatWindow9") : `${t("chatWindow10")} ${userInfo.username}`}
                                 </div>}
                             <button className={`w-[25%] h-full border-l-2 border-gray-300
                             bg-lime ${buttonColor ? "brightness-95 text-gray-800" : "text-gray-500"}`}
                                     disabled={userInfo.blockedByUser || userInfo.blockedUser}
                                     onClick={handleSendMessage}  {...bindHoverHandlers()}>
-                                Send
+                                {t("chatWindow11")}
                             </button>
                             {content.length > 1000 &&
                                 <p className="absolute -bottom-[19px] m:-bottom-[22px] -left-[2px] p-[1px] rounded-sm text-xs m:text-sm bg-coolRed text-white">
-                                    Message is too long!
+                                    {t("chatWindow12")}
                                 </p>}
                         </div>
                         {(deleteDecision || blockUnblockDecision) &&
@@ -448,18 +450,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                 ${userInfo.blockedByUser && blockUnblockDecision ? "bg-green-400" : "bg-coolRed"}`}
                                      ref={componentRef1}>
                                     <p className="text-center mt-12">
-                                        {`Are you sure you want to ${deleteDecision ? " delete this conversation?" : `${userInfo.blockedByUser ? "unblock" : "block"} this user?`}`}
+                                        {`${t("chatWindow13")} ${deleteDecision ? ` ${t("chatWindow14")}` : `${userInfo.blockedByUser ? t("chatWindow15") : t("chatWindow16")} ${t("chatWindow17")}`}`}
                                     </p>
                                     <div className="flex flex-row gap-14 m:gap-20 mt-8 mb-12">
                                         <button className={`w-[72px] m:w-20 h-9 m:h-10 border rounded-sm shadow
                                         ${!isMobile && "hover:text-black hover:bg-white hover:border-black"}`}
                                                 onClick={deleteDecision ? handleDeleteConversation : handleBlockUnblockUser}>
-                                            Yes
+                                            {t("chatWindow18")}
                                         </button>
                                         <button className={`w-[72px] m:w-20 h-9 m:h-10 border rounded-sm shadow
                                         ${!isMobile && "hover:text-black hover:bg-white hover:border-black"}`}
                                                 onClick={deleteDecision ? () => setDeleteDecision(false) : () => setBlockUnblockDecision(false)}>
-                                            No
+                                            {t("chatWindow19")}
                                         </button>
                                     </div>
                                     <FontAwesomeIcon icon={deleteDecision ? faComments : faUser} className="absolute inset-0 m-auto text-xl m:text-2xl"/>
@@ -467,7 +469,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                             </div>}
                     </div>
                     : <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
-                    Choose conversation to display.
+                        {t("chatWindow20")}
                     </div>
                 : <ChatsLoader/>
             }

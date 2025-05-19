@@ -3,7 +3,7 @@ import {useButton} from "../../../../../../CustomHooks/useButton.ts";
 
 interface ConfirmDeleteButtonProps {
     onClick: () => void;
-    option: "Yes" | "No";
+    option: string;
 }
 
 const ConfirmDeleteButton: React.FC<ConfirmDeleteButtonProps> = ({ onClick, option }) => {

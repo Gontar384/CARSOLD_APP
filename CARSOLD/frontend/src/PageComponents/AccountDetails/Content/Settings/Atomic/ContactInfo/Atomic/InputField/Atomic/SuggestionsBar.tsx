@@ -8,7 +8,6 @@ interface SuggestionsBarProps {
 }
 
 const SuggestionsBar: React.FC<SuggestionsBarProps> = ({citySuggestions, setCitySuggestions, setValue, setClickedSuggestion}) => {
-
     const handleClickSuggestion = (index: number) => {
         if (citySuggestions) {
             setValue(citySuggestions[index]);

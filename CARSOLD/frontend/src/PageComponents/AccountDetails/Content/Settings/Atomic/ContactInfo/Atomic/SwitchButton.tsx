@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import ContactPublicLoader from "../../../../../../../Additional/Loading/ContactPublicLoader.tsx";
 import {updateAndFetchContactPublic} from "../../../../../../../ApiCalls/Services/UserService.ts";
+import {useLanguage} from "../../../../../../../GlobalProviders/Language/useLanguage.ts";
 
 const SwitchButton: React.FC = () => {
 
@@ -9,6 +10,7 @@ const SwitchButton: React.FC = () => {
     const [initialLoad, setInitialLoad] = useState<boolean | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(true);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     const handleSwitchButton = async () => {
         if (isDisabled) return;
@@ -34,7 +36,6 @@ const SwitchButton: React.FC = () => {
     //sets isPublic and initialLoad on initial
     useEffect(() => {
         setIsFetching(true);
-
         const handleFetchContactPublic = async () => {
             try {
                 const isPublic = await updateAndFetchContactPublic(null);
@@ -58,7 +59,7 @@ const SwitchButton: React.FC = () => {
     return (
         <div className="flex flex-col gap-[2px] m:gap-1 ml-[3px]">
             <p className="text-lg m:text-xl">
-                Public
+                {t("contactInfo7")}
             </p>
             {!isFetching ? (
                 <button className={`flex items-center justify-center w-[54px] h-[30px] m:scale-110 border border-gray-500

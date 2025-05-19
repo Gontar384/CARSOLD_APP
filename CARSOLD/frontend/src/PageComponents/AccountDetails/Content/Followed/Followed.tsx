@@ -3,6 +3,7 @@ import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
 import SmallOfferDisplay from "../MyOffers/Atomic/SmallOfferDisplay.tsx";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 const Followed: React.FC = () => {
     document.title = "CARSOLD | Followed";
@@ -37,6 +38,7 @@ const Followed: React.FC = () => {
     const [followed, setFollowed] = useState<boolean>(false);
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
+    const {t} = useLanguage();
 
     useEffect(() => {
         const manageHandleFetchAllFollowed = async () => {
@@ -100,7 +102,7 @@ const Followed: React.FC = () => {
                     </div>
                 ) : (
                         <p className="text-xl m:text-2xl text-center mt-44 m:mt-48 w-[90%] m:w-[95%]">
-                            You don't have any offers followed yet.
+                            {t("followed")}
                         </p>
                 )
             ) : (

@@ -9,6 +9,7 @@ import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 import {changePassword, changePasswordRecovery} from "../../../ApiCalls/Services/UserService.ts";
 import {BadRequestError, ForbiddenError} from "../../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../../GlobalProviders/Language/useLanguage.ts";
 
 interface PasswordChangeFormProps {
     setIsChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,6 +34,12 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
     const navigate = useNavigate();
     const {handleCheckPassword, handleCheckOldPassword} = useUserInfo();
     const {handleCheckAuth, isAuthenticated} = useAuth();
+    const {t, language} = useLanguage();
+
+    useEffect(() => {
+        setPasswordInfo("");
+        setOldPasswordInfo("");
+    }, [language]); //resets info when changing language
 
     useEffect(() => {
         setOldPasswordInfo("");
@@ -70,7 +77,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             }
             if (password === oldPassword) {
                 setPasswordIcon(faCircleExclamation);
-                setPasswordInfo("New password cannot be the same!");
+                setPasswordInfo(t("changePassword6"));
                 setPasswordRepIcon(null);
                 return;
             }
@@ -84,19 +91,19 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         }
         if (password.length < 8) {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Password is too short.");
+            setPasswordInfo(t("changePassword7"));
             setPasswordRepIcon(null);
             return;
         }
         if (password.length > 50) {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Password is too long.");
+            setPasswordInfo(t("changePassword8"));
             setPasswordRepIcon(null);
             return;
         }
         if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
             setPasswordIcon(faCircleExclamation);
-            setPasswordInfo("Must include lowercase, uppercase, and number.");
+            setPasswordInfo(t("changePassword9"));
             setPasswordRepIcon(null);
             return;
         }
@@ -111,7 +118,6 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
         } else {
             setPasswordRepIcon(faCircleCheck);
         }
-
     }, [heldValue, loggedIn, oldPassword, oldPasswordIcon, password, passwordRep]);
 
     const handleRecoveryPasswordChange = async () => {
@@ -157,7 +163,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
             setOldPasswordIcon(null);
         } catch (error: unknown) {
             if (error instanceof ForbiddenError) {
-                setOldPasswordInfo("Wrong password.");
+                setOldPasswordInfo(t("changePassword10"));
             } else {
                 console.error("Unexpected error during password change: ", error);
             }
@@ -168,13 +174,13 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({setIsChanged, se
 
     return (
         <div className={`flex flex-col items-center w-full`}>
-            {loggedIn && <Input placeholder={"Old password"} inputType={inputType} setInputType={setInputType}
+            {loggedIn && <Input placeholder={t("changePassword2")} inputType={inputType} setInputType={setInputType}
                                 value={oldPassword} setValue={setOldPassword} icon={oldPasswordIcon} info={oldPasswordInfo}/>}
-            <Input placeholder={"New password"} inputType={inputType} setInputType={setInputType} value={password}
+            <Input placeholder={t("changePassword3")} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} icon={passwordIcon} info={passwordInfo}/>
-            <Input placeholder={"Repeat password"} inputType={inputType} setInputType={setInputType} value={passwordRep}
+            <Input placeholder={t("changePassword4")} inputType={inputType} setInputType={setInputType} value={passwordRep}
                    setValue={setPasswordRep} icon={passwordRepIcon} hasEye={true} whichForm={"none"}/>
-            <SubmitButton label={"Change"} disabled={isDisabled}
+            <SubmitButton label={t("changePassword5")} disabled={isDisabled}
                           onClick={isAuthenticated ? handlePasswordChange : handleRecoveryPasswordChange}/>
         </div>
     )

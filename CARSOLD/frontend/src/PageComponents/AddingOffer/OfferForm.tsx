@@ -1004,8 +1004,7 @@ const OfferForm: React.FC = () => {
                     </div>
                     <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3 mt-20 m:mb-24">
                         <div className="flex justify-center m:block w-full mb-14 m:mb-16">
-                            <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")}
-                                        required={true}
+                            <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}
                                         error={error.title} message={message.title} maxLength={30} setToggled={handleSetToggled("title")}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">

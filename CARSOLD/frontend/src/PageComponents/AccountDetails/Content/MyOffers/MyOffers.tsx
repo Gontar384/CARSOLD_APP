@@ -6,6 +6,7 @@ import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useOfferUtil} from "../../../../CustomHooks/useOfferUtil.ts";
 import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 export interface FetchedOffer {
     id: number;
@@ -46,6 +47,7 @@ const MyOffers: React.FC = () => {
     const [deleted, setDeleted] = useState<boolean>(false);
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
+    const {t} = useLanguage();
 
     useEffect(() => {
         if (sessionStorage.getItem("offerAdded") === "true") {
@@ -126,12 +128,12 @@ const MyOffers: React.FC = () => {
                 ) : (
                     <div className="flex flex-col items-center w-[90%] m:w-[95%] h-full mt-28 m:mt-32">
                         <p className="text-xl m:text-2xl text-center">
-                            You don't have any offers added yet. Click here to add one:
+                            {t("myOffers1")}
                         </p>
                         <button className={`mt-8 m:mt-10 text-xl m:text-2xl p-2 m:p-3 border-2 border-black border-opacity-40 rounded
                                 ${buttonColor ? "bg-white" : "bg-lime"}`}
                                 onClick={() => navigate("/addingOffer")} {...bindHoverHandlers()}>
-                            Add offer
+                            {t("myOffers2")}
                         </button>
                     </div>
                 )
@@ -143,7 +145,7 @@ const MyOffers: React.FC = () => {
                 </>
             )}
             {(offerAdded || offerUpdated || offerDeleted) &&
-            <AnimatedBanner text={`Offer ${offerAdded ? "added" : offerUpdated ? "updated" : "deleted"} successfully!`}
+            <AnimatedBanner text={`${t("animatedBanner2")} ${offerAdded ? t("animatedBanner3") : offerUpdated ? t("animatedBanner4") : t("animatedBanner5")} ${t("animatedBanner6")}`}
             onAnimationEnd={offerAdded ? () => setOfferAdded(false) : offerUpdated ? () => setOfferUpdated(false) : () => setOfferDeleted(false)}
             delay={3000} color="bg-gray-200" z="z-10"/>}
         </>

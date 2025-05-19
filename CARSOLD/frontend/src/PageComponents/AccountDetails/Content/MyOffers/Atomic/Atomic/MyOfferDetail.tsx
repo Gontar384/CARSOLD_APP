@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 interface MyOfferDetailProps {
     icon: IconProp;
-    label: "Views" | "Follows";
+    label: string;
     count: number;
 }
 

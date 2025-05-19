@@ -5,6 +5,7 @@ import {adminDeleteReport, adminFetchReports} from "../../../../ApiCalls/Service
 import {faCar, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface Report {
     id: number | null;
@@ -22,6 +23,7 @@ const Admin: React.FC = () => {
     const [fetched, setFetched] = useState<boolean>(false);
     const itemsPerPage = 6;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
+    const {t, translateBackend} = useLanguage();
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -68,24 +70,24 @@ const Admin: React.FC = () => {
                 reports.map((report, key) => (
                 <div key={key} className="flex flex-col mb-6 m:mb-8">
                     <div className="flex flex-row items-center justify-between gap-1.5 m:gap-2 p-3 m:p-4 bg-white rounded-md">
-                        <p className="text-base m:text-lg">{report.reason}</p>
+                        <p className="text-base m:text-lg truncate">{translateBackend("reportReasons", report.reason ?? "")}</p>
                         <div className="flex flex-row gap-1.5 m:gap-2">
                             <Link className="flex flex-row items-center gap-0.5 m:gap-1"
                                   to={`/displayOffer/${report.offerId}`}>
                                 <FontAwesomeIcon icon={faCar} className="text-xl m:text-2xl"/>
-                                <p className="text-base m:text-lg">Check</p>
+                                <p className="text-base m:text-lg">{t("admin1")}</p>
                             </Link>
                             <div className="h-6 m:h-7 border border-black"></div>
                             <button className="flex flex-row items-center gap-0.5 m:gap-1"
                                     onClick={() => handleDeleteReport(report.id)}>
                                 <FontAwesomeIcon icon={faXmark} className="text-xl m:text-2xl"/>
-                                <p className="text-base m:text-lg">Delete</p>
+                                <p className="text-base m:text-lg">{t("admin2")}</p>
                             </button>
                         </div>
                     </div>
-                    <p className="text-xs m:text-sm ml-3 m:ml-4">reported by {report.reportUsername}</p>
+                    <p className="text-xs m:text-sm ml-3 m:ml-4">{t("admin3")} {report.reportUsername}</p>
                 </div>
-            ))) : <p className="text-xl m:text-2xl text-center mt-32 m:mt-36">No reports to display!</p> }
+            ))) : <p className="text-xl m:text-2xl text-center mt-32 m:mt-36">{t("admin4")}</p> }
             {reports.length > 0 && (hasPrevPage || hasNextPage) && (
                 <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                     {hasPrevPage && (

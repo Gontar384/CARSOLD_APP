@@ -8,6 +8,7 @@ import {faCircleCheck, faCircleExclamation} from "@fortawesome/free-solid-svg-ic
 import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import {deleteUser} from "../../../../../../../../ApiCalls/Services/UserService.ts";
 import {ForbiddenError, InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../../../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -26,6 +27,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const {handleCheckAuth} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
+    const {t} = useLanguage();
 
     useEffect(() => {
         const checkPassword = async () => {
@@ -50,7 +52,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
             sessionStorage.setItem("isAccountDeleted", "true");
         } catch (error: unknown) {
             if (error instanceof ForbiddenError) {
-                setInfo("Wrong password.")
+                setInfo(t("deleteAccount7"))
             } else if (error instanceof InternalServerError) {
                 setWentWrong(true);
                 setPopup(false);
@@ -72,7 +74,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
 
     const handleDeleteGoogleAccount = async () => {
         if (confirmation !== "delete_account") {
-            setInfo("Type in correctly.")
+            setInfo(t("deleteAccount8"));
             return;
         }
         await deleteAccount();
@@ -83,18 +85,19 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     }, [confirmation]);
 
     return (
-        <div className="flex flex-col items-center mb-8 m:mb-10">
+        <div className="flex flex-col items-center mb-8 m:mb-10 px-2">
             <p className="text-center mt-8 m:mt-10">
-                {label}</p>
+                {label}
+            </p>
             <div className="flex w-full justify-center mt-5 m:mt-7 mb-2 m:mb-3">
                 {!googleLogged ? (
-                    <Input placeholder="Password" inputType="password" value={password} setValue={setPassword} icon={icon} info={info}/>
+                    <Input placeholder={t("deleteAccount9")} inputType="password" value={password} setValue={setPassword} icon={icon} info={info}/>
                 ) : (
                     <Input placeholder="" inputType="text" value={confirmation} setValue={setConfirmation} info={info}/>
                 )
                 }
             </div>
-            <ConfirmButton label="Submit" type="submit" isDisabled={isDisabled}
+            <ConfirmButton label={t("deleteAccount10")} type="submit" isDisabled={isDisabled}
                            onClick={!googleLogged ? handleDeleteAccount : handleDeleteGoogleAccount}/>
         </div>
     )

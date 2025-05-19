@@ -1,10 +1,11 @@
 import {createContext, useContext} from "react";
-import {DictionaryKey, Language} from "./dictionary.ts";
+import {DictionaryKey, Language, TranslationCategory} from "./dictionary.ts";
 
 interface LanguageContext {
     language: Language;
     changeLanguage: (lang: Language) => void;
     t: (key: DictionaryKey) => string;
+    translateBackend: (category: TranslationCategory, value: string) => string;
 }
 
 export const LanguageContext = createContext<LanguageContext | undefined>(undefined);

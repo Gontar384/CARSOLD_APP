@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import ConfirmDeleteButton from "./Atomic/ConfirmDeleteButton.tsx";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ConfirmDeleteWindowProps {
     decision: boolean;
@@ -9,6 +10,7 @@ interface ConfirmDeleteWindowProps {
 
 const ConfirmDeleteWindow: React.FC<ConfirmDeleteWindowProps> = ({ decision, setDecision, onClick }) => {
     const componentRef = useRef<HTMLDivElement | null>(null);
+    const {t} = useLanguage();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -31,10 +33,10 @@ const ConfirmDeleteWindow: React.FC<ConfirmDeleteWindowProps> = ({ decision, set
             <div className="flex flex-col items-center w-11/12 max-w-[500px] text-xl m:text-2xl
                  border-2 border-black bg-gray-200 rounded"
                  ref={componentRef}>
-                <p className="mt-7 m:mt-8">Are you sure?</p>
+                <p className="mt-7 m:mt-8">{t("confirmDeleteWindow1")}</p>
                 <div className="flex flex-row justify-center gap-12 m:gap-16 w-full my-7 m:my-8 text-white">
-                    <ConfirmDeleteButton onClick={onClick} option="Yes"/>
-                    <ConfirmDeleteButton onClick={() => setDecision(false)} option="No"/>
+                    <ConfirmDeleteButton onClick={onClick} option={t("confirmDeleteWindow2")}/>
+                    <ConfirmDeleteButton onClick={() => setDecision(false)} option={t("confirmDeleteWindow3")}/>
                 </div>
             </div>
         </div>

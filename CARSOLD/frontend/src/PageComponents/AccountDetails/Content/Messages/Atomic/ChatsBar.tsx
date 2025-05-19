@@ -8,6 +8,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {Sent} from "../Messages.tsx";
 import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ChatsBarProps {
     sent: Sent;
@@ -35,6 +36,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
     const [searchParams] = useSearchParams();
     const receiverUsername: string = searchParams.get("username") ?? "";
     const {unseenMessagesCount, setUnseenMessagesCount} = useMessages();
+    const {t} = useLanguage();
 
     useEffect(() => {
         const handleGetAllConversations = async () => {
@@ -186,7 +188,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                                 text-gray-700`}>
                                     {conv.sentBy && conv.lastMessage ?
                                         <span className={`${!conv.seen && "font-semibold"}`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
-                                        : <span>No messages yet.</span>
+                                        : <span>{t("chatsBar2")}</span>
                                     }
                                 </div>
                             </div>
@@ -194,7 +196,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                     ))
                 ) : (
                     <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
-                        No conversations found.
+                        {t("chatsBar1")}
                     </div>
                 )
             ) : (

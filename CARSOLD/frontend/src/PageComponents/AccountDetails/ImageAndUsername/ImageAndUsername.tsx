@@ -5,7 +5,6 @@ import Message from "./Atomic/Message.tsx";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const ImageAndUsername: React.FC = () => {
-
     const [message, setMessage] = useState<string>('');
     const {bigWidth} = useUtil();
 

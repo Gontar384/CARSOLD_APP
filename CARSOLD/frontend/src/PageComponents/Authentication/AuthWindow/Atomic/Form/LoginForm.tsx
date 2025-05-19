@@ -8,6 +8,7 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {authenticate} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 const LoginForm: React.FC = () => {
     const [login, setLogin] = useState<string>("");
@@ -23,6 +24,11 @@ const LoginForm: React.FC = () => {
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {handleCheckLogin, handleCheckAccount} = useUserInfo();
     const {handleCheckAuth} = useAuth();
+    const {t, language} = useLanguage();
+
+    useEffect(() => {
+        setLoginInfo("");
+    }, [language]); //resets info when language changes
 
     useEffect(() => {
         if (login.length < 3) {
@@ -30,17 +36,16 @@ const LoginForm: React.FC = () => {
             setLoginInfo("");
             return;
         }
-
         const checkLogin = async () => {
             const present = await handleCheckLogin(login);
             if (present) {
                 const account = await handleCheckAccount(login);
                 if (!account.active) {
-                    setLoginInfo("Please confirm your account via email.");
+                    setLoginInfo(t("login1"));
                     setLoginIcon(faCircleExclamation);
                     return;
                 } else if (account.oauth2) {
-                    setLoginInfo("Please authenticate using Google.");
+                    setLoginInfo(t("login2"));
                     setLoginIcon(faCircleExclamation);
                     return;
                 }
@@ -51,9 +56,7 @@ const LoginForm: React.FC = () => {
                 setLoginInfo("");
             }
         };
-
         checkLogin();
-
     }, [debouncedLogin]);      //checks login, displays info for user
 
     const handleAuthenticate = async () => {
@@ -70,7 +73,7 @@ const LoginForm: React.FC = () => {
                 if (error.response.status === 401) {
                     setWrongPassword(true);
                 } else if (error.response.status === 404) {
-                    setLoginInfo("Wrong login.");
+                    setLoginInfo(t("login3"));
                 } else if (error.response.status !== 400) {
                     setWentWrong(true);
                     console.error("Unexpected error during authentication: ", error);
@@ -90,16 +93,16 @@ const LoginForm: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center w-11/12 py-10 mt-3 rounded-sm shadow-2xl ">
-            <Input placeholder={"E-mail or username"} inputType={"text"} value={login} setValue={setLogin}
+            <Input placeholder={t("login4")} inputType={"text"} value={login} setValue={setLogin}
                    icon={loginIcon} info={loginInfo}/>
-            <Input placeholder={"Password"} inputType={inputType} setInputType={setInputType} value={password}
+            <Input placeholder={t("login5")} inputType={inputType} setInputType={setInputType} value={password}
                    setValue={setPassword} hasEye={true} whichForm={"login"}/>
-            <SubmitButton label={"Sign in"} onClick={handleAuthenticate} disabled={isDisabled}/>
-            {wrongPassword && <AnimatedBanner text={"Wrong password!"} onAnimationEnd={() => setWrongPassword(false)}
+            <SubmitButton label={t("login6")} onClick={handleAuthenticate} disabled={isDisabled}/>
+            {wrongPassword && <AnimatedBanner text={t("animatedBanner11")} onAnimationEnd={() => setWrongPassword(false)}
                                               delay={2000} color={"bg-coolRed"} z={"z-40"}/>}
-            {wentWrong && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrong(false)}
+            {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
                                           delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
-            {isAccountDeleted && <AnimatedBanner text={"Account deleted..."} onAnimationEnd={() => setIsAccountDeleted(false)}
+            {isAccountDeleted && <AnimatedBanner text={t("animatedBanner12")} onAnimationEnd={() => setIsAccountDeleted(false)}
                                 delay={4000} color={"bg-coolYellow"} z={"z-40"}/>}
         </div>
     )

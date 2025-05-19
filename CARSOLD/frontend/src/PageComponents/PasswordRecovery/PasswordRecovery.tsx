@@ -9,6 +9,7 @@ import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {sendPasswordRecoveryEmail} from "../../ApiCalls/Services/UserService.ts";
 import {BadRequestError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const PasswordRecovery: React.FC = () => {
     document.title = "CARSOLD | Password Recovery";
@@ -20,6 +21,7 @@ const PasswordRecovery: React.FC = () => {
     const {handleCheckLogin, handleCheckAccount} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     useEffect(() => {
         setEmailInfo("");
@@ -65,9 +67,9 @@ const PasswordRecovery: React.FC = () => {
             setIsEmailSent(true);
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
-                setEmailInfo("Email address not found.")
+                setEmailInfo(t("passwordRecovery4"))
             } else if (error instanceof BadRequestError) {
-                setEmailInfo("Couldn't send email.")
+                setEmailInfo(t("passwordRecovery5"))
             }
         } finally {
             setTimeout(() => setIsDisabled(false), 2000);
@@ -78,18 +80,17 @@ const PasswordRecovery: React.FC = () => {
         <LayOut>
             <div className="flex flex-col items-center">
                 <div className="flex flex-col items-center w-11/12 max-w-[750px] mt-32 py-10 m:py-11 bg-lime
-                    border border-gray-300 rounded">
+                     border border-gray-300 rounded">
                     <p className="w-11/12 text-center text-lg m:text-xl mb-8 m:mb-9">
-                        Enter your email, so we will send you link for password change.
+                        {t("passwordRecovery1")}
                     </p>
                     <Input placeholder={"E-mail"} inputType={"text"} value={email} setValue={setEmail}
                            icon={emailIcon} info={emailInfo}/>
-                    <SubmitButton label={"Send"} disabled={isDisabled} onClick={handleSendPasswordRecoveryEmail}/>
+                    <SubmitButton label={t("passwordRecovery2")} disabled={isDisabled} onClick={handleSendPasswordRecoveryEmail}/>
                 </div>
             </div>
-            {isEmailSent &&
-                <AnimatedBanner text={"Email with link has been sent!"} onAnimationEnd={() => setIsEmailSent(false)}
-                                delay={4000} color={"bg-lowLime"} z={"z-50"}/>}
+            {isEmailSent && <AnimatedBanner text={t("passwordRecovery3")} onAnimationEnd={() => setIsEmailSent(false)}
+                                            delay={4000} color={"bg-lowLime"} z={"z-50"}/>}
         </LayOut>
     )
 }
