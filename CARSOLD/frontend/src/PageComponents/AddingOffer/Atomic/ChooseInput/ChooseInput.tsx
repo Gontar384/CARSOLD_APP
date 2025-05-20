@@ -14,7 +14,6 @@ interface ChooseButtonProps {
 }
 
 const ChooseInput: React.FC<ChooseButtonProps> = ({ label, firstOption, secondOption, value, setValue, required, error, message }) => {
-
     const handleButtonClick = (option: string) => {
         setValue(option);
     };

@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faImage, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface SingularImageInputProps {
     index: number;
@@ -19,6 +20,7 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
     const [imgHovered, setImgHovered] = useState<boolean>(false);
     const preview: string = photos[index];
     const {isMobile} = useUtil();
+    const {t} = useLanguage();
 
     const updatePhotos = (updated: (string)[]) => {
         const filteredPhotos: (string)[] = updated.filter(img => img !== "");
@@ -34,17 +36,15 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
 
         Array.from(files).forEach(file => {
             if (!file.type.startsWith("image/")) {
-                setWarning(`File "${file.name}" is not an image and was not added.`);
+                setWarning(`${t("offerForm100")}${file.name}${t("offerForm101")}`)
             } else if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                setWarning(`File "${file.name}" exceeds the size limit of ${MAX_SIZE_MB}MB and was not added.`);
+                setWarning(`${t("offerForm100")}${file.name}${t("offerForm102")}${MAX_SIZE_MB}${t("offerForm103")}`);
             } else if (remainingSlots > 0) {
                 validFiles.push(file);
                 remainingSlots--;
             }
         });
-
         if (validFiles.length === 0) return;
-
         const newPhotos = [...photos];
 
         validFiles.forEach(file => {
@@ -53,9 +53,8 @@ const SingularImageInput: React.FC<SingularImageInputProps> = ({index, photos, s
                 newPhotos[emptyIndex] = URL.createObjectURL(file);
             }
         });
-
         if (validFiles.length < files.length) {
-            setWarning(`Only ${validFiles.length} images were added. ${files.length - validFiles.length} were ignored due to size/type/limit.`);
+            setWarning(`${t("offerForm104")}${validFiles.length}${t("offerForm105")}${files.length - validFiles.length}${t("offerForm106")}`);
         }
 
         updatePhotos(newPhotos);

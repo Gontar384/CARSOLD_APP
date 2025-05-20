@@ -37,12 +37,12 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
     const formatNumber = (value: string) => {
         return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
-    const {t, translateBackend} = useLanguage();
+    const {t, translate} = useLanguage();
     const offerDetails = [
         {label: formatNumber(offer.power) + t("smallOfferDisplay1")},
         {label: formatNumber(offer.capacity) + " cm3"},
-        {label: translateBackend("transmission", offer.transmission)},
-        {label: translateBackend("fuel", offer.fuel)},
+        {label: translate("transmission", offer.transmission)},
+        {label: translate("fuel", offer.fuel)},
     ];
     const {isMobile} = useUtil();
     const [heartHovered, setHeartHovered] = useState<boolean>(false);

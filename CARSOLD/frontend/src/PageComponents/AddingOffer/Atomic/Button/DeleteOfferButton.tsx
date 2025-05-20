@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import ConfirmDeleteWindow from "./ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface DeleteOfferButtonProps {
     onClick: () => void;
@@ -10,6 +11,7 @@ const DeleteOfferButton: React.FC<DeleteOfferButtonProps> = ({onClick}) => {
     const [hovered, setHovered] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [decision, setDecision] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     const handleTouchButton = () => {
         setHovered(true);
@@ -24,9 +26,9 @@ const DeleteOfferButton: React.FC<DeleteOfferButtonProps> = ({onClick}) => {
                     onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
                     onTouchStart={isMobile ? handleTouchButton : undefined}
                     onClick={() => setDecision(true)}>
-                Delete offer
+                {t("offerForm95")}
                 {hovered &&
-                    <div className="w-[93px] m:w-[105px] h-[2px] absolute bg-white animate-underline"/>
+                    <div className="w-[95px] m:w-[105px] h-[2px] absolute bg-white animate-underline"/>
                 }
             </button>
             {decision &&

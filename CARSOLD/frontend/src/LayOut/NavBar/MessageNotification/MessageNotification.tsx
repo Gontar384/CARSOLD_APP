@@ -64,7 +64,7 @@ const MessageNotification: React.FC = () => {
         visible && notification.content !== "" && !blockDisplay &&
         <div className={`fixed ${!mobileWidth ? `w-72 h-[90px] p-1 bottom-0 rounded-t-xl ring-4 ${animation}` 
             : `w-48 h-[74px] p-0.5 top-12 rounded-b-xl ring-[3px] ${animation1}`}
-            right-0 bg-white ring-lime z-40 cursor-pointer`}
+            right-0 bg-white ring-lime z-40 cursor-pointer border border-black border-opacity-30`}
              onClick={() => navigate(`/details/messages?username=${notification.senderUsername}`)}>
             <div className="flex flex-row justify-center items-center gap-1 m:gap-1.5 pb-0.5 m:pb-1 border-b border-gray-300">
                 {notification.senderProfilePic !== "" && !imageError ?

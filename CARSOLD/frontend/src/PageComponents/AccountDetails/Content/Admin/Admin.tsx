@@ -23,7 +23,7 @@ const Admin: React.FC = () => {
     const [fetched, setFetched] = useState<boolean>(false);
     const itemsPerPage = 6;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
-    const {t, translateBackend} = useLanguage();
+    const {t, translate} = useLanguage();
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -70,7 +70,7 @@ const Admin: React.FC = () => {
                 reports.map((report, key) => (
                 <div key={key} className="flex flex-col mb-6 m:mb-8">
                     <div className="flex flex-row items-center justify-between gap-1.5 m:gap-2 p-3 m:p-4 bg-white rounded-md">
-                        <p className="text-base m:text-lg truncate">{translateBackend("reportReasons", report.reason ?? "")}</p>
+                        <p className="text-base m:text-lg truncate">{translate("reportReasons", report.reason ?? "")}</p>
                         <div className="flex flex-row gap-1.5 m:gap-2">
                             <Link className="flex flex-row items-center gap-0.5 m:gap-1"
                                   to={`/displayOffer/${report.offerId}`}>

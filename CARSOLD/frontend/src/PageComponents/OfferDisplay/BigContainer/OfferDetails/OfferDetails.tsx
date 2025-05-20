@@ -72,31 +72,31 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     };
 
     return (
-        <div className="w-[95%] bg-white rounded border-2 border-black border-opacity-40 mb-14 m:mb-16">
+        <div className="w-[95%] bg-white rounded border-2 border-black border-opacity-40 mb-8 m:mb-16">
             <p className="text-2xl m:text-3xl text-center font-bold mt-6 m:mt-8">{brand + " " + model}</p>
             <div className="flex flex-row justify-evenly mt-10 m:mt-12">
                 {details.map((item, index) => (
                     <div className="flex flex-col items-center justify-center gap-1.5 m:gap-2" key={index}>
                         <FontAwesomeIcon icon={item.icon} className="text-3xl m:text-4xl"/>
-                        <p className="text-lg m:text-xl text-center">{item.value}</p>
+                        <p className="text-base m:text-lg text-center">{item.value}</p>
                     </div>
                 ))}
             </div>
-            <div className="flex flex-wrap flex-row justify-evenly items-center mt-6 m:mt-8 gap-1.5 m:gap-2 p-1 m:p-1.5">
+            <div className="flex flex-wrap flex-row justify-evenly items-center mt-6 m:mt-8 gap-3 px-2">
                 {moreDetails.map((item, index) => (
-                    <div className="flex flex-col items-center justify-center w-28 h-12 m:w-32 m:h-14
-                    border border-black border-opacity-40 rounded-xl bg-gray-50 text-sm m:text-base" key={index}>
+                    <div className="flex flex-col items-center justify-center w-24 m:w-28 h-12 m:h-14
+                    border border-black border-opacity-40 rounded-xl bg-gray-50 text-xs m:text-sm" key={index}>
                         <p>{item.label}</p>
                         <p className="font-bold">{item.value}</p>
                     </div>
                 ))}
             </div>
             {(seats || doors || steeringWheel || country) &&
-                <div className="flex flex-row justify-center items-center mt-7 m:mt-8 px-3 m:px-4 border-y border-black border-opacity-40">
+                <div className="flex flex-row justify-center items-center mt-7 m:mt-8 px-3 m:px-4 py-1 border-y border-black border-opacity-40">
                     {additionalDetails.length > 0 && (
                         <div className="text-center">
                             {additionalDetails.filter(Boolean).map((item, index, arr) => (
-                                <span className="text-base m:text-lg" key={index}>
+                                <span className="text-sm m:text-base" key={index}>
                                     {item} {index < arr.length - 1 && " • "}
                                 </span>
                             ))}
@@ -104,17 +104,17 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                     )}
                 </div>}
                 {(vin || plate || firstRegistration) &&
-                    <div className="flex flex-col items-center justify-center mt-10 m:mt-12">
-                        <FontAwesomeIcon icon={faCircleInfo} className="text-2xl m:text-3xl mb-4"/>
+                    <div className="flex flex-col items-center justify-center mt-8 m:mt-10">
+                        <FontAwesomeIcon icon={faCircleInfo} className="text-xl m:text-2xl mb-4"/>
                         {registrationInfo.map((item, index) => (
-                            <div className="flex flex-row gap-0.5 m:gap-1 text-base m:text-lg" key={index}>
+                            <div className="flex flex-row gap-0.5 m:gap-1 text-sm m:text-base" key={index}>
                                 <p className="font-bold">{item.label}</p>
                                 <p>{item.value}</p>
                             </div>
                         ))}
                     </div>
                 }
-            <div className="flex justify-center my-12 m:my-14">
+            <div className="flex justify-center my-10 m:my-12">
                 <div className="w-[95%]">
                     <p className="mb-0.5 m:mb-1 text-base m:text-lg font-bold">Description</p>
                     <div className={`${!isExpanded && "max-h-[200px] m:max-h-[300px]"} p-1.5 m:p-2 text-sm m:text-base relative

@@ -5,7 +5,8 @@ interface LanguageContext {
     language: Language;
     changeLanguage: (lang: Language) => void;
     t: (key: DictionaryKey) => string;
-    translateBackend: (category: TranslationCategory, value: string) => string;
+    translate: (category: TranslationCategory, value: string) => string;
+    translateForBackend: (category: TranslationCategory, value: string) => string;
 }
 
 export const LanguageContext = createContext<LanguageContext | undefined>(undefined);

@@ -29,20 +29,25 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({child
         setTimeout(() => setDisabled(false), 300);
     }, [disabled]);
 
-    const t = useCallback((key: DictionaryKey): string => {
-        return dictionary[language][key] || key;
+    const t = useCallback((key: DictionaryKey | null | undefined): string => {
+        if (!key) return "";
+        return dictionary[language]?.[key] || key;
     }, [language]);
 
-    const translateBackend = useCallback(
-        (category: TranslationCategory, value: string): string => {
-            const translations = dictionary[language][category] as Record<string, string>;
-            return translations?.[value] || value;
-        },
-        [language]
-    );
+    const translate = useCallback((category: TranslationCategory | null | undefined, key: string | null | undefined): string => {
+        if (!category || !key) return "";
+        const translations = dictionary[language]?.[category] as Record<string, string> | undefined;
+        return translations?.[key] || key;
+    }, [language]);
+
+    const translateForBackend = useCallback((category: TranslationCategory | null | undefined, key: string | null | undefined): string => {
+        if (!category || !key) return "";
+        const translations = dictionary["ENG"]?.[category] as Record<string, string> | undefined;
+        return translations?.[key] || key;
+    }, []);
 
     return (
-        <LanguageContext.Provider value={{ language, changeLanguage, t, translateBackend }}>
+        <LanguageContext.Provider value={{ language, changeLanguage, t, translate, translateForBackend }}>
             {children}
         </LanguageContext.Provider>
     );

@@ -1,15 +1,13 @@
 import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
-import {faAsterisk} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {carModels} from "./Atomic/SelectInput/SelectData/carModels.ts";
 import {carBrands} from "./Atomic/SelectInput/SelectData/carBrands.ts";
-import {carBodyTypes} from "./Atomic/SelectInput/SelectData/carBodyTypes.ts";
+import {carBodyTypes, carBodyTypesPl} from "./Atomic/SelectInput/SelectData/carBodyTypes.ts";
 import {carYears} from "./Atomic/SelectInput/SelectData/carYears.ts";
-import {carFuels} from "./Atomic/SelectInput/SelectData/carFuels.ts";
-import {carDrives} from "./Atomic/SelectInput/SelectData/carDrives.ts";
-import {carColors} from "./Atomic/SelectInput/SelectData/carColors.ts";
-import {carCountries} from "./Atomic/SelectInput/SelectData/carCountries.ts";
+import {carFuels, carFuelsPl} from "./Atomic/SelectInput/SelectData/carFuels.ts";
+import {carDrives, carDrivesPl} from "./Atomic/SelectInput/SelectData/carDrives.ts";
+import {carColors, carColorsPl} from "./Atomic/SelectInput/SelectData/carColors.ts";
+import {carCountries, carCountriesPl} from "./Atomic/SelectInput/SelectData/carCountries.ts";
 import BasicInput from "./Atomic/BasicInput/BasicInput.tsx";
 import ImageInput from "./Atomic/ImageInput/ImageInput.tsx";
 import SelectInput from "./Atomic/SelectInput/SelectInput.tsx";
@@ -27,8 +25,13 @@ import AddingOfferLoader from "../../Additional/Loading/AddingOfferLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
 import {NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
+import {carTransmissions, carTransmissionsPl} from "../Search/SearchFilters/AdditionalData/carTransmissions.ts";
+import {carConditions, carConditionsPl} from "../Search/SearchFilters/AdditionalData/carConditions.ts";
+import {carSteeringWheel, carSteeringWheelPl} from "./Atomic/SelectInput/SelectData/carSteeringWheel.ts";
 
 const OfferForm: React.FC = () => {
+    const {t, language, translate, translateForBackend} = useLanguage();
     interface RawOffer {
         title: string;
         brand: string;
@@ -113,28 +116,28 @@ const OfferForm: React.FC = () => {
         price: false
     });
     const [message, setMessage] = useState({
-        title: "At least 10 characters.",
-        brand: "Choose car's brand.",
-        model: "Choose car's model.",
-        bodyType: "Choose car's body type.",
-        year: "Choose year of production.",
-        mileage: "Provide car's mileage in km.",
-        fuel: "Choose fuel type.",
-        capacity: "Provide engine capacity in cm3.",
-        power: "Provide engine power in HP.",
-        drive: "Choose car's drive.",
-        transmission: "Choose car's transmission.",
-        color: "Choose car's color.",
-        condition: "Choose car's condition.",
-        seats: "Choose number of seats.",
-        steeringWheel: "Choose steering wheel side.",
-        doors: "Choose number of doors.",
-        country: "Choose car's origin country.",
-        vin: "Provide car's VIN.",
-        plate: "Provide license plate's number.",
-        firstRegistration: "Provide date of first registration.",
-        description: "At least 30 characters.",
-        price: "Enter price of your offer."
+        title: t("offerForm4"),
+        brand: t("offerForm5"),
+        model: t("offerForm6"),
+        bodyType: t("offerForm7"),
+        year: t("offerForm8"),
+        mileage: t("offerForm9"),
+        fuel: t("offerForm10"),
+        capacity: t("offerForm11"),
+        power: t("offerForm12"),
+        drive: t("offerForm13"),
+        transmission: t("offerForm14"),
+        color: t("offerForm15"),
+        condition: t("offerForm16"),
+        seats: t("offerForm17"),
+        steeringWheel: t("offerForm18"),
+        doors: t("offerForm19"),
+        country: t("offerForm20"),
+        vin: t("offerForm21"),
+        plate: t("offerForm22"),
+        firstRegistration: t("offerForm23"),
+        description: t("offerForm24"),
+        price: t("offerForm25"),
     });
     const [toggled, setToggled] = useState({
         title: false,
@@ -203,28 +206,28 @@ const OfferForm: React.FC = () => {
             });
             setError(Object.fromEntries(Object.keys(error).map((key) => [key, false])) as typeof error);
             setMessage({
-                title: "At least 10 characters.",
-                brand: "Choose car's brand.",
-                model: "Choose car's model.",
-                bodyType: "Choose car's body type.",
-                year: "Choose year of production.",
-                mileage: "Provide car's mileage in km.",
-                fuel: "Choose fuel type.",
-                capacity: "Provide engine capacity in cm3.",
-                power: "Provide engine power in HP.",
-                drive: "Choose car's drive.",
-                transmission: "Choose car's transmission.",
-                color: "Choose car's color.",
-                condition: "Choose car's condition.",
-                seats: "Choose number of seats.",
-                steeringWheel: "Choose steering wheel side.",
-                doors: "Choose number of doors.",
-                country: "Choose car's origin country.",
-                vin: "Provide car's VIN.",
-                plate: "Provide license plate's number.",
-                firstRegistration: "Provide date of first registration.",
-                description: "At least 30 characters.",
-                price: "Enter price of your offer."
+                title: t("offerForm4"),
+                brand: t("offerForm5"),
+                model: t("offerForm6"),
+                bodyType: t("offerForm7"),
+                year: t("offerForm8"),
+                mileage: t("offerForm9"),
+                fuel: t("offerForm10"),
+                capacity: t("offerForm11"),
+                power: t("offerForm12"),
+                drive: t("offerForm13"),
+                transmission: t("offerForm14"),
+                color: t("offerForm15"),
+                condition: t("offerForm16"),
+                seats: t("offerForm17"),
+                steeringWheel: t("offerForm18"),
+                doors: t("offerForm19"),
+                country: t("offerForm20"),
+                vin: t("offerForm21"),
+                plate: t("offerForm22"),
+                firstRegistration: t("offerForm23"),
+                description: t("offerForm24"),
+                price: t("offerForm25"),
             })
             setToggled(Object.fromEntries(Object.keys(toggled).map((key) => [key, false])) as typeof toggled);
             setIsDisabled(false);
@@ -235,6 +238,44 @@ const OfferForm: React.FC = () => {
             setWentWrongBanner(false);
         }
     }, [location.pathname]);
+
+    useEffect(() => {
+        setMessage({
+            title: t("offerForm4"),
+            brand: t("offerForm5"),
+            model: t("offerForm6"),
+            bodyType: t("offerForm7"),
+            year: t("offerForm8"),
+            mileage: t("offerForm9"),
+            fuel: t("offerForm10"),
+            capacity: t("offerForm11"),
+            power: t("offerForm12"),
+            drive: t("offerForm13"),
+            transmission: t("offerForm14"),
+            color: t("offerForm15"),
+            condition: t("offerForm16"),
+            seats: t("offerForm17"),
+            steeringWheel: t("offerForm18"),
+            doors: t("offerForm19"),
+            country: t("offerForm20"),
+            vin: t("offerForm21"),
+            plate: t("offerForm22"),
+            firstRegistration: t("offerForm23"),
+            description: t("offerForm24"),
+            price: t("offerForm25"),
+        });
+        setOffer(prev => ({
+            ...prev,
+            bodyType: translate("bodyType", offer.bodyType) ?? "",
+            fuel: translate("fuel", offer.fuel) ?? "",
+            drive: translate("drive", offer.drive) ?? "",
+            transmission: translate("transmission", offer.transmission) ?? "",
+            color: translate("color", offer.color) ?? "",
+            condition: translate("condition", offer.condition) ?? "",
+            steeringWheel: translate("steeringWheel", offer.steeringWheel) ?? "",
+            country: translate("country", offer.country) ?? ""
+        }));
+    }, [language]) //changes messages when language changes
 
     //those work when /modifyingOffer/{id}
     useEffect(() => {
@@ -265,20 +306,20 @@ const OfferForm: React.FC = () => {
                 title: data.title ?? "",
                 brand: data.brand ?? "",
                 model: data.model ?? "",
-                bodyType: data.bodyType ?? "",
+                bodyType: language === "POL" && data.bodyType ? translate("bodyType", data.bodyType) : data.bodyType ?? "",
                 year: String(data.year ?? ""),
                 mileage: formatNumber(String(data.mileage ?? "")),
-                fuel: data.fuel ?? "",
+                fuel: language === "POL" && data.fuel ? translate("fuel", data.fuel) : data.fuel ?? "",
                 capacity: formatNumber(String(data.capacity ?? "")),
                 power: formatNumber(String(data.power ?? "")),
-                drive: data.drive ?? "",
-                transmission: data.transmission ?? "",
-                color: data.color ?? "",
-                condition: data.condition ?? "",
+                drive: language === "POL" && data.drive ? translate("drive", data.drive) : data.drive ?? "",
+                transmission: language === "POL" && data.transmission ? translate("transmission", data.transmission) : data.transmission ?? "",
+                color: language === "POL" && data.color ? translate("color", data.color) : data.color ?? "",
+                condition: language === "POL" && data.condition ? translate("condition", data.condition) : data.condition ?? "",
                 seats: String(data.seats ?? ""),
                 doors: String(data.doors ?? ""),
-                steeringWheel: data.steeringWheel ?? "",
-                country: data.country ?? "",
+                steeringWheel: language === "POL" && data.steeringWheel ? translate("steeringWheel", data.steeringWheel) : data.steeringWheel ?? "",
+                country: language === "POL" && data.country ? translate("country", data.country) : data.country ?? "",
                 vin: data.vin ?? "",
                 plate: data.plate ?? "",
                 firstRegistration: String(data.firstRegistration ?? ""),
@@ -296,8 +337,7 @@ const OfferForm: React.FC = () => {
     }, [data, permission]);  //transfers data to object for updating offer purpose
 
     //helper methods
-    const handleSetOffer = (key: keyof typeof offer) =>
-        (setValue: React.SetStateAction<string> | React.SetStateAction<string[]>) => {
+    const handleSetOffer = (key: keyof typeof offer) => (setValue: React.SetStateAction<string> | React.SetStateAction<string[]>) => {
             setOffer(prev => ({
                 ...prev,
                 [key]: setValue
@@ -316,8 +356,7 @@ const OfferForm: React.FC = () => {
         setToggled(prev => ({...prev, [field]: value}));
     };
 
-    const handleSetToggled = (key: keyof typeof toggled) =>
-        (setValue: React.SetStateAction<boolean>) => {
+    const handleSetToggled = (key: keyof typeof toggled) => (setValue: React.SetStateAction<boolean>) => {
             setToggled(prev => ({
                 ...prev,
                 [key]: setValue
@@ -330,13 +369,13 @@ const OfferForm: React.FC = () => {
         if (toggled.title) {
             if (offer.title === "") {
                 setErrorField("title", true);
-                setMessageField("title", "You have to provide title.");
+                setMessageField("title", t("offerForm27"));
             } else if (!/[a-zA-Z0-9]/.test(offer.title)) {
                 setErrorField("title", true);
-                setMessageField("title", "Incorrect title!");
+                setMessageField("title", t("offerForm28"));
             } else if (offer.title.length < 5) {
                 setErrorField("title", true);
-                setMessageField("title", "Title is too short.");
+                setMessageField("title", t("offerForm29"));
             }
             setToggledField("title", false);
         }
@@ -346,14 +385,14 @@ const OfferForm: React.FC = () => {
         if (offer.title.length <= 30) {
             if ((offer.title.match(/[A-Z]/g) || []).length > 10) {
                 setErrorField("title", true);
-                setMessageField("title", "Too many BIG LETTERS!");
+                setMessageField("title", t("offerForm30"));
             } else {
                 setErrorField("title", false);
-                setMessageField("title", "At least 10 characters.");
+                setMessageField("title", t("offerForm4"));
             }
         } else {
             setErrorField("title", true);
-            setMessageField("title", "Title is too long.");
+            setMessageField("title", t("offerForm31"));
         }
     }, [offer.title]);
 
@@ -362,10 +401,10 @@ const OfferForm: React.FC = () => {
         if (toggled.brand) {
             if (offer.brand === "") {
                 setErrorField("brand", true);
-                setMessageField("brand", "You have to choose brand.");
+                setMessageField("brand", t("offerForm32"));
             } else {
                 setErrorField("brand", false);
-                setMessageField("brand", "Choose car's brand.");
+                setMessageField("brand", t("offerForm5"));
             }
             setToggledField("brand", false);
         }
@@ -376,10 +415,10 @@ const OfferForm: React.FC = () => {
         if (toggled.model) {
             if (offer.model === "") {
                 setErrorField("model", true);
-                setMessageField("model", "You have to choose model.");
+                setMessageField("model", t("offerForm33"));
             } else {
                 setErrorField("model", false);
-                setMessageField("model", "Choose car's model.");
+                setMessageField("model", t("offerForm6"));
             }
             setToggledField("model", false);
         }
@@ -396,10 +435,10 @@ const OfferForm: React.FC = () => {
         if (toggled.bodyType) {
             if (offer.bodyType === "") {
                 setErrorField("bodyType", true);
-                setMessageField("bodyType", "You have to choose body type.");
+                setMessageField("bodyType", t("offerForm34"));
             } else {
                 setErrorField("bodyType", false);
-                setMessageField("bodyType", "Choose car's body type.");
+                setMessageField("bodyType", t("offerForm7"));
             }
             setToggledField("bodyType", false);
         }
@@ -410,10 +449,10 @@ const OfferForm: React.FC = () => {
         if (toggled.year) {
             if (offer.year === "") {
                 setErrorField("year", true);
-                setMessageField("year", "You have to choose year of production.");
+                setMessageField("year", t("offerForm35"));
             } else {
                 setErrorField("year", false);
-                setMessageField("year", "Choose year of production.");
+                setMessageField("year", t("offerForm8"));
             }
             setToggledField("year", false);
         }
@@ -424,7 +463,7 @@ const OfferForm: React.FC = () => {
         if (toggled.mileage) {
             if (offer.mileage === "") {
                 setErrorField("mileage", true);
-                setMessageField("mileage", "You have to provide car's mileage.");
+                setMessageField("mileage", t("offerForm36"));
             }
             setToggledField("mileage", false);
         }
@@ -433,10 +472,10 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.mileage.length > 9) {
             setErrorField("mileage", true);
-            setMessageField("mileage", "Mileage is incorrect!");
+            setMessageField("mileage", t("offerForm37"));
         } else {
             setErrorField("mileage", false);
-            setMessageField("mileage", "Provide car's mileage in km.");
+            setMessageField("mileage", t("offerForm9"));
         }
     }, [offer.mileage]);
 
@@ -445,10 +484,10 @@ const OfferForm: React.FC = () => {
         if (toggled.fuel) {
             if (offer.fuel === "") {
                 setErrorField("fuel", true);
-                setMessageField("fuel", "You have to choose fuel type.");
+                setMessageField("fuel", t("offerForm38"));
             } else {
                 setErrorField("fuel", false);
-                setMessageField("fuel", "Choose fuel type.");
+                setMessageField("fuel", t("offerForm10"));
             }
             setToggledField("fuel", false);
         }
@@ -459,10 +498,10 @@ const OfferForm: React.FC = () => {
         if (toggled.capacity) {
             if (offer.capacity === "") {
                 setErrorField("capacity", true);
-                setMessageField("capacity", "You have to provide engine capacity.");
+                setMessageField("capacity", t("offerForm39"));
             } else if (offer.capacity.length < 3) {
                 setErrorField("capacity", true);
-                setMessageField("capacity", "Engine capacity is incorrect!");
+                setMessageField("capacity", t("offerForm40"));
             }
             setToggledField("capacity", false);
         }
@@ -471,10 +510,10 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.capacity.length > 6) {
             setErrorField("capacity", true);
-            setMessageField("capacity", "Engine capacity is incorrect!");
+            setMessageField("capacity", t("offerForm40"));
         } else {
             setErrorField("capacity", false);
-            setMessageField("capacity", "Provide engine capacity in cm3.");
+            setMessageField("capacity", t("offerForm11"));
         }
     }, [offer.capacity]);
 
@@ -483,7 +522,7 @@ const OfferForm: React.FC = () => {
         if (toggled.power) {
             if (offer.power === "") {
                 setErrorField("power", true);
-                setMessageField("power", "You have to provide engine power.");
+                setMessageField("power", t("offerForm41"));
             }
             setToggledField("power", false);
         }
@@ -492,10 +531,10 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.power.length > 5) {
             setErrorField("power", true);
-            setMessageField("power", "Engine power is incorrect!");
+            setMessageField("power", t("offerForm42"));
         } else {
             setErrorField("power", false);
-            setMessageField("power", "Provide engine power in HP.");
+            setMessageField("power", t("offerForm12"));
         }
     }, [offer.power]);
 
@@ -504,10 +543,10 @@ const OfferForm: React.FC = () => {
         if (toggled.drive) {
             if (offer.drive === "") {
                 setErrorField("drive", true);
-                setMessageField("drive", "You have to choose drive.");
+                setMessageField("drive", t("offerForm43"));
             } else {
                 setErrorField("drive", false);
-                setMessageField("drive", "Choose car's drive.");
+                setMessageField("drive", t("offerForm13"));
             }
             setToggledField("drive", false);
         }
@@ -517,7 +556,7 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.transmission !== "") {
             setErrorField("transmission", false);
-            setMessageField("transmission", "Choose car's transmission.")
+            setMessageField("transmission", t("offerForm14"))
         }
     }, [offer.transmission]);
 
@@ -526,10 +565,10 @@ const OfferForm: React.FC = () => {
         if (toggled.color) {
             if (offer.color === "") {
                 setErrorField("color", true);
-                setMessageField("color", "You have to choose color.");
+                setMessageField("color", t("offerForm44"));
             } else {
                 setErrorField("color", false);
-                setMessageField("color", "Choose car's color.");
+                setMessageField("color", t("offerForm15"));
             }
             setToggledField("color", false);
         }
@@ -539,7 +578,7 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.condition !== "") {
             setErrorField("condition", false);
-            setMessageField("condition", "Choose car's condition.")
+            setMessageField("condition", t("offerForm16"))
         }
     }, [offer.condition]);
 
@@ -549,16 +588,16 @@ const OfferForm: React.FC = () => {
             if (offer.vin === "") {
                 setToggledField("vin", false);
                 setErrorField("vin", false);
-                setMessageField("vin", "Provide car's VIN.");
+                setMessageField("vin", t("offerForm21"));
                 return;
             }
             const vinRegex = /^[A-Z0-9]{17}$/;
             if (vinRegex.test(offer.vin)) {
                 setErrorField("vin", false);
-                setMessageField("vin", "Provide car's VIN.");
+                setMessageField("vin", t("offerForm21"));
             } else {
                 setErrorField("vin", true);
-                setMessageField("vin", "VIN is incorrect!");
+                setMessageField("vin", t("offerForm45"));
             }
             setToggledField("vin", false);
         }
@@ -570,16 +609,16 @@ const OfferForm: React.FC = () => {
             if (offer.plate === "") {
                 setToggledField("plate", false);
                 setErrorField("plate", false);
-                setMessageField("plate", "Provide license plate's number.");
+                setMessageField("plate", t("offerForm22"));
                 return;
             }
             const plateRegex = /^[A-Z0-9]{4,8}$/;
             if (plateRegex.test(offer.plate)) {
                 setErrorField("plate", false);
-                setMessageField("plate", "Provide license plate's number.");
+                setMessageField("plate", t("offerForm22"));
             } else {
                 setErrorField("plate", true);
-                setMessageField("plate", "License plate number is incorrect!");
+                setMessageField("plate", t("offerForm46"));
             }
             setToggledField("plate", false);
         }
@@ -591,16 +630,16 @@ const OfferForm: React.FC = () => {
             if (offer.firstRegistration === "") {
                 setToggledField("firstRegistration", false);
                 setErrorField("firstRegistration", false);
-                setMessageField("firstRegistration", "Provide date of first registration.");
+                setMessageField("firstRegistration", t("offerForm23"));
                 return;
             }
             const year = Number(offer.firstRegistration.split("-")[0]);
             if (year >= 1900 && year <= 2025) {
                 setErrorField("firstRegistration", false);
-                setMessageField("firstRegistration", "Provide date of first registration.");
+                setMessageField("firstRegistration", t("offerForm23"));
             } else {
                 setErrorField("firstRegistration", true);
-                setMessageField("firstRegistration", "Incorrect date!");
+                setMessageField("firstRegistration", t("offerForm47"));
             }
             setToggledField("firstRegistration", false);
         }
@@ -611,13 +650,13 @@ const OfferForm: React.FC = () => {
         if (toggled.description) {
             if (offer.description === "") {
                 setErrorField("description", true);
-                setMessageField("description", "You have to add description.");
+                setMessageField("description", t("offerForm48"));
             } else if (!/[a-zA-Z0-9]/.test(offer.description)) {
                 setErrorField("description", true);
-                setMessageField("description", "Incorrect description!");
+                setMessageField("description", t("offerForm50"));
             } else if (offer.description.length < 30) {
                 setErrorField("description", true);
-                setMessageField("description", "Description is too short.");
+                setMessageField("description", t("offerForm49"));
             }
             setToggledField("description", false);
         }
@@ -626,10 +665,10 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.description.length > 2000) {
             setErrorField("description", true);
-            setMessageField("description", "Description is too long!");
+            setMessageField("description", t("offerForm51"));
         } else {
             setErrorField("description", false);
-            setMessageField("description", "At least 30 characters.");
+            setMessageField("description", t("offerForm24"));
         }
     }, [offer.description]);
 
@@ -638,10 +677,10 @@ const OfferForm: React.FC = () => {
         if (toggled.price) {
             if (offer.price === "") {
                 setErrorField("price", true);
-                setMessageField("price", "You have to set price.");
+                setMessageField("price", t("offerForm52"));
             } else if (offer.price.length < 3) {
                 setErrorField("price", true);
-                setMessageField("price", "Price is incorrect!");
+                setMessageField("price", t("offerForm53"));
             }
             setToggledField("price", false);
         }
@@ -650,10 +689,10 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         if (offer.price.length > 12) {
             setErrorField("price", true);
-            setMessageField("price", "Price is incorrect!");
+            setMessageField("price", t("offerForm53"));
         } else {
             setErrorField("price", false);
-            setMessageField("price", "Enter price of your offer.");
+            setMessageField("price", t("offerForm25"));
         }
     }, [offer.price]);
 
@@ -664,163 +703,163 @@ const OfferForm: React.FC = () => {
 
         if (offer.title === "") {
             setErrorField("title", true);
-            setMessageField("title", "You have to provide title.")
+            setMessageField("title", t("offerForm27"))
             isValid = false;
         } else if (!/[a-zA-Z0-9]/.test(offer.title)) {
             setErrorField("title", true);
-            setMessageField("title", "Incorrect title!");
+            setMessageField("title", t("offerForm28"));
             isValid = false;
         } else if (offer.title.length < 5) {
             setErrorField("title", true);
-            setMessageField("title", "Title is too short.");
+            setMessageField("title", t("offerForm29"));
             isValid = false;
         } else if (offer.title.length > 30) {
             setErrorField("title", true);
-            setMessageField("title", "Title is too long.");
+            setMessageField("title", t("offerForm31"));
             isValid = false;
         } else if ((offer.title.match(/[A-Z]/g) || []).length > 10) {
             setErrorField("title", true);
-            setMessageField("title", "Too many BIG LETTERS!");
+            setMessageField("title", t("offerForm30"));
             isValid = false;
         }
         if (offer.brand === "" || !carBrands.includes(offer.brand)) {
             setErrorField("brand", true);
-            setMessageField("brand", "You have to choose brand.")
+            setMessageField("brand", t("offerForm32"))
             isValid = false;
         }
         if (offer.model === "" && offer.brand !== "Other" || !carModels[offer.brand].includes(offer.model)) {
             setErrorField("model", true);
-            setMessageField("model", "You have to choose model.");
+            setMessageField("model", t("offerForm33"));
             isValid = false;
         }
-        if (offer.bodyType === "" || !carBodyTypes.includes(offer.bodyType)) {
+        if (offer.bodyType === "" || (!carBodyTypes.includes(offer.bodyType) && !carBodyTypesPl.includes(offer.bodyType))) {
             setErrorField("bodyType", true);
-            setMessageField("bodyType", "You have to choose body type.");
+            setMessageField("bodyType", t("offerForm34"));
             isValid = false;
         }
         if (offer.year === "" || !carYears.includes(offer.year)) {
             setErrorField("year", true);
-            setMessageField("year", "You have to choose year of production.");
+            setMessageField("year", t("offerForm35"));
             isValid = false;
         }
         if (offer.mileage === "") {
             setErrorField("mileage", true);
-            setMessageField("mileage", "You have to provide car's mileage.");
+            setMessageField("mileage", t("offerForm36"));
             isValid = false;
         } else if (offer.mileage.length > 9) {
             setErrorField("mileage", true);
-            setMessageField("mileage", "Mileage is incorrect!");
+            setMessageField("mileage", t("offerForm37"));
             isValid = false;
         }
-        if (offer.fuel === "" || !carFuels.includes(offer.fuel)) {
+        if (offer.fuel === "" || (!carFuels.includes(offer.fuel) && !carFuelsPl.includes(offer.fuel))) {
             setErrorField("fuel", true);
-            setMessageField("fuel", "You have to choose fuel type.");
+            setMessageField("fuel", t("offerForm38"));
             isValid = false;
         }
         if (offer.capacity === "") {
             setErrorField("capacity", true);
-            setMessageField("capacity", "You have to provide engine capacity.");
+            setMessageField("capacity", t("offerForm39"));
             isValid = false;
         } else if (offer.capacity.length < 3) {
             setErrorField("capacity", true);
-            setMessageField("capacity", "Engine capacity is incorrect!");
+            setMessageField("capacity", t("offerForm40"));
             isValid = false;
         } else if (offer.capacity.length > 6) {
             setErrorField("capacity", true);
-            setMessageField("capacity", "Engine capacity is incorrect!");
+            setMessageField("capacity", t("offerForm40"));
             isValid = false;
         }
         if (offer.power === "") {
             setErrorField("power", true);
-            setMessageField("power", "You have to provide engine power.");
+            setMessageField("power", t("offerForm41"));
             isValid = false;
         } else if (offer.power.length > 5) {
             setErrorField("power", true);
-            setMessageField("power", "Engine power is incorrect!");
+            setMessageField("power", t("offerForm42"));
             isValid = false;
         }
-        if (offer.drive === "" || !carDrives.includes(offer.drive)) {
+        if (offer.drive === "" || (!carDrives.includes(offer.drive) && !carDrivesPl.includes(offer.drive))) {
             setErrorField("drive", true);
-            setMessageField("drive", "You have to choose drive.");
+            setMessageField("drive", t("offerForm43"));
             isValid = false;
         }
-        if (offer.transmission === "" || !["Manual", "Automatic"].includes(offer.transmission)) {
+        if (offer.transmission === "" || ![t("offerForm60"), t("offerForm61")].includes(offer.transmission)) {
             setErrorField("transmission", true);
-            setMessageField("transmission", "You have to choose car's transmission.");
+            setMessageField("transmission", t("offerForm54"));
             isValid = false;
         }
-        if (offer.color === "" || !carColors.includes(offer.color)) {
+        if (offer.color === "" || (!carColors.includes(offer.color) && !carColorsPl.includes(offer.color))) {
             setErrorField("color", true);
-            setMessageField("color", "You have to choose color.");
+            setMessageField("color", t("offerForm44"));
             isValid = false;
         }
-        if (offer.condition === "" || !["Undamaged", "Damaged"].includes(offer.condition)) {
+        if (offer.condition === "" || ![t("offerForm62"), t("offerForm63")].includes(offer.condition)) {
             setErrorField("condition", true);
-            setMessageField("condition", "You have to choose car's condition.");
+            setMessageField("condition", t("offerForm55"));
             isValid = false;
         }
         if (offer.seats !== "" && !carSeats.includes(offer.seats)) {
             setErrorField("seats", true);
-            setMessageField("seats", "You have to choose seats.");
+            setMessageField("seats", t("offerForm56"));
             isValid = false;
         }
         if (offer.doors !== "" && !carDoors.includes(offer.doors)) {
             setErrorField("doors", true);
-            setMessageField("doors", "You have to choose doors.");
+            setMessageField("doors", t("offerForm57"));
             isValid = false;
         }
-        if (offer.steeringWheel !== "" && !["Left", "Right"].includes(offer.steeringWheel)) {
+        if (offer.steeringWheel !== "" && ![t("offerForm64"), t("offerForm65")].includes(offer.steeringWheel)) {
             setErrorField("steeringWheel", true);
-            setMessageField("steeringWheel", "You have to choose steering wheel side.");
+            setMessageField("steeringWheel", t("offerForm58"));
             isValid = false;
         }
-        if (offer.country !== "" && !carCountries.includes(offer.country)) {
+        if (offer.country !== "" && !carCountries.includes(offer.country) && !carCountriesPl.includes(offer.country)) {
             setErrorField("country", true);
-            setMessageField("country", "You have to choose country.");
+            setMessageField("country", t("offerForm59"));
             isValid = false;
         }
         if (offer.vin !== "" && !/^[A-Z0-9]{17}$/.test(offer.vin)) {
             setErrorField("vin", true);
-            setMessageField("vin", "VIN is incorrect!");
+            setMessageField("vin", t("offerForm45"));
             isValid = false;
         }
         if (offer.plate !== "" && !/^[A-Z0-9]{4,8}$/.test(offer.plate)) {
             setErrorField("plate", true);
-            setMessageField("plate", "License plate number is incorrect!");
+            setMessageField("plate", t("offerForm46"));
             isValid = false;
         }
         if (offer.firstRegistration !== "") {
             const year = Number(offer.firstRegistration.split("-")[0]);
             if (year < 1900 && year > 2025) {
                 setErrorField("firstRegistration", true);
-                setMessageField("firstRegistration", "Incorrect date!");
+                setMessageField("firstRegistration", t("offerForm47"));
                 isValid = false;
             }
         }
         if (offer.description === "") {
             setErrorField("description", true);
-            setMessageField("description", "You have to add description.");
+            setMessageField("description", t("offerForm48"));
             isValid = false;
         } else if (!/[a-zA-Z0-9]/.test(offer.description)) {
             setErrorField("description", true);
-            setMessageField("description", "Incorrect description!");
+            setMessageField("description", t("offerForm50"));
             isValid = false;
         } else if (offer.description.length < 30) {
             setErrorField("description", true);
-            setMessageField("description", "Description is too short.");
+            setMessageField("description", t("offerForm49"));
             isValid = false;
         } else if (offer.description.length > 2000) {
             setErrorField("description", true);
-            setMessageField("description", "Description is too long!");
+            setMessageField("description", t("offerForm51"));
             isValid = false;
         }
         if (offer.price === "") {
             setErrorField("price", true);
-            setMessageField("price", "You have to set price.");
+            setMessageField("price", t("offerForm52"));
             isValid = false;
         } else if (offer.price.length < 3 || offer.price.length > 12) {
             setErrorField("price", true);
-            setMessageField("price", "Price is incorrect!");
+            setMessageField("price", t("offerForm53"));
             isValid = false;
         }
 
@@ -830,7 +869,6 @@ const OfferForm: React.FC = () => {
     //fetch photos, convert photos and Offer object to formData
     const convertToOfferData = async (offer: RawOffer): Promise<FormData> => {
         const formData = new FormData();
-
         for (let index = 0; index < offer.photos.length; index++) {
             const photo = offer.photos[index];
             if (photo) {
@@ -844,7 +882,6 @@ const OfferForm: React.FC = () => {
                 }
             }
         }
-
         const parseNumber = (value: string): number | null => {
             const sanitizedValue = value.replace(/\./g, '');
             const parsed = Number(sanitizedValue);
@@ -855,20 +892,20 @@ const OfferForm: React.FC = () => {
             title: offer.title,
             brand: offer.brand,
             model: offer.model,
-            bodyType: offer.bodyType,
+            bodyType: translateForBackend("bodyType", offer.bodyType),
             year: parseNumber(offer.year),
             mileage: parseNumber(offer.mileage),
-            fuel: offer.fuel,
+            fuel: translateForBackend("fuel", offer.fuel),
             capacity: parseNumber(offer.capacity),
             power: parseNumber(offer.power),
-            drive: offer.drive,
-            transmission: offer.transmission,
+            drive: translateForBackend("drive", offer.drive),
+            transmission: translateForBackend("transmission", offer.transmission),
             seats: offer.seats ? parseNumber(offer.seats) : null,
             doors: offer.doors ? parseNumber(offer.doors) : null,
-            steeringWheel: offer.steeringWheel || null,
-            condition: offer.condition,
-            color: offer.color,
-            country: offer.country || null,
+            steeringWheel: translateForBackend("steeringWheel", offer.steeringWheel) || null,
+            condition: translateForBackend("condition", offer.condition),
+            color: translateForBackend("color", offer.color),
+            country: translateForBackend("country", offer.country) || null,
             vin: offer.vin || null,
             plate: offer.plate || null,
             firstRegistration: offer.firstRegistration || null,
@@ -876,7 +913,6 @@ const OfferForm: React.FC = () => {
             price: parseNumber(offer.price),
             currency: offer.currency,
         };
-
         formData.append("offer", new Blob([JSON.stringify(offerDto)], { type: "application/json" }));
 
         return formData;
@@ -993,65 +1029,66 @@ const OfferForm: React.FC = () => {
                 <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
                     <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
-                        {id !== null && permission === true ? "Modify offer" : "Add offer"}
+                        {id !== null && permission === true ? t("offerForm1") : t("offerForm2")}
                     </p>
-                    <div className="flex justify-center w-[90%] bg-white rounded-md border-2 border-gray-300">
-                        <p className="w-full text-lg m:text-xl p-4 m:p-6">
-                            We need some information about your car to interest possible customers!
-                            You must fill fields marked with <FontAwesomeIcon className="mb-0.5 mr-1 m:mr-1.5 text-xs m:text-sm" icon={faAsterisk}/>
-                            mark, but try to provide as many details as you can. Good luck!
+                    <div className="flex justify-center w-[80%] bg-white rounded-md border-2 border-gray-300">
+                        <p className="w-full text-lg m:text-xl p-4 m:p-6 text-center">
+                            {t("offerForm3")}
                         </p>
                     </div>
                     <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3 mt-20 m:mb-24">
                         <div className="flex justify-center m:block w-full mb-14 m:mb-16">
-                            <BasicInput label="Title" type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}
+                            <BasicInput label={t("offerForm26")} type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}
                                         error={error.title} message={message.title} maxLength={30} setToggled={handleSetToggled("title")}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">
-                            <SelectInput label="Brand" options={carBrands} value={offer.brand} setValue={handleSetOffer("brand")}
+                            <SelectInput label={t("offerForm66")} options={carBrands} value={offer.brand} setValue={handleSetOffer("brand")}
                                          required={true} error={error.brand} message={message.brand} setToggled={handleSetToggled("brand")}/>
                             <SelectInput label="Model" options={carModels[offer.brand] ?? []} value={offer.model} setValue={handleSetOffer("model")}
                                          required={offer.brand !== "Other"} disabled={!carBrands.includes(offer.brand) || offer.brand === "Other"}
                                          error={error.model} message={message.model} setToggled={handleSetToggled("model")}/>
-                            <SelectInput label="Body type" options={carBodyTypes} value={offer.bodyType} setValue={handleSetOffer("bodyType")}
+                            <SelectInput label={t("offerForm67")} options={language === "ENG" ? carBodyTypes : carBodyTypesPl} value={offer.bodyType} setValue={handleSetOffer("bodyType")}
                                          required={true} error={error.bodyType} message={message.bodyType} setToggled={handleSetToggled("bodyType")}/>
-                            <SelectInput label="Year of production" options={carYears} value={offer.year} setValue={handleSetOffer("year")}
+                            <SelectInput label={t("offerForm68")} options={carYears} value={offer.year} setValue={handleSetOffer("year")}
                                          required={true} error={error.year} message={message.year} setToggled={handleSetToggled("year")}/>
-                            <BasicInput label="Mileage" type="number" value={offer.mileage} setValue={handleSetOffer("mileage")}
+                            <BasicInput label={t("offerForm69")} type="number" value={offer.mileage} setValue={handleSetOffer("mileage")}
                                         required={true} error={error.mileage} message={message.mileage} symbol="km" setToggled={handleSetToggled("mileage")}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">
-                            <SelectInput label="Fuel" options={carFuels} value={offer.fuel} setValue={handleSetOffer("fuel")} error={error.fuel}
+                            <SelectInput label={t("offerForm70")} options={language === "ENG" ? carFuels : carFuelsPl} value={offer.fuel} setValue={handleSetOffer("fuel")} error={error.fuel}
                                          required={true} message={message.fuel} setToggled={handleSetToggled("fuel")}/>
-                            <BasicInput label="Engine capacity" type="number" value={offer.capacity} setValue={handleSetOffer("capacity")}  error={error.capacity}
+                            <BasicInput label={t("offerForm71")} type="number" value={offer.capacity} setValue={handleSetOffer("capacity")}  error={error.capacity}
                                         required={true} message={message.capacity} symbol="cm3" setToggled={handleSetToggled("capacity")}/>
-                            <BasicInput label="Engine power" type="number" value={offer.power} setValue={handleSetOffer("power")} error={error.power}
-                                        required={true} message={message.power} symbol="HP" setToggled={handleSetToggled("power")}/>
-                            <SelectInput label="Drive" options={carDrives} value={offer.drive} setValue={handleSetOffer("drive")} error={error.drive}
+                            <BasicInput label={t("offerForm72")} type="number" value={offer.power} setValue={handleSetOffer("power")} error={error.power}
+                                        required={true} message={message.power} symbol={t("offerForm96")} setToggled={handleSetToggled("power")}/>
+                            <SelectInput label={t("offerForm73")} options={language === "ENG" ? carDrives : carDrivesPl} value={offer.drive} setValue={handleSetOffer("drive")} error={error.drive}
                                          required={true} message={message.drive} setToggled={handleSetToggled("drive")}/>
-                            <ChooseInput label="Transmission" firstOption="Manual" secondOption="Automatic" value={offer.transmission} setValue={handleSetOffer("transmission")}
+                            <ChooseInput label={t("offerForm74")} firstOption={language === "ENG" ? carTransmissions[0] : carTransmissionsPl[0]} secondOption={language === "ENG" ? carTransmissions[1] : carTransmissionsPl[1]}
+                                         value={offer.transmission} setValue={handleSetOffer("transmission")}
                                          error={error.transmission} required={true} message={message.transmission}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-12 m:mb-14">
-                            <SelectInput label="Color" options={carColors} value={offer.color} setValue={handleSetOffer("color")} error={error.color}
+                            <SelectInput label={t("offerForm75")} options={language === "ENG" ? carColors : carColorsPl} value={offer.color} setValue={handleSetOffer("color")} error={error.color}
                                          required={true} message={message.color} setToggled={handleSetToggled("color")}/>
-                            <ChooseInput label="Condition" firstOption="Undamaged" secondOption="Damaged" value={offer.condition} setValue={handleSetOffer("condition")}
+                            <ChooseInput label={t("offerForm76")} firstOption={language === "ENG" ? carConditions[0] : carConditionsPl[0]} secondOption={language === "ENG" ? carConditions[1] : carConditionsPl[1]}
+                                         value={offer.condition} setValue={handleSetOffer("condition")}
                                          error={error.condition} required={true} message={message.condition}/>
-                            <SelectInput label="Seats" options={carSeats} value={offer.seats} setValue={handleSetOffer("seats")}
+                            <SelectInput label={t("offerForm77")} options={carSeats} value={offer.seats} setValue={handleSetOffer("seats")}
                                          error={error.seats} message={message.seats}/>
-                            <ChooseInput label="Steering wheel" firstOption="Left" secondOption="Right" value={offer.steeringWheel} setValue={handleSetOffer("steeringWheel")}
+                            <ChooseInput label={t("offerForm78")} firstOption={language === "ENG" ? carSteeringWheel[0] : carSteeringWheelPl[0]} secondOption={language === "ENG" ? carSteeringWheel[1] : carSteeringWheelPl[1]}
+                                         value={offer.steeringWheel} setValue={handleSetOffer("steeringWheel")}
                                          error={error.steeringWheel} message={message.steeringWheel}/>
-                            <SelectInput label="Doors" options={carDoors} value={offer.doors} setValue={handleSetOffer("doors")}
+                            <SelectInput label={t("offerForm79")} options={carDoors} value={offer.doors} setValue={handleSetOffer("doors")}
                                          error={error.doors} message={message.doors}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-10 m:mb-12">
-                            <SelectInput label="Origin country" options={carCountries} value={offer.country}
+                            <SelectInput label={t("offerForm80")} options={language === "ENG" ? carCountries : carCountriesPl} value={offer.country}
                                          setValue={handleSetOffer("country")} error={error.country} message={message.country}/>
                             <BasicInput label="VIN" type="text" value={offer.vin} setValue={handleSetOffer("vin")}
                                         error={error.vin} message={message.vin} setToggled={handleSetToggled("vin")}/>
-                            <BasicInput label="License plate" type="text" value={offer.plate} setValue={handleSetOffer("plate")}
+                            <BasicInput label={t("offerForm81")} type="text" value={offer.plate} setValue={handleSetOffer("plate")}
                                         error={error.plate} message={message.plate} setToggled={handleSetToggled("plate")}/>
-                            <BasicInput label="First registration" type="date" value={offer.firstRegistration} setValue={handleSetOffer("firstRegistration")}
+                            <BasicInput label={t("offerForm82")} type="date" value={offer.firstRegistration} setValue={handleSetOffer("firstRegistration")}
                                         error={error.firstRegistration} message={message.firstRegistration} setToggled={handleSetToggled("firstRegistration")}/>
                         </div>
                         <div className="flex justify-center m:block w-full mb-12 m:mb-14">
@@ -1062,7 +1099,7 @@ const OfferForm: React.FC = () => {
                             <ImageInput photos={offer.photos} setPhotos={handleSetOffer("photos")}/>
                         </div>
                         <div className="flex justify-center m:block w-full mb-20 m:mb-24">
-                            <BasicInput label="Price" type="number" value={offer.price} setValue={handleSetOffer("price")} error={error.price}
+                            <BasicInput label={t("offerForm84")} type="number" value={offer.price} setValue={handleSetOffer("price")} error={error.price}
                                         symbol={offer.currency} firstOtherSymbol="PLN" secondOtherSymbol="EUR" setSymbol={handleSetOffer("currency")}
                                         required={true} message={message.price} setToggled={handleSetToggled("price")}/>
                         </div>
@@ -1079,16 +1116,16 @@ const OfferForm: React.FC = () => {
                     </div>
                 </div>
                 {formErrorBanner &&
-                    <AnimatedBanner text={"Fill fields correctly"} onAnimationEnd={() => setFormErrorBanner(false)}
+                    <AnimatedBanner text={t("animatedBanner13")} onAnimationEnd={() => setFormErrorBanner(false)}
                                     delay={2000} color={"bg-coolRed"} z={"z-10"}/>}
                 {inappropriateContentBanner &&
-                    <AnimatedBanner text={"Title or description contains inappropriate content"}
+                    <AnimatedBanner text={t("animatedBanner14")}
                                     onAnimationEnd={() => setInappropriateContentBanner(false)} delay={4000} color={"bg-coolRed"} z={"z-10"}/>}
-                {waitBanner && <AnimatedBanner text={"You need to wait a bit, before modifying offer again"} onAnimationEnd={() => setWaitBanner(false)}
+                {waitBanner && <AnimatedBanner text={t("animatedBanner15")} onAnimationEnd={() => setWaitBanner(false)}
                                                delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
-                {wentWrongBanner && <AnimatedBanner text={"Something went wrong..."} onAnimationEnd={() => setWentWrongBanner(false)}
+                {wentWrongBanner && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrongBanner(false)}
                                               delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
-                {tooManyBanner && <AnimatedBanner text={"Couldn't add, you've added too many offers yet"} onAnimationEnd={() => setTooManyBanner(false)}
+                {tooManyBanner && <AnimatedBanner text={t("animatedBanner16")} onAnimationEnd={() => setTooManyBanner(false)}
                                                     delay={6000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}
             </div>

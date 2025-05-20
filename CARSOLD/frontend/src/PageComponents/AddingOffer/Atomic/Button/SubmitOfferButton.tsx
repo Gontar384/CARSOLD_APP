@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface SubmitOfferButtonProps {
     onClick: () => void;
@@ -9,6 +10,7 @@ interface SubmitOfferButtonProps {
 const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick, type }) => {
     const [hovered, setHovered] = useState<boolean>(false);
     const {isMobile} = useUtil();
+    const {t} = useLanguage();
 
     const handleTouchButton = () => {
         setHovered(true);
@@ -23,9 +25,9 @@ const SubmitOfferButton: React.FC<SubmitOfferButtonProps> = ({ onClick, type }) 
                 onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
                 onTouchStart={isMobile ? handleTouchButton : undefined}
                 onClick={onClick}>
-            {`Submit & ${type ? "update" : "add"} offer`}
+            {`${type ? t("offerForm93") : t("offerForm94")}`}
             {hovered &&
-                <div className={`${type ? "w-[174px] m:w-[194px]" : "w-[150px] m:w-[168px]"} h-[2px] absolute bg-black animate-underline`}/>
+                <div className={`${type ? "w-[92%] m:w-[90%]" : "w-[92%] m:w-[90%]"} h-[2px] absolute bg-black animate-underline`}/>
             }
         </button>
     )
