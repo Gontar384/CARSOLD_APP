@@ -12,7 +12,7 @@ const Decision: React.FC<DecisionProps> = ({setPopup, setConfirmed}) => {
 
     return (
         <div className="flex flex-col items-center w-full h-full mb-8 m:mb-10">
-            <p className="w-10/12 text-center mt-8 m:mt-10">
+            <p className="w-11/12 text-center mt-10 m:mt-12">
                 {t("deleteAccount2")}
             </p>
             <div className="flex flex-row items-center justify-center mt-5 m:mt-7 gap-10 m:gap-12">

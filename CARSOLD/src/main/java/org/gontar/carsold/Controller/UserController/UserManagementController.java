@@ -30,9 +30,9 @@ public class UserManagementController {
     }
 
     @PostMapping("/public/user/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto, @RequestParam(defaultValue = "false") boolean translate) {
         User user = mapper.mapToEntity(userDto);
-        User createdUser = service.registerUser(user);
+        User createdUser = service.registerUser(user, translate);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

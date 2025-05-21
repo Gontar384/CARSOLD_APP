@@ -3,5 +3,5 @@ export const carConditions = [
 ];
 
 export const carConditionsPl = [
-    "Nieuszkodzony", "Uszkodzony"
+    "Nieuszkodzone", "Uszkodzone"
 ];

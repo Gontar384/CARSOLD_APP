@@ -1,7 +1,7 @@
 export const carSteeringWheel = [
-    "Left", "Right"
+    "On left", "On right"
 ];
 
 export const carSteeringWheelPl = [
-    "Lewa", "Prawa"
+    "Po lewej", "Po prawej"
 ];

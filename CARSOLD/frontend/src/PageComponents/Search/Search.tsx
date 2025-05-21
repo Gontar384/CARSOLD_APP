@@ -5,6 +5,7 @@ import {UpdatedOffer} from "../AccountDetails/Content/MyOffers/MyOffers.tsx";
 import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOfferDisplay.tsx";
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
 import {usePagination} from "../../CustomHooks/usePagination.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const Search: React.FC = () => {
     document.title = "CARSOLD | Search";
@@ -13,6 +14,7 @@ const Search: React.FC = () => {
     const itemsPerPage = 10;
     const [totalElements, setTotalElements] = useState<number>(0);
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
+    const {t} = useLanguage();
 
     return (
         <LayOut>
@@ -26,7 +28,7 @@ const Search: React.FC = () => {
                             {offers.length > 0 ?
                                 <div className="w-[90%] m:w-[95%] max-w-[700px] relative">
                                     <p className="absolute top-[5px] m:top-[7px] right-0 text-sm m:text-base underline">
-                                        Results: {totalElements}
+                                        {t("search1")}{totalElements}
                                     </p>
                                     {offers.map((offer) => (
                                         <SmallOfferDisplay type="search" key={offer.id} offer={offer}/>
@@ -53,7 +55,7 @@ const Search: React.FC = () => {
                                         </div>
                                     )}
                                 </div>
-                                : <p className="text-xl m:text-2xl mt-36 m:mt-40">No results found</p>
+                                : <p className="text-xl m:text-2xl mt-36 m:mt-40">{t("search2")}</p>
                             }
                         </div> :
                         <>

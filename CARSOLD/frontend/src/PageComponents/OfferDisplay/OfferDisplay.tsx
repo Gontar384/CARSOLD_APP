@@ -16,6 +16,7 @@ import {adminDeleteOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const OfferDisplay: React.FC = () => {
     document.title = "CARSOLD | Offer"
@@ -102,6 +103,7 @@ const OfferDisplay: React.FC = () => {
     const [report, setReport] = useState<boolean>(false);
     const [reported, setReported] = useState<boolean>(false);
     const [hasReported, setHasReported] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     useEffect(() => {
         if (section) {
@@ -200,8 +202,8 @@ const OfferDisplay: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col lg:flex-row justify-center w-11/12 max-w-[1300px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full items-center lg:w-[70%] border border-gray-300 bg-lowLime rounded relative">
+                <div className="flex flex-col lg:flex-row justify-center w-full m:w-[95%] max-w-[1350px] gap-3 m:gap-4">
+                    <div className="flex flex-col w-full items-center lg:w-[70%] m:border border-gray-300 bg-lowLime rounded relative">
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                         {offerFetched &&
                             <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
@@ -222,13 +224,13 @@ const OfferDisplay: React.FC = () => {
                             </button>
                         }
                         {offer.role === "USER" && !offer.permission && !hasReported &&
-                            <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
+                            <button className="absolute left-2.5 top-2.5 m:left-3 m:top-3"
                                     onClick={() => setReport(true)}>
                                 <FontAwesomeIcon icon={faFlag} className="text-xl m:text-2xl"/>
                             </button>
                         }
                     </div>
-                    <div className="flex flex-col items-center w-full lg:w-[30%] border border-gray-300 bg-lowLime rounded">
+                    <div className="flex flex-col items-center w-full lg:w-[30%] m:border border-gray-300 bg-lowLime rounded">
                     {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
@@ -241,7 +243,7 @@ const OfferDisplay: React.FC = () => {
                 {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
                                                    onClick={() => handleDeleteOffer(offer.id)}/>)}
                 {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported} setHasReported={setHasReported}/>}
-                {reported && <AnimatedBanner text={"Offer reported"} onAnimationEnd={() => setReported(false)}
+                {reported && <AnimatedBanner text={t("animatedBanner17")} onAnimationEnd={() => setReported(false)}
                                                     delay={3000} color={"bg-gray-300"} z={"z-10"}/>}
             </div>
         </LayOut>

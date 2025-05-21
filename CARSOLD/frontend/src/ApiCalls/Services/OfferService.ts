@@ -32,11 +32,11 @@ export const fetchOfferWithUser = async (id: number | null): Promise<AxiosRespon
     }
 };
 
-export const addOffer = async (offer: object): Promise<AxiosResponse> => {
+export const addOffer = async (offer: FormData): Promise<AxiosResponse> => {
     return await api.post('api/private/offer/add', offer);  //manually handling errors in main function
 };
 
-export const updateOffer = async (id: number | null, offer: object): Promise<AxiosResponse> => {
+export const updateOffer = async (id: number | null, offer: FormData): Promise<AxiosResponse> => {
     return await api.put(`api/private/offer/update/${id}`, offer); //manually handling errors in main function
 };
 

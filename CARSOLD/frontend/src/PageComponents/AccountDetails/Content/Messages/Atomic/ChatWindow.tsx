@@ -15,6 +15,10 @@ import SockJS from "sockjs-client";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
+export interface MessageDto {
+    receiverUsername: string;
+    content: string;
+}
 interface ChatWindowProps {
     setSent: React.Dispatch<React.SetStateAction<Sent>>;
     setDeleted: React.Dispatch<React.SetStateAction<string>>;
@@ -135,7 +139,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         if (content.length > 1000) return;
         if (userInfo.blockedByUser || userInfo.blockedUser) return;
         setDisabled(true);
-        const messageToSend = {receiverUsername: receiverUsername, content: content};
+        const messageToSend: MessageDto = {receiverUsername: receiverUsername, content: content};
         try {
             await sendMessage(messageToSend);
             const messageToAdd: Message = {

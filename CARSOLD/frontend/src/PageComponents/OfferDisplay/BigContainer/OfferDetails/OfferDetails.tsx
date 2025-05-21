@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faCarSide, faCircleInfo, faGasPump, faRoad} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface OfferDetailsProps {
     brand: string;
@@ -30,22 +31,31 @@ interface OfferDetailsProps {
 const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, year, mileage, fuel, capacity, power,
                                                        drive, transmission, color, condition, seats, doors, steeringWheel,
                                                        country, vin, plate, firstRegistration, description }) => {
+    const {t, translate} = useLanguage();
     const details = [
-        {value: bodyType, icon: faCarSide}, {value: year, icon: faCalendar}, {value: mileage + " km", icon: faRoad}, {value: fuel, icon: faGasPump}
+        {value: translate("bodyType", bodyType), icon: faCarSide},
+        {value: year, icon: faCalendar},
+        {value: mileage + " km", icon: faRoad},
+        {value: translate("fuel", fuel), icon: faGasPump}
     ];
     const moreDetails = [
-        {label: "Capacity", value: capacity + " cm3"}, {label: "Power", value: power + " HP"}, {label: "Drive", value: drive.split("(")[0]},
-        {label: "Transmission", value: transmission}, {label: "Color ", value: color}, {label: "Condition ", value: condition}
+        {label: t("offerDisplay17"), value: capacity + " cm3"},
+        {label: t("offerDisplay18"), value: power + t("offerDisplay7")},
+        {label: t("offerDisplay19"), value: translate("drive", drive)},
+        {label: t("offerDisplay20"), value: translate("transmission", transmission)},
+        {label: t("offerDisplay21"), value: translate("color", color)},
+        {label: t("offerDisplay22"), value: translate("condition", condition)}
     ];
     const additionalDetails = [
-        seats && <><span className="font-bold">{seats}</span> seats</>,
-        doors && <><span className="font-bold">{doors}</span> doors</>,
-        steeringWheel && <>steering wheel on <span className="font-bold">{steeringWheel?.toLowerCase()}</span></>,
-        country && <>from <span className="font-bold">{country}</span></>
+        seats && <><span className="font-bold">{seats}</span>{t("offerDisplay8")}</>,
+        doors && <><span className="font-bold">{doors}</span> {t("offerDisplay9")}</>,
+        steeringWheel && <>{t("offerDisplay10")}<span className="font-bold">{translate("steeringWheel", steeringWheel).toLowerCase()}</span></>,
+        country && <>{t("offerDisplay11")}<span className="font-bold">{translate("country", country)}</span></>
     ];
     const registrationInfo = [
-        {label: "VIN:", value: vin}, {label: "License plate number:", value: plate},
-        {label: "First registration:", value: firstRegistration?.split("-").reverse().join("-")}
+        {label: "VIN:", value: vin},
+        {label: t("offerDisplay12"), value: plate},
+        {label: t("offerDisplay13"), value: firstRegistration?.split("-").reverse().join("-")}
     ];
     const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -82,9 +92,9 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                     </div>
                 ))}
             </div>
-            <div className="flex flex-wrap flex-row justify-evenly items-center mt-6 m:mt-8 gap-3 px-2">
+            <div className="flex flex-wrap flex-row justify-evenly items-center mt-6 m:mt-8 gap-3 px-3">
                 {moreDetails.map((item, index) => (
-                    <div className="flex flex-col items-center justify-center w-24 m:w-28 h-12 m:h-14
+                    <div className="flex flex-col items-center justify-center w-28 m:w-32 h-14 m:h-16
                     border border-black border-opacity-40 rounded-xl bg-gray-50 text-xs m:text-sm" key={index}>
                         <p>{item.label}</p>
                         <p className="font-bold">{item.value}</p>
@@ -107,16 +117,17 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                     <div className="flex flex-col items-center justify-center mt-8 m:mt-10">
                         <FontAwesomeIcon icon={faCircleInfo} className="text-xl m:text-2xl mb-4"/>
                         {registrationInfo.map((item, index) => (
+                            item.value !== "" &&
                             <div className="flex flex-row gap-0.5 m:gap-1 text-sm m:text-base" key={index}>
-                                <p className="font-bold">{item.label}</p>
-                                <p>{item.value}</p>
+                                <p>{item.label}</p>
+                                <p className="font-bold">{item.value}</p>
                             </div>
                         ))}
                     </div>
                 }
             <div className="flex justify-center my-10 m:my-12">
                 <div className="w-[95%]">
-                    <p className="mb-0.5 m:mb-1 text-base m:text-lg font-bold">Description</p>
+                    <p className="mb-0.5 m:mb-1 text-base m:text-lg font-bold">{t("offerDisplay14")}</p>
                     <div className={`${!isExpanded && "max-h-[200px] m:max-h-[300px]"} p-1.5 m:p-2 text-sm m:text-base relative
                     rounded border border-black border-opacity-10 whitespace-pre-wrap break-words overflow-hidden`} ref={textRef}>
                         {description}
@@ -125,7 +136,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
                     {isOverflowing && (
                         <button className={`text-sm m:text-base mt-2 ${buttonColor && "underline"}`}
                                 onClick={toggleExpand} {...bindHoverHandlers()}>
-                            {isExpanded ? "Show Less" : "Show More"}
+                            {isExpanded ? t("offerDisplay15") : t("offerDisplay16")}
                         </button>
                     )}
                 </div>

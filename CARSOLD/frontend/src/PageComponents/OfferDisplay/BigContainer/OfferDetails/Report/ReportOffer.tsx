@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {reportOffer} from "../../../../../ApiCalls/Services/OfferService.ts";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface ReportOfferProps {
     id: number | null;
@@ -34,6 +35,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
     const [disabled, setDisabled] = useState<boolean>(false);
     const [hovered, setHovered] = useState<boolean[]>(Array(9).fill(false));
     const {isMobile} = useUtil();
+    const {t, translate} = useLanguage();
 
     const handleSubmit = async () => {
         if (selectedReason.reason === "" || disabled) return;
@@ -89,11 +91,11 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
     };
 
     return (
-        <div className="flex justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-40 z-50">
+        <div className="flex justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-40 z-50 touch-none">
             <div className="flex flex-col items-center w-[95%] h-[95%] max-w-[800px] bg-lowLime rounded overflow-hidden border border-gray-300"
                  ref={componentRef}>
-                <h2 className="text-2xl m:text-3xl font-semibold my-12 m:my-14">Report Offer</h2>
-                <div className="space-y-6 m:space-y-8 overflow-auto px-2">
+                <h2 className="text-2xl m:text-3xl font-semibold my-12 m:my-14">{t("offerDisplay1")}</h2>
+                <div className="space-y-6 m:space-y-8 overflow-auto px-4">
                     {reportReasons.map((reportReason, index) => (
                         <label key={index} className={`flex items-center space-x-2 m:space-x-3 cursor-pointer ${hovered[index] && "underline"}
                         ${selectedReason.reason === reportReason && "underline"}`}
@@ -101,7 +103,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
                             <input type="radio" className="w-3 h-3 m:w-4 m:h-4"
                                    value={reportReason} checked={selectedReason.reason === reportReason}
                                    onChange={() => setSelectedReason(prev => ({...prev, reason: reportReason}) )}/>
-                            <span className="text-lg m:text-xl">{reportReason}</span>
+                            <span className="text-lg m:text-xl">{translate("reportReasons", reportReason)}</span>
                         </label>
                     ))}
                 </div>
@@ -109,11 +111,11 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
                     <button className={`px-4 py-2 bg-red-600 text-white rounded disabled:opacity-60
                             ${selectedReason !== null && "hover:ring-2 ring-black"}`}
                             onClick={handleSubmit} disabled={!selectedReason}>
-                        Submit Report
+                        {t("offerDisplay2")}
                     </button>
                     <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:ring-2 ring-black"
                             onClick={() => setReport(false)}>
-                        Cancel
+                        {t("offerDisplay3")}
                     </button>
                 </div>
             </div>

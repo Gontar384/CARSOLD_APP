@@ -6,7 +6,7 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import org.springframework.security.core.Authentication;
 
 public interface UserManagementService {
-    User registerUser(User user);
+    User registerUser(User user, boolean translate);
     String fetchUsername();
     void changePassword(String oldPassword, String newPassword);
     void changePasswordRecovery(String token, String password, HttpServletRequest request, HttpServletResponse response);

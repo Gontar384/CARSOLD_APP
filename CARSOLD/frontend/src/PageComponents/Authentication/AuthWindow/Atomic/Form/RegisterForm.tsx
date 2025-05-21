@@ -10,12 +10,13 @@ import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
+export interface User {
+    email: string,
+    username: string,
+    password: string
+}
+
 const RegisterForm: React.FC = () => {
-    interface User {
-        email: string,
-        username: string,
-        password: string
-    }
     const [user, setUser] = useState<User>({
         email: "", username: "", password: ""
     })
@@ -190,7 +191,7 @@ const RegisterForm: React.FC = () => {
         }
         setIsDisabled(true);
         try {
-            const response = await registerUser(user);
+            const response = await registerUser(user, language === "ENG");
             if (response.status === 201) {
                 setIsRegistered(true);
                 setUser({email: '', username: '', password: '',});

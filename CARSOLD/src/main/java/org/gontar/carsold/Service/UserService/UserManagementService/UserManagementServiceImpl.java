@@ -63,7 +63,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public User registerUser(User user) {
+    public User registerUser(User user, boolean translate) {
         Objects.requireNonNull(user, "user cannot be null");
         Objects.requireNonNull(user.getPassword(), "password cannot be null");
         try {
@@ -76,7 +76,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             User processedUser = findOrCreateUser(user);
 
             updateUser(processedUser, user);
-            sendActivationEmail(processedUser);
+            sendActivationEmail(processedUser, translate);
 
             userRepository.save(processedUser);
             return processedUser;
@@ -137,7 +137,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         User existingUserByEmail = userRepository.findByEmail(user.getEmail());
         User existingUserByUsername = userRepository.findByUsername(user.getUsername());
 
-        if (existingUserByEmail != null && existingUserByUsername != null && !existingUserByEmail.equals(existingUserByUsername)) {
+        if (existingUserByEmail != null && existingUserByUsername != null && !existingUserByEmail.getId().equals(existingUserByUsername.getId())) {
             throw new UserDataException("Email and username belong to different existing accounts");
         }
 
@@ -165,11 +165,11 @@ public class UserManagementServiceImpl implements UserManagementService {
         processedUser.setOauth2(false);
     }
 
-    private void sendActivationEmail(User user) {
+    private void sendActivationEmail(User user, boolean translate) {
         String token = jwtService.generateToken(user.getUsername(), 30);
         String link = frontendUrl + "/activate?token=" + token;
 
-        emailService.sendAccountActivationEmail(user.getEmail(), user.getUsername(), link);
+        emailService.sendAccountActivationEmail(user.getEmail(), user.getUsername(), link, translate);
     }
 
     @Override

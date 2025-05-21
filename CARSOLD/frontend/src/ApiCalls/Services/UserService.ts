@@ -1,6 +1,7 @@
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {handleError} from "../Errors/ErrorHandler.ts";
 import {AxiosResponse} from "axios";
+import {User} from "../../PageComponents/Authentication/AuthWindow/Atomic/Form/RegisterForm.tsx";
 
 //---Authentication---
 
@@ -43,8 +44,8 @@ export const logout = async (): Promise<void> => {
 
 //---Management---
 
-export const registerUser = async (user: object): Promise<AxiosResponse> => {
-    return await api.post('api/public/user/register', user); //manually handling errors in main function
+export const registerUser = async (user: User, translate: boolean | null): Promise<AxiosResponse> => {
+    return await api.post('api/public/user/register', user, { params: { translate }}); //manually handling errors in main function
 };
 
 export const fetchUsername = async (): Promise<AxiosResponse> => {
@@ -82,9 +83,9 @@ export const deleteUser = async (password: string | null): Promise<void> => {
 
 //---EmailNotification---
 
-export const sendPasswordRecoveryEmail = async (email: string | null): Promise<void> => {
+export const sendPasswordRecoveryEmail = async (email: string | null, translate: boolean | null): Promise<void> => {
     try {
-        await api.get('api/public/email/sendPasswordRecoveryEmail', { params: { email: email } });
+        await api.post('api/public/email/sendPasswordRecoveryEmail', {email: email, translate: translate});
     } catch (error) {
         handleError(error);
     }

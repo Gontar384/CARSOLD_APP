@@ -21,7 +21,7 @@ const PasswordRecovery: React.FC = () => {
     const {handleCheckLogin, handleCheckAccount} = useUserInfo();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
-    const {t} = useLanguage();
+    const {t, language} = useLanguage();
 
     useEffect(() => {
         setEmailInfo("");
@@ -62,7 +62,7 @@ const PasswordRecovery: React.FC = () => {
 
         setIsDisabled(true);
         try {
-            await sendPasswordRecoveryEmail(email);
+            await sendPasswordRecoveryEmail(email, language === "ENG");
             setEmail("");
             setIsEmailSent(true);
         } catch (error: unknown) {

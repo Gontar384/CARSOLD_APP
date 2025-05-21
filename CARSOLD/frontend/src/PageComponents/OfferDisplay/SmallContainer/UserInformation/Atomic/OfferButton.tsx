@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../../../GlobalProviders/Auth/useAuth.ts";
 import {activateConversation} from "../../../../../ApiCalls/Services/MessageService.ts";
 import {BadRequestError, NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface OfferButtonProps {
     permission: boolean;
@@ -18,6 +19,7 @@ const OfferButton: React.FC<OfferButtonProps> = ({permission, id, username}) => 
     const navigate = useNavigate();
     const {isAuthenticated} = useAuth();
     const [disabled, setDisabled] = useState<boolean>(false);
+    const {t} = useLanguage();
 
     const handleSendMessage = async () => {
         if (disabled) return;
@@ -43,11 +45,11 @@ const OfferButton: React.FC<OfferButtonProps> = ({permission, id, username}) => 
 
     return (
         <div className="flex justify-center w-full">
-            <button className={`flex flex-row items-center justify-center gap-2 m:gap-3 bg-lime border border-gray-600 rounded-lg w-48 h-11 m:w-56 m:h-12 
-          ${buttonColor && "brightness-[97%] shadow"}`}
+            <button className={`flex flex-row items-center justify-center gap-2 m:gap-3 bg-lime border border-gray-600 rounded-lg
+                    ${permission ? "w-44 m:w-52" : "w-56 m:w-64"} h-11 m:h-12 ${buttonColor && "brightness-[97%] shadow"}`}
                     {...bindHoverHandlers()} onClick={permission ? () => navigate(`/modifyingOffer/${id}`) : handleSendMessage}>
                 <FontAwesomeIcon icon={permission ? faGear : faMessage} className="text-2xl m:text-3xl text-gray-600"/>
-                <p className="text-xl m:text-2xl text-gray-600">{permission ? "Edit offer" : "Send message"}</p>
+                <p className="text-xl m:text-2xl text-gray-600">{permission ? t("offerDisplay4") : t("offerDisplay5")}</p>
             </button>
         </div>
     )

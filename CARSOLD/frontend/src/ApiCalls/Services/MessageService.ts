@@ -1,6 +1,7 @@
 import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {handleError} from "../Errors/ErrorHandler.ts";
 import {AxiosResponse} from "axios";
+import {MessageDto} from "../../PageComponents/AccountDetails/Content/Messages/Atomic/ChatWindow.tsx";
 
 export const activateConversation = async (username: string | null): Promise<void> => {
     try {
@@ -10,7 +11,7 @@ export const activateConversation = async (username: string | null): Promise<voi
     }
 };
 
-export const sendMessage = async (message: object | null): Promise<void> => {
+export const sendMessage = async (message: MessageDto | null): Promise<void> => {
     try {
         await api.post("api/private/message/send", message);
     } catch (error) {
