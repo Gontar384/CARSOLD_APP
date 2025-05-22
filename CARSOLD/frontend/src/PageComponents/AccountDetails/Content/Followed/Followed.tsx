@@ -6,7 +6,6 @@ import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 const Followed: React.FC = () => {
-    document.title = "CARSOLD | Followed";
     interface FetchedOffer {
         id: number;
         title: string;
@@ -39,6 +38,7 @@ const Followed: React.FC = () => {
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle7")}`;
 
     useEffect(() => {
         const manageHandleFetchAllFollowed = async () => {

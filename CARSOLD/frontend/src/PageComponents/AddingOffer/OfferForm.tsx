@@ -170,7 +170,7 @@ const OfferForm: React.FC = () => {
     const [waitBanner, setWaitBanner] = useState<boolean>(false);
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
     const [tooManyBanner, setTooManyBanner] = useState<boolean>(false);
-    document.title = `CARSOLD | ${(id !== null && permission === true) ? "Modify offer" : "Add offer"}`
+    document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
 
     //if user redirects from /modifyingOffer/{id} to /addingOffer, it resets all states
     useEffect(() => {
@@ -424,11 +424,14 @@ const OfferForm: React.FC = () => {
         }
     }, [toggled.model]);
 
+    //to reset model when brand changes
     useEffect(() => {
         if (!carModels[offer.brand]?.includes(offer.model)) {
             setOffer(prev => ({...prev, model: ""}));
+            setErrorField("model", false);
+            setMessageField("model", t("offerForm6"));
         }
-    }, [offer.brand]);  //to reset model when brand changes
+    }, [offer.brand]);
 
     //bodyType
     useEffect(() => {
@@ -727,7 +730,7 @@ const OfferForm: React.FC = () => {
             setMessageField("brand", t("offerForm32"))
             isValid = false;
         }
-        if (offer.model === "" && offer.brand !== "Other" || !carModels[offer.brand].includes(offer.model)) {
+        if (offer.model === "" || !carModels[offer.brand].includes(offer.model)) {
             setErrorField("model", true);
             setMessageField("model", t("offerForm33"));
             isValid = false;
@@ -1026,7 +1029,7 @@ const OfferForm: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className={`flex flex-col items-center w-11/12 lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
+                <div className={`flex flex-col items-center w-full m:w-[95%] lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                  bg-lowLime border border-black border-opacity-10 rounded-sm`}>
                     <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
                         {id !== null && permission === true ? t("offerForm1") : t("offerForm2")}
@@ -1045,7 +1048,7 @@ const OfferForm: React.FC = () => {
                             <SelectInput label={t("offerForm66")} options={carBrands} value={offer.brand} setValue={handleSetOffer("brand")}
                                          required={true} error={error.brand} message={message.brand} setToggled={handleSetToggled("brand")}/>
                             <SelectInput label="Model" options={carModels[offer.brand] ?? []} value={offer.model} setValue={handleSetOffer("model")}
-                                         required={offer.brand !== "Other"} disabled={!carBrands.includes(offer.brand) || offer.brand === "Other"}
+                                         required={true} disabled={!carBrands.includes(offer.brand)}
                                          error={error.model} message={message.model} setToggled={handleSetToggled("model")}/>
                             <SelectInput label={t("offerForm67")} options={language === "ENG" ? carBodyTypes : carBodyTypesPl} value={offer.bodyType} setValue={handleSetOffer("bodyType")}
                                          required={true} error={error.bodyType} message={message.bodyType} setToggled={handleSetToggled("bodyType")}/>

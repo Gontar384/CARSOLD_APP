@@ -3,6 +3,7 @@ package org.gontar.carsold.Service.UserService.UserManagementService;
 import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.*;
@@ -65,15 +66,16 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public User registerUser(User user, boolean translate) {
         Objects.requireNonNull(user, "user cannot be null");
-        Objects.requireNonNull(user.getPassword(), "password cannot be null");
+        user.setUsername(user.getUsername().trim());
+        user.setEmail(user.getEmail().trim());
         try {
             if (!user.getUsername().matches("^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")) {
                 throw new InvalidValueException("Username contains wrong characters: " + user.getUsername());
             }
+            User processedUser = findOrCreateUser(user);
+
             boolean result = checkIfUsernameSafe(user.getUsername());
             if (!result) throw new InappropriateContentException("Username is inappropriate");
-
-            User processedUser = findOrCreateUser(user);
 
             updateUser(processedUser, user);
             sendActivationEmail(processedUser, translate);
@@ -85,18 +87,49 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
     }
 
+    private User findOrCreateUser(User user) {
+        String normalizedUsername = user.getUsername().toLowerCase();
+        String normalizedEmail = user.getEmail().toLowerCase();
+
+        User userByUsername = userRepository.findByUsernameLower(normalizedUsername);
+        User userByEmail = userRepository.findByEmailLower(normalizedEmail);
+
+        if (userByEmail != null && userByUsername != null && !userByEmail.getId().equals(userByUsername.getId())) {
+            throw new UserDataException("Email and username belong to different existing accounts");
+        }
+        if (userByUsername != null) {
+            if (userByUsername.getActive()) {
+                throw new UserDataException("User with username " + user.getUsername() + " already exists and it's active");
+            }
+            return userByUsername;
+        }
+        if (userByEmail != null) {
+            if (userByEmail.getActive()) {
+                throw new UserDataException("User with email " + user.getEmail() + " already exists and it's active");
+            }
+            return userByEmail;
+        }
+        return user;
+    }
+
     public boolean checkIfUsernameSafe(String username) {
-        Objects.requireNonNull(username, "username cannot be null");
         if (!isUsernameFreeOfInappropriateWords(username)) return false;
         return isUsernameNonToxic(username);
     }
 
     private boolean isUsernameFreeOfInappropriateWords(String username) {
-        String[] inappropriateWords = {"frajer", "murzyn", "debil"};
-        for (String word : inappropriateWords) {
-            if (username.toLowerCase().contains(word)) return false;
+        String lowered = username.toLowerCase();
+        LevenshteinDistance levenshtein = LevenshteinDistance.getDefaultInstance();
+        for (String word : ForbiddenWords.WORDS) {
+            String w = word.toLowerCase();
+            if (lowered.contains(w)) return false;
+            int len = w.length();
+            for (int i = 0; i <= lowered.length() - len; i++) {
+                String sub = lowered.substring(i, i + len);
+                int distance = levenshtein.apply(sub, w);
+                if (distance <= 1) return false;
+            }
         }
-
         return true;
     }
 
@@ -131,30 +164,6 @@ public class UserManagementServiceImpl implements UserManagementService {
         } catch (Exception e) {
             throw new ExternalCheckException("Perspective API failed to check username  " + username + ": " + e.getMessage());
         }
-    }
-
-    private User findOrCreateUser(User user) {
-        User existingUserByEmail = userRepository.findByEmail(user.getEmail());
-        User existingUserByUsername = userRepository.findByUsername(user.getUsername());
-
-        if (existingUserByEmail != null && existingUserByUsername != null && !existingUserByEmail.getId().equals(existingUserByUsername.getId())) {
-            throw new UserDataException("Email and username belong to different existing accounts");
-        }
-
-        if (existingUserByEmail != null) {
-            if (existingUserByEmail.getActive()) {
-                throw new UserDataException("User with email " + user.getEmail() + " already exists and it's active");
-            }
-            return existingUserByEmail;
-        }
-        if (existingUserByUsername != null) {
-            if (existingUserByUsername.getActive()) {
-                throw new UserDataException("User with username " + user.getUsername() + " already exists and it's active");
-            }
-            return existingUserByUsername;
-        }
-
-        return user;
     }
 
     private void updateUser(User processedUser, User user) {
@@ -216,7 +225,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     public void deleteUser(String password, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         User user = userDetailsService.loadUser();
         if (!user.getOauth2()) {
-            Objects.requireNonNull(password, "password cannot be null");
             if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
         }
 

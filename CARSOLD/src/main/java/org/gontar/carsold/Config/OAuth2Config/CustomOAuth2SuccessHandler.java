@@ -48,9 +48,18 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     }
 
     private User createNewOAuth2User(String email) {
+        String baseUsername = email.split("@")[0].toLowerCase();
+        String username = baseUsername;
+        int suffix = 0;
+
+        while (repository.existsByUsernameLower(username)) {
+            suffix++;
+            username = baseUsername + suffix;
+        }
+
         User newUser = new User();
         newUser.setEmail(email);
-        newUser.setUsername(email.split("@")[0]);
+        newUser.setUsername(username);
         newUser.setPassword(null);
         newUser.setActive(true);
         newUser.setOauth2(true);

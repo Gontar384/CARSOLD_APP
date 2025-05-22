@@ -22,7 +22,9 @@ public class InfoServiceImpl implements InfoService {
 
     @Override
     public boolean checkLogin(String login) {
-        return login != null && (login.contains("@") ? repository.existsByEmail(login) : repository.existsByUsername(login));
+        if (login == null) return false;
+        String normalizedLogin = login.toLowerCase();
+        return login.contains("@") ? repository.existsByEmailLower(normalizedLogin) : repository.existsByUsernameLower(normalizedLogin);
     }
 
     @Override
@@ -33,7 +35,8 @@ public class InfoServiceImpl implements InfoService {
             userInfoDto.setOauth2(false);
             return userInfoDto;
         }
-        User user = login.contains("@") ? repository.findByEmail(login) : repository.findByUsername(login);
+        String normalizedLogin = login.toLowerCase();
+        User user = login.contains("@") ? repository.findByEmailLower(normalizedLogin) : repository.findByUsernameLower(normalizedLogin);
         userInfoDto.setActive(user != null ? user.getActive() : false);
         userInfoDto.setOauth2(user != null ? user.getOauth2() : false);
 

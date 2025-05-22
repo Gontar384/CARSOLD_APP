@@ -8,13 +8,13 @@ import {usePagination} from "../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const Search: React.FC = () => {
-    document.title = "CARSOLD | Search";
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const itemsPerPage = 10;
     const [totalElements, setTotalElements] = useState<number>(0);
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle2")}`;
 
     return (
         <LayOut>

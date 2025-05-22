@@ -11,13 +11,13 @@ import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const Home: React.FC = () => {
-    document.title = "CARSOLD | Home"
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const [hovered, setHovered] = useState<boolean[]>(Array(3).fill(false));
     const [initial, setInitial] = useState<boolean>(true);
     const {bigWidth, isMobile} = useUtil();
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle1")}`
 
     useEffect(() => {
         const handleFetchRandomOffers = async () => {
@@ -78,56 +78,58 @@ const Home: React.FC = () => {
 
     return (
         <LayOut>
-            <div className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
-                <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime animate-appearFastRev border-gray-300
-                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 z-10" : "rounded w-[90%] items-center min-h-[500px] px-5 border text-center"}`}>
-                    <p className={`${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"} text-2xl m:text-3xl`}>
+            <div
+                className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
+                <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime animate-appearFastRev
+                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 border-gray-300 z-10" : "rounded w-full items-center min-h-[500px] text-center"}`}>
+                    <p className={`text-2xl m:text-3xl ${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"}`}>
                         {t("home1")}
                     </p>
-                    <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-6`}>
-                        <p className="text-[20px] m:text-[26px]">
-                            {t("home2")}
-                        </p>
+                    <p className={`flex flex-row items-center gap-2 text-[20px] m:text-[26px] mt-6 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
+                        {t("home2")}
                         <FontAwesomeIcon icon={faEarthAmericas} className="text-2xl m:text-3xl"/>
-                    </div>
-                    <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
-                         {...bindHoverHandlers(0)}>
-                        <Link to={"/authenticate/login"} className={`text-xl m:text-2xl ${hovered[0] ? "underline" : "no-underline"}`}>
+                    </p>
+                    <div className={`mt-10 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
+                        <Link className={`flex flex-row items-center w-fit gap-2 text-xl m:text-2xl ${hovered[0] ? "underline" : "no-underline"}`}
+                              to={"/authenticate/login"} {...bindHoverHandlers(0)}>
                             {t("home3")}
+                            <FontAwesomeIcon icon={faDoorOpen} className={`text-2xl m:text-3xl ${hovered[0] && "scale-110"}`}/>
                         </Link>
-                        <FontAwesomeIcon icon={faDoorOpen} className={`text-2xl m:text-3xl ${hovered[0] && "scale-110"}`}/>
                     </div>
-                    <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
-                         {...bindHoverHandlers(1)}>
-                        <Link to={"/search?page=0&size=10 "} className={`text-xl m:text-2xl ${hovered[1] ? "underline" : "no-underline"}`}>
+                    <div className={`mt-10 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
+                        <Link className={`flex flex-row items-center w-fit gap-2 text-xl m:text-2xl ${hovered[1] ? "underline" : "no-underline"}`}
+                              to={"/search?page=0&size=10"} {...bindHoverHandlers(1)}>
                             {t("home4")}
+                            <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-2xl m:text-3xl ${hovered[1] && "scale-110"}`}/>
                         </Link>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-2xl m:text-3xl ${hovered[1] && "scale-110"}`}/>
                     </div>
-                    <div className={`flex flex-row items-center gap-2 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`} mt-10`}
-                         {...bindHoverHandlers(2)}>
-                        <Link to={"/addingOffer"} className={`text-xl m:text-2xl underline ${hovered[2] ? "underline" : "no-underline"}`}>
+                    <div className={`mt-10 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
+                        <Link className={`flex flex-row items-center w-fit gap-2 text-xl m:text-2xl ${hovered[2] ? "underline" : "no-underline"}`}
+                              to={"/addingOffer"} {...bindHoverHandlers(2)}>
                             {t("home5")}
+                            <FontAwesomeIcon icon={faMoneyBillWave} className={`text-2xl m:text-3xl ${hovered[2] && "scale-110"}`}/>
                         </Link>
-                        <FontAwesomeIcon icon={faMoneyBillWave} className={`text-2xl m:text-3xl ${hovered[2] && "scale-110"}`}/>
                     </div>
                 </div>
-                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime animate-appearFast border-gray-300
-                ${bigWidth ? "w-[60%] absolute right-0 min-h-[720px] border-y-2 z-20" : "rounded w-[90%] min-h-[600px] m:min-h-[860px] mt-5 border"}`}>
+                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime animate-appearFast
+                ${bigWidth ? "w-[60%] absolute right-0 min-h-[720px] border-y-2 border-gray-300 z-20" : "rounded w-full min-h-[600px] m:min-h-[860px] mt-5"}`}>
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full gap-4" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"} -mt-8 m:-mt-10`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? (offers[0] ? <SmallOfferDisplay type="search" offer={offers[0]} /> : null) : (<HomeOfferLoading />)}
+                                {fetched ? (offers[0] ? <SmallOfferDisplay type="search" offer={offers[0]}/> : null) : (
+                                    <HomeOfferLoading/>)}
                             </div>
                         </div>
                         <div className={`flex justify-center ${bigWidth && `mr-5 ${initial && "animate-appearSlow"}`}`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? (offers[1] ? <SmallOfferDisplay type="search" offer={offers[1]} /> : null) : (<HomeOfferLoading />)}
+                                {fetched ? (offers[1] ? <SmallOfferDisplay type="search" offer={offers[1]}/> : null) : (
+                                    <HomeOfferLoading/>)}
                             </div>
                         </div>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"}`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
-                                {fetched ? (offers[2] ? <SmallOfferDisplay type="search" offer={offers[2]} /> : null) : (<HomeOfferLoading />)}
+                                {fetched ? (offers[2] ? <SmallOfferDisplay type="search" offer={offers[2]}/> : null) : (
+                                    <HomeOfferLoading/>)}
                             </div>
                         </div>
                     </div>

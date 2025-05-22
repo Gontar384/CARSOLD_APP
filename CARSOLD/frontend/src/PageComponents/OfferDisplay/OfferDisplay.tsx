@@ -19,7 +19,6 @@ import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const OfferDisplay: React.FC = () => {
-    document.title = "CARSOLD | Offer"
     interface FetchedOffer {
         id: number | null;
         title: string;
@@ -104,6 +103,7 @@ const OfferDisplay: React.FC = () => {
     const [reported, setReported] = useState<boolean>(false);
     const [hasReported, setHasReported] = useState<boolean>(false);
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle3")}`
 
     useEffect(() => {
         if (section) {

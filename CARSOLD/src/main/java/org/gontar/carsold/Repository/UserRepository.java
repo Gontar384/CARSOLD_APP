@@ -15,13 +15,19 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
-    boolean existsByUsername(String username);
-    boolean existsByEmail(String email);
     User findByEmail(String email);
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:username)")
+    User findByUsernameLower(@Param("username") String username);
+    @Query("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email)")
+    User findByEmailLower(@Param("email") String email);
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE LOWER(u.email) = LOWER(:email)")
+    boolean existsByEmailLower(@Param("email") String email);
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE LOWER(u.username) = LOWER(:username)")
+    boolean existsByUsernameLower(@Param("username") String username);
+    boolean existsByUsername(String username);
     List<User> findByFollowedOffersContaining(Offer offer);
     @Query("SELECT o FROM User u JOIN u.followedOffers o WHERE u.id = :userId")
     Set<Offer> findFollowedOffersByUserId(@Param("userId") Long userId);
-    @Query(value = "SELECT o FROM User u JOIN u.followedOffers o WHERE u.id = :userId",
-            countQuery = "SELECT COUNT(o) FROM User u JOIN u.followedOffers o WHERE u.id = :userId")
+    @Query(value = "SELECT o FROM User u JOIN u.followedOffers o WHERE u.id = :userId", countQuery = "SELECT COUNT(o) FROM User u JOIN u.followedOffers o WHERE u.id = :userId")
     Page<Offer> findFollowedOffersByUserIdPageable(@Param("userId") Long userId, Pageable pageable);
 }

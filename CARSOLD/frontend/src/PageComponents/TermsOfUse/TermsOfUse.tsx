@@ -4,8 +4,8 @@ import Section from "./Atomic/Section.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const TermsOfUse: React.FC = () => {
-    document.title = "CARSOLD | Terms Of Use";
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle13")}`;
 
     return (
         <LayOut>

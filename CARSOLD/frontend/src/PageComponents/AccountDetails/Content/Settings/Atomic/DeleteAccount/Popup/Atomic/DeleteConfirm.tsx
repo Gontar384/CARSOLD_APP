@@ -73,7 +73,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     };
 
     const handleDeleteGoogleAccount = async () => {
-        if (confirmation !== "delete_account") {
+        if (confirmation !== "delete_account" && confirmation !== "usuń_konto") {
             setInfo(t("deleteAccount8"));
             return;
         }

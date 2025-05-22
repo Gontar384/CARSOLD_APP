@@ -278,7 +278,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 bg-white z-20">
                 <SelectInput label={t("search3")} value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
                 <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}
-                             disabled={!carBrands.includes(filter.brand) || filter.brand === "Other"} shrinked={true}/>
+                             disabled={!carBrands.includes(filter.brand)} shrinked={true}/>
                 <SelectInput label={t("search4")} value={filter.bodyType} setValue={handleSetFilter("bodyType")} options={language === "ENG" ? carBodyTypes : carBodyTypesPl} shrinked={true}/>
                 {isMobile && <SelectInput label={t("search5")} value={filter.fuel} setValue={handleSetFilter("fuel")} options={language === "ENG" ? carFuels : carFuelsPl} shrinked={true}/>}
                 <SelectInput label={t("search6")} value={filter.minPrice} setValue={handleSetFilter("minPrice")} shrinked={true} symbol="PLN"

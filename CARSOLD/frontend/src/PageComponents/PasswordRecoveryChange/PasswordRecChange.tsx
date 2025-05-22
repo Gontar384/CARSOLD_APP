@@ -5,10 +5,10 @@ import PasswordChangeForm from "./PasswordChangeForm/PasswordChangeForm.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const PasswordRecChange: React.FC = () => {
-    document.title = "CARSOLD | Password Recovery";
     const [isChanged, setIsChanged] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle5")}`;
 
     return (
         <LayOut>

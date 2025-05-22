@@ -36,7 +36,6 @@ export interface UpdatedOffer {
 }
 
 const MyOffers: React.FC = () => {
-    document.title = "CARSOLD | My offers";
     const [offerAdded, setOfferAdded] = useState<boolean>(false);
     const [offerUpdated, setOfferUpdated] = useState<boolean>(false);
     const [offerDeleted, setOfferDeleted] = useState<boolean>(false);
@@ -48,6 +47,7 @@ const MyOffers: React.FC = () => {
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle6")}`;
 
     useEffect(() => {
         if (sessionStorage.getItem("offerAdded") === "true") {

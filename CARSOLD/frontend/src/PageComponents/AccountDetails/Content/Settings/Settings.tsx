@@ -8,13 +8,13 @@ import Popup from "./Atomic/DeleteAccount/Popup/Popup.tsx";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 const Settings: React.FC = () => {
-    document.title = "CARSOLD | Settings";
     const {handleCheckGoogleAuth} = useUserInfo();
     const [googleAuth, setGoogleAuth] = useState<boolean | null>(null);
     const [popup, setPopup] = useState<boolean>(false);
     const [isChanged, setIsChanged] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle9")}`;
 
     useEffect(() => {
         const checkGoogleAuthentication = async () => {

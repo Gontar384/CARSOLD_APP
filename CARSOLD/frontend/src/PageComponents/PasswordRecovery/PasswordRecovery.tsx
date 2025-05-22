@@ -12,7 +12,6 @@ import {BadRequestError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const PasswordRecovery: React.FC = () => {
-    document.title = "CARSOLD | Password Recovery";
     const [email, setEmail] = useState<string>("");
     const [emailInfo, setEmailInfo] = useState<string>("");
     const [emailIcon, setEmailIcon] = useState<IconProp | null>(null);
@@ -22,6 +21,7 @@ const PasswordRecovery: React.FC = () => {
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
     const {t, language} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle5")}`;
 
     useEffect(() => {
         setEmailInfo("");

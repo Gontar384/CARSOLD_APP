@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import ChatsBar from "./Atomic/ChatsBar.tsx";
 import ChatWindow from "./Atomic/ChatWindow.tsx";
+import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 export interface Sent {
     username: string;
@@ -11,7 +12,6 @@ export interface Sent {
 }
 
 const Messages: React.FC = () => {
-    document.title = "CARSOLD | Messages";
     const {bigWidth} = useUtil();
     const [sent, setSent] = useState<Sent>({
         username: "",
@@ -21,6 +21,8 @@ const Messages: React.FC = () => {
     });
     const [deleted, setDeleted] = useState<string>("");
     const [markSeen, setMarkSeen] = useState<boolean>(false);
+    const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle8")}`;
 
     return (
         <div className={`flex flex-1 justify-center w-full h-full

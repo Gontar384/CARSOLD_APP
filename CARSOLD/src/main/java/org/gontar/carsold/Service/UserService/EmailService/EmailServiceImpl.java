@@ -46,10 +46,6 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendAccountActivationEmail(String email, String username, String link, boolean translate) {
-        Objects.requireNonNull(email, "Email cannot be null");
-        Objects.requireNonNull(username, "Username cannot be null");
-        Objects.requireNonNull(link, "Link cannot be null");
-
         String subject;
         String content;
         try {

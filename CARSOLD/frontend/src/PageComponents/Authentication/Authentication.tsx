@@ -3,10 +3,12 @@ import AuthWindow from "./AuthWindow/AuthWindow.tsx";
 import Aside from "./Aside/Aside.tsx";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const Authentication: React.FC = () => {
-    document.title = "CARSOLD | Authenticate";
     const {bigWidth} = useUtil();
+    const {t} = useLanguage();
+    document.title = `CARSOLD | ${t("tabTitle4")}`;
 
     return (
         <LayOut>

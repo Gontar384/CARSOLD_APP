@@ -395,7 +395,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     @Override
     public boolean fetchPermission(Offer offer) {
-        Objects.requireNonNull(offer, "Offer cannot be null");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return false;

@@ -24,6 +24,7 @@ const Admin: React.FC = () => {
     const itemsPerPage = 6;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t, translate} = useLanguage();
+    document.title = "CARSOLD | Admin";
 
     useEffect(() => {
         const manageCheckAdmin = async () => {

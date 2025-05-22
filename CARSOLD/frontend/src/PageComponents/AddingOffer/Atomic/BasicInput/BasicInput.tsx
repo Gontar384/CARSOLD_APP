@@ -34,13 +34,13 @@ const BasicInput: React.FC<TitleInputProps> = ({label, type, symbol, setSymbol, 
     };
 
     return (
-        <div className="relative w-64 m:w-72" onBlur={() => setToggled?.(true)}>
+        <div className="relative w-[280px] m:w-[300px]" onBlur={() => setToggled?.(true)}>
             <label className={`absolute transition-all duration-200 rounded-md pointer-events-none
             ${isFocused || value || type === "date" ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!error ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </label>
-            <input className={`w-full p-2 ${symbol && "pr-14 m:pr-16"} text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow
+            <input className={`w-full p-2 ${symbol && "pr-12 m:pr-14"} text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow
             ${!error ? "border-gray-300 focus:border-darkLime" : "border-coolRed text-coolRed"}`}
                    value={value} type={type === "date" ? "date" : "text"}
                    onChange={handleChange}
