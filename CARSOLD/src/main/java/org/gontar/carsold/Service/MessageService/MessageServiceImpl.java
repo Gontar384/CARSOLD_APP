@@ -1,5 +1,6 @@
 package org.gontar.carsold.Service.MessageService;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.gontar.carsold.Domain.Entity.Message.Conversation;
 import org.gontar.carsold.Domain.Entity.Message.Message;
 import org.gontar.carsold.Domain.Entity.User.User;
@@ -45,12 +46,12 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void activateConversation(String username) {
         ConversationContext context = getConversationContext(username, true);
-        if (context.conversation.getUser1().getId().equals(context.user.getId())) {
+        if (context.isUser1) {
             context.conversation.setActivatedByUser1(true);
             if (context.conversation.isDeletedByUser1()) {
                 context.conversation.setDeletedByUser1(false);
             }
-        } else if (context.conversation.getUser2().getId().equals(context.user.getId())) {
+        } else {
             context.conversation.setActivatedByUser2(true);
             if (context.conversation.isDeletedByUser2()) {
                 context.conversation.setDeletedByUser2(false);
@@ -59,6 +60,7 @@ public class MessageServiceImpl implements MessageService {
         conversationRepository.save(context.conversation);
     }
 
+    @Transactional
     @Override
     public void sendMessage(String username, String content) {
         Objects.requireNonNull(content, "Content cannot be null");
@@ -95,10 +97,10 @@ public class MessageServiceImpl implements MessageService {
         conversationRepository.save(context.conversation);
 
         int unseenCount;
-        if (context.otherUser.getId().equals(context.conversation.getUser1().getId())) {
-            unseenCount = conversationRepository.countUnseenAndActivatedByUser1(context.otherUser.getId());
-        } else {
+        if (context.isUser1) {
             unseenCount = conversationRepository.countUnseenAndActivatedByUser2(context.otherUser.getId());
+        } else {
+            unseenCount = conversationRepository.countUnseenAndActivatedByUser1(context.otherUser.getId());
         }
 
         NotificationDto dto = new NotificationDto();

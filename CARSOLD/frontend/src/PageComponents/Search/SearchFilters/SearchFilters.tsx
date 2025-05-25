@@ -259,7 +259,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
 
     useEffect(() => {
         handleSearch();
-    }, [currentPage, trigger]);
+    }, [currentPage, trigger, filter.sortBy]);
 
     const handleManageSearch = () => {
         setCurrentPage(0);

@@ -197,6 +197,11 @@ export default {
                     '0%': {transform: "translateY(0)"},
                     '100%': {transform: "translateY(100%)"},
                 },
+                pulseBar: {
+                    '0%': {transform: "scaleY(1)", opacity: "0.7"},
+                    '50%': {transform: "scaleY(2)", opacity: "1"},
+                    '100%': {transform: "scaleY(1)", opacity: "0.7"},
+                },
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -239,6 +244,7 @@ export default {
                 appearFastRev: 'appearFastRev 0.5s ease-in-out forwards',
                 slideUpAppear: 'slideUpAppear 0.3s ease-in-out forwards',
                 slideDownDisappear: 'slideDownDisappear 0.3s ease-in-out forwards',
+                pulseBar: 'pulseBar 1.2s ease-in-out infinite'
             },
         },
     },

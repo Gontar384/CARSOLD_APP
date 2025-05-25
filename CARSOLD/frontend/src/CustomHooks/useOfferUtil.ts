@@ -14,7 +14,7 @@ export const useOfferUtil = () => {
             const response = await fetchOffer(id);
             if (response.data) return response.data;
         } catch (error: unknown) {
-            navigate('/home');
+            navigate("/details/myOffers");
             if (error instanceof NotFoundError) {
                 console.error("Offer not found: ", error);
             } else {
@@ -29,7 +29,7 @@ export const useOfferUtil = () => {
             const response = await fetchOfferWithUser(id);
             if (response.data) return response.data;
         } catch (error: unknown) {
-            navigate('/home');
+            navigate("/search?page=0&size=10");
             if (error instanceof NotFoundError) {
                 console.error("Offer not found: ", error);
             } else {

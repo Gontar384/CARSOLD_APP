@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -80,6 +82,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         return dto;
     }
 
+    @Transactional
     @Override
     public boolean followAndCheck(Long id, Boolean follow) {
         Objects.requireNonNull(id, "Id cannot be null");

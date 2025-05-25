@@ -78,10 +78,9 @@ const Home: React.FC = () => {
 
     return (
         <LayOut>
-            <div
-                className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
-                <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime animate-appearFastRev
-                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 border-gray-300 z-10" : "rounded w-full items-center min-h-[500px] text-center"}`}>
+            <div className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
+                <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime border-gray-300 animate-appearFastRev
+                ${bigWidth ? "w-[50%] min-h-[720px] justify-center border-y-2 z-10" : "rounded w-full items-center min-h-[500px] text-center border-y"}`}>
                     <p className={`text-2xl m:text-3xl ${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"}`}>
                         {t("home1")}
                     </p>
@@ -111,8 +110,8 @@ const Home: React.FC = () => {
                         </Link>
                     </div>
                 </div>
-                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime animate-appearFast
-                ${bigWidth ? "w-[60%] absolute right-0 min-h-[720px] border-y-2 border-gray-300 z-20" : "rounded w-full min-h-[600px] m:min-h-[860px] mt-5"}`}>
+                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime border-gray-300 animate-appearFast
+                ${bigWidth ? "w-[60%] absolute right-0 min-h-[720px] border-y-2 z-20" : "rounded w-full min-h-[600px] m:min-h-[860px] mt-5 border-y"}`}>
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full gap-4" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"} -mt-8 m:-mt-10`}>
                             <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>

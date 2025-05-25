@@ -6,6 +6,7 @@ import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOf
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
 import {usePagination} from "../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const Search: React.FC = () => {
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
@@ -14,12 +15,14 @@ const Search: React.FC = () => {
     const [totalElements, setTotalElements] = useState<number>(0);
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
+    const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle2")}`;
 
     return (
         <LayOut>
             <div className="flex flex-col items-center -mt-12 m:-mt-14 -mb-[200px]">
-                <div className="flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px] h-full min-h-[1500px] pb-44 m:pb-48">
+                <div className={`flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px]
+                h-full min-h-[1500px] pb-44 m:pb-48 border-gray-300 ${isMobile ? "border-b" : "border-b border-x"}`}>
                     <SearchFilters setOffers={setOffers} setFetched={setFetched} setCurrentPage={setCurrentPage}
                                    currentPage={currentPage} itemsPerPage={itemsPerPage} setTotalPages={setTotalPages}
                                    setTotalElements={setTotalElements}/>

@@ -24,6 +24,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -179,6 +180,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         User user = userDetailsService.loadUser();
         if (offerRepository.countByUserId(user.getId()) >= 50) throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
         if (isContentToxic(offer.getTitle(), offer.getDescription())) throw new InappropriateContentException("Title or description are inappropriate");
+
         offer.setUser(user);
         Offer savedOffer = offerRepository.save(offer);
         processImages(savedOffer, photos, user.getUsername());
@@ -251,6 +253,8 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             for (int i = 0; i < photos.size(); i++) {
                 MultipartFile file = photos.get(i);
                 try {
+                    if (file.getSize() > 5 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
+                    if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
                     String photoUrl = uploadToStorage(file, username, offer.getId(), i + 1);
                     photoUrls.add(photoUrl);
                 } catch (MediaNotSupportedException e) {
@@ -288,9 +292,6 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     private String uploadToStorage(MultipartFile file, String username, Long id, int imageIndex) throws StorageException, IOException {
-        if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
-        if (file.getSize() > 5 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
-
         String fileName = username + "/offer" + id + "/offer" + id + "image" + imageIndex;
 
         Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -311,8 +312,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         if (!fetchPermission(existingOffer)) {
             throw new NoPermissionException("User has no permission to update offer");
         }
-        if (existingOffer.getLastUpdated() != null &&
-                existingOffer.getLastUpdated().isAfter(LocalDateTime.now().minusMinutes(5))) {
+        if (existingOffer.getLastUpdated() != null && existingOffer.getLastUpdated().isAfter(LocalDateTime.now().minusMinutes(5))) {
             throw new AccessDeniedException("User can update offer only once every 5 minutes");
         }
         if (isContentToxic(offer.getTitle(), offer.getDescription())) {
@@ -359,6 +359,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         return existingOffer;
     }
 
+    @Transactional
     @Override
     public void deleteOffer(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
@@ -376,8 +377,8 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                 userRepository.save(follower);
             }
         });
-
         deleteImagesFromStorage(user.getUsername(), existingOffer.getId());
+
         offerRepository.delete(existingOffer);
     }
 

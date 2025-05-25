@@ -92,7 +92,6 @@ public class ProfilePicServiceImpl implements ProfilePicService {
             BatchAnnotateImagesResponse batchResponse = vision.batchAnnotateImages(batchRequest);
             AnnotateImageResponse response = batchResponse.getResponsesList().getFirst();
             SafeSearchAnnotation safeSearch = response.getSafeSearchAnnotation();
-            //uses SafeSearch values ("possibly" sensitive content)
             return (safeSearch.getAdultValue() >= 3 ||
                     safeSearch.getViolenceValue() >= 3 ||
                     safeSearch.getRacyValue() >= 3);

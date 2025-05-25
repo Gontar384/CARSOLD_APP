@@ -24,6 +24,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const {profilePic, profilePicFetched, setProfilePicChanged} = useUserUtil();
     const deactivationTimeout = useRef<NodeJS.Timeout | null>(null);  //for delays
+    const [changeCount, setChangeCount] = useState<number>(0);
     const {t} = useLanguage();
 
     const handleActivateInput = () => {
@@ -71,6 +72,10 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
 
     const handleUploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (isDisabled) return;
+        if (changeCount >= 3) {
+            setMessage(t("profilePic7"));
+            return;
+        }
 
         const file = event.target.files?.[0];
         if (!file) return;
@@ -105,6 +110,7 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             setPicUploaded(true);
             setInputActive(false);
             setInputDisabled(true);
+            setChangeCount(prev => prev + 1);
         }
     };
 

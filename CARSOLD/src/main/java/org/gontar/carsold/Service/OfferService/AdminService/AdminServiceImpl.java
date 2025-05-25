@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
         this.reportRepository = reportRepository;
     }
 
+    @Transactional
     @Override
     public void adminDeleteOffer(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
@@ -52,7 +54,6 @@ public class AdminServiceImpl implements AdminService {
                 userRepository.save(follower);
             }
         });
-
         try {
             String folderPrefix = username + "/offer" + id + "/";
             Storage storage = StorageOptions.getDefaultInstance().getService();

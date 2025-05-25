@@ -7,11 +7,12 @@ import Settings from "./Settings/Settings.tsx";
 import Info from "./Info/Info.tsx";
 import ContentLoader from "../../../Additional/Loading/ContentLoader.tsx";
 import Admin from "./Admin/Admin.tsx";
+import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
 
 const Content: React.FC = () => {
-
     const {section} = useParams();
     const navigate = useNavigate();
+    const {isMobile} = useUtil();
 
     const [choice, setChoice] = useState<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin">("myOffers");
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -33,8 +34,8 @@ const Content: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col items-center w-full rounded-sm
-        max-w-[1500px] min-h-[710px] m:min-h-[870px] bg-lowLime border border-gray-400">
+        <div className={`flex flex-col items-center w-full rounded-sm max-w-[1500px] min-h-[710px] m:min-h-[870px]
+        bg-lowLime border-gray-300 ${isMobile ? "border-y" : "border"}`}>
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>
             : choice === "messages" ? <Messages/>

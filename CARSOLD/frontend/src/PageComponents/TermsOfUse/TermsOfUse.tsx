@@ -2,15 +2,18 @@ import React from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import Section from "./Atomic/Section.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const TermsOfUse: React.FC = () => {
     const {t} = useLanguage();
+    const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle13")}`;
 
     return (
         <LayOut>
             <div className="flex flex-col items-center -mb-[200px] m:-mb-[100px]">
-                <div className="flex flex-col w-11/12 max-w-[1200px] p-5 m:p-7 bg-lowLime border border-gray-300 rounded">
+                <div className={`flex flex-col w-full max-w-[1200px] p-5 m:p-7 bg-lowLime 
+                ${isMobile ? "border-y" : "border"} border-gray-300 rounded`}>
                     <h1 className="text-2xl m:text-3xl text-center font-bold">
                         {t("termsOfUse1")}
                     </h1>

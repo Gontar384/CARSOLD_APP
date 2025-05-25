@@ -40,7 +40,7 @@ const Admin: React.FC = () => {
             setFetched(false);
             try {
                 const reports = await adminFetchReports(currentPage, itemsPerPage);
-                setReports(reports.data._embedded.reportDtoList);
+                setReports(reports.data._embedded?.reportDtoList ?? []);
                 setTotalPages(reports.data.page.totalPages);
             } catch (error) {
                 console.error("Unexpected error while fetching reports: ", error);

@@ -52,21 +52,25 @@ public class ContactInfoServiceImpl implements ContactInfoService {
 
     private boolean isPolishName(String name) {
         List<String> polishSpecificNames = Arrays.asList(
-                //male
                 "Łukasz", "Wojciech", "Krzysztof", "Tomasz", "Jerzy", "Mieczysław", "Zbigniew", "Andrzej",
-                "Piotr", "Janusz", "Ryszard", "Sławomir", "Tadeusz", "Bolesław", "Kazimierz", "Mariusz",
-                "Czesław", "Leszek", "Stanislaw", "Marek", "Wacław", "Radosław", "Artur", "Zdzisław",
-                "Jarosław", "Bogdan", "Grzegorz", "Adam", "Dariusz", "Marcin", "Jacek", "Rafał", "Patryk",
-                "Mariusz", "Wojtek", "Zygmunt", "Marian", "Kamil", "Albert", "Dominik", "Krzysztof", "Marek",
-                "Feliks", "Kornel", "Sebastian", "Roman", "Michał", "Alojzy", "Jerzy", "Seweryn", "Łukasz",
-                //female
+                "Piotr", "Janusz", "Ryszard", "Sławomir", "Tadeusz", "Bolesław", "Kazimierz", "Czesław",
+                "Leszek", "Stanisław", "Marek", "Wacław", "Radosław", "Artur", "Zdzisław", "Jarosław", "Ignacy",
+                "Bogdan", "Grzegorz", "Adam", "Dariusz", "Marcin", "Jacek", "Rafał", "Patryk", "Mariusz",
+                "Wojtek", "Zygmunt", "Marian", "Kamil", "Albert", "Dominik", "Feliks", "Kornel", "Sebastian",
+                "Roman", "Michał", "Alojzy", "Seweryn", "Jakub", "Kuba", "Mateusz", "Przemysław", "Robert",
+                "Igor", "Oskar", "Jan", "Emil", "Bartosz", "Damian", "Norbert", "Hubert", "Szymon", "Henryk",
+                "Konrad", "Wiktor", "Tymoteusz", "Antoni", "Julian", "Aleksander", "Leon", "Brunon", "Iwo",
+                "Maksymilian", "Eryk", "Cezary", "Lucjan",
                 "Żaneta", "Jolanta", "Grażyna", "Bożena", "Stefania", "Wanda", "Irena", "Halina", "Cecylia",
                 "Eugenia", "Teresa", "Aneta", "Danuta", "Zofia", "Alicja", "Barbara", "Joanna", "Katarzyna",
                 "Magdalena", "Anna", "Maria", "Małgorzata", "Elżbieta", "Karolina", "Monika", "Ewa", "Hanna",
-                "Zdzisława", "Jadwiga", "Patrycja", "Ewa", "Lidia", "Kamila", "Kinga", "Dominika", "Urszula",
-                "Justyna", "Aleksandra", "Renata", "Izabela", "Bożena", "Krzysztofka", "Lucyna", "Wioletta",
-                "Tereska", "Barbara", "Weronika", "Krystyna", "Malwina", "Elżbieta", "Wiesława", "Dagmara",
-                "Joanna", "Zuzanna", "Honorata", "Beata", "Marta", "Liliana", "Monika", "Małgorzata", "Anita"
+                "Zdzisława", "Jadwiga", "Patrycja", "Lidia", "Kamila", "Kinga", "Dominika", "Urszula",
+                "Justyna", "Aleksandra", "Renata", "Izabela", "Krzysztofka", "Lucyna", "Wioletta", "Tereska",
+                "Weronika", "Krystyna", "Malwina", "Wiesława", "Dagmara", "Zuzanna", "Honorata", "Beata",
+                "Marta", "Liliana", "Anita", "Martyna", "Julia", "Natalia", "Agata", "Paulina", "Helena",
+                "Nikola", "Sylwia", "Klaudia", "Milena", "Agnieszka", "Gabriela", "Emilia", "Olga", "Marcelina",
+                "Justyna", "Mariola", "Wiktoria", "Amelia", "Lena", "Kalina", "Rozalia", "Laura", "Blanka",
+                "Antonina", "Iga", "Nadia", "Aurelia", "Jagoda", "Iwona", "Sabina", "Celina"
         );
         return polishSpecificNames.contains(name);
     }

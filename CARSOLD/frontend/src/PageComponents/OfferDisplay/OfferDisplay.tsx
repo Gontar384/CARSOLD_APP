@@ -17,6 +17,7 @@ import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/Custom
 import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const OfferDisplay: React.FC = () => {
     interface FetchedOffer {
@@ -103,13 +104,14 @@ const OfferDisplay: React.FC = () => {
     const [reported, setReported] = useState<boolean>(false);
     const [hasReported, setHasReported] = useState<boolean>(false);
     const {t} = useLanguage();
+    const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle3")}`
 
     useEffect(() => {
         if (section) {
             const numericId = Number(section.replace(/,/g, ''));
             if (!isNaN(numericId)) setId(numericId);
-        } else navigate("/home");
+        } else navigate("/search?page=0&size=10");
     }, [section]);  //gets id from section
 
     const formatNumber = (value: string) => {
@@ -184,7 +186,7 @@ const OfferDisplay: React.FC = () => {
         setDisabled(true);
         try {
             await adminDeleteOffer(id);
-            navigate("/search?page=0&size=10");
+            navigate("/details/admin");
         } catch(error: unknown) {
             setDecision(false);
             if (error instanceof NotFoundError) {
@@ -202,8 +204,9 @@ const OfferDisplay: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col lg:flex-row justify-center w-full m:w-[95%] max-w-[1350px] gap-3 m:gap-4">
-                    <div className="flex flex-col w-full items-center lg:w-[70%] m:border border-gray-300 bg-lowLime rounded relative">
+                <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] gap-3 m:gap-4">
+                    <div className={`flex flex-col w-full items-center lg:w-[70%] ${isMobile ? "border-y" : "border"}
+                    border-gray-300 bg-lowLime rounded relative`}>
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                         {offerFetched &&
                             <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
@@ -230,7 +233,7 @@ const OfferDisplay: React.FC = () => {
                             </button>
                         }
                     </div>
-                    <div className="flex flex-col items-center w-full lg:w-[30%] m:border border-gray-300 bg-lowLime rounded">
+                    <div className={`flex flex-col items-center w-full lg:w-[30%] ${offerFetched ? isMobile ? "border-y" : "border" : ""} border-gray-300 bg-lowLime rounded`}>
                     {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>

@@ -3,6 +3,7 @@ package org.gontar.carsold.Service.UserService.UserManagementService;
 import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
@@ -78,9 +79,9 @@ public class UserManagementServiceImpl implements UserManagementService {
             if (!result) throw new InappropriateContentException("Username is inappropriate");
 
             updateUser(processedUser, user);
+            userRepository.save(processedUser);
             sendActivationEmail(processedUser, translate);
 
-            userRepository.save(processedUser);
             return processedUser;
         } catch (UserDataException | EmailSendingException | RegisterUserException e) {
             throw new RegisterUserException("Registration process failed: " + e.getMessage());
@@ -221,13 +222,13 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteUser(String password, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         User user = userDetailsService.loadUser();
         if (!user.getOauth2()) {
             if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
         }
-
         Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
         if (followedOffers != null) {
             followedOffers.forEach(offer -> {
@@ -235,7 +236,6 @@ public class UserManagementServiceImpl implements UserManagementService {
                 offerRepository.save(offer);
             });
         }
-
         List<Offer> userOffers = user.getOffers() != null ? new ArrayList<>(user.getOffers()) : Collections.emptyList();
         userOffers.forEach(offer -> {
             List<User> followers = userRepository.findByFollowedOffersContaining(offer);
@@ -245,10 +245,8 @@ public class UserManagementServiceImpl implements UserManagementService {
                     userRepository.save(follower);
                 }
             });
-
         });
-
-        deleteUserInCloud(user.getUsername());
+        deleteUserInCloudStorage(user.getUsername());
 
         offerRepository.flush();
         userRepository.flush();
@@ -257,7 +255,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         authenticationService.logout(request, response, authentication);
     }
 
-    private void deleteUserInCloud(String username) {
+    private void deleteUserInCloudStorage(String username) {
         try {
         String folderPrefix = username + "/";
         Storage storage = StorageOptions.getDefaultInstance().getService();

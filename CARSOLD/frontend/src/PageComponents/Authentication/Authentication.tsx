@@ -12,7 +12,7 @@ const Authentication: React.FC = () => {
 
     return (
         <LayOut>
-            <div className={`flex gap-16 ${bigWidth ? "flex-row items-start justify-center" : "flex-col items-center"}`}>
+            <div className={`flex gap-12 m:gap-14 lg:gap-16 ${bigWidth ? "flex-row items-start justify-center" : "flex-col items-center"}`}>
                 <AuthWindow/>
                 <Aside/>
             </div>

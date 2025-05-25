@@ -10,7 +10,7 @@ const ImageAndUsername: React.FC = () => {
 
     return (
         <div className={`flex items-center w-11/12 ${bigWidth ? "max-w-[700px]" : "max-w-[550px]"} 
-        min-h-[70px] m:min-h-[80px] relative bg-lowLime rounded-l-full`}>
+        min-h-[70px] m:min-h-[80px] relative bg-lowLime rounded-full border border-gray-300`}>
             <Image setMessage={setMessage}/>
             <Username/>
             {message !== "" && (

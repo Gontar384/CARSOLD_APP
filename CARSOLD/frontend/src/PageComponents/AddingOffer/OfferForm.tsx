@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import {carModels} from "./Atomic/SelectInput/SelectData/carModels.ts";
 import {carBrands} from "./Atomic/SelectInput/SelectData/carBrands.ts";
@@ -29,6 +29,9 @@ import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 import {carTransmissions, carTransmissionsPl} from "../Search/SearchFilters/AdditionalData/carTransmissions.ts";
 import {carConditions, carConditionsPl} from "../Search/SearchFilters/AdditionalData/carConditions.ts";
 import {carSteeringWheel, carSteeringWheelPl} from "./Atomic/SelectInput/SelectData/carSteeringWheel.ts";
+import * as nsfwjs from 'nsfwjs';
+import OfferFormLoader from "../../Additional/Loading/OfferFormLoader.tsx";
+import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const OfferForm: React.FC = () => {
     const {t, language, translate, translateForBackend} = useLanguage();
@@ -171,6 +174,33 @@ const OfferForm: React.FC = () => {
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
     const [tooManyBanner, setTooManyBanner] = useState<boolean>(false);
     document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
+    const {isMobile} = useUtil();
+    const nsfwModelRef = useRef<nsfwjs.NSFWJS | null>(null);
+    const [modelLoading, setModelLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const loadModel = async () => {
+            setModelLoading(true);
+            const originalConsoleInfo = console.info;
+            console.info = () => {};
+
+            const loadPromise = nsfwjs.load().then(model => {
+                nsfwModelRef.current = model;
+            });
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error("Model loading timeout")), 7000);
+            });
+            try {
+                await Promise.race([loadPromise, timeoutPromise]);
+            } catch (error) {
+                console.error("Failed to load NSFW model:", error);
+            } finally {
+                console.info = originalConsoleInfo;
+                setModelLoading(false);
+            }
+        };
+        loadModel();
+    }, []);  //loading NSFW model to check images before upload
 
     //if user redirects from /modifyingOffer/{id} to /addingOffer, it resets all states
     useEffect(() => {
@@ -878,8 +908,29 @@ const OfferForm: React.FC = () => {
                 try {
                     const response = await fetch(photo);
                     const blob = await response.blob();
-                    const filename = `photo${index}.${blob.type.split("/")[1]}`;
-                    formData.append("photos", blob, filename);
+
+                    let isNSFW: boolean = false;
+                    if (nsfwModelRef.current) {
+                        const imageBitmap = await createImageBitmap(blob);
+                        const canvas = document.createElement("canvas");
+                        canvas.width = imageBitmap.width;
+                        canvas.height = imageBitmap.height;
+                        const ctx = canvas.getContext("2d");
+                        ctx?.drawImage(imageBitmap, 0, 0);
+
+                        const predictions = await nsfwModelRef.current.classify(canvas);
+                        const pornScore = predictions.find(p => p.className === "Porn")?.probability || 0;
+
+                        if (pornScore > 0.1) {
+                            console.warn(`NSFW image at index ${index}, skipping.`);
+                            isNSFW = true;
+                        }
+                    }
+
+                    if (!isNSFW) {
+                        const filename = `photo${index}.${blob.type.split("/")[1]}`;
+                        formData.append("photos", blob, filename);
+                    }
                 } catch (error) {
                     console.error(`Error converting blob URL to file: ${photo}`, error);
                 }
@@ -916,6 +967,7 @@ const OfferForm: React.FC = () => {
             price: parseNumber(offer.price),
             currency: offer.currency,
         };
+
         formData.append("offer", new Blob([JSON.stringify(offerDto)], { type: "application/json" }));
 
         return formData;
@@ -1029,8 +1081,8 @@ const OfferForm: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className={`flex flex-col items-center w-full m:w-[95%] lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
-                 bg-lowLime border border-black border-opacity-10 rounded-sm`}>
+                <div className={`flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
+                 bg-lowLime ${isMobile ? "border-y" : "border"} border-gray-300 rounded-sm`}>
                     <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
                         {id !== null && permission === true ? t("offerForm1") : t("offerForm2")}
                     </p>
@@ -1131,6 +1183,7 @@ const OfferForm: React.FC = () => {
                 {tooManyBanner && <AnimatedBanner text={t("animatedBanner16")} onAnimationEnd={() => setTooManyBanner(false)}
                                                     delay={6000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}
+                {modelLoading && <OfferFormLoader/>}
             </div>
         </LayOut>
     );

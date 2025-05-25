@@ -39,8 +39,8 @@ spring:
       project-id: ${GOOGLE_CLOUD_PROJECT}
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 6MB
+      max-request-size: 6MB
 
 # Off DB Logs
 logging:
