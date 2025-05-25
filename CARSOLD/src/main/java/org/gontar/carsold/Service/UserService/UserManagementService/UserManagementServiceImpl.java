@@ -125,10 +125,13 @@ public class UserManagementServiceImpl implements UserManagementService {
             String w = word.toLowerCase();
             if (lowered.contains(w)) return false;
             int len = w.length();
-            for (int i = 0; i <= lowered.length() - len; i++) {
-                String sub = lowered.substring(i, i + len);
-                int distance = levenshtein.apply(sub, w);
-                if (distance <= 1) return false;
+            if (len >= 4) {
+                for (int i = 0; i <= lowered.length() - len; i++) {
+                    String sub = lowered.substring(i, i + len);
+                    if (sub.matches(".*\\d.*")) continue;
+                    int distance = levenshtein.apply(sub, w);
+                    if (distance <= 1) return false;
+                }
             }
         }
         return true;
