@@ -323,7 +323,7 @@ export const dictionary = {
         offerForm104: "Tylko ",
         offerForm105: " zdjęć zostało dodanych. ",
         offerForm106: " zostało zignorowanych przez wielkość/typ/limit.",
-        offerForm107: "Opisz tutaj swoje auto...",
+        offerForm107: "Tutaj opisz swoje auto...",
         search1: "Wyniki: ",
         search2: "Nie znaleziono ofert",
         search3: "Marka",

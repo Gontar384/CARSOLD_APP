@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAsterisk, faPlay} from "@fortawesome/free-solid-svg-icons";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface SelectInputProps {
     label: string;
@@ -14,12 +15,14 @@ interface SelectInputProps {
     setToggled?: React.Dispatch<React.SetStateAction<boolean>>;
     shrinked?: boolean;
     symbol?: string;
+    numericOnly?: boolean;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled, shrinked, symbol }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setValue, disabled, required, error, message, setToggled, shrinked, symbol, numericOnly }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const componentRef = useRef<HTMLDivElement | null>(null);
     const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+    const {isMobile} = useUtil();
 
     useEffect(() => {
         const newFilteredOptions = options.filter(option =>
@@ -64,6 +67,25 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
         }, 100);
     };
 
+    useEffect(() => {
+        if (!isMobile) return;
+        const handleTouchMove = () => {
+            const input = componentRef.current?.querySelector("input");
+            if (document.activeElement === input) {
+                input?.blur();
+            }
+        };
+        document.addEventListener("touchmove", handleTouchMove);
+
+        return () => document.removeEventListener("touchmove", handleTouchMove);
+    }, [isMobile]); //fixes input focus/blur bug on mobile (blurs input when swiping)
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let newValue = e.target.value;
+        if (numericOnly) newValue = newValue.replace(/[^0-9]/g, '');
+        setValue(newValue);
+    };
+
     return (
         <div className={`relative ${shrinked ? "w-40 m:w-48" : "w-[280px] m:w-[300px]"}`} ref={componentRef} onBlur={handleSetToggled}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
@@ -73,17 +95,15 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
             </p>
             <input className={`w-full p-2 pr-10 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black focus: outline-none
             ${!error ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
-                   disabled={disabled} value={value} onChange={(e) => setValue(e.target.value)}
-                   onFocus={handleFocus}/>
+                   disabled={disabled} value={value} onChange={(e) => handleOnChange(e)}
+                   onFocus={handleFocus} readOnly={isMobile}/>
             {isOpen && filteredOptions.length > 0 && (
                 <ul className="absolute w-full text-lg m:text-xl bg-white border border-darkLime rounded-md shadow
                 max-h-[222px] overflow-y-auto overflow-x-hidden z-10 animate-unroll">
                     {filteredOptions.map((option) => (
                         <li key={option} className="p-2 hover:bg-gray-200 cursor-pointer relative"
                             tabIndex={0} role="button" onClick={() => handleSelect(option)}
-                            onKeyDown={(event) => {
-                                if (event.key === "Enter") handleSelect(option)
-                            }}>
+                            onKeyDown={(event) => {if (event.key === "Enter") handleSelect(option)}}>
                             {option}
                             {symbol && <p className="absolute right-2 top-2.5 text-lg m:text-xl text-gray-500">{symbol}</p>}
                         </li>

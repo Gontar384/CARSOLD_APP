@@ -283,36 +283,36 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
                              disabled={!carBrands.includes(filter.brand)} shrinked={true}/>
                 <SelectInput label={t("search4")} value={filter.bodyType} setValue={handleSetFilter("bodyType")} options={language === "ENG" ? carBodyTypes : carBodyTypesPl} shrinked={true}/>
                 {isMobile && <SelectInput label={t("search5")} value={filter.fuel} setValue={handleSetFilter("fuel")} options={language === "ENG" ? carFuels : carFuelsPl} shrinked={true}/>}
-                <SelectInput label={t("search6")} value={filter.minPrice} setValue={handleSetFilter("minPrice")} shrinked={true} symbol="PLN"
+                <SelectInput label={t("search6")} value={filter.minPrice} setValue={handleSetFilter("minPrice")} shrinked={true} symbol="PLN" numericOnly={true}
                              options={filter.maxPrice === "" ? carPrices : carPrices.filter(price => Number(price) < Number(filter.maxPrice))}/>
-                <SelectInput label={t("search7")} value={filter.maxPrice} setValue={handleSetFilter("maxPrice")} shrinked={true} symbol="PLN"
+                <SelectInput label={t("search7")} value={filter.maxPrice} setValue={handleSetFilter("maxPrice")} shrinked={true} symbol="PLN" numericOnly={true}
                              options={carPrices.filter(price => Number(price) > Number(filter.minPrice))}/>
-                <SelectInput label={t("search8")} value={filter.minYear} setValue={handleSetFilter("minYear")} shrinked={true}
+                <SelectInput label={t("search8")} value={filter.minYear} setValue={handleSetFilter("minYear")} shrinked={true} numericOnly={true}
                              options={filter.maxYear === "" ? carYears : carYears.filter(year => Number(year) < Number(filter.maxYear))}/>
-                <SelectInput label={t("search9")} value={filter.maxYear} setValue={handleSetFilter("maxYear")} shrinked={true}
+                <SelectInput label={t("search9")} value={filter.maxYear} setValue={handleSetFilter("maxYear")} shrinked={true} numericOnly={true}
                              options={carYears.filter(year => Number(year) > Number(filter.minYear))}/>
                 {!isMobile && <SelectInput label={t("search5")} value={filter.fuel} setValue={handleSetFilter("fuel")} options={language === "ENG" ? carFuels : carFuelsPl} shrinked={true}/>}
-                <SelectInput label={t("search10")} value={filter.minMileage} setValue={handleSetFilter("minMileage")} shrinked={true} symbol="km"
+                <SelectInput label={t("search10")} value={filter.minMileage} setValue={handleSetFilter("minMileage")} shrinked={true} symbol="km" numericOnly={true}
                              options={filter.maxMileage === "" ? carMileages : carMileages.filter(mileage => Number(mileage) < Number(filter.maxMileage))}/>
-                <SelectInput label={t("search11")} value={filter.maxMileage} setValue={handleSetFilter("maxMileage")} shrinked={true}
-                             options={carMileages.filter(mileage => Number(mileage) > Number(filter.minMileage))} symbol="km"/>
+                <SelectInput label={t("search11")} value={filter.maxMileage} setValue={handleSetFilter("maxMileage")} shrinked={true} symbol="km" numericOnly={true}
+                             options={carMileages.filter(mileage => Number(mileage) > Number(filter.minMileage))}/>
             </div>
             <div className={`${moreFilters ? `grid grid-cols-2 lg:grid-cols-5 gap-3 ${animation} z-10` : "hidden"}`}>
                 <SelectInput label={t("search12")} value={filter.color} setValue={handleSetFilter("color")} shrinked={true} options={language === "ENG" ? carColors : carColorsPl}/>
                 {isMobile && <SelectInput label={t("search13")} value={filter.transmission} setValue={handleSetFilter("transmission")} shrinked={true} options={language === "ENG" ? carTransmissions : carTransmissionsPl}/>}
-                <SelectInput label={t("search14")} value={filter.minPower} setValue={handleSetFilter("minPower")} shrinked={true} symbol={t("search27")}
+                <SelectInput label={t("search14")} value={filter.minPower} setValue={handleSetFilter("minPower")} shrinked={true} symbol={t("search27")} numericOnly={true}
                              options={filter.maxPower === "" ? carPowers : carPowers.filter(power => Number(power) < Number(filter.maxPower))}/>
-                <SelectInput label={t("search15")} value={filter.maxPower} setValue={handleSetFilter("maxPower")} shrinked={true} symbol={t("search27")}
+                <SelectInput label={t("search15")} value={filter.maxPower} setValue={handleSetFilter("maxPower")} shrinked={true} symbol={t("search27")} numericOnly={true}
                              options={carPowers.filter(power => Number(power) > Number(filter.minPower))}/>
-                <SelectInput label={t("search16")} value={filter.minCapacity} setValue={handleSetFilter("minCapacity")} shrinked={true} symbol="cm3"
+                <SelectInput label={t("search16")} value={filter.minCapacity} setValue={handleSetFilter("minCapacity")} shrinked={true} symbol="cm3" numericOnly={true}
                              options={filter.maxCapacity === "" ? carCapacities : carCapacities.filter(capacity => Number(capacity) < Number(filter.maxCapacity))}/>
-                <SelectInput label={t("search17")} value={filter.maxCapacity} setValue={handleSetFilter("maxCapacity")} shrinked={true} symbol="cm3"
+                <SelectInput label={t("search17")} value={filter.maxCapacity} setValue={handleSetFilter("maxCapacity")} shrinked={true} symbol="cm3" numericOnly={true}
                              options={carCapacities.filter(capacity => Number(capacity) > Number(filter.minCapacity))}/>
                 {!isMobile && <SelectInput label={t("search18")} value={filter.transmission} setValue={handleSetFilter("transmission")} shrinked={true} options={language === "ENG" ? carTransmissions : carTransmissionsPl}/>}
                 <SelectInput label={t("search19")} value={filter.drive} setValue={handleSetFilter("drive")} shrinked={true} options={language === "ENG" ? carDrives : carDrivesPl}/>
                 <SelectInput label={t("search20")} value={filter.condition} setValue={handleSetFilter("condition")} shrinked={true} options={language === "ENG" ? carConditions : carConditionsPl}/>
-                <SelectInput label={t("search21")} value={filter.seats} setValue={handleSetFilter("seats")} shrinked={true} options={carSeats}/>
-                <SelectInput label={t("search22")} value={filter.doors} setValue={handleSetFilter("doors")} shrinked={true} options={carDoors}/>
+                <SelectInput label={t("search21")} value={filter.seats} setValue={handleSetFilter("seats")} shrinked={true} options={carSeats} numericOnly={true}/>
+                <SelectInput label={t("search22")} value={filter.doors} setValue={handleSetFilter("doors")} shrinked={true} options={carDoors} numericOnly={true}/>
             </div>
             <div className="flex flex-row flex-wrap justify-center gap-1 m:gap-3 mt-6 mb-4 m:mb-5">
                 <SearchFiltersButton label={t("search23")} onClick={handleResetFilter} color="gray-200"/>

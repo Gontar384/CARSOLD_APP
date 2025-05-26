@@ -1100,11 +1100,10 @@ const OfferForm: React.FC = () => {
                             <SelectInput label={t("offerForm66")} options={carBrands} value={offer.brand} setValue={handleSetOffer("brand")}
                                          required={true} error={error.brand} message={message.brand} setToggled={handleSetToggled("brand")}/>
                             <SelectInput label="Model" options={carModels[offer.brand] ?? []} value={offer.model} setValue={handleSetOffer("model")}
-                                         required={true} disabled={!carBrands.includes(offer.brand)}
-                                         error={error.model} message={message.model} setToggled={handleSetToggled("model")}/>
+                                         required={true} disabled={!carBrands.includes(offer.brand)} error={error.model} message={message.model} setToggled={handleSetToggled("model")}/>
                             <SelectInput label={t("offerForm67")} options={language === "ENG" ? carBodyTypes : carBodyTypesPl} value={offer.bodyType} setValue={handleSetOffer("bodyType")}
                                          required={true} error={error.bodyType} message={message.bodyType} setToggled={handleSetToggled("bodyType")}/>
-                            <SelectInput label={t("offerForm68")} options={carYears} value={offer.year} setValue={handleSetOffer("year")}
+                            <SelectInput label={t("offerForm68")} options={carYears} value={offer.year} setValue={handleSetOffer("year")} numericOnly={true}
                                          required={true} error={error.year} message={message.year} setToggled={handleSetToggled("year")}/>
                             <BasicInput label={t("offerForm69")} type="number" value={offer.mileage} setValue={handleSetOffer("mileage")}
                                         required={true} error={error.mileage} message={message.mileage} symbol="km" setToggled={handleSetToggled("mileage")}/>
@@ -1129,12 +1128,12 @@ const OfferForm: React.FC = () => {
                                          value={offer.condition} setValue={handleSetOffer("condition")}
                                          error={error.condition} required={true} message={message.condition}/>
                             <SelectInput label={t("offerForm77")} options={carSeats} value={offer.seats} setValue={handleSetOffer("seats")}
-                                         error={error.seats} message={message.seats}/>
+                                         error={error.seats} message={message.seats} numericOnly={true}/>
                             <ChooseInput label={t("offerForm78")} firstOption={language === "ENG" ? carSteeringWheel[0] : carSteeringWheelPl[0]} secondOption={language === "ENG" ? carSteeringWheel[1] : carSteeringWheelPl[1]}
                                          value={offer.steeringWheel} setValue={handleSetOffer("steeringWheel")}
                                          error={error.steeringWheel} message={message.steeringWheel}/>
                             <SelectInput label={t("offerForm79")} options={carDoors} value={offer.doors} setValue={handleSetOffer("doors")}
-                                         error={error.doors} message={message.doors}/>
+                                         error={error.doors} message={message.doors} numericOnly={true}/>
                         </div>
                         <div className="flex flex-col items-center m:grid grid-col-1 md:grid-cols-2 w-full gap-y-7 m:gap-y-8 mb-10 m:mb-12">
                             <SelectInput label={t("offerForm80")} options={language === "ENG" ? carCountries : carCountriesPl} value={offer.country}
