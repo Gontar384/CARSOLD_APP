@@ -42,7 +42,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         if (name == null || name.isBlank()) {
             user.setName(null);
             repository.save(user);
-        } else if (isPolishName(name) || isValidName(name)) {
+        } else if (isRealName(name) || isPersonRelated(name)) {
             user.setName(name);
             repository.save(user);
         } else {
@@ -50,8 +50,8 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         }
     }
 
-    private boolean isPolishName(String name) {
-        List<String> polishSpecificNames = Arrays.asList(
+    private boolean isRealName(String name) {
+        List<String> realNames = Arrays.asList(
                 "Łukasz", "Wojciech", "Krzysztof", "Tomasz", "Jerzy", "Mieczysław", "Zbigniew", "Andrzej",
                 "Piotr", "Janusz", "Ryszard", "Sławomir", "Tadeusz", "Bolesław", "Kazimierz", "Czesław",
                 "Leszek", "Stanisław", "Marek", "Wacław", "Radosław", "Artur", "Zdzisław", "Jarosław", "Ignacy",
@@ -70,12 +70,31 @@ public class ContactInfoServiceImpl implements ContactInfoService {
                 "Marta", "Liliana", "Anita", "Martyna", "Julia", "Natalia", "Agata", "Paulina", "Helena",
                 "Nikola", "Sylwia", "Klaudia", "Milena", "Agnieszka", "Gabriela", "Emilia", "Olga", "Marcelina",
                 "Justyna", "Mariola", "Wiktoria", "Amelia", "Lena", "Kalina", "Rozalia", "Laura", "Blanka",
-                "Antonina", "Iga", "Nadia", "Aurelia", "Jagoda", "Iwona", "Sabina", "Celina"
+                "Antonina", "Iga", "Nadia", "Aurelia", "Jagoda", "Iwona", "Sabina", "Celina",
+                "James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas",
+                "Charles", "Christopher", "Daniel", "Matthew", "Anthony", "Mark", "Donald", "Steven", "Paul",
+                "Andrew", "Joshua", "Kevin", "Brian", "George", "Edward", "Ronald", "Timothy", "Jason", "Jeffrey",
+                "Ryan", "Jacob", "Gary", "Nicholas", "Eric", "Stephen", "Jonathan", "Larry", "Justin", "Scott",
+                "Brandon", "Frank", "Benjamin", "Gregory", "Samuel", "Raymond", "Patrick", "Alexander", "Jack",
+                "Dennis", "Jerry", "Tyler", "Aaron", "Jose", "Henry", "Douglas", "Adam", "Peter", "Nathan",
+                "Zachary", "Walter", "Kyle", "Harold", "Carl", "Arthur", "Lawrence", "Jeremy", "Terry", "Sean",
+                "Christian", "Ethan", "Austin", "Noah", "Jesse", "Joe", "Bryan", "Billy", "Jordan", "Albert",
+                "Dylan", "Bruce", "Willie", "Gabriel", "Alan", "Juan", "Logan", "Wayne", "Ralph", "Roy",
+                "Vincent", "Russell", "Randy", "Philip", "Bobby", "Johnny", "Mary", "Patricia", "Linda", "Barbara",
+                "Elizabeth", "Jennifer", "Maria", "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen",
+                "Betty", "Helen", "Sandra", "Donna", "Carol", "Ruth", "Sharon", "Michelle", "Laura", "Sarah",
+                "Kimberly", "Deborah", "Jessica", "Shirley", "Cynthia", "Angela", "Melissa", "Brenda", "Amy",
+                "Anna", "Rebecca", "Virginia", "Kathleen", "Pamela", "Martha", "Ashley", "Stephanie", "Emma",
+                "Olivia", "Chloe", "Abigail", "Isabella", "Samantha", "Sophia", "Avery", "Charlotte", "Mia",
+                "Amelia", "Emily", "Madison", "Grace", "Ella", "Scarlett", "Lily", "Addison", "Aubrey", "Hannah",
+                "Natalie", "Zoe", "Leah", "Savannah", "Brooklyn", "Claire", "Skylar", "Aaliyah", "Violet",
+                "Stella", "Lucy", "Hazel", "Lillian", "Aria", "Ellie", "Peyton", "Audrey", "Nora", "Caroline",
+                "Sophie", "Sadie", "Hailey", "Layla", "Victoria", "Riley", "Penelope", "Eleanor"
         );
-        return polishSpecificNames.contains(name);
+        return realNames.contains(name);
     }
 
-    private boolean isValidName(String name) {
+    private boolean isPersonRelated(String name) {
         try {
             String apiUrl = "https://language.googleapis.com/v1/documents:analyzeEntities?key=" + cloudNaturalLanguageApiKey;
 

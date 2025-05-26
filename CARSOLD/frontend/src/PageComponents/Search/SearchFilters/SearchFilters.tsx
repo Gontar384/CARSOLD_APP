@@ -118,8 +118,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         if (filter.sortBy) params.set("sortBy", translateForBackend("sortBy", filter.sortBy));
         params.set("page", String(currentPage));
         params.set("size", String(itemsPerPage));
-        setSearchParams(params);
-    }, [filter, currentPage]); //sets filter
+        if (params.toString() !== searchParams.toString()) {
+            setSearchParams(params, { replace: true });
+        }
+    }, [filter, currentPage, searchParams]); //sets filter
 
     useEffect(() => {
         setFilter(prev => ({

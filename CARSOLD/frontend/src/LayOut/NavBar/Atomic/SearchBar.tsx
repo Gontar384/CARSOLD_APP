@@ -49,6 +49,10 @@ const SearchBar: React.FC = () => {
             navigate(`/search?phrase=${phrase}&page=0&size=10`);
             setSearched(true);
             setTrigger(prev => !prev);
+            if (isMobile) {
+                navigator.vibrate?.(50);
+                (document.activeElement as HTMLElement)?.blur();
+            }
         }
     };
 
