@@ -1,14 +1,14 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {MemoryRouter, useParams, useNavigate, useLocation} from 'react-router-dom';
 import {useOfferUtil} from '../../CustomHooks/useOfferUtil';
-import OfferForm from "../../PageComponents/AddingOffer/OfferForm.tsx";
-import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider.tsx";
-import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider.tsx";
-import {SearchProvider} from "../../GlobalProviders/Search/SearchProvider.tsx";
-import {UserUtilProvider} from "../../GlobalProviders/UserUtil/UserUtilProvider.tsx";
-import {LanguageProvider} from "../../GlobalProviders/Language/LanguageProvider.tsx";
+import OfferForm from "../../PageComponents/AddingOffer/OfferForm";
+import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider";
+import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider";
+import {SearchProvider} from "../../GlobalProviders/Search/SearchProvider";
+import {UserUtilProvider} from "../../GlobalProviders/UserUtil/UserUtilProvider";
+import {LanguageProvider} from "../../GlobalProviders/Language/LanguageProvider";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         post: jest.fn(),
         put: jest.fn(),
@@ -22,15 +22,15 @@ jest.mock('react-router-dom', () => ({
     useLocation: jest.fn(),
 }));
 
-jest.mock('../../CustomHooks/useOfferUtil', () => ({
+jest.mock('../../CustomHooks/useOfferUtil.ts', () => ({
     useOfferUtil: jest.fn(),
 }));
 
-jest.mock('../../ApiCalls/Services/OfferService', () => ({
+jest.mock('../../ApiCalls/Services/OfferService.ts', () => ({
     addOffer: jest.fn(),
 }));
 
-jest.mock('../../GlobalProviders/Messages/useMessages', () => ({
+jest.mock('../../GlobalProviders/Messages/useMessages.ts', () => ({
     useMessages: () => ({
         addMessage: jest.fn(),
     }),

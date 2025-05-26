@@ -5,20 +5,20 @@ import {MemoryRouter} from 'react-router-dom';
 import {useUserInfo} from '../../CustomHooks/useUserInfo';
 import {LanguageProvider} from "../../GlobalProviders/Language/LanguageProvider.tsx";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         get: jest.fn(),
         post: jest.fn(),
     },
 }));
 
-jest.mock('../../GlobalProviders/Util/useUtil', () => ({
+jest.mock('../../GlobalProviders/Util/useUtil.ts', () => ({
     useUtil: () => ({
         CreateDebouncedValue: jest.fn((value) => value),
     }),
 }));
 
-jest.mock('../../CustomHooks/useUserInfo', () => ({
+jest.mock('../../CustomHooks/useUserInfo.ts', () => ({
     useUserInfo: jest.fn(),
 }));
 

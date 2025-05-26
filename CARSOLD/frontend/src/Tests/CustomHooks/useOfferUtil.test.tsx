@@ -1,11 +1,11 @@
 import { render, waitFor } from '@testing-library/react';
-import { useOfferUtil } from '../../CustomHooks/useOfferUtil';
+import { useOfferUtil } from '../../CustomHooks/useOfferUtil.ts';
 import { useNavigate } from 'react-router-dom';
 import {fetchAllFollowed, fetchAllUserOffers, fetchOffer, fetchOfferWithUser, fetchStats, followAndCheck} from "../../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import {useEffect} from "react";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         get: jest.fn(),
     },
@@ -16,7 +16,7 @@ beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
-jest.mock('../../ApiCalls/Services/OfferService');
+jest.mock('../../ApiCalls/Services/OfferService.ts');
 jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));

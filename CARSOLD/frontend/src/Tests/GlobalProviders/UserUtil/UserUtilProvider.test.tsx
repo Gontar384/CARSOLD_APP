@@ -1,5 +1,5 @@
 import {render, waitFor, act, renderHook} from '@testing-library/react';
-import {UserUtilProvider} from "../../../GlobalProviders/UserUtil/UserUtilProvider";
+import {UserUtilProvider} from "../../../GlobalProviders/UserUtil/UserUtilProvider.tsx";
 import {fetchProfilePic, fetchUsername} from "../../../ApiCalls/Services/UserService.ts";
 import {MemoryRouter} from "react-router-dom";
 import {UserUtilContext, useUserUtil} from "../../../GlobalProviders/UserUtil/useUserUtil.ts";

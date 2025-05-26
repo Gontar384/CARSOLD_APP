@@ -1,27 +1,27 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import {api} from '../../Config/AxiosConfig/AxiosConfig';
+import {api} from '../../Config/AxiosConfig/AxiosConfig.ts';
 import {MemoryRouter} from 'react-router-dom';
-import {useUserInfo} from '../../CustomHooks/useUserInfo';
-import LoginForm from "../../PageComponents/Authentication/AuthWindow/Atomic/Form/LoginForm";
+import {useUserInfo} from '../../CustomHooks/useUserInfo.ts';
+import LoginForm from "../../PageComponents/Authentication/AuthWindow/Atomic/Form/LoginForm.tsx";
 import {LanguageProvider} from "../../GlobalProviders/Language/LanguageProvider.tsx";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         post: jest.fn(),
     },
 }));
 
-jest.mock('../../GlobalProviders/Util/useUtil', () => ({
+jest.mock('../../GlobalProviders/Util/useUtil.ts', () => ({
     useUtil: () => ({
         CreateDebouncedValue: jest.fn((value) => value),
     }),
 }));
 
-jest.mock('../../CustomHooks/useUserInfo', () => ({
+jest.mock('../../CustomHooks/useUserInfo.ts', () => ({
     useUserInfo: jest.fn(),
 }));
 
-jest.mock('../../GlobalProviders/Auth/useAuth', () => ({
+jest.mock('../../GlobalProviders/Auth/useAuth.ts', () => ({
     useAuth: jest.fn(() => ({
         handleCheckAuth: jest.fn(),
     })),

@@ -1,8 +1,8 @@
 import { render, waitFor } from '@testing-library/react';
-import { api } from "../../Config/AxiosConfig/AxiosConfig";
-import { useUserInfo } from "../../CustomHooks/useUserInfo";
+import { api } from "../../Config/AxiosConfig/AxiosConfig.ts";
+import { useUserInfo } from "../../CustomHooks/useUserInfo.ts";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         get: jest.fn(),
     },

@@ -1,12 +1,12 @@
 import {render, screen, waitFor} from '@testing-library/react';
-import AuthErrorManager from "../../Config/AuthConfig/AuthErrorManager";
-import {api} from "../../Config/AxiosConfig/AxiosConfig";
+import AuthErrorManager from "../../Config/AuthConfig/AuthErrorManager.tsx";
+import {api} from "../../Config/AxiosConfig/AxiosConfig.ts";
 import {act} from "react";
-import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider";
+import {AuthProvider} from "../../GlobalProviders/Auth/AuthProvider.tsx";
 import {MemoryRouter} from "react-router-dom";
 import {UtilProvider} from "../../GlobalProviders/Util/UtilProvider.tsx";
 
-jest.mock('../../Config/AxiosConfig/AxiosConfig', () => ({
+jest.mock('../../Config/AxiosConfig/AxiosConfig.ts', () => ({
     api: {
         get: jest.fn(),
         interceptors: {

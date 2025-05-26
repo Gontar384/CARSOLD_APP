@@ -9,6 +9,7 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
+import RegisterLoading from "../../../../../Additional/Loading/RegisterLoading.tsx";
 
 export interface User {
     email: string,
@@ -40,6 +41,7 @@ const RegisterForm: React.FC = () => {
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const [wrongData, setWrongData] = useState<boolean>(false);
     const {t, language} = useLanguage();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         setEmailInfo("");
@@ -190,6 +192,7 @@ const RegisterForm: React.FC = () => {
             setMark(false);
         }
         setIsDisabled(true);
+        setLoading(true);
         try {
             const response = await registerUser(user, language === "ENG");
             if (response.status === 201) {
@@ -213,12 +216,14 @@ const RegisterForm: React.FC = () => {
                     console.error("Unexpected error during registration: ", error);
                 }
             }
+        } finally {
+            setLoading(false);
         }
         setTimeout(() => setIsDisabled(false), 1000);
     };
 
     return (
-        <div className="flex flex-col items-center w-11/12 py-8 mt-3 rounded-sm shadow-2xl">
+        <div className="flex flex-col items-center w-11/12 py-8 mt-3 rounded-sm shadow-2xl relative">
             <Input placeholder={"E-mail"} inputType={"text"} value={user.email} field={"email"} setValue={setUser}
                    icon={emailIcon} info={emailInfo}/>
             <Input placeholder={t("register12")} inputType={"text"} value={user.username} field={"username"}
@@ -236,6 +241,7 @@ const RegisterForm: React.FC = () => {
                                           delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
             {wrongData && <AnimatedBanner text={t("animatedBanner10")} onAnimationEnd={() => setWrongData(false)}
                                           delay={4000} color={"bg-gray-300"} z={"z-40"}/>}
+            {loading && <RegisterLoading/>}
         </div>
     )
 }
