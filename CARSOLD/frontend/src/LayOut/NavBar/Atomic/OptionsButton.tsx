@@ -29,7 +29,7 @@ const OptionsButton: React.FC<OptionsButtonProps> = ({excludedButtonRef, iconAni
     }
 
     return (
-        <button className="text-lg m:text-xl px-1.5 ml-2.5" ref={excludedButtonRef}
+        <button className="text-lg m:text-xl px-2.5 py-1.5 ml-1.5" ref={excludedButtonRef}
                 onClick={mobileWidth ? () => handleBar(lowerBar, setLowerBar) : () => handleBar(midBar, setMidBar)}>
             <FontAwesomeIcon icon={faBars} className={`${iconAnimation}`}/>
         </button>
