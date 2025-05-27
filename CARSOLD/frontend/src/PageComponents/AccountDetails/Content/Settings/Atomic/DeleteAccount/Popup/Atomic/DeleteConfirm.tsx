@@ -28,6 +28,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     const {handleCheckAuth} = useAuth();
     const [confirmation, setConfirmation] = useState<string>("");
     const {t} = useLanguage();
+    const {disableDarkMode} = useUtil();
 
     useEffect(() => {
         const checkPassword = async () => {
@@ -49,6 +50,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
         try {
             await deleteUser(password);
             await handleCheckAuth();
+            disableDarkMode();
             sessionStorage.setItem("isAccountDeleted", "true");
         } catch (error: unknown) {
             if (error instanceof ForbiddenError) {

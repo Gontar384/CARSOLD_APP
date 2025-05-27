@@ -23,6 +23,7 @@ import {FetchedOffer, UpdatedOffer} from "../../AccountDetails/Content/MyOffers/
 import {sortBy, sortByPl} from "./AdditionalData/sortBy.ts";
 import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {useLanguage} from "../../../GlobalProviders/Language/useLanguage.ts";
+import RegisterAndSearchLoading from "../../../Additional/Loading/RegisterAndSearchLoading.tsx";
 
 interface SearchFiltersProps {
     setOffers: React.Dispatch<React.SetStateAction<UpdatedOffer[]>>;
@@ -91,6 +92,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
     const {phrase, setPhrase, trigger, setTrigger, setClicked} = useSearch();
     const {t, language, translate, translateForBackend} = useLanguage();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const params = new URLSearchParams();
@@ -227,6 +229,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         }).toString();
 
         setSearchParams(queryParams);
+        setLoading(true);
         try {
             const offers = await fetchFilteredOffers(queryParams);
             if (offers.data) {
@@ -256,6 +259,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         } finally {
             setFetched(true);
             setDisabled(false);
+            setTimeout(() => setLoading(false), 200);
         }
     };
 
@@ -276,7 +280,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     }, [searchTrigger]);
 
     return (
-        <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl">
+        <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl relative">
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 bg-white z-20">
                 <SelectInput label={t("search3")} value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
                 <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}
@@ -320,6 +324,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
                 <SearchFiltersButton label={t("search25")} onClick={handleManageSearch} color="lowLime"/>
             </div>
             <SelectInput label={t("search26")} value={filter.sortBy} setValue={handleSetFilter("sortBy")} shrinked={true} options={language === "ENG" ? sortBy : sortByPl}/>
+            {loading && <RegisterAndSearchLoading usage="search"/>}
         </div>
     )
 };

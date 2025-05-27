@@ -69,10 +69,12 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
 
     useEffect(() => {
         if (!isMobile) return;
-        const handleTouchMove = () => {
-            const input = componentRef.current?.querySelector("input");
-            if (document.activeElement === input) {
-                input?.blur();
+        const handleTouchMove = (event: TouchEvent) => {
+            if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+                const input = componentRef.current?.querySelector("input");
+                if (document.activeElement === input) {
+                    input?.blur();
+                }
             }
         };
         document.addEventListener("touchmove", handleTouchMove);
@@ -93,7 +95,7 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
             ${!error ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </p>
-            <input className={`w-full p-2 pr-10 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black focus: outline-none
+            <input className={`w-full h-12 pl-2 pr-10 text-lg m:text-xl rounded-md cursor-pointer bg-white border-2 text-black focus: outline-none
             ${!error ? isOpen ? "border-darkLime" : "border-gray-300" : "border-coolRed"}`}
                    disabled={disabled} value={value} onChange={(e) => handleOnChange(e)}
                    onFocus={handleFocus} readOnly={isMobile}/>

@@ -9,7 +9,7 @@ import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {registerUser} from "../../../../../ApiCalls/Services/UserService.ts";
 import {AxiosError} from "axios";
 import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
-import RegisterLoading from "../../../../../Additional/Loading/RegisterLoading.tsx";
+import RegisterAndSearchLoading from "../../../../../Additional/Loading/RegisterAndSearchLoading.tsx";
 
 export interface User {
     email: string,
@@ -241,7 +241,7 @@ const RegisterForm: React.FC = () => {
                                           delay={5000} color={"bg-coolYellow"} z={"z-40"}/>}
             {wrongData && <AnimatedBanner text={t("animatedBanner10")} onAnimationEnd={() => setWrongData(false)}
                                           delay={4000} color={"bg-gray-300"} z={"z-40"}/>}
-            {loading && <RegisterLoading/>}
+            {loading && <RegisterAndSearchLoading usage="register"/>}
         </div>
     )
 }

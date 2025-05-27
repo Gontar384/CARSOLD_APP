@@ -17,8 +17,20 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
     const {t} = useLanguage();
 
     const toggleInput = () => {
+        const activeEl = document.activeElement;
+        const input = (activeEl instanceof HTMLInputElement) ? activeEl : null;
+        const selectionStart = input?.selectionStart ?? null;
+        const selectionEnd = input?.selectionEnd ?? null;
+
         setInputType?.((prev) => prev === "password" ? "text" : "password");
-        setEyeIcon(eyeIcon === faEye ? faEyeSlash : faEye);
+        setEyeIcon(prev => prev === faEye ? faEyeSlash : faEye);
+
+        setTimeout(() => {
+            if (input && selectionStart !== null && selectionEnd !== null && typeof input.setSelectionRange === "function") {
+                input.setSelectionRange(selectionStart, selectionEnd);
+                input.focus();
+            }
+        }, 0);
     }
 
     return (
@@ -39,7 +51,7 @@ const Additional: React.FC<AdditionalProps> = ({setInputType, whichForm, termsCh
                     </Link>
                 </div>
             ) : null}
-            <button onClick={toggleInput} className="w-6 h-6 m:w-7 m:h-7">
+            <button className="w-6 h-6 m:w-7 m:h-7" onClick={toggleInput} onMouseDown={(e) => {e.preventDefault()}} >
                 <FontAwesomeIcon icon={eyeIcon} className={`w-full h-full ${eyeIcon === faEyeSlash ? "scale-110" : ""}`}/>
             </button>
         </div>

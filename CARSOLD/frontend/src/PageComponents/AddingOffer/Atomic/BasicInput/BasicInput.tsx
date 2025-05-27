@@ -40,7 +40,7 @@ const BasicInput: React.FC<TitleInputProps> = ({label, type, symbol, setSymbol, 
             ${!error ? "text-gray-500" : "text-coolRed"}`}>
                 {label}
             </label>
-            <input className={`w-full p-2 ${symbol && "pr-12 m:pr-14"} text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow
+            <input className={`w-full h-12 pl-2 ${symbol && "pr-12 m:pr-14"} text-lg m:text-xl border-2 rounded-md focus:outline-none focus:shadow
             ${!error ? "border-gray-300 focus:border-darkLime" : "border-coolRed text-coolRed"}`}
                    value={value} type={type === "date" ? "date" : "text"}
                    onChange={handleChange}
