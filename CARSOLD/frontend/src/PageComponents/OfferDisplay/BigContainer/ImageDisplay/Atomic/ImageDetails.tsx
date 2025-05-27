@@ -100,8 +100,8 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     return (
             offerFetched ? (
                 photos.length > 0 && !error &&
-                    <div className={`w-full cursor-pointer aspect-[15/10] overflow-hidden
-                    ${fullScreen && "m:w-[95%] max-w-[1200px] h-[98%] max-h-[800px] fixed inset-0 m-auto z-50"}`}
+                    <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer 
+                    ${fullScreen && "max-w-[1300px] md:h-full md:max-h-[600px] lg:max-h-[800px] border border-gray-300 rounded fixed inset-0 m-auto z-50"}`}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? () => setPhotoHovered(false) : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}
