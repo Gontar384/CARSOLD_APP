@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faCarSide, faCircleInfo, faGasPump, faRoad} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../../../CustomHooks/useButton.ts";
-import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
 interface OfferDetailsProps {
@@ -61,7 +60,6 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const textRef = useRef<HTMLDivElement>(null);
     const {buttonColor, bindHoverHandlers} = useButton();
-    const {isMobile} = useUtil();
 
     useEffect(() => {
         if (textRef.current) {
@@ -74,7 +72,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
             if (prev) {
                 textRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                 setTimeout(() => {
-                    window.scrollBy({ top: isMobile ? -1200 : -500, behavior: "smooth" });
+                    window.scrollBy({ top: -700, behavior: "smooth" });
                 }, 0);
             }
             return !prev;
