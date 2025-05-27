@@ -37,7 +37,7 @@ const Input = <T extends string | number | object>({placeholder, inputType, setI
     };   //let update individual values and specific fields of objects
 
     return (
-        <div className={`w-10/12 max-w-[270px] m:w-9/12 m:max-w-max mb-6 m:mb-7`}>
+        <div className={`w-full max-w-[270px] m:max-w-[340px] mb-6 m:mb-7`}>
             <div className="w-full relative">
                 <input className="w-full p-1 pr-12 text-xl m:text-2xl rounded-sm shadow-lg transition duration-500 ease-in-out
                 focus:outline-none focus:ring-2 m:focus:ring-[3px] focus:ring-blue-500/30 focus:shadow-blue-500/50"
