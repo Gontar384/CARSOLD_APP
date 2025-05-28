@@ -20,7 +20,9 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     const [direction, setDirection] = useState<number>(0);
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
-    const [startTouch, setStartTouch] = useState<number>(0);
+    const [startTouchX, setStartTouchX] = useState(0);
+    const [startTouchY, setStartTouchY] = useState(0);
+    const [lockedAxis, setLockedAxis] = useState<null | 'x' | 'y'>(null);
     const [endTouch, setEndTouch] = useState<number>(0);
     const [startMouse, setStartMouse] = useState<number>(0);
     const [endMouse, setEndMouse] = useState<number>(0);
@@ -35,30 +37,47 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
-        setStartTouch(e.touches[0].clientX);
-        setEndTouch(e.touches[0].clientX);
+        setStartTouchX(e.touches[0].clientX);
+        setStartTouchY(e.touches[0].clientY);
+        setLockedAxis(null);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - startTouch;
-        const deltaY = touch.clientY - e.currentTarget.getBoundingClientRect().top;
+        const moveX = e.touches[0].clientX;
+        const moveY = e.touches[0].clientY;
+        const deltaX = Math.abs(moveX - startTouchX);
+        const deltaY = Math.abs(moveY - startTouchY);
 
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            setEndTouch(touch.clientX);
+        if (!lockedAxis) {
+            if (deltaX > deltaY && deltaX > 10) {
+                setLockedAxis('x');
+                document.body.style.overflow = 'hidden';
+            } else if (deltaY > deltaX && deltaY > 10) {
+                setLockedAxis('y');
+            }
+        }
+        if (lockedAxis === 'x') {
+            if (Math.abs(moveX - startTouchX) > 10) {
+                setEndTouch(moveX);
+            }
         }
     };
 
     const handleTouchEnd = () => {
-        const touchDifference = startTouch - endTouch;
-        if (Math.abs(touchDifference) > 50) {
-            if (touchDifference > 0 && photoIndex < photos.length - 1) {
-                changePhoto(1);
-            } else if (touchDifference < 0 && photoIndex > 0) {
-                changePhoto(-1);
+        if (lockedAxis === 'x') {
+            const touchDifference = startTouchX - endTouch;
+            if (Math.abs(touchDifference) > 50) {
+                if (touchDifference > 0 && photoIndex < photos.length - 1) {
+                    changePhoto(1);
+                } else if (touchDifference < 0 && photoIndex > 0) {
+                    changePhoto(-1);
+                }
             }
         }
-        setStartTouch(0);
+        document.body.style.overflow = '';
+        setLockedAxis(null);
+        setStartTouchX(0);
+        setStartTouchY(0);
         setEndTouch(0);
     };
 
@@ -91,20 +110,27 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
             }
         }
         if (fullScreen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            document.addEventListener("touchstart", handleClickOutside);
+            document.addEventListener("mouseup", handleClickOutside);
+            document.addEventListener("touchend", handleClickOutside);
         }
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            document.removeEventListener("touchstart", handleClickOutside);
+            document.removeEventListener("mouseup", handleClickOutside);
+            document.removeEventListener("touchend", handleClickOutside);
         }
     }, [fullScreen])  //adds event listener to off fullScreen image display
+
+    useEffect(() => {
+        if (fullScreen && imageRef.current) {
+            imageRef.current.focus();
+        }
+    }, [fullScreen]); //puts focus on image when fullscreen
 
     return (
             offerFetched ? (
                 photos.length > 0 && !error &&
                     <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer 
-                    ${fullScreen && "max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px] border border-gray-300 rounded fixed inset-0 m-auto z-50"}`}
+                    ${fullScreen && `max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px]
+                    border border-gray-300 rounded fixed inset-0 m-auto z-50 touch-none`}`}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? () => setPhotoHovered(false) : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}
@@ -113,12 +139,17 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                          onTouchStart={isMobile ? handleTouchStart : undefined}
                          onTouchMove={isMobile ? handleTouchMove : undefined}
                          onTouchEnd={isMobile ? handleTouchEnd : undefined}
-                         ref={imageRef}>
+                         onKeyDown={e => {
+                             if (!fullScreen) return;
+                             e.preventDefault();
+                             if (e.key === "ArrowLeft" && photoIndex > 0) changePhoto(-1);
+                             else if (e.key === "ArrowRight" && photoIndex < photos.length - 1) changePhoto(1);
+                         }} tabIndex={0} ref={imageRef}>
                         <AnimatePresence custom={direction} mode="popLayout">
                             <motion.img key={photoIndex} src={photos[photoIndex]} alt="Car Photo"
                                         className="w-full h-full object-cover rounded" onError={() => setError(true)}
-                                        initial={{x: direction * 100 + "%"}} exit={{x: -direction * 100 + "%"}}
-                                        animate={{x: "0%"}} transition={{duration: 0.5, ease: "easeInOut"}}/>
+                                        initial={{translateX: direction * 100 + "%"}} exit={{translateX: -direction * 100 + "%"}}
+                                        animate={{translateX: "0%"}} transition={{duration: 0.4, ease: "easeInOut"}} style={{ willChange: "transform" }}/>
                         </AnimatePresence>
                         <div className="flex items-center justify-center absolute inset-0">
                             {photoHovered &&
@@ -128,7 +159,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                                                 onClick={photoIndex > 0 ? () => changePhoto(-1) : undefined}>
                                                 <FontAwesomeIcon icon={faPlay} className="text-6xl text-gray-200 opacity-90"
                                                                  style={{transform: "rotate(180deg)"}}/>
-                                            </button>
+                                        </button>
                                         }
                                         {photoIndex < photos.length - 1 &&
                                             <button className="absolute right-1"

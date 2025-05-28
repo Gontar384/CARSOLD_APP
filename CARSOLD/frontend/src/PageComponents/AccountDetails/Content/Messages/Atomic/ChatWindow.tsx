@@ -112,7 +112,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 }
             } finally {
                 setFetched(true);
-                setInitial(false);
             }
         };
         if (receiverUsername) handleGetConversationOnInitial();
@@ -181,13 +180,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     }; //sending message
 
     useEffect(() => {
-        const container = messageContainerRef.current;
-        if (container) {
-            requestAnimationFrame(() => {
-                container.scrollTop = container.scrollHeight;
-            });
-        }
-        if (msgAdded) setMsgAdded(false);
+        const timeout = setTimeout(() => {
+            const container = messageContainerRef.current;
+            if (container) container.scrollTop = container.scrollHeight;
+            if (msgAdded) setMsgAdded(false);
+            if (initial) setInitial(false);
+        }, 0);
+
+        return () => clearTimeout(timeout);
     }, [initial, msgAdded]);  //orients container on bottom
 
     useEffect(() => {
