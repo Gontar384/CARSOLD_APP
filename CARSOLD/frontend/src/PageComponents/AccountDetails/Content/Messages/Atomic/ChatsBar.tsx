@@ -187,7 +187,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                                 <div className={`flex flex-row items-center gap-0.5 m:gap-1 text-xs m:text-sm
                                 text-gray-700`}>
                                     {conv.sentBy && conv.lastMessage ?
-                                        <span className={`${!conv.seen && "font-semibold"}`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
+                                        <span className={`${!conv.seen && "font-semibold"} truncate`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
                                         : <span>{t("chatsBar2")}</span>
                                     }
                                 </div>

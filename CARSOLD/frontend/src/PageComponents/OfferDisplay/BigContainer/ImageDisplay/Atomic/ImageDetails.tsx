@@ -40,9 +40,12 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        const moveX = e.touches[0].clientX;
-        if (Math.abs(moveX - startTouch) > 10) {
-            setEndTouch(moveX);
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - startTouch;
+        const deltaY = touch.clientY - e.currentTarget.getBoundingClientRect().top;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            setEndTouch(touch.clientX);
         }
     };
 

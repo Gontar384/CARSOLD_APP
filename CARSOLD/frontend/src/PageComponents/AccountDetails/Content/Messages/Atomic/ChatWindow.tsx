@@ -112,6 +112,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 }
             } finally {
                 setFetched(true);
+                setInitial(false);
             }
         };
         if (receiverUsername) handleGetConversationOnInitial();
@@ -175,13 +176,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 console.error("Unexpected error when sending message: ", error);
             }
         } finally {
-            setTimeout(() => setDisabled(false), 500);
+            setTimeout(() => setDisabled(false), 100);
         }
     }; //sending message
 
     useEffect(() => {
         const container = messageContainerRef.current;
-        if (container) container.scrollTop = container.scrollHeight;
+        if (container) {
+            requestAnimationFrame(() => {
+                container.scrollTop = container.scrollHeight;
+            });
+        }
         if (msgAdded) setMsgAdded(false);
     }, [initial, msgAdded]);  //orients container on bottom
 
