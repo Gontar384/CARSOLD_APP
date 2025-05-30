@@ -1,5 +1,5 @@
 import React from "react";
-import {faCircleUser, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faCircleUser, faUserXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import OfferButton from "./Atomic/OfferButton.tsx";
 import UserContactInfo from "./Atomic/UserContactInfo.tsx";
@@ -31,7 +31,7 @@ const UserInformation: React.FC<UserInformationProps> = ({username, profilePic, 
                 {userRole === "ADMIN" && !permission &&
                     <button className="absolute -top-5 m:-top-6"
                             onClick={() => setUserDeleteDecision(true)}>
-                        <FontAwesomeIcon icon={faTrash} className="text-xl m:text-2xl"/>
+                        <FontAwesomeIcon icon={faUserXmark} className="text-xl m:text-2xl"/>
                     </button>
                 }
             </div>
