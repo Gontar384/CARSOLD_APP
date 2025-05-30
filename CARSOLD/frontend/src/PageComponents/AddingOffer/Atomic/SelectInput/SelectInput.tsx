@@ -39,7 +39,48 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
     const handleSelect = (value: string) => {
         setValue(value);
         setIsOpen(false);
+        setToggled?.(true);
     };
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let newValue = e.target.value;
+        if (numericOnly) newValue = newValue.replace(/[^0-9]/g, '');
+        setValue(newValue);
+        setToggled?.(true);
+    };
+
+    const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+        const currentTarget = event.currentTarget;
+        const relatedTarget = event.relatedTarget as Node | null;
+        if (relatedTarget && currentTarget.contains(relatedTarget)) {
+            return;
+        }
+        setToggled?.(true);
+    };
+
+    useEffect(() => {
+        if (value !== "") {
+            if (!options.includes(value)) {
+                setValue("");
+                setTimeout(() => setToggled?.(true), 10);
+            }
+        }
+    }, [isOpen]); //clears input when value doesn't match provided array
+
+    useEffect(() => {
+        if (!isMobile) return;
+        const handleTouchMove = (event: TouchEvent) => {
+            if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
+                const input = componentRef.current?.querySelector("input");
+                if (document.activeElement === input) {
+                    input?.blur();
+                }
+            }
+        };
+        document.addEventListener("touchmove", handleTouchMove);
+
+        return () => document.removeEventListener("touchmove", handleTouchMove);
+    }, [isMobile]); //fixes input focus/blur bug on mobile (blurs input when swiping)
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -57,39 +98,8 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
         }
     }, [isOpen]) //offs dropdown
 
-    useEffect(() => {
-        if (!options.includes(value)) setValue("");
-    }, [isOpen]); //clears input when value doesn't match provided array
-
-    const handleSetToggled = () => {
-        setTimeout(() => {
-            setToggled?.(true);
-        }, 100);
-    };
-
-    useEffect(() => {
-        if (!isMobile) return;
-        const handleTouchMove = (event: TouchEvent) => {
-            if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
-                const input = componentRef.current?.querySelector("input");
-                if (document.activeElement === input) {
-                    input?.blur();
-                }
-            }
-        };
-        document.addEventListener("touchmove", handleTouchMove);
-
-        return () => document.removeEventListener("touchmove", handleTouchMove);
-    }, [isMobile]); //fixes input focus/blur bug on mobile (blurs input when swiping)
-
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let newValue = e.target.value;
-        if (numericOnly) newValue = newValue.replace(/[^0-9]/g, '');
-        setValue(newValue);
-    };
-
     return (
-        <div className={`relative ${shrinked ? "w-40 m:w-48" : "w-[280px] m:w-[300px]"}`} ref={componentRef} onBlur={handleSetToggled}>
+        <div className={`relative ${shrinked ? "w-40 m:w-48" : "w-[280px] m:w-[300px]"}`} ref={componentRef} onBlur={handleBlur}>
             <p className={`absolute transition-all duration-200 rounded-md pointer-events-none
             ${isOpen || value ? `text-xs m:text-sm left-4 -top-[9px] m:-top-[11px] bg-white px-1` : "text-lg m:text-xl left-2 top-2.5"}
             ${!error ? "text-gray-500" : "text-coolRed"}`}>

@@ -177,6 +177,7 @@ const OfferForm: React.FC = () => {
     const {isMobile} = useUtil();
     const nsfwModelRef = useRef<nsfwjs.NSFWJS | null>(null);
     const [modelLoading, setModelLoading] = useState<boolean>(true);
+    const [tooLarge, setTooLarge] = useState<boolean>(false);
 
     useEffect(() => {
         const loadModel = async () => {
@@ -908,7 +909,10 @@ const OfferForm: React.FC = () => {
                 try {
                     const response = await fetch(photo);
                     const blob = await response.blob();
-
+                    if (blob.size > 5 * 1024 * 1024) {
+                        console.warn(`File at index ${index} is too large, skipping.`);
+                        continue;
+                    }
                     let isNSFW: boolean = false;
                     if (nsfwModelRef.current) {
                         const imageBitmap = await createImageBitmap(blob);
@@ -975,7 +979,6 @@ const OfferForm: React.FC = () => {
 
     const handleAddOffer = async () => {
         if (isDisabled) return;
-
         if (!checkValues()) {
             window.scrollTo({ top: 0, behavior: "smooth" });
             setFormErrorBanner(true);
@@ -991,17 +994,28 @@ const OfferForm: React.FC = () => {
                 navigate('/details/myOffers');
             }
         } catch (error: unknown) {
-            if (error instanceof AxiosError && error.response) {
-                if (error.response.status === 422) {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                    setInappropriateContentBanner(true);
-                    console.error("Provided details are inappropriate: ", error);
-                } else if (error.response.status === 405) {
-                    setTooManyBanner(true);
-                    console.error("Couldn't add, you've added too many offers yet: ", error);
-                } else {
-                    setWentWrongBanner(true);
-                    console.error("Unexpected error when processing offer: ", error);
+            if (error instanceof AxiosError) {
+                if (error.response) {
+                    if (error.response.status === 422) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        setInappropriateContentBanner(true);
+                        console.error("Provided details are inappropriate: ", error);
+                    } else if (error.response.status === 405) {
+                        setTooManyBanner(true);
+                        console.error("Couldn't add, you've added too many offers yet: ", error);
+                    } else if (error.response.status === 415) {
+                        setWentWrongBanner(true);
+                        console.error("Couldn't add, provided image has wrong format: ", error);
+                    } else if (error.response.status === 413) {
+                        setTooLarge(true);
+                        console.error("Couldn't add, at least one image is too large: ", error);
+                    } else {
+                        setWentWrongBanner(true);
+                        console.error("Unexpected error when processing offer: ", error);
+                    }
+                } else if (error.code === "ERR_NETWORK") {
+                    setTooLarge(true);
+                    console.error("Cannot be processed - images may be too large: ", error);
                 }
             }
         } finally {
@@ -1016,7 +1030,6 @@ const OfferForm: React.FC = () => {
             navigate("/details/myOffers");
             return;
         }
-
         if (!checkValues()) {
             window.scrollTo({ top: 0, behavior: "smooth" });
             setFormErrorBanner(true);
@@ -1032,18 +1045,28 @@ const OfferForm: React.FC = () => {
                 navigate("/details/myOffers");
             }
         } catch (error: unknown) {
-            if (error instanceof AxiosError && error.response) {
-                if (error.response.status === 422) {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                    setInappropriateContentBanner(true);
-                } else if (error.response.status === 405) {
-                    setWaitBanner(true);
-                } else if (error.response.status === 404) {
-                    console.error("Offer not found");
-                    navigate("/addingOffer");
-                } else {
-                    setWentWrongBanner(true);
-                    console.error("Unexpected error during processing offer: ", error);
+            if (error instanceof AxiosError) {
+                if (error.response) {
+                    if (error.response.status === 422) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        setInappropriateContentBanner(true);
+                        console.error("Provided details are inappropriate: ", error);
+                    } else if (error.response.status === 405) {
+                        setTooManyBanner(true);
+                        console.error("Couldn't add, you've added too many offers yet: ", error);
+                    } else if (error.response.status === 415) {
+                        setWentWrongBanner(true);
+                        console.error("Couldn't add, provided image has wrong format: ", error);
+                    } else if (error.response.status === 413) {
+                        setTooLarge(true);
+                        console.error("Couldn't add, at least one image is too large: ", error);
+                    } else {
+                        setWentWrongBanner(true);
+                        console.error("Unexpected error when processing offer: ", error);
+                    }
+                } else if (error.code === "ERR_NETWORK") {
+                    setTooLarge(true);
+                    console.error("Cannot be processed - images may be too large: ", error);
                 }
             }
         } finally {
@@ -1181,6 +1204,8 @@ const OfferForm: React.FC = () => {
                                               delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {tooManyBanner && <AnimatedBanner text={t("animatedBanner16")} onAnimationEnd={() => setTooManyBanner(false)}
                                                     delay={6000} color={"bg-coolYellow"} z={"z-10"}/>}
+                {tooLarge && <AnimatedBanner text={t("animatedBanner18")} onAnimationEnd={() => setTooLarge(false)}
+                                             delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {loading && <AddingOfferLoader/>}
                 {modelLoading && <OfferFormLoader/>}
             </div>

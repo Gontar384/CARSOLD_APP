@@ -27,6 +27,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     const [startMouse, setStartMouse] = useState<number>(0);
     const [endMouse, setEndMouse] = useState<number>(0);
     const imageRef = useRef<HTMLDivElement | null>(null);
+    const [isZoomed, setIsZoomed] = useState<boolean>(false);
 
     const changePhoto = (dir: number) => {
         if (disabled) return;
@@ -66,7 +67,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     const handleTouchEnd = () => {
         if (lockedAxis === 'x') {
             const touchDifference = startTouchX - endTouch;
-            if (Math.abs(touchDifference) > 50) {
+            if (!isZoomed && Math.abs(touchDifference) > 50) {
                 if (touchDifference > 0 && photoIndex < photos.length - 1) {
                     changePhoto(1);
                 } else if (touchDifference < 0 && photoIndex > 0) {
@@ -92,7 +93,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     };
 
     const handleMouseUp = () => {
-        if (Math.abs(startMouse - endMouse) > 50) {
+        if (!isZoomed && Math.abs(startMouse - endMouse) > 50) {
             if (startMouse - endMouse > 50) {
                 if (photoIndex < photos.length - 1) changePhoto(1);
             } else if (endMouse - startMouse > 50) {
@@ -125,12 +126,46 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
         }
     }, [fullScreen]); //puts focus on image when fullscreen
 
+    useEffect(() => {
+        if (!isMobile) return;
+        const checkZoom = () => {
+            const zoom = window.visualViewport?.scale || 1;
+            const isZoomNow = Math.abs(zoom - 1) > 0.05;
+            setIsZoomed(prev => {
+                if (prev !== isZoomNow) return isZoomNow;
+                return prev;
+            });
+        };
+        checkZoom();
+        window.visualViewport?.addEventListener("resize", checkZoom);
+        window.visualViewport?.addEventListener("scroll", checkZoom);
+
+        return () => {
+            window.visualViewport?.removeEventListener("resize", checkZoom);
+            window.visualViewport?.removeEventListener("scroll", checkZoom);
+        };
+    }, []); //detects zoom and blocks swiping
+
+    useEffect(() => {
+        if (!fullScreen) return;
+        const originalOverflow = document.body.style.overflow;
+        const originalTouchAction = document.body.style.touchAction;
+
+        document.body.style.overflow = "hidden";
+        document.body.style.touchAction = "pinch-zoom";
+
+        return () => {
+            document.body.style.overflow = originalOverflow;
+            document.body.style.touchAction = originalTouchAction;
+        };
+    }, [fullScreen]); //blocks moving background vertically
+
     return (
             offerFetched ? (
                 photos.length > 0 && !error &&
-                    <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer 
+                    <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none
                     ${fullScreen && `max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px]
-                    border border-gray-300 rounded fixed inset-0 m-auto z-50 touch-none`}`}
+                    border border-gray-300 rounded fixed inset-0 m-auto z-50`}`}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? () => setPhotoHovered(false) : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}
@@ -151,43 +186,29 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                                         initial={{translateX: direction * 100 + "%"}} exit={{translateX: -direction * 100 + "%"}}
                                         animate={{translateX: "0%"}} transition={{duration: 0.4, ease: "easeInOut"}} style={{ willChange: "transform" }}/>
                         </AnimatePresence>
+                        {(photoHovered || isMobile) &&
                         <div className="flex items-center justify-center absolute inset-0">
-                            {photoHovered &&
-                                <>
-                                    {photoIndex > 0 &&
-                                        <button className="absolute left-1"
-                                                onClick={photoIndex > 0 ? () => changePhoto(-1) : undefined}>
-                                                <FontAwesomeIcon icon={faPlay} className="text-6xl text-gray-200 opacity-90"
-                                                                 style={{transform: "rotate(180deg)"}}/>
-                                        </button>
-                                        }
-                                        {photoIndex < photos.length - 1 &&
-                                            <button className="absolute right-1"
-                                                    onClick={photoIndex < photos.length - 1 ? () => changePhoto(1) : undefined}>
-                                                <FontAwesomeIcon icon={faPlay} className="text-6xl text-gray-200 opacity-90"/>
-                                            </button>
-                                        }
-                                    </>
-                                }
-                                {(photoHovered || isMobile) &&
-                                    <>
-                                    {photos.length > 1 &&
-                                        <div className="flex gap-1 m:gap-1.5 absolute bottom-3 m:bottom-4">
-                                            {photos.map((_, index) => (
-                                                <div key={index} className={`w-1.5 h-1.5 m:w-2 m:h-2 border border-black border-opacity-70 rounded
-                                                ${photoIndex === index ? "bg-lowBlack" : "bg-gray-200"} transition-all duration-500`}>
-                                                </div>
-                                            ))}
-                                        </div>}
-                                        <button className="flex absolute text-gray-200 left-1 bottom-1 m:left-2 m:bottom-2 p-1 m:p-2"
-                                                onClick={() => setFullScreen(!fullScreen)}>
-                                            <FontAwesomeIcon icon={!fullScreen ? faMagnifyingGlassPlus : faMagnifyingGlassMinus}
-                                                             className="text-2xl m:text-3xl text-gray-200"/>
-                                        </button>
-                                    </>
-                                }
-                            </div>
-
+                            {photoIndex > 0 &&
+                                <button className="absolute left-1"
+                                        onClick={photoIndex > 0 ? () => changePhoto(-1) : undefined}>
+                                    <FontAwesomeIcon icon={faPlay} className={`${isMobile ? "text-3xl pl-5 py-5" : "text-5xl p-2"} text-gray-300 opacity-90`} style={{transform: "rotate(180deg)"}}/>
+                                </button>}
+                            {photoIndex < photos.length - 1 &&
+                                <button className="absolute right-1"
+                                        onClick={photoIndex < photos.length - 1 ? () => changePhoto(1) : undefined}>
+                                    <FontAwesomeIcon icon={faPlay} className={`${isMobile ? "text-3xl pl-5 py-5" : "text-5xl p-2"} text-gray-300 opacity-90`}/>
+                                </button>}
+                            {photos.length > 1 &&
+                                <div className="flex gap-1 m:gap-1.5 absolute bottom-3 m:bottom-4">
+                                    {photos.map((_, index) => (
+                                        <div key={index} className={`w-1.5 h-1.5 m:w-2 m:h-2 border border-black border-opacity-70 rounded
+                                        ${photoIndex === index ? "bg-lowBlack" : "bg-gray-300"} transition-all duration-500`}/>))}
+                                </div>}
+                            <button className="flex absolute text-gray-300 left-1 bottom-1 m:left-2 m:bottom-2 p-2"
+                                    onClick={() => setFullScreen(!fullScreen)}>
+                                <FontAwesomeIcon icon={!fullScreen ? faMagnifyingGlassPlus : faMagnifyingGlassMinus} className={`${isMobile ? "text-xl" : "text-3xl"} text-gray-200`}/>
+                            </button>
+                        </div>}
                     </div>
             ) : (
                 <ImageDisplayLoader/>

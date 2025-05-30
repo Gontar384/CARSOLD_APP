@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.gontar.carsold.CarsoldApplication;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Domain.Entity.User.User;
+import org.gontar.carsold.Exception.CustomException.ImageTooLargeException;
 import org.gontar.carsold.Exception.CustomException.InappropriateContentException;
 import org.gontar.carsold.Exception.CustomException.MediaNotSupportedException;
 import org.gontar.carsold.Repository.UserRepository;
@@ -87,7 +88,7 @@ public class ProfilePicServiceIntegrationTest {
                 largeFileBytes
         );
 
-        MediaNotSupportedException exception = assertThrows(MediaNotSupportedException.class, () -> profilePicService.uploadProfilePic(mockFile));
+        ImageTooLargeException exception = assertThrows(ImageTooLargeException.class, () -> profilePicService.uploadProfilePic(mockFile));
 
         assertEquals("Image is too large", exception.getMessage());
     }

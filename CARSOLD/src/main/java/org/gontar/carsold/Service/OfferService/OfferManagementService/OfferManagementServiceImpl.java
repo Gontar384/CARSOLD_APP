@@ -253,7 +253,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
             for (int i = 0; i < photos.size(); i++) {
                 MultipartFile file = photos.get(i);
                 try {
-                    if (file.getSize() > 5 * 1024 * 1024) throw new MediaNotSupportedException("Image is too large");
+                    if (file.getSize() > 5 * 1024 * 1024) throw new ImageTooLargeException("Image is too large");
                     if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
                     String photoUrl = uploadToStorage(file, username, offer.getId(), i + 1);
                     photoUrls.add(photoUrl);

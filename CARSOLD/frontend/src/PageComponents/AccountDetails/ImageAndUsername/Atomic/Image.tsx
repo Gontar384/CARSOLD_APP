@@ -5,7 +5,7 @@ import ProfilePicLoader from "../../../../Additional/Loading/ProfilePicLoader.ts
 import LoadingPicAnimation from "../../../../Additional/Loading/LoadingPicAnimation.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Services/UserService.ts";
-import {InternalServerError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
+import {InternalServerError, PayloadTooLargeError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
 import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
@@ -76,7 +76,6 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
             setMessage(t("profilePic7"));
             return;
         }
-
         const file = event.target.files?.[0];
         if (!file) return;
         if (!file.type.startsWith('image/')) {
@@ -98,6 +97,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
         } catch (error: unknown) {
             if (error instanceof UnsupportedMediaTypeError) {
                 setMessage(t("profilePic3"))
+            } else if (error instanceof PayloadTooLargeError) {
+                setMessage(t("profilePic2"));
             } else if (error instanceof UnprocessableEntityError) {
                 setMessage(t("profilePic4"));
             } else if (error instanceof InternalServerError) {

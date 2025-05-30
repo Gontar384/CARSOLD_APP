@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {blockUnblockUser, deleteConversation, getConversationOnInitial, getPreviousMessages, sendMessage} from "../../../../../ApiCalls/Services/MessageService.ts";
-import {BadRequestError, NotFoundError, PayloadTooLarge} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
+import {BadRequestError, NotFoundError, PayloadTooLargeError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowUp, faCheck, faCircleInfo, faCircleUser, faComments, faUser} from "@fortawesome/free-solid-svg-icons";
@@ -169,7 +169,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
                 setMessages([]);
                 console.error("You cannot send message: ", error);
-            } else if (error instanceof PayloadTooLarge) {
+            } else if (error instanceof PayloadTooLargeError) {
                 console.error("Message is too long: ", error);
             } else {
                 console.error("Unexpected error when sending message: ", error);

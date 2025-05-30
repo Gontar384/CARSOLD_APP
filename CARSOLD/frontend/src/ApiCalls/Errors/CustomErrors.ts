@@ -74,7 +74,7 @@ export class InternalServerError extends ApiException {
 }
 
 //413
-export class PayloadTooLarge extends ApiException {
+export class PayloadTooLargeError extends ApiException {
     constructor(message: string, response: AxiosResponse | undefined) {
         super(message, response);
         this.name = "PayloadTooLarge";

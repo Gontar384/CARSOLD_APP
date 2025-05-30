@@ -12,7 +12,7 @@ import {faFlag, faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
-import {adminDeleteOffer} from "../../ApiCalls/Services/OfferService.ts";
+import {adminDeleteOffer, adminDeleteUser} from "../../ApiCalls/Services/OfferService.ts";
 import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
@@ -99,13 +99,15 @@ const OfferDisplay: React.FC = () => {
     const {bindHoverHandlers, buttonColor} = useButton();
     const {isAuthenticated} = useAuth();
     const [disabled, setDisabled] = useState<boolean>(false);
-    const [decision, setDecision] = useState<boolean>(false);
+    const [offerDeleteDecision, setOfferDeleteDecision] = useState<boolean>(false);
+    const [userDeleteDecision, setUserDeleteDecision] = useState<boolean>(false);
     const [report, setReport] = useState<boolean>(false);
     const [reported, setReported] = useState<boolean>(false);
     const [hasReported, setHasReported] = useState<boolean>(false);
     const {t} = useLanguage();
     const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle3")}`
+    const [wentWrong, setWentWrong] = useState<boolean>(false);
 
     useEffect(() => {
         if (section) {
@@ -187,12 +189,14 @@ const OfferDisplay: React.FC = () => {
         try {
             await adminDeleteOffer(id);
             navigate("/details/admin");
-        } catch(error: unknown) {
-            setDecision(false);
+            sessionStorage.setItem("offerDeletedByAdmin", "true");
+        } catch (error: unknown) {
+            setOfferDeleteDecision(false);
+            setWentWrong(true);
             if (error instanceof NotFoundError) {
                 console.error("Offer with id = " + offer.id +  " not found: ", error);
             } else if (error instanceof MethodNotAllowedError) {
-                console.error("User does not have permission: ", error);
+                console.error("You don't have permission: ", error);
             } else {
                 console.error("Unexpected error occurred during admin offer deletion: ", error);
             }
@@ -200,6 +204,28 @@ const OfferDisplay: React.FC = () => {
             setDisabled(false);
         }
     };
+
+    const handleDeleteUser = async (username: string | null) => {
+        if (disabled) return;
+        setDisabled(true);
+        try{
+            await adminDeleteUser(username);
+            navigate("/details/admin");
+            sessionStorage.setItem("userDeletedByAdmin", "true");
+        } catch (error: unknown) {
+            setUserDeleteDecision(false);
+            setWentWrong(true);
+            if (error instanceof NotFoundError) {
+                console.error("User with username = " + offer.username +  " not found: ", error);
+            } else if (error instanceof MethodNotAllowedError) {
+                console.error("You don't have permission: ", error);
+            } else {
+                console.error("Unexpected error occurred during admin offer deletion: ", error);
+            }
+        } finally {
+            setDisabled(false);
+        }
+    }
 
     return (
         <LayOut>
@@ -220,9 +246,9 @@ const OfferDisplay: React.FC = () => {
                                 <FontAwesomeIcon icon={faHeart} className={`text-3xl m:text-4xl ${followed ? "text-coolRed" : "text-gray-600"}
                                                                 ${buttonColor && "brightness-[115%]"}`}/>
                             </button>}
-                        {offer.role === "ADMIN" &&
+                        {offer.role === "ADMIN" && !offer.permission &&
                             <button className="absolute left-2.5 top-1.5 m:left-3 m:top-2"
-                                    onClick={() => setDecision(true)}>
+                                    onClick={() => setOfferDeleteDecision(true)}>
                                 <FontAwesomeIcon icon={faTrash} className="text-xl m:text-2xl"/>
                             </button>
                         }
@@ -238,16 +264,21 @@ const OfferDisplay: React.FC = () => {
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
                                 <UserInformation username={offer.username} profilePic={offer.profilePic} name={offer.name} phone={offer.phone}
-                                                 city={offer.city} coordinates={offer.coordinates} permission={offer.permission} id={offer.id}/>
+                                                 city={offer.city} coordinates={offer.coordinates} permission={offer.permission} id={offer.id}
+                                                 userRole={offer.role} setUserDeleteDecision={setUserDeleteDecision}/>
                             </> : <OfferSmallLoader/>
                         }
                     </div>
                 </div>
-                {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
+                {offerDeleteDecision && (<ConfirmDeleteWindow decision={offerDeleteDecision} setDecision={setOfferDeleteDecision}
                                                    onClick={() => handleDeleteOffer(offer.id)}/>)}
+                {userDeleteDecision && (<ConfirmDeleteWindow decision={userDeleteDecision} setDecision={setUserDeleteDecision}
+                                                   onClick={() => handleDeleteUser(offer.username)}/>)}
                 {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported} setHasReported={setHasReported}/>}
                 {reported && <AnimatedBanner text={t("animatedBanner17")} onAnimationEnd={() => setReported(false)}
                                                     delay={3000} color={"bg-gray-300"} z={"z-10"}/>}
+                {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
+                                                    delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
             </div>
         </LayOut>
     );

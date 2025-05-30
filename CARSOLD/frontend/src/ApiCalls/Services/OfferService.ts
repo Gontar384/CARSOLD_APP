@@ -126,3 +126,11 @@ export const adminDeleteReport = async (id: number | null): Promise<void> => {
         handleError(error);
     }
 };
+
+export const adminDeleteUser = async (username: string | null): Promise<void> => {
+    try {
+        await api.delete(`api/private/admin/deleteUser/${username}`);
+    } catch (error) {
+        handleError(error);
+    }
+};

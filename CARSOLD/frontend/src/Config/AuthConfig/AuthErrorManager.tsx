@@ -12,7 +12,12 @@ const AuthErrorManager: React.FC = () => {
     const isAuthenticationRequest = (url: string | undefined): boolean => {
         if (!url) return false;
         const paths = ['api/public/auth/authenticate', 'api/private/user/delete', 'api/private/user/changePassword'];
+        return paths.some(path => url.startsWith(path))
+    };
 
+    const isOfferModificationRequest = (url: string | undefined): boolean => {
+        if (!url) return false;
+        const paths = ['api/private/offer/add', 'api/private/offer/update', 'api/private/userProfilePic/upload'];
         return paths.some(path => url.startsWith(path))
     };
 
@@ -41,8 +46,10 @@ const AuthErrorManager: React.FC = () => {
                     console.error("Unauthorized, problem with request, cookie or JWT: ", error);
                 }
             } else if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
+                const requestUrl = error.config?.url;
+                if (isOfferModificationRequest(requestUrl)) return Promise.reject(error);
                 handleAuthError();
-                console.error("Network/CORS error: possibly a CORS issue or server unreachable.", error);
+                console.error("Network error or server unreachable.", error);
             }
             return Promise.reject(error);
         });

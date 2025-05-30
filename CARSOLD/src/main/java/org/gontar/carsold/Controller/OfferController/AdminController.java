@@ -43,4 +43,11 @@ public class AdminController {
         service.adminDeleteReport(id);
         return ResponseEntity.ok().build();
     }
+
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/private/admin/deleteUser/{username}")
+    public ResponseEntity<?> adminDeleteUser(@PathVariable String username) {
+        service.adminDeleteUser(username);
+        return ResponseEntity.ok().build();
+    }
 }

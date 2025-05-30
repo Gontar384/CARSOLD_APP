@@ -14,7 +14,7 @@ spring:
     show-sql: true
     open-in-view: false
 
-  # SMTP Server Configuration (email sending)
+  # SMTP Server Configuration (Email Sending)
   mail:
     host: smtp.gmail.com
     port: 587
@@ -37,12 +37,14 @@ spring:
   cloud:
     gcp:
       project-id: ${GOOGLE_CLOUD_PROJECT}
+
+# Data Transfer Limits (With Reserve)
   servlet:
     multipart:
       max-file-size: 6MB
-      max-request-size: 6MB
+      max-request-size: 45MB
 
-# Off DB Logs
+# Suppress Hibernate And Hikari Logs During Startup
 logging:
   level:
     org.hibernate: warn

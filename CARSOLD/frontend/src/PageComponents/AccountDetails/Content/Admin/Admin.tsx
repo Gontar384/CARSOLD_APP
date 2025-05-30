@@ -6,6 +6,7 @@ import {faCar, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
+import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 
 interface Report {
     id: number | null;
@@ -25,6 +26,8 @@ const Admin: React.FC = () => {
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t, translate} = useLanguage();
     document.title = "CARSOLD | Admin";
+    const [offerDeleted, setOfferDeleted] = useState<boolean>(false);
+    const [userDeleted, setUserDeleted] = useState<boolean>(false);
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -62,6 +65,17 @@ const Admin: React.FC = () => {
             console.error("Error when deleting report: ", error);
         }
     };
+
+    useEffect(() => {
+        if (sessionStorage.getItem("offerDeletedByAdmin") === "true") {
+            setOfferDeleted(true);
+            sessionStorage.removeItem("offerDeletedByAdmin");
+        }
+        if (sessionStorage.getItem("userDeletedByAdmin") === "true") {
+            setUserDeleted(true);
+            sessionStorage.removeItem("userDeletedByAdmin");
+        }
+    }, []); //detects if offer or user was deleted by admin
 
     if (!fetched) return null;
 
@@ -110,6 +124,10 @@ const Admin: React.FC = () => {
                     )}
                 </div>
             )}
+            {(offerDeleted || userDeleted) &&
+                <AnimatedBanner text={`${offerDeleted ? t("animatedBanner19") : t("animatedBanner20")}`}
+                                onAnimationEnd={offerDeleted ? () => setOfferDeleted(false) : () => setUserDeleted(false)}
+                                delay={3000} color="bg-gray-200" z="z-10"/>}
         </div>
     )
 };

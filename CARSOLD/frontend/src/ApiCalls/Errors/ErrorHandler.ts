@@ -1,5 +1,5 @@
 import {AxiosError} from "axios";
-import {ApiException, BadRequestError, ForbiddenError, InternalServerError, MethodNotAllowedError, NotFoundError, PayloadTooLarge, UnauthorizedError, UnprocessableEntityError, UnsupportedMediaTypeError} from "./CustomErrors.ts";
+import {ApiException, BadRequestError, ForbiddenError, InternalServerError, MethodNotAllowedError, NotFoundError, PayloadTooLargeError, UnauthorizedError, UnprocessableEntityError, UnsupportedMediaTypeError} from "./CustomErrors.ts";
 
 export const handleError = (error: unknown): void => {
     if (error instanceof AxiosError) {
@@ -32,8 +32,8 @@ export const handleError = (error: unknown): void => {
                 console.error("Internal Server Error:", message, error);
                 throw new InternalServerError(message, error.response);
             case 413:
-                console.error("Payload Too Large:", message, error);
-                throw new PayloadTooLarge(message, error.response);
+                console.error("Payload Too Large Error:", message, error);
+                throw new PayloadTooLargeError(message, error.response);
             default:
                 console.error(`Other API Error (Status: ${status}):`, message, error);
                 throw new ApiException(message, error.response);

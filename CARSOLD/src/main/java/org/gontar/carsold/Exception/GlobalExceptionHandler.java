@@ -166,6 +166,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Media Not Supported");
     }
 
+    @ExceptionHandler(ImageTooLargeException.class)
+    public ResponseEntity<?> handleMediaNotSupportedException(ImageTooLargeException ex) {
+        log.error("Image Too Large Exception: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("Image Too Large");
+    }
+
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
         log.error("Unsupported Media Type: {}", ex.getMessage(), ex);

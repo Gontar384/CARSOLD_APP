@@ -10,6 +10,7 @@ import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Exception.CustomException.ExternalDeleteException;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
+import org.gontar.carsold.Exception.CustomException.UserNotFoundException;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.ReportRepository;
 import org.gontar.carsold.Repository.UserRepository;
@@ -20,8 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -54,15 +54,7 @@ public class AdminServiceImpl implements AdminService {
                 userRepository.save(follower);
             }
         });
-        try {
-            String folderPrefix = username + "/offer" + id + "/";
-            Storage storage = StorageOptions.getDefaultInstance().getService();
-            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
-                    .iterateAll()
-                    .forEach(Blob::delete);
-        } catch (StorageException e) {
-            throw new ExternalDeleteException("Failed to delete images for offer with id = " + id + " in Google Cloud: " + e.getMessage());
-        }
+        deleteOfferInCloudStorage(username, id);
         offerRepository.delete(existingOffer);
     }
 
@@ -86,5 +78,60 @@ public class AdminServiceImpl implements AdminService {
     public void adminDeleteReport(Long id) {
         Objects.requireNonNull(id, "Id cannot be null");
         reportRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void adminDeleteUser(String username) {
+        Objects.requireNonNull(username, "Username cannot be null");
+        User user = userRepository.findByUsername(username);
+        if (user == null) throw new UserNotFoundException("User not found");
+
+        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
+        if (followedOffers != null) {
+            followedOffers.forEach(offer -> {
+                offer.setFollows(offer.getFollows() - 1);
+                offerRepository.save(offer);
+            });
+        }
+        List<Offer> userOffers = user.getOffers() != null ? new ArrayList<>(user.getOffers()) : Collections.emptyList();
+        userOffers.forEach(offer -> {
+            List<User> followers = userRepository.findByFollowedOffersContaining(offer);
+            followers.forEach(follower -> {
+                if (follower.getFollowedOffers() != null) {
+                    follower.getFollowedOffers().removeIf(o -> o.getId().equals(offer.getId()));
+                    userRepository.save(follower);
+                }
+            });
+        });
+        deleteUserInCloudStorage(user.getUsername());
+
+        offerRepository.flush();
+        userRepository.flush();
+        userRepository.delete(user);
+    }
+
+    private void deleteOfferInCloudStorage(String username, Long id) {
+        try {
+            String folderPrefix = username + "/offer" + id + "/";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                    .iterateAll()
+                    .forEach(Blob::delete);
+        } catch (StorageException e) {
+            throw new ExternalDeleteException("Failed to delete images for offer with id = " + id + " in Google Cloud: " + e.getMessage());
+        }
+    }
+
+    private void deleteUserInCloudStorage(String username) {
+        try {
+            String folderPrefix = username + "/";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                    .iterateAll()
+                    .forEach(Blob::delete);
+        } catch (StorageException e) {
+            throw new ExternalDeleteException("Failed to delete user in Google Cloud: " + e.getMessage());
+        }
     }
 }

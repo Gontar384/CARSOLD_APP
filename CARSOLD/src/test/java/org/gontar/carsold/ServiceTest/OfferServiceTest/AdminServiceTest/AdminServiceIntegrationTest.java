@@ -6,6 +6,7 @@ import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Entity.User.UserPrincipal;
 import org.gontar.carsold.Exception.CustomException.OfferNotFound;
+import org.gontar.carsold.Exception.CustomException.UserNotFoundException;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.OfferService.AdminService.AdminServiceImpl;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,10 +52,10 @@ public class AdminServiceIntegrationTest {
         TestEnvConfig.loadEnv();
     }
 
-    private User createAndAuthenticateUser() {
+    private User createAndAuthenticateUser(String username, String email) {
         User user = new User();
-        user.setUsername("testUser8");
-        user.setEmail("testUser8@gmail.com");
+        user.setUsername(username);
+        user.setEmail(email);
         user.setActive(true);
         user.setOauth2(false);
         user = userRepository.saveAndFlush(user);
@@ -70,7 +72,7 @@ public class AdminServiceIntegrationTest {
     private Offer createOffer(User user) {
         Offer offer = new Offer();
         offer.setUser(user);
-        offer.setTitle("Sell Audi Perfect");
+        offer.setTitle("Perfect Car For Sale");
         offer.setBrand("Audi");
         offer.setModel("S3");
         offer.setBodyType("Sedan");
@@ -92,7 +94,7 @@ public class AdminServiceIntegrationTest {
 
     @Test
     public void adminDeleteOffer_shouldDeleteOfferAndImages() {
-        User testUser = createAndAuthenticateUser();
+        User testUser = createAndAuthenticateUser("testUser13", "testUser13@gmail.com");
         Offer existingOffer = createOffer(testUser);
 
         adminService.adminDeleteOffer(existingOffer.getId());
@@ -108,5 +110,23 @@ public class AdminServiceIntegrationTest {
                 () -> adminService.adminDeleteOffer(nonExistingOfferId));
 
         assertEquals("Offer not found", exception.getMessage());
+    }
+
+    @Test
+    public void adminDeleteUser_shouldDeleteUserAndCleanupFollowedOffers() {
+        User testUser = createAndAuthenticateUser("testUser14", "testUser14@gmail.com");
+
+        adminService.adminDeleteUser(testUser.getUsername());
+
+        assertFalse(userRepository.findById(testUser.getId()).isPresent());
+    }
+
+    @Test
+    public void adminDeleteUser_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
+        String nonExistingUsername = "nonExistingUser";
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class,
+                () -> adminService.adminDeleteUser(nonExistingUsername));
+
+        assertEquals("User not found", exception.getMessage());
     }
 }

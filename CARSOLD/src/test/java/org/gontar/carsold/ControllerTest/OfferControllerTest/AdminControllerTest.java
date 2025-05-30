@@ -68,4 +68,13 @@ public class AdminControllerTest {
         mockMvc.perform(delete("/api/private/admin/deleteReport/1"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void adminDeleteUser_shouldReturnOk() throws Exception {
+        doNothing().when(adminService).adminDeleteUser("testUser");
+
+        mockMvc.perform(delete("/api/private/admin/deleteUser/testUser"))
+                .andExpect(status().isOk());
+    }
 }
