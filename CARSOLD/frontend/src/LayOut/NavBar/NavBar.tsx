@@ -29,18 +29,23 @@ const NavBar: React.FC = () => {
                 {(mobileWidth || midWidth) &&
                     <OptionsButton excludedButtonRef={excludedButtonRef}
                                    iconAnimation={iconAnimation} setIconAnimation={setIconAnimation}/>}
-                <Logo/>
-                <LanguageButton/>
-                <SearchBar/>
-                {bigWidth &&
+                {bigWidth ?
                     <>
+                        <Logo/>
+                        <LanguageButton/>
+                        <SearchBar/>
                         <AddButton/>
                         <UserInfo/>
+                    </> :
+                    <>
+                        <Logo/>
+                        <SearchBar/>
+                        <LanguageButton/>
                     </>}
                 {loadingAuth && <LoadingNavBarLine/>}
             </div>
             {mobileWidth && <LowerBar/>}
-            {midWidth  && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
+            {midWidth && <MidBar excludedButtonRef={excludedButtonRef} setIconAnimation={setIconAnimation}/>}
             <MessageNotification/>
         </>
     )

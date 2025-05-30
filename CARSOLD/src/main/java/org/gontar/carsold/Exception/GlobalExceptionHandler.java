@@ -167,7 +167,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ImageTooLargeException.class)
-    public ResponseEntity<?> handleMediaNotSupportedException(ImageTooLargeException ex) {
+    public ResponseEntity<?> handleImageTooLargeException(ImageTooLargeException ex) {
         log.error("Image Too Large Exception: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("Image Too Large");
     }

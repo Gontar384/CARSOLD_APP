@@ -12,7 +12,7 @@ const SearchBar: React.FC = () => {
     const searchRef = useRef<string>("");
     const componentRef = useRef<HTMLDivElement | null>(null);
     const [magnifierAnimation, setMagnifierAnimation] = useState<"animate-disappear" | "animate-disappearRev" | null>(null);
-    const {isMobile} = useUtil();
+    const {isMobile, bigWidth} = useUtil();
     const navigate = useNavigate();
     const {buttonColor, bindHoverHandlers} = useButton();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -82,8 +82,8 @@ const SearchBar: React.FC = () => {
     }, []); //loading
 
     return (
-        <div className="flex flex-row items-center justify-center gap-1 m:gap-1.5 mr-1.5">
-            <div className="w-full m:max-w-[330px] relative" ref={componentRef}>
+        <div className="flex flex-row items-center justify-center gap-1 m:gap-1.5">
+            <div className="w-full m:max-w-[310px] relative" ref={componentRef}>
                 {!clicked && phrase === "" &&
                     <FontAwesomeIcon className={`absolute top-[5px] left-[6px] m:left-2 text-xl m:text-2xl z-30 ${magnifierAnimation}`}
                         icon={faMagnifyingGlass}/>}
@@ -98,9 +98,10 @@ const SearchBar: React.FC = () => {
                     </button>}
                 {loading && <div className="w-full h-full absolute inset-0 m-auto bg-lime rounded-sm z-40"></div>}
             </div>
-            <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")}>
-                <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-0.5"/>
-            </Link>
+            {bigWidth &&
+                <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")}>
+                    <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-1"/>
+                </Link>}
         </div>
     )
 }

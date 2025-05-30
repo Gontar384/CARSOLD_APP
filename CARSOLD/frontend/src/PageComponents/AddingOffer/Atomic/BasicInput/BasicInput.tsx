@@ -25,11 +25,9 @@ const BasicInput: React.FC<TitleInputProps> = ({label, type, symbol, setSymbol, 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let newValue = e.target.value;
-
         if (type === "number") {
             newValue = newValue.replace(/[^0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
-
         setValue(newValue);
     };
 

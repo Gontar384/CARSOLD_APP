@@ -32,7 +32,7 @@ const DeleteOfferButton: React.FC<DeleteOfferButtonProps> = ({onClick}) => {
                 }
             </button>
             {decision &&
-                <ConfirmDeleteWindow decision={decision} setDecision={setDecision} onClick={onClick}/>
+                <ConfirmDeleteWindow decision={decision} setDecision={setDecision} onClick={onClick} deleteType={"offer"}/>
             }
         </>
     )

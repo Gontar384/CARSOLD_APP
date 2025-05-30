@@ -50,7 +50,7 @@ const App: React.FC = () => {
                                             <Route path="/addingOffer" element={<OfferForm/>}/>
                                             <Route path="/modifyingOffer/:section?" element={<OfferForm/>}/>
                                         </Route>
-                                        <Route path="*" element={<Navigate to="/search?page=0&size=10"/>}/>
+                                        <Route path="*" element={<Navigate to="/home"/>}/>
                                     </Routes>
                                     <CookieBanner/> {/*displays cookie banner*/}
                                     <AuthErrorManager/> {/*monitors for token or verification error, displays 'session expired' banner*/}

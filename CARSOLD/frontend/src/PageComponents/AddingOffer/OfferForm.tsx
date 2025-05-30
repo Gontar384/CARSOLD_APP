@@ -1052,8 +1052,8 @@ const OfferForm: React.FC = () => {
                         setInappropriateContentBanner(true);
                         console.error("Provided details are inappropriate: ", error);
                     } else if (error.response.status === 405) {
-                        setTooManyBanner(true);
-                        console.error("Couldn't add, you've added too many offers yet: ", error);
+                        setWaitBanner(true);
+                        console.error("You need to wait a bit before updating offer again: ", error);
                     } else if (error.response.status === 415) {
                         setWentWrongBanner(true);
                         console.error("Couldn't add, provided image has wrong format: ", error);

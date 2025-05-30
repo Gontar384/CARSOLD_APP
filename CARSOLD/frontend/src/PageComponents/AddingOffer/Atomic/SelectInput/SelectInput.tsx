@@ -46,15 +46,13 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
         let newValue = e.target.value;
         if (numericOnly) newValue = newValue.replace(/[^0-9]/g, '');
         setValue(newValue);
-        setToggled?.(true);
+        if (value === "") setToggled?.(true);
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
         const currentTarget = event.currentTarget;
         const relatedTarget = event.relatedTarget as Node | null;
-        if (relatedTarget && currentTarget.contains(relatedTarget)) {
-            return;
-        }
+        if (relatedTarget && currentTarget.contains(relatedTarget)) return;
         setToggled?.(true);
     };
 
@@ -62,13 +60,12 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, options, value, setVal
         if (value !== "") {
             if (!options.includes(value)) {
                 setValue("");
-                setTimeout(() => setToggled?.(true), 10);
+                setTimeout(() => setToggled?.(true), 0);
             }
         }
     }, [isOpen]); //clears input when value doesn't match provided array
 
     useEffect(() => {
-        if (!isMobile) return;
         const handleTouchMove = (event: TouchEvent) => {
             if (componentRef.current && !componentRef.current.contains(event.target as Node)) {
                 const input = componentRef.current?.querySelector("input");

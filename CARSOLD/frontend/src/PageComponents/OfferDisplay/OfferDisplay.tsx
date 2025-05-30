@@ -271,9 +271,9 @@ const OfferDisplay: React.FC = () => {
                     </div>
                 </div>
                 {offerDeleteDecision && (<ConfirmDeleteWindow decision={offerDeleteDecision} setDecision={setOfferDeleteDecision}
-                                                   onClick={() => handleDeleteOffer(offer.id)}/>)}
+                                                   onClick={() => handleDeleteOffer(offer.id)} deleteType={"offer"}/>)}
                 {userDeleteDecision && (<ConfirmDeleteWindow decision={userDeleteDecision} setDecision={setUserDeleteDecision}
-                                                   onClick={() => handleDeleteUser(offer.username)}/>)}
+                                                   onClick={() => handleDeleteUser(offer.username)} deleteType={"user"}/>)}
                 {report && <ReportOffer id={offer.id} report={report} setReport={setReport} setReported={setReported} setHasReported={setHasReported}/>}
                 {reported && <AnimatedBanner text={t("animatedBanner17")} onAnimationEnd={() => setReported(false)}
                                                     delay={3000} color={"bg-gray-300"} z={"z-10"}/>}

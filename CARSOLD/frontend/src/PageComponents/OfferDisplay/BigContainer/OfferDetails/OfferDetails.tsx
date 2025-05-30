@@ -72,7 +72,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
             if (prev) {
                 textRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                 setTimeout(() => {
-                    window.scrollBy({ top: -700, behavior: "smooth" });
+                    window.scrollBy({ top: -850, behavior: "smooth" });
                 }, 0);
             }
             return !prev;

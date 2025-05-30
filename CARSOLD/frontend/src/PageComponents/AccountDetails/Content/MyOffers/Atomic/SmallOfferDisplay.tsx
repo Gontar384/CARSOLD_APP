@@ -181,7 +181,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                         </div>
                     </div>
                     {decision && (<ConfirmDeleteWindow decision={decision} setDecision={setDecision}
-                                                       onClick={handleDeleteOffer}/>)}
+                                                       onClick={handleDeleteOffer} deleteType={"offer"}/>)}
                 </>
             }
             {loading && <AddingOfferLoader/>}

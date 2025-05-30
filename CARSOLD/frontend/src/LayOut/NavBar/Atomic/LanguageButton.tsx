@@ -10,7 +10,8 @@ const LanguageButton: React.FC = () => {
     const {t} = useLanguage();
 
     return (
-        <button className={`flex flex-col justify-center items-center w-9 m:w-10 p-1 ${buttonColor ? "text-white" : "text-black"}`}
+        <button className={`flex flex-col justify-center items-center w-9 m:w-10 px-2 py-0.5 mr-2 lg:mr-0
+        ${buttonColor ? "text-white" : "text-black"}`}
                 {...bindHoverHandlers()} onClick={() => changeLanguage(language === "POL" ? "ENG" : "POL")}
                 title={t("languageButton")}>
             <FontAwesomeIcon icon={faLanguage} className="text-lg m:text-xl"/>
