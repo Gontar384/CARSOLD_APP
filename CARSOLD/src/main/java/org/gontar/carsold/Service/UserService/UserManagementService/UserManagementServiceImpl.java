@@ -125,7 +125,7 @@ public class UserManagementServiceImpl implements UserManagementService {
             String w = word.toLowerCase();
             if (lowered.contains(w)) return false;
             int len = w.length();
-            if (len >= 4) {
+            if (len >= 5) {
                 for (int i = 0; i <= lowered.length() - len; i++) {
                     String sub = lowered.substring(i, i + len);
                     if (sub.matches(".*\\d.*")) continue;

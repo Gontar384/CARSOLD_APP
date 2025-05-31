@@ -60,7 +60,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
                 "Roman", "Michał", "Alojzy", "Seweryn", "Jakub", "Kuba", "Mateusz", "Przemysław", "Robert",
                 "Igor", "Oskar", "Jan", "Emil", "Bartosz", "Damian", "Norbert", "Hubert", "Szymon", "Henryk",
                 "Konrad", "Wiktor", "Tymoteusz", "Antoni", "Julian", "Aleksander", "Leon", "Brunon", "Iwo",
-                "Maksymilian", "Eryk", "Cezary", "Lucjan",
+                "Maksymilian", "Eryk", "Cezary", "Lucjan", "Paweł",
                 "Żaneta", "Jolanta", "Grażyna", "Bożena", "Stefania", "Wanda", "Irena", "Halina", "Cecylia",
                 "Eugenia", "Teresa", "Aneta", "Danuta", "Zofia", "Alicja", "Barbara", "Joanna", "Katarzyna",
                 "Magdalena", "Anna", "Maria", "Małgorzata", "Elżbieta", "Karolina", "Monika", "Ewa", "Hanna",

@@ -4,6 +4,8 @@ import UserOfferLoader from "../../../../Additional/Loading/UserOfferLoader.tsx"
 import SmallOfferDisplay from "../MyOffers/Atomic/SmallOfferDisplay.tsx";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
+import {useButton} from "../../../../CustomHooks/useButton.ts";
+import {useNavigate} from "react-router-dom";
 
 const Followed: React.FC = () => {
     interface FetchedOffer {
@@ -39,6 +41,8 @@ const Followed: React.FC = () => {
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
     document.title = `CARSOLD | ${t("tabTitle7")}`;
+    const {bindHoverHandlers, buttonColor} = useButton();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const manageHandleFetchAllFollowed = async () => {
@@ -101,9 +105,16 @@ const Followed: React.FC = () => {
                         )}
                     </div>
                 ) : (
-                        <p className="text-xl m:text-2xl text-center mt-44 m:mt-48 w-[90%] m:w-[95%]">
+                    <div className="flex flex-col items-center w-[90%] m:w-[95%] h-full mt-28 m:mt-32">
+                        <p className="text-xl m:text-2xl text-center">
                             {t("followed")}
                         </p>
+                        <button className={`mt-8 m:mt-10 text-xl m:text-2xl p-2 m:p-3 border-2 border-black border-opacity-40 rounded
+                                ${buttonColor ? "bg-white" : "bg-lime"}`}
+                                onClick={() => navigate("/search?page=0&size=10")} {...bindHoverHandlers()}>
+                            {t("followed1")}
+                        </button>
+                    </div>
                 )
             ) : (
                 <>
