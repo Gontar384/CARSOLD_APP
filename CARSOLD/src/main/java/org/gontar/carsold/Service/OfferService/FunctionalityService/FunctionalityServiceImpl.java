@@ -2,6 +2,7 @@ package org.gontar.carsold.Service.OfferService.FunctionalityService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.Offer.OfferPhoto;
 import org.gontar.carsold.Domain.Entity.Report.Report;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.Offer.OfferStatsDto;
@@ -69,7 +70,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         dto.setId(offer.getId());
         dto.setTitle(offer.getTitle());
         if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-            dto.setPhotoUrl(offer.getPhotos().getFirst());
+            dto.setPhotoUrl(offer.getPhotos().stream().findFirst().map(OfferPhoto::getPhotoUrl).orElse(null));
         }
         dto.setPrice(offer.getPrice());
         dto.setCurrency(offer.getCurrency());

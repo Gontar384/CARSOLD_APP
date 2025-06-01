@@ -1,6 +1,7 @@
 package org.gontar.carsold.Service.OfferService.SearchService;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.Offer.OfferPhoto;
 import org.gontar.carsold.Domain.Model.Offer.OfferFilterDto;
 import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
 import org.gontar.carsold.Repository.OfferRepository;
@@ -35,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
         dto.setId(offer.getId());
         dto.setTitle(offer.getTitle());
         if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-            dto.setPhotoUrl(offer.getPhotos().getFirst());
+            dto.setPhotoUrl(offer.getPhotos().stream().findFirst().map(OfferPhoto::getPhotoUrl).orElse(null));
         }
         dto.setPrice(offer.getPrice());
         dto.setCurrency(offer.getCurrency());

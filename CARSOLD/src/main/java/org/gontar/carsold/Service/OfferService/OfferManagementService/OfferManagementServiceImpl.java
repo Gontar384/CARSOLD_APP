@@ -3,6 +3,7 @@ package org.gontar.carsold.Service.OfferService.OfferManagementService;
 import com.google.cloud.storage.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
+import org.gontar.carsold.Domain.Entity.Offer.OfferPhoto;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Domain.Model.Offer.OfferWithUserDto;
 import org.gontar.carsold.Domain.Model.Offer.PartialOfferDto;
@@ -34,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -78,7 +80,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         dto.setId(offer.getId());
         dto.setTitle(offer.getTitle());
         if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-            dto.setPhotoUrl(offer.getPhotos().getFirst());
+            dto.setPhotoUrl(offer.getPhotos().stream().findFirst().map(OfferPhoto::getPhotoUrl).orElse(null));
         }
         dto.setPrice(offer.getPrice());
         dto.setCurrency(offer.getCurrency());
@@ -120,7 +122,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setDescription(offer.getDescription());
         offerWithUserDto.setPrice(offer.getPrice());
         offerWithUserDto.setCurrency(offer.getCurrency());
-        offerWithUserDto.setPhotos(offer.getPhotos());
+        offerWithUserDto.setPhotos(offer.getPhotos().stream().map(OfferPhoto::getPhotoUrl).collect(Collectors.toList()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         offerWithUserDto.setCreatedOn(offer.getCreatedOn().format(formatter));
         offerWithUserDto.setUsername(user.getUsername());
@@ -176,6 +178,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         }
     }
 
+    @Transactional
     @Override
     public Offer createOffer(Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(offer, "Offer cannot be null");
@@ -245,12 +248,12 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     private void processImages(Offer offer, List<MultipartFile> photos, String username) {
+        offer.clearPhotos();
         if (photos != null && !photos.isEmpty()) {
             if (photos.size() > 8) {
                 log.info("Too many images uploaded. Only the first 8 will be used.");
             }
             photos = photos.subList(0, Math.min(photos.size(), 8));
-            List<String> photoUrls = new ArrayList<>();
 
             for (int i = 0; i < photos.size(); i++) {
                 MultipartFile file = photos.get(i);
@@ -258,16 +261,16 @@ public class OfferManagementServiceImpl implements OfferManagementService {
                     if (file.getSize() > 5 * 1024 * 1024) throw new ImageTooLargeException("Image is too large");
                     if (!isImageValid(file)) throw new MediaNotSupportedException("This is not an acceptable image");
                     String photoUrl = uploadToStorage(file, username, offer.getId(), i + 1);
-                    photoUrls.add(photoUrl);
+
+                    OfferPhoto offerPhoto = new OfferPhoto();
+                    offerPhoto.setPhotoUrl(photoUrl);
+                    offer.addPhoto(offerPhoto);
                 } catch (MediaNotSupportedException e) {
                     log.info("Skipping unsupported image: {}", file.getOriginalFilename());
                 } catch (IOException | StorageException e) {
                     log.error("Failed to upload image: {} - Reason: {}", file.getOriginalFilename(), e.getMessage());
                 }
             }
-            offer.setPhotos(photoUrls);
-        } else {
-            offer.setPhotos(null);
         }
         offerRepository.save(offer);
     }
@@ -305,6 +308,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         return String.format("https://storage.googleapis.com/%s/%s?timestamp=%d", bucketName, fileName, System.currentTimeMillis());
     }
 
+    @Transactional
     @Override
     public Offer updateOffer(Long id, Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(id, "Id cannot be null");

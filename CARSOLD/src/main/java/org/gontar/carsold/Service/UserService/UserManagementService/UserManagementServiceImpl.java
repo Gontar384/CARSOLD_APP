@@ -64,6 +64,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.authenticationService = authenticationService;
     }
 
+    @Transactional
     @Override
     public User registerUser(User user, boolean translate) {
         Objects.requireNonNull(user, "user cannot be null");

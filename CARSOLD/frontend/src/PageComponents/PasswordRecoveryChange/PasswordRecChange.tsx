@@ -23,7 +23,7 @@ const PasswordRecChange: React.FC = () => {
                     <PasswordChangeForm setIsChanged={setIsChanged} setWentWrong={setWentWrong} loggedIn={false}/>
                 </div>
             </div>
-            {isChanged && <AnimatedBanner text={t("animatedBanner7")} color={"bg-lowLime"} z={"z-50"}/>}
+            {isChanged && <AnimatedBanner text={t("animatedBanner21")} color={"bg-lowLime"} z={"z-50"}/>}
             {wentWrong && <AnimatedBanner text={t("animatedBanner8")} color={"bg-coolYellow"} z={"z-50"}/>}
         </LayOut>
     )

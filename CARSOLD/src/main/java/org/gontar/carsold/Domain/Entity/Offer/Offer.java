@@ -142,10 +142,19 @@ public class Offer {
     @Size(max = 5, message = "Currency must be or under 5 characters")
     private String currency;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "offer_photos", joinColumns = @JoinColumn(name = "offer_id"))
-    @Column(name = "photo_url")
-    private List<String> photos = new ArrayList<>();
+    @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<OfferPhoto> photos = new ArrayList<>();
+
+    public void addPhoto(OfferPhoto photo) {
+        if (photos == null) photos = new ArrayList<>();
+        photos.add(photo);
+        photo.setOffer(this);
+    }
+
+    public void clearPhotos() {
+        if (photos == null) photos = new ArrayList<>();
+        photos.clear();
+    }
 
     @Column
     private LocalDateTime lastUpdated;

@@ -58,8 +58,8 @@ public class EmailServiceImpl implements EmailService {
                         "Aktywuj konto" +
                         "</a>" +
                         "</div>" +
-                        "<br><p>Jeśli link wygasł, prosimy zarejestrować się jeszcze raz.</p>" +
-                        "<p>W przypadku problemów z aktywacją, prosimy otworzyć link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji poczty.</p><br><hr>" +
+                        "<br><p>Jeśli link wygasł, należy zarejestrować się ponownie.</p>" +
+                        "<p>W przypadku problemów z aktywacją, otwórz link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji pocztowej.</p><br><hr>" +
                         "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
                 subject = "CAR$OLD Account Activation";
@@ -70,8 +70,8 @@ public class EmailServiceImpl implements EmailService {
                         "Activate Account" +
                         "</a>" +
                         "</div>" +
-                        "<br><p>If link has expired, please register again.</p>" +
-                        "<p>If you experience any issues with activation, please open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
+                        "<br><p>If link has expired, register again.</p>" +
+                        "<p>If you experience any issues with activation, open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
                         "<p>This message was sent automatically. Please do not reply.</p>";
             }
 
@@ -106,7 +106,7 @@ public class EmailServiceImpl implements EmailService {
                         "Zmień hasło" +
                         "</a>" +
                         "</div><br>" +
-                        "<p>W przypadku problemów ze zmianą hasła, prosimy otworzyć link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji poczty.</p><br><hr>" +
+                        "<p>W przypadku problemów ze zmianą hasła, otwórz link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji pocztowej.</p><br><hr>" +
                         "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
                 subject = "CAR$OLD Password Recovery";
@@ -117,7 +117,7 @@ public class EmailServiceImpl implements EmailService {
                         "Change password" +
                         "</a>" +
                         "</div><br>" +
-                        "<p>If you experience any issues changing your password, please open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
+                        "<p>If you experience any issues changing your password, open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
                         "<p>This message was sent automatically. Please do not reply.</p>";
             }
             sendEmail(email, subject, content);
