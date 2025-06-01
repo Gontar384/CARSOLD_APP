@@ -9,6 +9,7 @@ import {useAuth} from "../../../../../../../../GlobalProviders/Auth/useAuth.ts";
 import {deleteUser} from "../../../../../../../../ApiCalls/Services/UserService.ts";
 import {ForbiddenError, InternalServerError} from "../../../../../../../../ApiCalls/Errors/CustomErrors.ts";
 import {useLanguage} from "../../../../../../../../GlobalProviders/Language/useLanguage.ts";
+import SpinningLoader from "../../../../../../../../Additional/Loading/SpinningLoader.tsx";
 
 interface ConfirmProps {
     googleLogged: boolean;
@@ -29,6 +30,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     const [confirmation, setConfirmation] = useState<string>("");
     const {t} = useLanguage();
     const {disableDarkMode} = useUtil();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const checkPassword = async () => {
@@ -47,6 +49,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
     const deleteAccount = async () => {
         if (isDisabled) return;
         setIsDisabled(true);
+        setLoading(true);
         try {
             await deleteUser(password);
             await handleCheckAuth();
@@ -65,6 +68,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
                 console.error("Unexpected error: ", error);
             }
         } finally {
+            setLoading(false);
             setTimeout(() => setIsDisabled(false), 1000);
         }
     }
@@ -101,6 +105,7 @@ const DeleteConfirm: React.FC<ConfirmProps> = ({googleLogged, label, setPopup, s
             </div>
             <ConfirmButton label={t("deleteAccount10")} type="submit" isDisabled={isDisabled}
                            onClick={!googleLogged ? handleDeleteAccount : handleDeleteGoogleAccount}/>
+            {loading && <SpinningLoader/>}
         </div>
     )
 }

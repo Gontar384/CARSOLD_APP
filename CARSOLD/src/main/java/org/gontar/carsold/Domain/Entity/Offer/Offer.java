@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.User.User;
-import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Data
@@ -150,14 +150,9 @@ public class Offer {
     @Column
     private LocalDateTime lastUpdated;
 
-    @Column(updatable = false, nullable = false, length = 10)
-    private String createdOn;
-
-    @PrePersist
-    protected void onCreate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        this.createdOn = LocalDate.now().format(formatter);
-    }
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdOn;
 
     @Column(nullable = false)
     private Integer views = 0;

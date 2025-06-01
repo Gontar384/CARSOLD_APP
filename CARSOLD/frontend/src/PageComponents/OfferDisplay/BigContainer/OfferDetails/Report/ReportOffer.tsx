@@ -104,7 +104,7 @@ const ReportOffer: React.FC<ReportOfferProps> = ({ id, report, setReport, setRep
             <div className="flex flex-col items-center justify-evenly w-[95%] h-[95%] max-w-[800px] bg-lowLime rounded overflow-hidden border border-gray-300"
                  ref={componentRef}>
                 <h2 className="text-2xl m:text-3xl font-semibold my-4">{t("offerDisplay1")}</h2>
-                <div className="space-y-7 m:space-y-8 overflow-auto overscroll-contain border-y border-black border-opacity-20 py-2">
+                <div className="space-y-7 m:space-y-8 overflow-auto overscroll-contain border-y border-black border-opacity-20 py-2 m:py-3">
                     {reportReasons.map((reportReason, index) => (
                         <label key={index} className={`flex items-center px-4 gap-x-2 m:gap-x-3 cursor-pointer ${hovered[index] && "underline"}
                         ${selectedReason.reason === reportReason && "underline"}`}

@@ -2,7 +2,7 @@ import React from "react";
 import LoadingPicAnimation from "./LoadingPicAnimation.tsx";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
-const AddingOfferLoader: React.FC = () => {
+const SpinningLoader: React.FC = () => {
     const {isMobile} = useUtil();
 
     return (
@@ -14,4 +14,4 @@ const AddingOfferLoader: React.FC = () => {
     );
 };
 
-export default AddingOfferLoader
+export default SpinningLoader

@@ -51,26 +51,28 @@ public class EmailServiceImpl implements EmailService {
         try {
             if (!translate) {
                 subject = "CAR$OLD Aktywacja Konta";
-                content = "<p style='font-size: 25px;'>Dziękujemy za rejestrację " + username +
-                        "! Aby aktywować konto, kliknij tutaj:</p>" +
+                content = "<p style='font-size: 25px;'>Witaj " + username +
+                        "! Aby aktywować konto, kliknij poniższy link:</p>" +
                         "<div style='background-color: #caf04f; width: 345px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' target=\"_blank\" href=\"" + link + "\">" +
                         "Aktywuj konto" +
                         "</a>" +
                         "</div>" +
-                        "<p>Jeśli link wygasł - zerejestruj się jeszcze raz.<br><br><hr>" +
-                        "<p>Wiadomość wysłana automatycznie, prosimy nie odpowiadać.</p>";
+                        "<br><p>Jeśli link wygasł, prosimy zarejestrować się jeszcze raz.</p>" +
+                        "<p>W przypadku problemów z aktywacją, prosimy otworzyć link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji poczty.</p><br><hr>" +
+                        "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
                 subject = "CAR$OLD Account Activation";
-                content = "<p style='font-size: 25px;'>Thank you for registering " + username +
-                        "! To activate your account, please click here:</p>" +
+                content = "<p style='font-size: 25px;'>Welcome " + username +
+                        "! To activate account, click the following link:</p>" +
                         "<div style='background-color: #caf04f; width: 410px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' target=\"_blank\" href=\"" + link + "\">" +
                         "Activate Account" +
                         "</a>" +
                         "</div>" +
-                        "<p>If link expired - register again.<br><br><hr>" +
-                        "<p>This message was sent automatically, do not reply.</p>";
+                        "<br><p>If link has expired, please register again.</p>" +
+                        "<p>If you experience any issues with activation, please open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
+                        "<p>This message was sent automatically. Please do not reply.</p>";
             }
 
             sendEmail(email, subject, content);
@@ -97,24 +99,26 @@ public class EmailServiceImpl implements EmailService {
         try {
             if (!translate) {
                 subject = "CAR$OLD Odzyskiwanie Hasła";
-                content = "<p style='font-size: 25px;'>Witaj " + user.getUsername() +
-                        "! Aby zmienić hasło, proszę kliknij poniższy link:</p>" +
+                content = "<p style='font-size: 25px;'>Witaj " + user.getUsername() + ", miło Cię znowu widzieć! " +
+                        "Aby zmienić hasło, kliknij poniższy link:</p>" +
                         "<div style='background-color: #d3d61c; width: 295px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' target=\"_blank\" href=\"" + link + "\">" +
                         "Zmień hasło" +
                         "</a>" +
-                        "</div><hr>" +
-                        "<p>Wiadomość wysłana automatycznie, prosimy nie odpowiadać.</p>";
+                        "</div><br>" +
+                        "<p>W przypadku problemów ze zmianą hasła, prosimy otworzyć link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji poczty.</p><br><hr>" +
+                        "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
                 subject = "CAR$OLD Password Recovery";
-                content = "<p style='font-size: 25px;'>Hello " + user.getUsername() +
-                        "! To change your password, please click the following link:</p>" +
+                content = "<p style='font-size: 25px;'>Hello " + user.getUsername() + ", good to see you again! " +
+                        "To change password, click the following link:</p>" +
                         "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
-                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' href=\"" + link + "\">" +
+                        "<a style='text-decoration: none; color: black; font-size: 50px; font-weight: bold;' target=\"_blank\" href=\"" + link + "\">" +
                         "Change password" +
                         "</a>" +
-                        "</div><hr>" +
-                        "<p>This message was sent automatically, do not reply.</p>";
+                        "</div><br>" +
+                        "<p>If you experience any issues changing your password, please open the link in a browser (Chrome, Firefox, Safari) — not inside a mail application.</p><br><hr>" +
+                        "<p>This message was sent automatically. Please do not reply.</p>";
             }
             sendEmail(email, subject, content);
         } catch (MessagingException e) {

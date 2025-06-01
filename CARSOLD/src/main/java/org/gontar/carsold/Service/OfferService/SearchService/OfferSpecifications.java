@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import jakarta.persistence.criteria.Predicate;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,17 +95,9 @@ public class OfferSpecifications {
             }
             if (query != null) {
                 if (filter.getSortBy() == null || filter.getSortBy().equals("Oldest")) {
-                    query.orderBy(criteriaBuilder.asc(
-                            criteriaBuilder.function("TO_DATE", LocalDate.class,
-                                    root.get("createdOn"),
-                                    criteriaBuilder.literal("dd/MM/yyyy"))
-                    ));
+                    query.orderBy(criteriaBuilder.asc(root.get("createdOn")));
                 } else if (filter.getSortBy().equals("Newest")) {
-                    query.orderBy(criteriaBuilder.desc(
-                            criteriaBuilder.function("TO_DATE", LocalDate.class,
-                                    root.get("createdOn"),
-                                    criteriaBuilder.literal("dd/MM/yyyy"))
-                    ));
+                    query.orderBy(criteriaBuilder.desc(root.get("createdOn")));
                 } else if (filter.getSortBy().equals("Most popular")) {
                     query.orderBy(criteriaBuilder.desc(root.get("views")));
                 } else if (filter.getSortBy().equals("Least popular")) {

@@ -18,6 +18,7 @@ import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import SpinningLoader from "../../Additional/Loading/SpinningLoader.tsx";
 
 const OfferDisplay: React.FC = () => {
     interface FetchedOffer {
@@ -108,6 +109,7 @@ const OfferDisplay: React.FC = () => {
     const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle3")}`
     const [wentWrong, setWentWrong] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (section) {
@@ -186,6 +188,7 @@ const OfferDisplay: React.FC = () => {
     const handleDeleteOffer = async (id: number | null) => {
         if (disabled) return;
         setDisabled(true);
+        setLoading(true);
         try {
             await adminDeleteOffer(id);
             navigate("/details/admin");
@@ -202,12 +205,14 @@ const OfferDisplay: React.FC = () => {
             }
         } finally {
             setDisabled(false);
+            setLoading(false);
         }
     };
 
     const handleDeleteUser = async (username: string | null) => {
         if (disabled) return;
         setDisabled(true);
+        setLoading(true);
         try{
             await adminDeleteUser(username);
             navigate("/details/admin");
@@ -224,6 +229,7 @@ const OfferDisplay: React.FC = () => {
             }
         } finally {
             setDisabled(false);
+            setLoading(false);
         }
     }
 
@@ -279,6 +285,7 @@ const OfferDisplay: React.FC = () => {
                                                     delay={3000} color={"bg-gray-300"} z={"z-10"}/>}
                 {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
                                                     delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
+                {loading && <SpinningLoader/>}
             </div>
         </LayOut>
     );

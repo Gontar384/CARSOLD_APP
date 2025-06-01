@@ -8,7 +8,7 @@ import ConfirmDeleteWindow from "../../../../AddingOffer/Atomic/Button/ConfirmDe
 import MyOfferDetail from "./Atomic/MyOfferDetail.tsx";
 import {deleteOffer} from "../../../../../ApiCalls/Services/OfferService.ts";
 import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
-import AddingOfferLoader from "../../../../../Additional/Loading/AddingOfferLoader.tsx";
+import SpinningLoader from "../../../../../Additional/Loading/SpinningLoader.tsx";
 import AnimatedBanner from "../../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useOfferUtil} from "../../../../../CustomHooks/useOfferUtil.ts";
 import {useLanguage} from "../../../../../GlobalProviders/Language/useLanguage.ts";
@@ -184,7 +184,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                                                        onClick={handleDeleteOffer} deleteType={"offer"}/>)}
                 </>
             }
-            {loading && <AddingOfferLoader/>}
+            {loading && <SpinningLoader/>}
             {wentWrong && <AnimatedBanner text={t("animatedBanner1")} onAnimationEnd={() => setWentWrong(false)}
                                           delay={3000} color={"bg-coolYellow"} z={"z-10"}/>}
         </>

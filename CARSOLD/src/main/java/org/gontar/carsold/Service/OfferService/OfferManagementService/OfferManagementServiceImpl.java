@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -120,7 +121,8 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setPrice(offer.getPrice());
         offerWithUserDto.setCurrency(offer.getCurrency());
         offerWithUserDto.setPhotos(offer.getPhotos());
-        offerWithUserDto.setCreatedOn(offer.getCreatedOn());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        offerWithUserDto.setCreatedOn(offer.getCreatedOn().format(formatter));
         offerWithUserDto.setUsername(user.getUsername());
         offerWithUserDto.setProfilePic(user.getProfilePic());
         if (user.getContactPublic()) {

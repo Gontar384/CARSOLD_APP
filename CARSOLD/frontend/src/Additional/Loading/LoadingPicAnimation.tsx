@@ -5,15 +5,12 @@ interface LoadingPicAnimationProps {
 }
 
 const LoadingPicAnimation: React.FC<LoadingPicAnimationProps> = ({ size }) => {
-
-    //stores accumulating degrees every cycle
     const [rotationDegrees, setRotationDegrees] = useState<number>(0);
 
-    //makes cycle every 16 millis to maintain its smooth flow
     useEffect(() => {
         const interval = setInterval(() => {
             setRotationDegrees(prev => prev + 2);
-        }, 16);  //for 60FPS
+        }, 16);  //60FPS
 
         return () => clearInterval(interval);
     }, []);

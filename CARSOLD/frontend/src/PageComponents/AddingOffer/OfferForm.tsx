@@ -21,7 +21,7 @@ import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {addOffer, deleteOffer, updateOffer} from "../../ApiCalls/Services/OfferService.ts";
 import {AxiosError} from "axios";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import AddingOfferLoader from "../../Additional/Loading/AddingOfferLoader.tsx";
+import SpinningLoader from "../../Additional/Loading/SpinningLoader.tsx";
 import {useOfferUtil} from "../../CustomHooks/useOfferUtil.ts";
 import DeleteOfferButton from "./Atomic/Button/DeleteOfferButton.tsx";
 import {NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
@@ -1206,7 +1206,7 @@ const OfferForm: React.FC = () => {
                                                     delay={6000} color={"bg-coolYellow"} z={"z-10"}/>}
                 {tooLarge && <AnimatedBanner text={t("animatedBanner18")} onAnimationEnd={() => setTooLarge(false)}
                                              delay={4000} color={"bg-coolYellow"} z={"z-10"}/>}
-                {loading && <AddingOfferLoader/>}
+                {loading && <SpinningLoader/>}
                 {modelLoading && <OfferFormLoader/>}
             </div>
         </LayOut>

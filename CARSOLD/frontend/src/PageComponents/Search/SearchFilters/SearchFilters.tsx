@@ -90,7 +90,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
-    const {phrase, setPhrase, trigger, setTrigger, setClicked} = useSearch();
+    const {phrase, setPhrase, trigger, setClicked} = useSearch();
     const {t, language, translate, translateForBackend} = useLanguage();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -181,8 +181,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
             sortBy: "",
         });
         setPhrase("");
-        setClicked(false);
-        setTrigger(prev => !prev);
+        setTimeout(() => setClicked(false), 0);
+        setCurrentPage(0);
+        setSearchTrigger(true);
     };
 
     const handleMoreFilters = () => {
@@ -264,8 +265,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     };
 
     useEffect(() => {
-        handleSearch();
-    }, [currentPage, trigger, filter.sortBy]);
+        setSearchTrigger(true);
+    }, [currentPage]); //searches after changing page
+
+    useEffect(() => {
+        setCurrentPage(0);
+        setSearchTrigger(true);
+    }, [trigger, filter.sortBy]); //searches by using phrase or by sorting
 
     const handleManageSearch = () => {
         setCurrentPage(0);
@@ -277,7 +283,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
             handleSearch();
             setSearchTrigger(false);
         }
-    }, [searchTrigger]);
+    }, [searchTrigger]); //to activate searching when all states are properly updated, especially currentPage
 
     return (
         <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl relative">

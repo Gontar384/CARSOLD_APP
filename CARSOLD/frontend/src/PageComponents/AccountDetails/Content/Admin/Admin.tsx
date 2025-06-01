@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
+import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 
 interface Report {
     id: number | null;
@@ -28,6 +29,9 @@ const Admin: React.FC = () => {
     document.title = "CARSOLD | Admin";
     const [offerDeleted, setOfferDeleted] = useState<boolean>(false);
     const [userDeleted, setUserDeleted] = useState<boolean>(false);
+    const [checkOfferButton, setCheckOfferButton] = useState<number | null>(null);
+    const [deleteReportButton, setDeleteReportButton] = useState<number | null>(null);
+    const {isMobile} = useUtil();
 
     useEffect(() => {
         const manageCheckAdmin = async () => {
@@ -87,13 +91,21 @@ const Admin: React.FC = () => {
                     <div className="flex flex-row items-center justify-between gap-1.5 m:gap-2 p-3 m:p-4 bg-white rounded-md">
                         <p className="text-base m:text-lg truncate">{translate("reportReasons", report.reason ?? "")}</p>
                         <div className="flex flex-row gap-1.5 m:gap-2">
-                            <Link className="flex flex-row items-center gap-0.5 m:gap-1"
+                            <Link className={`flex flex-row items-center gap-0.5 m:gap-1 ${checkOfferButton === report.id && "underline"}`}
+                                  onMouseEnter={!isMobile ? () => setCheckOfferButton(report.id) : undefined}
+                                  onMouseLeave={!isMobile ? () => setCheckOfferButton(null) : undefined}
+                                  onTouchStart={isMobile ? () => setCheckOfferButton(report.id) : undefined}
+                                  onTouchEnd={isMobile ? () => setCheckOfferButton(null) : undefined}
                                   to={`/displayOffer/${report.offerId}`}>
                                 <FontAwesomeIcon icon={faCar} className="text-xl m:text-2xl"/>
                                 <p className="text-base m:text-lg">{t("admin1")}</p>
                             </Link>
                             <div className="h-6 m:h-7 border border-black"></div>
-                            <button className="flex flex-row items-center gap-0.5 m:gap-1"
+                            <button className={`flex flex-row items-center gap-0.5 m:gap-1 ${deleteReportButton === report.id && "underline"}`}
+                                    onMouseEnter={!isMobile ? () => setDeleteReportButton(report.id) : undefined}
+                                    onMouseLeave={!isMobile ? () => setDeleteReportButton(null) : undefined}
+                                    onTouchStart={isMobile ? () => setDeleteReportButton(report.id) : undefined}
+                                    onTouchEnd={isMobile ? () => setDeleteReportButton(null) : undefined}
                                     onClick={() => handleDeleteReport(report.id)}>
                                 <FontAwesomeIcon icon={faXmark} className="text-xl m:text-2xl"/>
                                 <p className="text-base m:text-lg">{t("admin2")}</p>
