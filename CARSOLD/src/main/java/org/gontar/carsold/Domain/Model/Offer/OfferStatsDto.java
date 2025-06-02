@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferStatsDto {
-    private Integer views;
-    private Integer follows;
+    private Long views;
+    private Long follows;
 }

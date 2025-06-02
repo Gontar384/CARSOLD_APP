@@ -12,8 +12,8 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [lowerBar, setLowerBar] = useState<boolean>(false);
     const [midBar, setMidBar] = useState<boolean>(false);
     const [mobileWidth, setMobileWidth] = useState<boolean>(window.innerWidth < 450);
-    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth <= 1024);
-    const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth > 1024);
+    const [midWidth, setMidWidth] = useState<boolean>(window.innerWidth >= 450 && window.innerWidth < 1024);
+    const [bigWidth, setBigWidth] = useState<boolean>(window.innerWidth >= 1024);
     const [isMobile, setIsMobile] = useState<boolean>("ontouchstart" in window || navigator.maxTouchPoints > 0);
     const location = useLocation();
 
@@ -66,8 +66,8 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
         const handleResize = () => {
             const width = window.innerWidth;
             setMobileWidth(width < 450);
-            setMidWidth(width >= 450 && width <= 1024);
-            setBigWidth(width > 1024);
+            setMidWidth(width >= 450 && width < 1024);
+            setBigWidth(width >= 1024);
         };
 
         window.addEventListener("resize", handleResize);

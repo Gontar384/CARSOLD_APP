@@ -377,12 +377,9 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         User user = userDetailsService.loadUser();
 
         List<User> followers = userRepository.findByFollowedOffersContaining(existingOffer);
-        followers.forEach(follower -> {
-            if (follower.getFollowedOffers() != null) {
-                follower.getFollowedOffers().removeIf(o -> o.getId().equals(id));
-                userRepository.save(follower);
-            }
-        });
+        followers.forEach(follower -> follower.getFollowedOffers().remove(existingOffer));
+        userRepository.saveAll(followers);
+
         deleteImagesFromStorage(user.getUsername(), existingOffer.getId());
 
         offerRepository.delete(existingOffer);

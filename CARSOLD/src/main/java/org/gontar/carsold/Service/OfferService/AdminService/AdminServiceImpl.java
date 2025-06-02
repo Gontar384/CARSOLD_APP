@@ -48,12 +48,9 @@ public class AdminServiceImpl implements AdminService {
         String username = existingOffer.getUser().getUsername();
 
         List<User> followers = userRepository.findByFollowedOffersContaining(existingOffer);
-        followers.forEach(follower -> {
-            if (follower.getFollowedOffers() != null) {
-                follower.getFollowedOffers().removeIf(o -> o.getId().equals(id));
-                userRepository.save(follower);
-            }
-        });
+        followers.forEach(follower -> follower.getFollowedOffers().remove(existingOffer));
+        userRepository.saveAll(followers);
+
         deleteOfferInCloudStorage(username, id);
         offerRepository.delete(existingOffer);
     }
@@ -87,23 +84,14 @@ public class AdminServiceImpl implements AdminService {
         User user = userRepository.findByUsername(username);
         if (user == null) throw new UserNotFoundException("User not found");
 
-        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
-        if (followedOffers != null) {
-            followedOffers.forEach(offer -> {
-                offer.setFollows(offer.getFollows() - 1);
-                offerRepository.save(offer);
-            });
+        if (user.getOffers() != null) {
+            for (Offer offer : user.getOffers()) {
+                List<User> followers = userRepository.findByFollowedOffersContaining(offer);
+                followers.forEach(follower -> follower.getFollowedOffers().remove(offer));
+                userRepository.saveAll(followers);
+            }
         }
-        List<Offer> userOffers = user.getOffers() != null ? new ArrayList<>(user.getOffers()) : Collections.emptyList();
-        userOffers.forEach(offer -> {
-            List<User> followers = userRepository.findByFollowedOffersContaining(offer);
-            followers.forEach(follower -> {
-                if (follower.getFollowedOffers() != null) {
-                    follower.getFollowedOffers().removeIf(o -> o.getId().equals(offer.getId()));
-                    userRepository.save(follower);
-                }
-            });
-        });
+
         deleteUserInCloudStorage(user.getUsername());
 
         offerRepository.flush();

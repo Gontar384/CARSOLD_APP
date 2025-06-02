@@ -6,7 +6,7 @@ const Logo: React.FC = () => {
     const {t} = useLanguage();
 
     return (
-        <Link className="flex flex-row justify-center text-[22px] m:text-[26px] lg:ml-4 mr-1 lg:mr-0"
+        <Link className="flex flex-row justify-center text-[24px] m:text-[28px] lg:ml-4 mr-1 lg:mr-0"
               to={"/search?page=0&size=10"} title={t("logo")}>
             <p className="text-white">CAR</p>
             <p className="text-black">$</p>

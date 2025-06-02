@@ -233,23 +233,15 @@ public class UserManagementServiceImpl implements UserManagementService {
         if (!user.getOauth2()) {
             if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
         }
-        Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
-        if (followedOffers != null) {
-            followedOffers.forEach(offer -> {
-                offer.setFollows(offer.getFollows() - 1);
-                offerRepository.save(offer);
-            });
+
+        if (user.getOffers() != null) {
+            for (Offer offer : user.getOffers()) {
+                List<User> followers = userRepository.findByFollowedOffersContaining(offer);
+                followers.forEach(follower -> follower.getFollowedOffers().remove(offer));
+                userRepository.saveAll(followers);
+            }
         }
-        List<Offer> userOffers = user.getOffers() != null ? new ArrayList<>(user.getOffers()) : Collections.emptyList();
-        userOffers.forEach(offer -> {
-            List<User> followers = userRepository.findByFollowedOffersContaining(offer);
-            followers.forEach(follower -> {
-                if (follower.getFollowedOffers() != null) {
-                    follower.getFollowedOffers().removeIf(o -> o.getId().equals(offer.getId()));
-                    userRepository.save(follower);
-                }
-            });
-        });
+
         deleteUserInCloudStorage(user.getUsername());
 
         offerRepository.flush();

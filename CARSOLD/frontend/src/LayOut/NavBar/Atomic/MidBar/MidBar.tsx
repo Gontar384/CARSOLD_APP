@@ -70,7 +70,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     if (midBarActive) {
         return (
-            <div className={`flex flex-col items-center w-[265px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
+            <div className={`flex flex-col items-center w-[270px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
             overflow-auto overscroll-contain`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
@@ -85,11 +85,11 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     )}
                 </div>
                 <div className="flex flex-col items-start w-full pb-14">
-                    <BarButton label={t("dropdownButton8")} icon={faFileCirclePlus} path={"/addingOffer"}/>
                     <BarButton label={t("dropdownButton1")} icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
                     <BarButton label={t("dropdownButton2")} icon={faHeart} path={"/details/followed"}/>
                     <BarButton label={t("dropdownButton3")} icon={faMessage} path={"/details/messages"} count={unseenMessagesCount}/>
                     <BarButton label={t("dropdownButton4")} icon={faScrewdriverWrench} path={"/details/settings"} />
+                    <BarButton label={t("dropdownButton8")} icon={faFileCirclePlus} path={"/addingOffer"}/>
                     {isAuthenticated &&
                         <>
                             <BarFunctionButton label={`${!darkMode ? t("dropdownButton6") : t("dropdownButton5")}`} icon={darkMode ? faLightbulb : faLightBulbRegular} onClick={toggleDarkMode}/>

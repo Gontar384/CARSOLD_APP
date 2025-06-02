@@ -18,4 +18,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long>, JpaSpecific
     List<Offer> findRandomOffers();
     @Query("SELECT COUNT(o) FROM Offer o WHERE o.user.id = :userId")
     long countByUserId(@Param("userId") Long userId);
+    @Query("SELECT COUNT(u) FROM User u JOIN u.followedOffers o WHERE o.id = :offerId")
+    long countFollowers(@Param("offerId") Long offerId);
 }

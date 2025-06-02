@@ -55,17 +55,17 @@ public class FunctionalityServiceUnitTest {
     public void fetchStats_shouldReturnOfferStats() {
         Offer offer = new Offer();
         offer.setId(1L);
-        offer.setViews(100);
-        offer.setFollows(5);
+        offer.setViews(100L);
 
         when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
         when(offerManagementService.fetchPermission(offer)).thenReturn(true);
+        when(offerRepository.countFollowers(1L)).thenReturn(5L);
 
         OfferStatsDto stats = functionalityService.fetchStats(1L);
 
         assertNotNull(stats);
-        assertEquals(100, stats.getViews());
-        assertEquals(5, stats.getFollows());
+        assertEquals(100L, stats.getViews());
+        assertEquals(5L, stats.getFollows());
     }
 
     @Test
@@ -131,15 +131,16 @@ public class FunctionalityServiceUnitTest {
 
         Offer offer = new Offer();
         offer.setId(1L);
-        offer.setFollows(0);
 
         when(userDetailsService.loadUser()).thenReturn(user);
         when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(userRepository.findFollowedOffersByUserId(user.getId())).thenReturn(new HashSet<>());
 
         boolean isFollowing = functionalityService.followAndCheck(1L, true);
 
         assertTrue(isFollowing);
-        assertEquals(1, offer.getFollows());
+        verify(userRepository).save(user);
+        verify(offerRepository).save(offer);
     }
 
     @Test
@@ -150,16 +151,15 @@ public class FunctionalityServiceUnitTest {
 
         Offer offer = new Offer();
         offer.setId(1L);
-        offer.setFollows(1);
 
         when(userDetailsService.loadUser()).thenReturn(user);
         when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(userRepository.findFollowedOffersByUserId(1L)).thenReturn(new HashSet<>(Set.of(offer)));
         when(userRepository.findFollowedOffersByUserId(1L)).thenReturn(new HashSet<>(Set.of(offer)));
 
         boolean isFollowing = functionalityService.followAndCheck(1L, true);
 
         assertFalse(isFollowing);
-        assertEquals(0, offer.getFollows());
         verify(userRepository).save(user);
         verify(offerRepository).save(offer);
     }

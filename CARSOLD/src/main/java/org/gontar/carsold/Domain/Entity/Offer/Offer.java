@@ -164,16 +164,17 @@ public class Offer {
     private LocalDateTime createdOn;
 
     @Column(nullable = false)
-    private Integer views = 0;
+    private Long views = 0L;
 
-    @Column(nullable = false)
-    private Integer follows = 0;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Offer offer)) return false;
+        return getId() != null && getId().equals(offer.getId());
+    }
 
     @Override
     public int hashCode() {
-        if (getId() == null) {
-            return super.hashCode();
-        }
-        return Objects.hash(getId());
+        return getId() != null ? getId().hashCode() : 0;
     }
 }

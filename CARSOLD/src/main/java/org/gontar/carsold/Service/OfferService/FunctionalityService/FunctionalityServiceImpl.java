@@ -52,7 +52,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         }
         OfferStatsDto offerStatsDto = new OfferStatsDto();
         offerStatsDto.setViews(offer.getViews());
-        offerStatsDto.setFollows(offer.getFollows());
+        long followersCount = offerRepository.countFollowers(id);
+        offerStatsDto.setFollows(followersCount);
         return offerStatsDto;
     }
 
@@ -95,17 +96,14 @@ public class FunctionalityServiceImpl implements FunctionalityService {
         }
 
         Set<Offer> followedOffers = userRepository.findFollowedOffersByUserId(user.getId());
-        boolean currentlyFollowing = followedOffers.stream()
-                .anyMatch(o -> o.getId().equals(id));
+        boolean currentlyFollowing = followedOffers.stream().anyMatch(o -> o.getId().equals(id));
         if (follow) {
             if (currentlyFollowing) {
                 currentlyFollowing = false;
-                followedOffers.removeIf(o -> o.getId().equals(id));
-                offer.setFollows(offer.getFollows() - 1);
+                followedOffers.remove(offer);
             } else {
                 currentlyFollowing = true;
                 followedOffers.add(offer);
-                offer.setFollows(offer.getFollows() + 1);
             }
             user.setFollowedOffers(followedOffers);
             offerRepository.save(offer);
