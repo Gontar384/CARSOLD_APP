@@ -34,7 +34,7 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
             return;
         }
         String serializedAuthorizationRequest = serialize(authorizationRequest);
-        createCookie(response, serializedAuthorizationRequest, 1);
+        createCookie(response, serializedAuthorizationRequest, 5);
     }
 
     @Override
