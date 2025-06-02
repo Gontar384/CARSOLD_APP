@@ -64,7 +64,7 @@ export const carModels: Record<string, string[]> = {
     "Iveco": ["Daily", "Massif"],
     "JAC": ["e-J7", "e-JS1", "e-JS4", "J6", "J7", "JS2", "JS3", "JS4", "JS6", "JS7", "JS8", "T6", "T8 PRO", "T9"],
     "Jaecoo": ["5", "7", "9"],
-    "Jaguar": ["Daimler", "E-Pace", "E-Type", "E-Pace", "F-Type", "I-Pace", "MK II", "S-Type", "X-Type", "XE", "XF", "XJ", "XJR", "XJS", "XK", "XK8"],
+    "Jaguar": ["Daimler", "E-Type", "E-Pace", "F-Type", "I-Pace", "MK II", "S-Type", "X-Type", "XE", "XF", "XJ", "XJR", "XJS", "XK", "XK8"],
     "Jeep": ["Avenger", "Cherokee", "CJ", "Comanche", "Commander", "Compass", "Gladiator", "Grand Cherokee", "Liberty", "Patriot", "Renegade", "Wagoneer", "Willys", "Wrangler"],
     "Jetour": ["Dashing", "Traveller", "X70", "X90", "X95"],
     "Jinpeng": ["Ami"],
