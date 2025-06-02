@@ -97,6 +97,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                     setMessages(formattedMessages);
                     setHasMore(pagedMessages?.hasMore ?? false);
                     setInitial(true);
+                    setPage(0);
                 }
             } catch (error: unknown) {
                 navigate("/details/messages");
@@ -188,7 +189,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         }, 0);
 
         return () => clearTimeout(timeout);
-    }, [initial, msgAdded]);  //orients container on bottom
+    }, [initial, msgAdded, receiverUsername]);  //orients container on bottom
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {

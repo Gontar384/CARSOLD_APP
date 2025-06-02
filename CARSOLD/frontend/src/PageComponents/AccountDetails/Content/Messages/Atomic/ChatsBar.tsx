@@ -158,7 +158,7 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
             }
         };
         handleMakeSeen();
-    }, [markSeen]);
+    }, [markSeen]); //makes conversation seen
 
     return (
         <>

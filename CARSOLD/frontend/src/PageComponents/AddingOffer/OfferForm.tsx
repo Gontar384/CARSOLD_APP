@@ -504,7 +504,7 @@ const OfferForm: React.FC = () => {
     }, [toggled.mileage]);
 
     useEffect(() => {
-        if (offer.mileage.length > 9) {
+        if ((parseNumber(offer.mileage) ?? 0) > 8000000) {
             setErrorField("mileage", true);
             setMessageField("mileage", t("offerForm37"));
         } else {
@@ -533,7 +533,7 @@ const OfferForm: React.FC = () => {
             if (offer.capacity === "") {
                 setErrorField("capacity", true);
                 setMessageField("capacity", t("offerForm39"));
-            } else if (offer.capacity.length < 3) {
+            } else if ((parseNumber(offer.capacity) ?? 0) < 300) {
                 setErrorField("capacity", true);
                 setMessageField("capacity", t("offerForm40"));
             }
@@ -542,7 +542,7 @@ const OfferForm: React.FC = () => {
     }, [toggled.capacity]);
 
     useEffect(() => {
-        if (offer.capacity.length > 6) {
+        if ((parseNumber(offer.capacity) ?? 0) > 17000) {
             setErrorField("capacity", true);
             setMessageField("capacity", t("offerForm40"));
         } else {
@@ -557,13 +557,16 @@ const OfferForm: React.FC = () => {
             if (offer.power === "") {
                 setErrorField("power", true);
                 setMessageField("power", t("offerForm41"));
+            } else if ((parseNumber(offer.power) ?? 0) < 10) {
+                setErrorField("power", true);
+                setMessageField("power", t("offerForm42"));
             }
             setToggledField("power", false);
         }
     }, [toggled.power]);
 
     useEffect(() => {
-        if (offer.power.length > 5) {
+        if ((parseNumber(offer.power) ?? 0) > 2000) {
             setErrorField("power", true);
             setMessageField("power", t("offerForm42"));
         } else {
@@ -712,7 +715,7 @@ const OfferForm: React.FC = () => {
             if (offer.price === "") {
                 setErrorField("price", true);
                 setMessageField("price", t("offerForm52"));
-            } else if (offer.price.length < 3) {
+            } else if ((parseNumber(offer.price) ?? 0) < 100) {
                 setErrorField("price", true);
                 setMessageField("price", t("offerForm53"));
             }
@@ -721,7 +724,7 @@ const OfferForm: React.FC = () => {
     }, [toggled.price]);
 
     useEffect(() => {
-        if (offer.price.length > 12) {
+        if ((parseNumber(offer.price) ?? 0) > 120000000) {
             setErrorField("price", true);
             setMessageField("price", t("offerForm53"));
         } else {
@@ -780,7 +783,7 @@ const OfferForm: React.FC = () => {
             setErrorField("mileage", true);
             setMessageField("mileage", t("offerForm36"));
             isValid = false;
-        } else if (offer.mileage.length > 9) {
+        } else if ((parseNumber(offer.mileage) ?? 0) > 8000000) {
             setErrorField("mileage", true);
             setMessageField("mileage", t("offerForm37"));
             isValid = false;
@@ -794,11 +797,7 @@ const OfferForm: React.FC = () => {
             setErrorField("capacity", true);
             setMessageField("capacity", t("offerForm39"));
             isValid = false;
-        } else if (offer.capacity.length < 3) {
-            setErrorField("capacity", true);
-            setMessageField("capacity", t("offerForm40"));
-            isValid = false;
-        } else if (offer.capacity.length > 6) {
+        } else if (((parseNumber(offer.capacity) ?? 0) < 300) || ((parseNumber(offer.capacity) ?? 0) > 17000)) {
             setErrorField("capacity", true);
             setMessageField("capacity", t("offerForm40"));
             isValid = false;
@@ -807,7 +806,7 @@ const OfferForm: React.FC = () => {
             setErrorField("power", true);
             setMessageField("power", t("offerForm41"));
             isValid = false;
-        } else if (offer.power.length > 5) {
+        } else if (((parseNumber(offer.power) ?? 0) < 10) || ((parseNumber(offer.power) ?? 0) > 2000)) {
             setErrorField("power", true);
             setMessageField("power", t("offerForm42"));
             isValid = false;
@@ -891,13 +890,19 @@ const OfferForm: React.FC = () => {
             setErrorField("price", true);
             setMessageField("price", t("offerForm52"));
             isValid = false;
-        } else if (offer.price.length < 3 || offer.price.length > 12) {
+        } else if (((parseNumber(offer.price) ?? 0) < 100) || ((parseNumber(offer.price) ?? 0) > 120000000)) {
             setErrorField("price", true);
             setMessageField("price", t("offerForm53"));
             isValid = false;
         }
 
         return isValid;
+    };
+
+    const parseNumber = (value: string): number | null => {
+        const sanitizedValue = value.replace(/\./g, '');
+        const parsed = Number(sanitizedValue);
+        return isNaN(parsed) ? null : parsed;
     };
 
     //fetch photos, convert photos and Offer object to formData
@@ -940,11 +945,6 @@ const OfferForm: React.FC = () => {
                 }
             }
         }
-        const parseNumber = (value: string): number | null => {
-            const sanitizedValue = value.replace(/\./g, '');
-            const parsed = Number(sanitizedValue);
-            return isNaN(parsed) ? null : parsed;
-        };
 
         const offerDto = {
             title: offer.title,
