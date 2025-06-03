@@ -182,7 +182,6 @@ export const dictionary = {
         termsOfUse34: "9.2 Dalsze korzystanie z platformy po wprowadzeniu zmian oznacza ich akceptację.",
         termsOfUse35: "Kontakt",
         termsOfUse36: "W przypadku pytań lub potrzeby pomocy prosimy o kontakt pod adresem:",
-        termsOfUse37: "carsold384@gmail.com",
         termsOfUse38: "Korzystając z CARSOLD, potwierdzasz, że zapoznałeś się z regulaminem, zrozumiałeś go i akceptujesz jego postanowienia.",
         home1: "Witamy w CAR$OLD!",
         home2: "Świecie samochodów",
@@ -393,6 +392,7 @@ export const dictionary = {
         tabTitle11: "Dodawanie oferty",
         tabTitle12: "Edytowanie oferty",
         tabTitle13: "Regulamin",
+        emailAddress: "Adres e-mail:",
         reportReasons: {
             "Inappropriate content":"Nieodpowiednia treść",
             "False or misleading information":"Fałszywe lub wprowadzające w błąd informacje",
@@ -710,7 +710,6 @@ export const dictionary = {
         termsOfUse34: "9.2 Continued use of the platform after changes constitutes acceptance of the updated Terms.",
         termsOfUse35: "Contact Us",
         termsOfUse36: "For questions or support, please contact us at:",
-        termsOfUse37: "carsold384@gmail.com",
         termsOfUse38: "By using CARSOLD, you acknowledge that you have read, understood, and agree to these Terms of use.",
         home1: "Welcome to CAR$OLD!",
         home2: "A world of cars",
@@ -921,6 +920,7 @@ export const dictionary = {
         tabTitle11: "Adding offer",
         tabTitle12: "Modifying offer",
         tabTitle13: "Terms of use",
+        emailAddress: "E-mail address:",
         reportReasons: {
             "Nieodpowiednia treść":"Inappropriate content",
             "Fałszywe lub wprowadzające w błąd informacje":"False or misleading information",

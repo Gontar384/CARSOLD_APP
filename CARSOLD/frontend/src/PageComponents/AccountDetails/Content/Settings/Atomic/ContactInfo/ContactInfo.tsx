@@ -35,7 +35,7 @@ const ContactInfo: React.FC = () => {
     }, [fetch]);
 
     return (
-        <div className="flex flex-col w-full items-center mt-[72px] m:mt-20">
+        <div className="flex flex-col w-full items-center mt-24 m:mt-28">
             <div>
                 <p className="text-xl m:text-2xl mb-8 m:mb-10 w-fit">{t("contactInfo12")}</p>
                 <div className="flex flex-col gap-6 m:gap-7">

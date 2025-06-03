@@ -57,6 +57,15 @@ export const fetchUsername = async (): Promise<AxiosResponse> => {
     }
 };
 
+export const fetchEmail = async (): Promise<AxiosResponse> => {
+    try {
+        return await api.get('api/private/user/fetchEmail');
+    } catch (error) {
+        handleError(error);
+        return Promise.reject(error);
+    }
+};
+
 export const changePassword = async (oldPassword: string | null, newPassword: string | null): Promise<void> => {
     try {
         await api.patch("api/private/user/changePassword", { oldPassword: oldPassword, newPassword: newPassword });

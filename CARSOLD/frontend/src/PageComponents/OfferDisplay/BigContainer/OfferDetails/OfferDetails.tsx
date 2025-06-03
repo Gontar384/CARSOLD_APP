@@ -80,7 +80,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     };
 
     return (
-        <div className="w-[95%] bg-white rounded border-2 border-black border-opacity-40 mb-8 m:mb-16">
+        <div className="w-full m:w-[95%] bg-white m:rounded border-y-2 m:border-2 border-black border-opacity-40 mb-8 m:mb-16">
             <p className="text-2xl m:text-3xl text-center font-bold mt-6 m:mt-8">{brand + " " + model}</p>
             <div className="flex flex-row justify-evenly mt-10 m:mt-12">
                 {details.map((item, index) => (

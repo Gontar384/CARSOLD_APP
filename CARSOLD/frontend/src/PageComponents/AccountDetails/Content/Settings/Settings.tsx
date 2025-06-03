@@ -6,6 +6,7 @@ import ContactInfo from "./Atomic/ContactInfo/ContactInfo.tsx";
 import DeleteAccountButton from "./Atomic/DeleteAccount/DeleteAccountButton.tsx";
 import Popup from "./Atomic/DeleteAccount/Popup/Popup.tsx";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
+import EmailAddress from "./Atomic/EmailAddress/EmailAddress.tsx";
 
 const Settings: React.FC = () => {
     const {handleCheckGoogleAuth} = useUserInfo();
@@ -30,6 +31,7 @@ const Settings: React.FC = () => {
     return (
         <div className="w-full h-full">
             <div className={`flex flex-col items-center`}>
+                <EmailAddress/>
                 <ContactInfo/>
                 {!googleAuth && <PasswordChange setIsChanged={setIsChanged}/>}
                 <DeleteAccountButton setPopup={setPopup}/>

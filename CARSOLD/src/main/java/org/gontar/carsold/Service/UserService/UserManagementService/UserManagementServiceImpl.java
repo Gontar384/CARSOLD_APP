@@ -193,6 +193,12 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
+    public String fetchEmail() {
+        User user = userDetailsService.loadUser();
+        return user.getEmail();
+    }
+
+    @Override
     public void changePassword(String oldPassword, String newPassword) {
         Objects.requireNonNull(oldPassword, "oldPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import LayOut from "../../LayOut/LayOut.tsx";
 import SearchFilters from "./SearchFilters/SearchFilters.tsx";
 import {UpdatedOffer} from "../AccountDetails/Content/MyOffers/MyOffers.tsx";
@@ -7,6 +7,7 @@ import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
 import {usePagination} from "../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
+import {useSearchParams} from "react-router-dom";
 
 const Search: React.FC = () => {
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
@@ -17,6 +18,14 @@ const Search: React.FC = () => {
     const {t} = useLanguage();
     const {isMobile} = useUtil();
     document.title = `CARSOLD | ${t("tabTitle2")}`;
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.has("page")) {
+            const page = Number(searchParams.get("page"));
+            if (!isNaN(page)) setCurrentPage(page);
+        }
+    }, []); //sets currentPage from URL on initial load (e.g. after refresh or back navigation)
 
     return (
         <LayOut>

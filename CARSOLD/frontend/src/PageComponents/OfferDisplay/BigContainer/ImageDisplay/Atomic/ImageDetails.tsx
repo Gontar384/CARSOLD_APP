@@ -15,7 +15,7 @@ interface ImageDetailsProps {
 }
 
 const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullScreen, offerFetched, error, setError}) => {
-    const [photoHovered, setPhotoHovered] = useState<boolean>(false);
+    const [photoHovered, setPhotoHovered] = useState<boolean>(true);
     const [photoIndex, setPhotoIndex] = useState<number>(0);
     const [direction, setDirection] = useState<number>(0);
     const [disabled, setDisabled] = useState<boolean>(false);
@@ -291,7 +291,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                 photos.length > 0 && !error &&
                     <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none bg-gray-100
                     ${fullScreen && `max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px]
-                    border border-gray-300 rounded fixed inset-0 m-auto z-50`}`} style={{ userSelect: 'none' }}
+                    rounded fixed inset-0 m-auto z-50`}`} style={{ userSelect: 'none' }}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? handleMouseLeave : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}

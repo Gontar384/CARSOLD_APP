@@ -49,6 +49,13 @@ public class UserManagementController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/private/user/fetchEmail")
+    public ResponseEntity<SingleStringDto> fetchEmail() {
+        String email = service.fetchEmail();
+        SingleStringDto response = new SingleStringDto(email);
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/private/user/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) {
         String newPassword = passwordChangeDto.getNewPassword();

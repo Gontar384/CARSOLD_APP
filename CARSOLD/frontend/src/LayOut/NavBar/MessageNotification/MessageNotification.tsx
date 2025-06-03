@@ -66,14 +66,14 @@ const MessageNotification: React.FC = () => {
             : `w-48 h-[74px] p-0.5 top-12 rounded-b-xl ring-[3px] ${animation1}`}
             right-0 bg-white ring-lime z-40 cursor-pointer border border-black border-opacity-30`}
              onClick={() => navigate(`/details/messages?username=${notification.senderUsername}`)}>
-            <div className="flex flex-row justify-center items-center gap-1 m:gap-1.5 pb-0.5 m:pb-1 border-b border-gray-300">
+            <div className="flex flex-row justify-center items-center gap-1 m:gap-1.5 pb-[3px] m:pb-[4px] border-b border-gray-300">
                 {notification.senderProfilePic !== "" && !imageError ?
                     <img src={notification.senderProfilePic} alt="Img" onError={() => setImageError(true)}
                          className="rounded-full w-7 h-7 m:w-8 m:h-8 border border-black"/>
                     : <FontAwesomeIcon icon={faCircleUser} className="w-7 h-7 m:w-8 m:h-8"/>}
                 <p className="text-base m:text-lg font-bold">{notification.senderUsername}</p>
             </div>
-            <div className={`text-sm m:text-base break-words h-10 m:h-12 line-clamp-2 px-0.5 m:px-1
+            <div className={`text-xs m:text-sm break-words line-clamp-2 h-[38px] m:h-[46px] px-1 m:px-1.5 py-[3px]
             ${((mobileWidth && notification.content.length < 30) || (!mobileWidth && notification.content.length < 40))
             && "flex items-center justify-center"} `}>
                 {notification.content}

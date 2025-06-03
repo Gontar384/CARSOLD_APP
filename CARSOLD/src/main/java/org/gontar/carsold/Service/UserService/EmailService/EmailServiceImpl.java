@@ -37,6 +37,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
+        helper.setFrom("CAR$OLD <carsold.contact@gmail.com>");
         helper.setTo(email);
         helper.setSubject(subject);
         helper.setText(content, true);
@@ -50,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
         String content;
         try {
             if (!translate) {
-                subject = "CAR$OLD Aktywacja Konta";
+                subject = "Aktywacja Konta";
                 content = "<p style='font-size: 25px;'>Witaj " + username +
                         "! Aby aktywować konto, kliknij poniższy link:</p>" +
                         "<div style='background-color: #caf04f; width: 345px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
@@ -62,7 +63,7 @@ public class EmailServiceImpl implements EmailService {
                         "<p>W przypadku problemów z aktywacją, otwórz link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji pocztowej.</p><br><hr>" +
                         "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
-                subject = "CAR$OLD Account Activation";
+                subject = "Account Activation";
                 content = "<p style='font-size: 25px;'>Welcome " + username +
                         "! To activate account, click the following link:</p>" +
                         "<div style='background-color: #caf04f; width: 410px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
@@ -98,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
         String content;
         try {
             if (!translate) {
-                subject = "CAR$OLD Odzyskiwanie Hasła";
+                subject = "Odzyskiwanie Hasła";
                 content = "<p style='font-size: 25px;'>Witaj " + user.getUsername() + ", miło Cię znowu widzieć! " +
                         "Aby zmienić hasło, kliknij poniższy link:</p>" +
                         "<div style='background-color: #d3d61c; width: 295px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +
@@ -109,7 +110,7 @@ public class EmailServiceImpl implements EmailService {
                         "<p>W przypadku problemów ze zmianą hasła, otwórz link w przeglądarce (Chrome, Firefox, Safari) – nie wewnątrz aplikacji pocztowej.</p><br><hr>" +
                         "<p>Wiadomość wysłana automatycznie. Prosimy nie odpowiadać.</p>";
             } else {
-                subject = "CAR$OLD Password Recovery";
+                subject = "Password Recovery";
                 content = "<p style='font-size: 25px;'>Hello " + user.getUsername() + ", good to see you again! " +
                         "To change password, click the following link:</p>" +
                         "<div style='background-color: #d3d61c; width: 435px; padding: 0px 20px; border: 2px solid gray; border-radius: 10px;'>" +

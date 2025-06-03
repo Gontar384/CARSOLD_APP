@@ -11,7 +11,7 @@ const Section: React.FC<SectionProps> = ({title, content}) => (
         <h3 className="text-xl m:text-2xl font-bold">{title}</h3>
         <div className="text-base m:text-xl mt-2 m:mt-3">
             {content.map((text, index) => (
-                <p key={index} className="mt-1 m:mt-2">
+                <p key={index} className={`mt-1 m:mt-2 ${text.includes("@gmail.com") && "font-bold"}`}>
                     {text}
                 </p>
             ))}

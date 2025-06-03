@@ -183,7 +183,7 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     public Offer createOffer(Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(offer, "Offer cannot be null");
         User user = userDetailsService.loadUser();
-        if (offerRepository.countByUserId(user.getId()) >= 50) throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
+        if (offerRepository.countByUserId(user.getId()) >= 20) throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
         if (isContentToxic(offer.getTitle(), offer.getDescription())) throw new InappropriateContentException("Title or description are inappropriate");
 
         offer.setUser(user);

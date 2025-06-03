@@ -87,6 +87,15 @@ class UserManagementControllerTest {
     }
 
     @Test
+    public void fetchEmail() throws Exception {
+        String email = "test@gmail.com";
+        when(userManagementService.fetchEmail()).thenReturn(email);
+
+        mockMvc.perform(get("/api/private/user/fetchEmail"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void changePassword() throws Exception {
         PasswordChangeDto passwordChangeDto = new PasswordChangeDto();
         passwordChangeDto.setOldPassword("oldPassword");

@@ -54,6 +54,19 @@ public class UserManagementServiceUnitTest {
     }
 
     @Test
+    public void fetchEmail() {
+        User mockUser = new User();
+        mockUser.setEmail("test@gmail.com");
+
+        when(userDetailsService.loadUser()).thenReturn(mockUser);
+
+        String email = managementService.fetchEmail();
+
+        assertEquals("test@gmail.com", email);
+        verify(userDetailsService).loadUser();
+    }
+
+    @Test
     public void changePassword_success() {
         User mockUser = new User();
         mockUser.setPassword("encodedOldPassword");

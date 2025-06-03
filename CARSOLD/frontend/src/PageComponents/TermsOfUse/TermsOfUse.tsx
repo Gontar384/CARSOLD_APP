@@ -81,7 +81,7 @@ const TermsOfUse: React.FC = () => {
                         title={t("termsOfUse35")}
                         content={[
                             t("termsOfUse36"),
-                            t("termsOfUse37"),
+                            "carsold.contact@gmail.com",
                             t("termsOfUse38"),
                         ]}/>
                 </div>

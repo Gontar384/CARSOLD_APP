@@ -2,8 +2,14 @@ import React from "react";
 import SocialLink from "./Atomic/SocialLink.tsx";
 import {useLanguage} from "../../../../../../GlobalProviders/Language/useLanguage.ts";
 
-const Socials: React.FC = () => {
+interface SocialsProps {
+    active: boolean;
+}
+
+const Socials: React.FC<SocialsProps> = ({ active }) => {
     const {t} = useLanguage();
+
+    if (!active) return null;
 
     return (
         <div className="mt-14 m:mt-16">
