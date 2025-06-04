@@ -22,17 +22,15 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = ({setPopup}) => 
     }
 
     return (
-        <button className="flex flex-col items-center justify-center mt-36 mb-[72px] m:mt-40 m:mb-20"
+        <button className="flex flex-col items-center justify-center mt-36 m:mt-40 mb-20 m:mb-24 gap-1 m:gap-2"
                 onClick={() => setPopup(true)}
                 onTouchStart={isMobile ? handleActivateAnimation : undefined}
                 onTouchEnd={isMobile ? handleDismissAnimation : undefined}
                 onMouseEnter={!isMobile ? handleActivateAnimation : undefined}
                 onMouseLeave={!isMobile ? () => setButtonAnimation(null) : undefined}>
+            <p className="text-lg m:text-xl whitespace-nowrap">{t("deleteAccount1")}</p>
             <FontAwesomeIcon icon={faDeleteLeft} className={`text-3xl m:text-4xl ${buttonAnimation}`}
                              style={{color: "red", transform: "rotate(-180deg)"}}/>
-            <p className="text-lg m:text-xl whitespace-nowrap">
-                {t("deleteAccount1")}
-            </p>
         </button>
     )
 }

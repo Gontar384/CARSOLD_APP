@@ -291,7 +291,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                 photos.length > 0 && !error &&
                     <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none bg-gray-100
                     ${fullScreen && `max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px]
-                    rounded fixed inset-0 m-auto z-50`}`} style={{ userSelect: 'none' }}
+                    fixed inset-0 m-auto z-50`}`} style={{ userSelect: 'none' }}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? handleMouseLeave : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}
@@ -310,7 +310,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                          }} tabIndex={0} ref={imageRef}>
                         <AnimatePresence custom={direction} mode="popLayout">
                             <motion.img key={photoIndex} src={photos[photoIndex]} alt="Car Photo"
-                                        className="w-full h-full object-cover rounded" onError={() => setError(true)}
+                                        className="w-full h-full object-cover" onError={() => setError(true)}
                                         initial={{translateX: direction * 100 + "%"}} exit={{translateX: -direction * 100 + "%"}}
                                         animate={{translateX: "0%", scale: scale, x: position.x, y: position.y}}
                                         transition={{duration: 0.4, ease: "easeInOut"}} style={{willChange: 'transform'}}/>
@@ -330,7 +330,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                             {photos.length > 1 &&
                                 <div className="flex gap-1 m:gap-1.5 absolute bottom-3 m:bottom-4">
                                     {photos.map((_, index) => (
-                                        <div key={index} className={`w-1.5 h-1.5 m:w-2 m:h-2 border border-black border-opacity-70 rounded
+                                        <div key={index} className={`${isMobile ? "w-1.5 h-1.5" : "w-2 h-2"} border border-black border-opacity-70 rounded
                                         ${photoIndex === index ? "bg-lowBlack" : "bg-gray-100"} transition-all duration-500`}/>))}
                                 </div>}
                             <button className="flex absolute text-gray-300 left-1 bottom-1 m:left-2 m:bottom-2 p-2"

@@ -235,7 +235,7 @@ const OfferDisplay: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center -mb-32 m:mb-0">
                 <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] gap-3 m:gap-4">
                     <div className={`flex flex-col w-full items-center lg:w-[70%] ${isMobile ? "border-y" : "border"}
                     border-gray-300 bg-lowLime rounded relative`}>

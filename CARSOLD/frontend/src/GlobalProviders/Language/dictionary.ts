@@ -636,7 +636,7 @@ export const dictionary = {
         animatedBanner19: "Offer has been deleted",
         animatedBanner20: "User has been deleted",
         animatedBanner21: "Password changed successfully, redirecting...",
-        changePassword1: "Change your password:",
+        changePassword1: "Change password:",
         changePassword2: "Old password",
         changePassword3: "New password",
         changePassword4: "Repeat password",
