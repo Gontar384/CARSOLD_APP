@@ -60,6 +60,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const textRef = useRef<HTMLDivElement>(null);
     const {buttonColor, bindHoverHandlers} = useButton();
+    const scrollPositionRef = useRef<number>(0);
 
     useEffect(() => {
         if (textRef.current) {
@@ -69,12 +70,8 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ brand, model, bodyType, yea
 
     const toggleExpand = () => {
         setIsExpanded((prev) => {
-            if (prev) {
-                textRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                setTimeout(() => {
-                    window.scrollBy({ top: -900, behavior: "smooth" });
-                }, 0);
-            }
+            if (!prev) scrollPositionRef.current = window.scrollY;
+            else setTimeout(() => window.scrollTo({ top: scrollPositionRef.current, behavior: "smooth" }), 10);
             return !prev;
         });
     };

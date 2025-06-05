@@ -129,7 +129,7 @@ const SmallOfferDisplay: React.FC<SmallOfferDisplayProps> = ({offer, type, setDe
                         {isMobile && <PriceDiv/>}
                     </div>
                     <div className="flex flex-col w-full min-w-0 mx-1 m:mx-2">
-                        <p className={`text-lg m:text-xl font-bold pb-3 ${isMobile && "truncate"}`}>{offer.title}</p>
+                        <h2 className={`text-lg m:text-xl font-bold pb-3 ${isMobile && "truncate"}`}>{offer.title}</h2>
                         <div className={`flex flex-col ${!isMobile && "justify-between"} h-full`}>
                             <div className="flex flex-wrap text-xs m:text-sm gap-1 m:gap-1.5 text-gray-600">
                                 {offerDetails.map((detail, index) => (
