@@ -9,7 +9,7 @@ const Aside: React.FC = () => {
 
     return (
         <aside className="flex flex-col w-full h-full max-w-[750px] lg:max-w-[900px] p-3 sm:rounded bg-lowLime
-        bg-[url('https://storage.googleapis.com/carsold_app_images_test/config/AsideBackground.jpg')] bg-center bg-cover
+        bg-[url('https://storage.googleapis.com/carsold-app-imgs-test/config/AsideBackground.jpg')] bg-center bg-cover
         border-y sm:border border-gray-300">
             <h2 className="text-center text-2xl m:text-3xl mb-3 mt-2 font-bold">{t("aside8")}</h2>
             <ul className="list-none">

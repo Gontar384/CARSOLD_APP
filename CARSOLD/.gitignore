@@ -1,7 +1,7 @@
 .env
 
 # Ignore Google Cloud service account key files
-carsold-app-*.json
+cloud-storage-key.json
 
 HELP.md
 target/
