@@ -118,7 +118,6 @@ public class JwtServiceUnitTest {
         assertNotNull(cookie);
         assertEquals("AUTH", cookie.getName());
         assertTrue(cookie.isHttpOnly());
-        assertTrue(cookie.isSecure());
         assertEquals("/", cookie.getPath());
         assertEquals("Lax", cookie.getSameSite());
         assertEquals(Duration.ofHours(timeInHours).getSeconds(), cookie.getMaxAge().getSeconds());

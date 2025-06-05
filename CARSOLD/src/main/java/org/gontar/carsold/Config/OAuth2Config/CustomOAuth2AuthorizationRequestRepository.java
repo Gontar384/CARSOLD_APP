@@ -5,6 +5,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.gontar.carsold.Exception.CustomException.CookieServiceException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -17,6 +18,9 @@ import java.util.Optional;
 
 @Component
 public class CustomOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
+
+    @Value("${DEPLOYMENT:false}")
+    private boolean deployment;
 
     private static final String COOKIE_NAME = "OAUTH2_AUTH";
 
@@ -68,7 +72,7 @@ public class CustomOAuth2AuthorizationRequestRepository implements Authorization
         try {
             ResponseCookie cookie = ResponseCookie.from(CustomOAuth2AuthorizationRequestRepository.COOKIE_NAME, value)
                     .httpOnly(true)
-                    .secure(true)
+                    .secure(deployment)
                     .path("/")
                     .sameSite("Lax")
                     .maxAge(Duration.ofMinutes(timeInMinutes))
