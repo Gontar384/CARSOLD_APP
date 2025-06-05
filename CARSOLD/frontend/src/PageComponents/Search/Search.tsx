@@ -6,7 +6,6 @@ import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOf
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
 import {usePagination} from "../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import {useSearchParams} from "react-router-dom";
 
 const Search: React.FC = () => {
@@ -16,9 +15,11 @@ const Search: React.FC = () => {
     const [totalElements, setTotalElements] = useState<number>(0);
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
-    const {isMobile} = useUtil();
-    document.title = `CARSOLD | ${t("tabTitle2")}`;
     const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle2")}`;
+    }, [t]);
 
     useEffect(() => {
         if (searchParams.has("page")) {
@@ -29,38 +30,46 @@ const Search: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center -mt-12 m:-mt-14 -mb-[200px]">
-                <div className={`flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px]
-                h-full min-h-[1500px] pb-44 m:pb-48 border-gray-300 ${isMobile ? "border-b" : "border-b border-x"}`}>
+            <div className="flex flex-col items-center -mt-12 m:-mt-14 -mb-[200px] m:mb-0">
+                <div className="flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px]
+                h-full min-h-[1500px] pb-44 m:pb-48 border-gray-300 border-b xl:border-x xl:rounded-b">
+                    <h1 className="hidden">Search</h1>
                     <SearchFilters setOffers={setOffers} setFetched={setFetched} setCurrentPage={setCurrentPage}
                                    currentPage={currentPage} itemsPerPage={itemsPerPage} setTotalPages={setTotalPages}
                                    setTotalElements={setTotalElements}/>
                     {fetched ?
                         <div className="flex flex-col items-center w-full max-w-[1200px]">
+                            <h2 className="hidden">Offers</h2>
                             {offers.length > 0 ?
                                 <div className="w-[90%] m:w-[95%] max-w-[700px] relative">
                                     <p className="absolute top-[5px] m:top-[7px] right-0 text-sm m:text-base underline">
                                         {t("search1")}{totalElements}
                                     </p>
-                                    {offers.map((offer) => (
-                                        <SmallOfferDisplay type="search" key={offer.id} offer={offer}/>
-                                    ))}
+                                    <ul className="list-none">
+                                        {offers.map((offer) => (
+                                            <li key={offer.id}>
+                                                <SmallOfferDisplay type="search" offer={offer}/>
+                                            </li>
+                                        ))}
+                                    </ul>
                                     {(hasPrevPage || hasNextPage) && (
-                                        <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
+                                        <div
+                                            className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                                             {hasPrevPage && (
                                                 <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
-                                                ${hovered[0] && "ring ring-white"}`}
-                                                        {...bindHoverButtons(0)} onClick={prevPage}>
+                                                ${hovered[0] && "ring ring-white"}`} {...bindHoverButtons(0)}
+                                                        onClick={prevPage}>
                                                     {currentPage}
                                                 </button>
                                             )}
-                                            <button className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default">
+                                            <button
+                                                className="w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-600 text-white rounded-md cursor-default">
                                                 {currentPage + 1}
                                             </button>
                                             {hasNextPage && (
                                                 <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md 
-                                                ${hovered[1] && "ring ring-white"}`}
-                                                        {...bindHoverButtons(1)} onClick={nextPage}>
+                                                ${hovered[1] && "ring ring-white"}`} {...bindHoverButtons(1)}
+                                                        onClick={nextPage}>
                                                     {currentPage + 2}
                                                 </button>
                                             )}

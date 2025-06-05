@@ -287,6 +287,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
 
     return (
         <div className="flex flex-col justify-center items-center w-full max-w-[1200px] pb-7 m:pb-8 pt-10 m:pt-12 gap-3 border-x-2 border-b-2 border-gray-300 bg-white rounded-b-xl relative">
+            <h2 className="hidden">Filters</h2>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 bg-white z-20">
                 <SelectInput label={t("search3")} value={filter.brand} setValue={handleSetFilter("brand")} options={carBrands} shrinked={true}/>
                 <SelectInput label="Model" value={filter.model} setValue={handleSetFilter("model")} options={carModels[filter.brand] ?? []}

@@ -21,6 +21,7 @@ export interface FetchedOffer {
     mileage: number;
     year: number;
 }
+
 export interface UpdatedOffer {
     id: number;
     title: string;
@@ -47,7 +48,10 @@ const MyOffers: React.FC = () => {
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
-    document.title = `CARSOLD | ${t("tabTitle6")}`;
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle6")}`;
+    }, [t]);
 
     useEffect(() => {
         if (sessionStorage.getItem("offerAdded") === "true") {
@@ -67,29 +71,29 @@ const MyOffers: React.FC = () => {
 
     useEffect(() => {
         const manageHandleFetchAllUserOffers = async () => {
-                const offers = await handleFetchAllUserOffers(currentPage, itemsPerPage);
-                if (offers) {
-                    const offersList = offers._embedded?.partialOfferDtoList ?? [];
-                    const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
-                        id: offer.id ?? "",
-                        title: offer.title ?? "",
-                        photoUrl: offer.photoUrl ?? "",
-                        price: String(offer.price ?? ""),
-                        currency: offer.currency ?? "",
-                        power: String(offer.power ?? ""),
-                        capacity: String(offer.capacity ?? ""),
-                        transmission: offer.transmission ?? "",
-                        fuel: offer.fuel ?? "",
-                        mileage: String(offer.mileage ?? ""),
-                        year: String(offer.year ?? ""),
-                    }));
-                    setOffers(formattedOffers);
-                    setTotalPages(offers.page.totalPages);
-                } else {
-                    setOffers([]);
-                    setTotalPages(0);
-                    setCurrentPage(0);
-                }
+            const offers = await handleFetchAllUserOffers(currentPage, itemsPerPage);
+            if (offers) {
+                const offersList = offers._embedded?.partialOfferDtoList ?? [];
+                const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
+                    id: offer.id ?? "",
+                    title: offer.title ?? "",
+                    photoUrl: offer.photoUrl ?? "",
+                    price: String(offer.price ?? ""),
+                    currency: offer.currency ?? "",
+                    power: String(offer.power ?? ""),
+                    capacity: String(offer.capacity ?? ""),
+                    transmission: offer.transmission ?? "",
+                    fuel: offer.fuel ?? "",
+                    mileage: String(offer.mileage ?? ""),
+                    year: String(offer.year ?? ""),
+                }));
+                setOffers(formattedOffers);
+                setTotalPages(offers.page.totalPages);
+            } else {
+                setOffers([]);
+                setTotalPages(0);
+                setCurrentPage(0);
+            }
         };
         manageHandleFetchAllUserOffers();
         setDeleted(false);
@@ -97,18 +101,22 @@ const MyOffers: React.FC = () => {
 
     return (
         <>
+            <h1 className="hidden">My offers</h1>
             {offerFetched ? (
                 offers.length > 0 ? (
                     <div className="w-[90%] m:w-[95%] h-full max-w-[700px] pb-8">
-                        {offers.map((offer) => (
-                            <SmallOfferDisplay type="myOffers" key={offer.id} offer={offer} setDeleted={setDeleted}/>
-                        ))}
+                        <ul className="list-none">
+                            {offers.map((offer) => (
+                                <li key={offer.id}>
+                                    <SmallOfferDisplay type="myOffers" offer={offer} setDeleted={setDeleted}/>
+                                </li>
+                            ))}
+                        </ul>
                         {offers.length > 0 && (hasPrevPage || hasNextPage) && (
                             <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                                 {hasPrevPage && (
                                     <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md
-                                    ${hovered[0] && "ring ring-white"}`}
-                                            {...bindHoverButtons(0)} onClick={prevPage}>
+                                    ${hovered[0] && "ring ring-white"}`} {...bindHoverButtons(0)} onClick={prevPage}>
                                         {currentPage}
                                     </button>
                                 )}
@@ -117,8 +125,7 @@ const MyOffers: React.FC = () => {
                                 </button>
                                 {hasNextPage && (
                                     <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md
-                                    ${hovered[1] && "ring ring-white"}`}
-                                            {...bindHoverButtons(1)} onClick={nextPage}>
+                                    ${hovered[1] && "ring ring-white"}`} {...bindHoverButtons(1)} onClick={nextPage}>
                                         {currentPage + 2}
                                     </button>
                                 )}
@@ -139,15 +146,15 @@ const MyOffers: React.FC = () => {
                 )
             ) : (
                 <>
-                    {Array.from({ length: 3 }).map((_, index) => (
+                    {Array.from({length: 3}).map((_, index) => (
                         <UserOfferLoader key={index} type="myOffers"/>
                     ))}
                 </>
             )}
             {(offerAdded || offerUpdated || offerDeleted) &&
-            <AnimatedBanner text={`${t("animatedBanner2")} ${offerAdded ? t("animatedBanner3") : offerUpdated ? t("animatedBanner4") : t("animatedBanner5")} ${t("animatedBanner6")}`}
-            onAnimationEnd={offerAdded ? () => setOfferAdded(false) : offerUpdated ? () => setOfferUpdated(false) : () => setOfferDeleted(false)}
-            delay={3000} color="bg-gray-200" z="z-10"/>}
+                <AnimatedBanner text={`${t("animatedBanner2")} ${offerAdded ? t("animatedBanner3") : offerUpdated ? t("animatedBanner4") : t("animatedBanner5")} ${t("animatedBanner6")}`}
+                                onAnimationEnd={offerAdded ? () => setOfferAdded(false) : offerUpdated ? () => setOfferUpdated(false) : () => setOfferDeleted(false)}
+                                delay={3000} color="bg-gray-200" z="z-10"/>}
         </>
     )
 }

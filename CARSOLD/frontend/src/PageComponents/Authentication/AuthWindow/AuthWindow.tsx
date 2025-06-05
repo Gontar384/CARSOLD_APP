@@ -4,15 +4,12 @@ import Headers from "./Atomic/Headers/Headers.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import RegisterForm from "./Atomic/Form/RegisterForm.tsx";
 import AuthWindowLoader from "../../../Additional/Loading/AuthWindowLoader.tsx";
-import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
-
 
 const AuthWindow: React.FC = () => {
     const [choice, setChoice] = useState<"login" | "register">("login");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const {section} = useParams();
     const navigate = useNavigate();
-    const {isMobile} = useUtil();
 
     useEffect(() => {
         const validSections: Array<"login" | "register"> = [
@@ -29,8 +26,8 @@ const AuthWindow: React.FC = () => {
     if (isLoading) return <AuthWindowLoader choice={choice}/>
 
     return (
-        <div className={`flex flex-col items-center w-full h-full bg-lime py-6 max-w-[460px] rounded-sm
-        ${isMobile ? "border-y" : "border"} border-gray-300`}>
+        <div className="flex flex-col items-center w-full h-full bg-lime py-6 max-w-[460px] m:rounded
+        border-y m:border border-gray-300">
             <Headers/>
             {choice === "login" ? <LoginForm/> : <RegisterForm/>}
         </div>

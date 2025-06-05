@@ -70,7 +70,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
 
     if (midBarActive) {
         return (
-            <div className={`flex flex-col items-center w-[270px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
+            <nav className={`flex flex-col items-center w-[270px] h-screen fixed top-14 bg-lime shadow ${barAnimation} z-50
             overflow-auto overscroll-contain`}
                 ref={componentRef}>
                 <div className="flex justify-center w-full py-3 border-y border-black border-opacity-5">
@@ -96,7 +96,7 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                             <BarFunctionButton label={t("dropdownButton7")} icon={faArrowRightFromBracket} onClick={handleLogout}/>
                         </>}
                 </div>
-            </div>
+            </nav>
         )
     }
 }

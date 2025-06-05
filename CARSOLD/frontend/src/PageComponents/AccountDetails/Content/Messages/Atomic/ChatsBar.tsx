@@ -4,7 +4,7 @@ import {getAllConversations, makeSeen} from "../../../../../ApiCalls/Services/Me
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleUser} from "@fortawesome/free-solid-svg-icons";
 import ChatsLoader from "../../../../../Additional/Loading/ChatsLoader.tsx";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {useUtil} from "../../../../../GlobalProviders/Util/useUtil.ts";
 import {Sent} from "../Messages.tsx";
 import {NotFoundError} from "../../../../../ApiCalls/Errors/CustomErrors.ts";
@@ -17,7 +17,7 @@ interface ChatsBarProps {
     markSeen: boolean;
 }
 
-const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen }) => {
+const ChatsBar: React.FC<ChatsBarProps> = ({sent, deleted, setDeleted, markSeen}) => {
     interface Conversation {
         username: string;
         profilePic: string;
@@ -26,12 +26,12 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
         sentBy: string;
         seen: boolean;
     }
+
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetched, setFetched] = useState<boolean>(false);
     const {notification} = useMessages();
     const [imageError, setImageError] = useState<boolean>(false);
     const [hovered, setHovered] = useState<number | null>(null);
-    const navigate = useNavigate();
     const {isMobile} = useUtil();
     const [searchParams] = useSearchParams();
     const receiverUsername: string = searchParams.get("username") ?? "";
@@ -53,16 +53,6 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                         seen: conv.seen ?? true,
                     }));
                     setConversations(formattedConversations);
-                    // const extendedConversations = Array(10)
-                    //     .fill(formattedConversations)
-                    //     .flat()
-                    //     .map((conv, idx) => ({
-                    //         ...conv,
-                    //         username: `${conv.username}_${idx}`, // make each username unique to avoid key/index issues
-                    //         timestamp: new Date(Date.now() - idx * 1000000).toISOString() // different timestamps
-                    //     }));
-                    //
-                    // setConversations(extendedConversations);
                 }
             } catch (error) {
                 console.error("Unexpected error when fetching user conversations: ", error);
@@ -140,7 +130,8 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
                     setConversations(prev =>
                         prev.map(conv =>
                             conv.username === receiverUsername
-                                ? {...conv,
+                                ? {
+                                    ...conv,
                                     seen: true,
                                 } : conv
                         )
@@ -164,36 +155,41 @@ const ChatsBar: React.FC<ChatsBarProps> = ({ sent, deleted, setDeleted, markSeen
         <>
             {fetched ? (
                 conversations.length > 0 ? (
-                    conversations.map((conv, index) => (
-                        <div key={index} className={`flex flex-row items-center w-full p-2 gap-2 border rounded-sm
-                        border-gray-300 cursor-pointer ${hovered === index && "scale-[101%] shadow-bottom"}`}
-                             onClick={() => navigate(`/details/messages?username=${conv.username}`)}
-                             onMouseEnter={!isMobile ? () => setHovered(index) : undefined}
-                             onMouseLeave={!isMobile ? () => setHovered(null) : undefined}
-                             onTouchStart={isMobile ? () => setHovered(index) : undefined}
-                             onTouchEnd={isMobile ? () => setHovered(null) : undefined}>
-                            {conv.profilePic !== "" && !imageError ?
-                                <img src={conv.profilePic} alt="Img" onError={() => setImageError(true)}
-                                     className="w-10 h-10 m:w-11 m:h-11 rounded-full object-cover"/>
-                                : <FontAwesomeIcon icon={faCircleUser} className="w-10 h-10 m:w-11 m:h-11"/>}
-                            <div className="flex flex-col w-full truncate">
-                                <div className="flex flex-row justify-between items-center gap-2">
-                                    <span className="font-bold text-sm m:text-base">{conv.username}</span>
-                                    {conv.timestamp &&
-                                        <span className="text-[10px] m:text-xs text-gray-500">
+                    <ul className="w-full list-none">
+                        {conversations.map((conv, index) => (
+                            <li key={index}>
+                                <Link className={`flex flex-row items-center w-full p-2 gap-2 border rounded-sm
+                                border-gray-300 cursor-pointer ${hovered === index && "scale-[101%] shadow-bottom"}`}
+                                      to={`/details/messages?username=${conv.username}`}
+                                      onMouseEnter={!isMobile ? () => setHovered(index) : undefined}
+                                      onMouseLeave={!isMobile ? () => setHovered(null) : undefined}
+                                      onTouchStart={isMobile ? () => setHovered(index) : undefined}
+                                      onTouchEnd={isMobile ? () => setHovered(null) : undefined}>
+                                    {conv.profilePic !== "" && !imageError ?
+                                        <img src={conv.profilePic} alt="Img" onError={() => setImageError(true)}
+                                             className="w-10 h-10 m:w-11 m:h-11 rounded-full object-cover"/>
+                                        : <FontAwesomeIcon icon={faCircleUser} className="w-10 h-10 m:w-11 m:h-11"/>}
+                                    <div className="flex flex-col w-full truncate">
+                                        <div className="flex flex-row justify-between items-center gap-2">
+                                            <span className="font-bold text-sm m:text-base">{conv.username}</span>
+                                            {conv.timestamp &&
+                                                <span className="text-[10px] m:text-xs text-gray-500">
                                             {new Date(conv.timestamp).toLocaleString()}
                                         </span>}
-                                </div>
-                                <div className={`flex flex-row items-center gap-0.5 m:gap-1 text-xs m:text-sm
-                                text-gray-700`}>
-                                    {conv.sentBy && conv.lastMessage ?
-                                        <span className={`${!conv.seen && "font-semibold"} truncate`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
-                                        : <span>{t("chatsBar2")}</span>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    ))
+                                        </div>
+                                        <div
+                                            className={`flex flex-row items-center gap-0.5 m:gap-1 text-xs m:text-sm text-gray-700`}>
+                                            {conv.sentBy && conv.lastMessage ?
+                                                <span
+                                                    className={`${!conv.seen && "font-semibold"} truncate`}>{`${conv.sentBy}: ${conv.lastMessage}`}</span>
+                                                : <span>{t("chatsBar2")}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
                 ) : (
                     <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
                         {t("chatsBar1")}

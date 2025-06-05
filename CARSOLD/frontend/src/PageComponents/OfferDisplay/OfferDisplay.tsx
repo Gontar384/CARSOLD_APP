@@ -17,7 +17,6 @@ import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/Custom
 import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 import SpinningLoader from "../../Additional/Loading/SpinningLoader.tsx";
 
 const OfferDisplay: React.FC = () => {
@@ -106,10 +105,12 @@ const OfferDisplay: React.FC = () => {
     const [reported, setReported] = useState<boolean>(false);
     const [hasReported, setHasReported] = useState<boolean>(false);
     const {t} = useLanguage();
-    const {isMobile} = useUtil();
-    document.title = `CARSOLD | ${t("tabTitle3")}`
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle3")}`
+    }, [t]);
 
     useEffect(() => {
         if (section) {
@@ -235,10 +236,11 @@ const OfferDisplay: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center -mb-32 m:mb-0">
-                <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] gap-3 m:gap-4">
-                    <div className={`flex flex-col w-full items-center lg:w-[70%] ${isMobile ? "border-y" : "border"}
-                    border-gray-300 bg-lowLime rounded relative`}>
+            <div className={`flex flex-col items-center ${offerFetched && "-mb-[200px] m:mb-0"}`}>
+                <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] m:gap-4">
+                    <h1 className="hidden">Offer</h1>
+                    <div className="flex flex-col w-full items-center lg:w-[70%] border-y lg:border
+                    border-gray-300 bg-lowLime lg:rounded relative">
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                         {offerFetched &&
                             <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
@@ -265,7 +267,7 @@ const OfferDisplay: React.FC = () => {
                             </button>
                         }
                     </div>
-                    <div className={`flex flex-col items-center w-full lg:w-[30%] ${offerFetched ? isMobile ? "border-y" : "border" : ""} border-gray-300 bg-lowLime rounded`}>
+                    <div className={`flex flex-col items-center w-full lg:w-[30%] ${offerFetched && "border-y lg:border"} border-gray-300 bg-lowLime lg:rounded`}>
                     {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>

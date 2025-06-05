@@ -11,9 +11,9 @@ const PasswordChange: React.FC<PasswordChangeProps> = ({setIsChanged}) => {
 
     return (
         <div className="mt-36 m:mt-40">
-            <p className="mb-8 m:mb-10 text-xl m:text-2xl text-center">
+            <h2 className="mb-8 m:mb-10 text-xl m:text-2xl text-center">
                 {t("changePassword1")}
-            </p>
+            </h2>
             <PasswordChangeForm setIsChanged={setIsChanged} loggedIn={true}/>
         </div>
     )

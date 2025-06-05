@@ -21,6 +21,7 @@ const Followed: React.FC = () => {
         mileage: number;
         year: number;
     }
+
     interface UpdatedOffer {
         id: number;
         title: string;
@@ -34,15 +35,19 @@ const Followed: React.FC = () => {
         mileage: string;
         year: string;
     }
+
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
     const {handleFetchAllFollowed, offerFetched} = useOfferUtil();
     const [followed, setFollowed] = useState<boolean>(false);
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
-    document.title = `CARSOLD | ${t("tabTitle7")}`;
     const {bindHoverHandlers, buttonColor} = useButton();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle7")}`;
+    }, [t]);
 
     useEffect(() => {
         const manageHandleFetchAllFollowed = async () => {
@@ -76,18 +81,22 @@ const Followed: React.FC = () => {
 
     return (
         <>
+            <h1 className="hidden">Followed offers</h1>
             {offerFetched ? (
                 offers.length > 0 ? (
                     <div className="w-[90%] m:w-[95%] h-full max-w-[700px] pb-8">
-                        {offers.map((offer) => (
-                            <SmallOfferDisplay type="followed" key={offer.id} offer={offer} setFollowed={setFollowed}/>
-                        ))}
+                        <ul className="list-none">
+                            {offers.map((offer) => (
+                                <li key={offer.id}>
+                                    <SmallOfferDisplay type="followed" offer={offer} setFollowed={setFollowed}/>
+                                </li>
+                            ))}
+                        </ul>
                         {offers.length > 0 && (hasPrevPage || hasNextPage) && (
                             <div className="flex justify-center my-8 m:my-10 gap-4 m:gap-5 text-sm m:text-base">
                                 {hasPrevPage && (
                                     <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md
-                                    ${hovered[0] && "ring ring-white"}`}
-                                            {...bindHoverButtons(0)} onClick={prevPage}>
+                                    ${hovered[0] && "ring ring-white"}`} {...bindHoverButtons(0)} onClick={prevPage}>
                                         {currentPage}
                                     </button>
                                 )}
@@ -96,8 +105,7 @@ const Followed: React.FC = () => {
                                 </button>
                                 {hasNextPage && (
                                     <button className={`w-[72px] m:w-20 h-[38px] m:h-10 bg-gray-800 text-white rounded-md
-                                    ${hovered[1] && "ring ring-white"}`}
-                                            {...bindHoverButtons(1)} onClick={nextPage}>
+                                    ${hovered[1] && "ring ring-white"}`} {...bindHoverButtons(1)} onClick={nextPage}>
                                         {currentPage + 2}
                                     </button>
                                 )}
@@ -118,7 +126,7 @@ const Followed: React.FC = () => {
                 )
             ) : (
                 <>
-                    {Array.from({ length: 3 }).map((_, index) => (
+                    {Array.from({length: 3}).map((_, index) => (
                         <UserOfferLoader key={index} type="followed"/>
                     ))}
                 </>

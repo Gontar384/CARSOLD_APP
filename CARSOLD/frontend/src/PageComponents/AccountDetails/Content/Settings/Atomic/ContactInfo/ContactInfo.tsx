@@ -36,7 +36,7 @@ const ContactInfo: React.FC = () => {
 
     return (
         <div className="mt-20 m:mt-24">
-            <p className="text-xl m:text-2xl mb-8 m:mb-10 text-center">{t("contactInfo12")}</p>
+            <h2 className="text-xl m:text-2xl mb-8 m:mb-10 text-center">{t("contactInfo12")}</h2>
             <div className="flex flex-col gap-6 m:gap-7">
                 <InputField label={t("contactInfo1")} value={name} setValue={setName} valueType="name" setFetch={setFetch}
                             isLoading={isLoading} errorInfo={t("contactInfo4")}/>

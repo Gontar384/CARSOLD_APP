@@ -13,7 +13,7 @@ const Socials: React.FC<SocialsProps> = ({ active }) => {
 
     return (
         <div className="mt-14 m:mt-16">
-            <p className="mb-8 m:mb-10 font-bold">{t("socials")}</p>
+            <h2 className="mb-8 m:mb-10 font-bold">{t("socials")}</h2>
             <div className="flex flex-col items-center relative z-10 gap-2 m:gap-3">
                 <SocialLink imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/600px-Octicons-mark-github.svg.png"
                             name="GitHub" link="https://github.com/Gontar384"/>

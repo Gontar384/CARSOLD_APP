@@ -19,13 +19,14 @@ export interface MessageDto {
     receiverUsername: string;
     content: string;
 }
+
 interface ChatWindowProps {
     setSent: React.Dispatch<React.SetStateAction<Sent>>;
     setDeleted: React.Dispatch<React.SetStateAction<string>>;
     setMarkSeen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSeen }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({setSent, setDeleted, setMarkSeen}) => {
     interface UserInfo {
         username: string;
         profilePic: string;
@@ -33,11 +34,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         blockedUser: boolean;
         seenByUser: boolean;
     }
+
     interface Message {
         senderUsername: string;
         content: string;
         timestamp: string;
     }
+
     const [searchParams] = useSearchParams();
     const receiverUsername: string = searchParams.get("username") ?? "";
     const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -101,7 +104,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 }
             } catch (error: unknown) {
                 navigate("/details/messages");
-                setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
+                setUserInfo({
+                    username: "",
+                    profilePic: "",
+                    blockedByUser: false,
+                    blockedUser: false,
+                    seenByUser: false
+                });
                 setMessages([]);
                 setHasMore(false);
                 if (error instanceof BadRequestError) {
@@ -133,7 +142,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
     const handleSendMessage = async () => {
         if (disabled || username === "" || content.trim() === "") return;
         if (receiverUsername === "") {
-            setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+            setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
             setMessages([]);
             return;
         }
@@ -162,12 +171,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         } catch (error: unknown) {
             if (error instanceof NotFoundError) {
                 navigate("/details/messages");
-                setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+                setUserInfo({
+                    username: "",
+                    profilePic: "",
+                    blockedByUser: false,
+                    blockedUser: false,
+                    seenByUser: false
+                });
                 setMessages([]);
                 console.error("Message receiver not found: ", error);
             } else if (error instanceof BadRequestError) {
                 navigate("/details/messages");
-                setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+                setUserInfo({
+                    username: "",
+                    profilePic: "",
+                    blockedByUser: false,
+                    blockedUser: false,
+                    seenByUser: false
+                });
                 setMessages([]);
                 console.error("You cannot send message: ", error);
             } else if (error instanceof PayloadTooLargeError) {
@@ -230,7 +251,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         try {
             await deleteConversation(receiverUsername);
             navigate("/details/messages");
-            setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+            setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
             setMessages([]);
             setDeleted(receiverUsername);
         } catch (error: unknown) {
@@ -256,7 +277,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
             }));
         } catch (error) {
             navigate("/details/messages");
-            setUserInfo({ username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false });
+            setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
             setMessages([]);
             if (error instanceof NotFoundError) {
                 console.error("User or conversation not found: ", error);
@@ -276,7 +297,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
             : `${import.meta.env.VITE_BACKEND_URL}/ws`;
         const socket = new SockJS(socketUrl);
         const stompClient = Stomp.over(socket);
-        stompClient.debug = () => {};
+        stompClient.debug = () => {
+        };
 
         const topic = [username, receiverUsername].sort().join("-");
         stompClient.connect({}, () => {
@@ -289,7 +311,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                 }
             });
             stompClientRef.current = stompClient;
-        }, () => {});
+        }, () => {
+        });
 
         return () => {
             if (stompClientRef.current?.connected) {
@@ -320,46 +343,53 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
         const handleGetOlderMessages = async () => {
             setIsLoadingMore(true);
             setTimeout(async () => {
-            try {
-                const pagedMessages = await getPreviousMessages(receiverUsername, page + 1);
-                if (pagedMessages.data?.messages.length > 0) {
-                    const container = messageContainerRef.current;
-                    const prevScrollHeight = container?.scrollHeight ?? 0;
+                try {
+                    const pagedMessages = await getPreviousMessages(receiverUsername, page + 1);
+                    if (pagedMessages.data?.messages.length > 0) {
+                        const container = messageContainerRef.current;
+                        const prevScrollHeight = container?.scrollHeight ?? 0;
 
-                    const formattedMessages = pagedMessages.data.messages.map((message: Message) => ({
-                        senderUsername: message.senderUsername ?? "",
-                        content: message.content ?? "",
-                        timestamp: message.timestamp ?? "",
-                    }));
+                        const formattedMessages = pagedMessages.data.messages.map((message: Message) => ({
+                            senderUsername: message.senderUsername ?? "",
+                            content: message.content ?? "",
+                            timestamp: message.timestamp ?? "",
+                        }));
 
-                    setMessages(prev => [...formattedMessages, ...prev,]);
-                    setPage(prev => prev + 1);
-                    setHasMore(pagedMessages.data.hasMore);
+                        setMessages(prev => [...formattedMessages, ...prev,]);
+                        setPage(prev => prev + 1);
+                        setHasMore(pagedMessages.data.hasMore);
 
-                    requestAnimationFrame(() => {
-                        if (container) {
-                            const offset = 3;
-                            container.scrollTop = container.scrollHeight - prevScrollHeight + offset;
-                        }});
-                } else {
+                        requestAnimationFrame(() => {
+                            if (container) {
+                                const offset = 3;
+                                container.scrollTop = container.scrollHeight - prevScrollHeight + offset;
+                            }
+                        });
+                    } else {
+                        setHasMore(false);
+                    }
+                } catch (error) {
+                    navigate("/details/messages");
+                    setUserInfo({
+                        username: "",
+                        profilePic: "",
+                        blockedByUser: false,
+                        blockedUser: false,
+                        seenByUser: false
+                    });
+                    setMessages([]);
                     setHasMore(false);
+                    if (error instanceof BadRequestError) {
+                        console.error("Cannot load more messages: ", error);
+                    } else if (error instanceof NotFoundError) {
+                        console.error("User or conversation not found: ", error);
+                    } else {
+                        console.error("Unexpected error when loading more messages: ", error);
+                    }
+                } finally {
+                    setIsLoadingMore(false);
+                    setHasScrolled(false);
                 }
-            } catch (error) {
-                navigate("/details/messages");
-                setUserInfo({username: "", profilePic: "", blockedByUser: false, blockedUser: false, seenByUser: false});
-                setMessages([]);
-                setHasMore(false);
-                if (error instanceof BadRequestError) {
-                    console.error("Cannot load more messages: ", error);
-                } else if (error instanceof NotFoundError) {
-                    console.error("User or conversation not found: ", error);
-                } else {
-                    console.error("Unexpected error when loading more messages: ", error);
-                }
-            } finally {
-                setIsLoadingMore(false);
-                setHasScrolled(false);
-            }
             }, 50);
         };
         if (receiverUsername) handleGetOlderMessages();
@@ -370,61 +400,70 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
             {fetched ?
                 userInfo.username ?
                     <div className="flex flex-col w-full h-full border-2 border-gray-300 rounded-sm">
-                        <div className="flex flex-row items-center w-full py-1 px-3 border-b-2 border-gray-300 rounded-sm shadow-bottom-l">
+                        <div
+                            className="flex flex-row items-center w-full py-1 px-3 border-b-2 border-gray-300 rounded-sm shadow-bottom-l">
                             <div className="flex flex-row items-center w-full gap-4">
                                 {userInfo.profilePic !== "" && !imageError ?
                                     <img src={userInfo.profilePic} alt="Img" onError={() => setImageError(true)}
                                          className="w-11 h-11 m:w-12 m:h-12 rounded-full object-cover border border-gray-500"/>
                                     : <FontAwesomeIcon icon={faCircleUser} className="w-11 h-11 m:w-12 m:h-12"/>}
-                                <span className="text-[22px] m:text-2xl font-semibold text-gray-500">{userInfo.username}</span>
+                                <span
+                                    className="text-[22px] m:text-2xl font-semibold text-gray-500">{userInfo.username}</span>
                             </div>
                             <div className="relative" ref={componentRef}>
-                                <button className={`pt-1 px-1 ${!isMobile && "hover:scale-[110%]"}`} onClick={() => setInteractionButton(prev => !prev)}>
-                                    <FontAwesomeIcon className="text-2xl m:text-[26px] text-gray-500" icon={faCircleInfo}/>
+                                <button className={`pt-1 px-1 ${!isMobile && "hover:scale-[110%]"}`}
+                                        onClick={() => setInteractionButton(prev => !prev)}>
+                                    <FontAwesomeIcon className="text-2xl m:text-[26px] text-gray-500"
+                                                     icon={faCircleInfo}/>
                                 </button>
                                 {interactionButton &&
                                     <div className="flex flex-col justify-center items-center w-[90px] h-[53px] m:h-[57px] text-xs m:text-sm
                                     divide-y text-white absolute -bottom-[11px] m:-bottom-[12px] -left-[104px]">
-                                        <button className={`w-full h-1/2 bg-coolRed ${!isMobile && "hover:text-lowBlack"}`}
-                                                onClick={() => setDeleteDecision(true)}>
+                                        <button
+                                            className={`w-full h-1/2 bg-coolRed ${!isMobile && "hover:text-lowBlack"}`}
+                                            onClick={() => setDeleteDecision(true)}>
                                             {t("chatWindow1")}
                                         </button>
-                                        <button className={`w-full h-1/2 ${userInfo.blockedByUser ? "bg-green-400" : "bg-coolRed"}
+                                        <button
+                                            className={`w-full h-1/2 ${userInfo.blockedByUser ? "bg-green-400" : "bg-coolRed"}
                                         ${!isMobile && "hover:text-lowBlack"}`}
-                                                onClick={() => setBlockUnblockDecision(true)}>
+                                            onClick={() => setBlockUnblockDecision(true)}>
                                             {userInfo.blockedByUser ? t("chatWindow3") : t("chatWindow2")}
                                         </button>
                                     </div>}
                             </div>
                         </div>
-                        <div className="flex flex-col w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
-                             ref={messageContainerRef} onScroll={handleScroll}>
+                        <div
+                            className="flex flex-col w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
+                            ref={messageContainerRef} onScroll={handleScroll}>
                             {isLoadingMore &&
                                 <div className="flex justify-center items-center w-full sticky top-0 z-10 text-xs m:text-sm">
                                     <span className="border border-gray-500 rounded px-1 bg-white shadow">{t("chatWindow4")}</span>
                                 </div>}
-                            {messages.map((message, index) => {
-                                const isOwn = message.senderUsername === username;
-                                const isLast = index === messages.length - 1;
-                                const isSeen = isLast && isOwn && userInfo.seenByUser;
-                                const isSent = isLast && isOwn && !userInfo.seenByUser;
-                                return (
-                                    <div key={index} className={`flex flex-row w-full p-1 m:p-1.5 relative
-                                    ${isOwn ? "justify-end" : "justify-start"}`}>
-                                        <div className={`text-base m:text-lg p-1.5 m:p-2 rounded-lg max-w-[49%] break-words
-                                        ${isOwn ? "bg-gray-400" : "bg-gray-300"}`} title={new Date(message.timestamp).toLocaleString()}>
-                                            {message.content}
-                                            {(isSent || isSeen) &&
-                                                <div className="flex flex-row justify-center items-center text-xs m:text-sm
-                                                absolute -bottom-3.5 right-2 gap-0.5">
-                                                    <FontAwesomeIcon icon={isSent ? faArrowUp : faCheck}/>
-                                                    <span>{isSent ? t("chatWindow5") : t("chatWindow6")}</span>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                )
-                            })}
+                            <ul className="list-none">
+                                {messages.map((message, index) => {
+                                    const isOwn = message.senderUsername === username;
+                                    const isLast = index === messages.length - 1;
+                                    const isSeen = isLast && isOwn && userInfo.seenByUser;
+                                    const isSent = isLast && isOwn && !userInfo.seenByUser;
+                                    return (
+                                        <li key={index} className={`flex flex-row w-full p-1 m:p-1.5 relative
+                                        ${isOwn ? "justify-end" : "justify-start"}`}>
+                                            <div className={`text-base m:text-lg p-1.5 m:p-2 rounded-lg max-w-[49%] break-words
+                                            ${isOwn ? "bg-gray-400" : "bg-gray-300"}`} title={new Date(message.timestamp).toLocaleString()}>
+                                                {message.content}
+                                                {(isSent || isSeen) &&
+                                                    <div className="flex flex-row justify-center items-center text-xs m:text-sm
+                                                    absolute -bottom-3.5 right-2 gap-0.5">
+                                                        <FontAwesomeIcon icon={isSent ? faArrowUp : faCheck}/>
+                                                        <span>{isSent ? t("chatWindow5") : t("chatWindow6")}</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </li>
+                                    )
+                                })}
+                            </ul>
                             {messages.length === 0 && (
                                 <div className="flex justify-center items-center h-full text-base m:text-lg text-gray-500">
                                     {t("chatWindow7")}
@@ -432,15 +471,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                             )}
                         </div>
                         <div className="flex flex-row items-center w-full h-11 m:h-12 text-lg m:text-xl border-t-2 border-gray-300 shadow-top-l relative">
-                            <input className="w-[75%] h-full outline-none px-2" placeholder={t("chatWindow8")} onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
-                                   value={content} onChange={(e) => setContent(e.target.value)} disabled={userInfo.blockedByUser || userInfo.blockedUser}
+                            <input className="w-[75%] h-full outline-none px-2" placeholder={t("chatWindow8")}
+                                   onFocus={() => setMarkSeen(true)} onBlur={() => setMarkSeen(false)}
+                                   value={content} onChange={(e) => setContent(e.target.value)}
+                                   disabled={userInfo.blockedByUser || userInfo.blockedUser}
                                    onKeyDown={e => e.key === "Enter" && handleSendMessage()}/>
                             {(userInfo.blockedByUser || userInfo.blockedUser) &&
                                 <div className="flex justify-center items-center truncate absolute top-0 left-0 w-[75%] h-full bg-coolRed text-white text-center"
-                                     onMouseDown={!isMobile ? () => setMarkSeen(true) : undefined}
-                                     onMouseUp={!isMobile ? () => setMarkSeen(false) : undefined}
-                                     onTouchStart={isMobile ? () => setMarkSeen(true) : undefined}
-                                     onTouchEnd={isMobile ? () => setMarkSeen(false) : undefined}>
+                                    onMouseDown={!isMobile ? () => setMarkSeen(true) : undefined}
+                                    onMouseUp={!isMobile ? () => setMarkSeen(false) : undefined}
+                                    onTouchStart={isMobile ? () => setMarkSeen(true) : undefined}
+                                    onTouchEnd={isMobile ? () => setMarkSeen(false) : undefined}>
                                     {userInfo.blockedByUser ? t("chatWindow9") : `${t("chatWindow10")} ${userInfo.username}`}
                                 </div>}
                             <button className={`w-[25%] h-full border-l-2 border-gray-300
@@ -474,7 +515,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ setSent, setDeleted, setMarkSee
                                             {t("chatWindow19")}
                                         </button>
                                     </div>
-                                    <FontAwesomeIcon icon={deleteDecision ? faComments : faUser} className="absolute inset-0 m-auto text-xl m:text-2xl"/>
+                                    <FontAwesomeIcon icon={deleteDecision ? faComments : faUser}
+                                                     className="absolute inset-0 m-auto text-xl m:text-2xl"/>
                                 </div>
                             </div>}
                     </div>

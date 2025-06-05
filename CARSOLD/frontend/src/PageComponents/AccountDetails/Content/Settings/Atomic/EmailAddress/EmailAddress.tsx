@@ -22,10 +22,10 @@ const EmailAddress: React.FC = () => {
 
     return (
         <div className="text-xl m:text-2xl w-[300px] m:w-[395px] mt-20 m:mt-24">
-            <p className="flex flex-row items-center justify-center w-full gap-1 m:gap-1.5">
+            <h2 className="flex flex-row items-center justify-center w-full gap-1 m:gap-1.5">
                 <FontAwesomeIcon icon={faEnvelope} />
                 {t("emailAddress")}
-            </p>
+            </h2>
             <p className="font-semibold mt-0.5 m:mt-1 break-all text-center w-full">{email}</p>
         </div>
     )

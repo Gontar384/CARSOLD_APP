@@ -15,7 +15,10 @@ const Settings: React.FC = () => {
     const [isChanged, setIsChanged] = useState<boolean>(false);
     const [wentWrong, setWentWrong] = useState<boolean>(false);
     const {t} = useLanguage();
-    document.title = `CARSOLD | ${t("tabTitle9")}`;
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle9")}`;
+    }, [t]);
 
     useEffect(() => {
         const checkGoogleAuthentication = async () => {
@@ -30,6 +33,7 @@ const Settings: React.FC = () => {
 
     return (
         <div className="w-full h-full">
+            <h1 className="hidden">Settings</h1>
             <div className={`flex flex-col items-center`}>
                 <EmailAddress/>
                 <ContactInfo/>

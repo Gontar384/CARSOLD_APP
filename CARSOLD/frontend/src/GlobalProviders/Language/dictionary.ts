@@ -392,6 +392,7 @@ export const dictionary = {
         tabTitle11: "Dodawanie oferty",
         tabTitle12: "Edytowanie oferty",
         tabTitle13: "Regulamin",
+        tabTitle14: "Aktywacja konta",
         emailAddress: "Adres e-mail:",
         reportReasons: {
             "Inappropriate content":"Nieodpowiednia treść",
@@ -723,7 +724,7 @@ export const dictionary = {
         aside5: "Test new features.",
         aside6: "Unlock Dark Mode - available only for authenticated users!",
         aside7: "Register and check how simple it is!",
-        aside8: "Why use?",
+        aside8: "Why is it worth it?",
         authHeader1: "Login",
         authHeader2: "Register",
         authHeader3: "Authenticate using Google",
@@ -910,7 +911,7 @@ export const dictionary = {
         tabTitle1: "Home",
         tabTitle2: "Search",
         tabTitle3: "Offer",
-        tabTitle4: "Authenticate",
+        tabTitle4: "Authentication",
         tabTitle5: "Password recovery",
         tabTitle6: "My offers",
         tabTitle7: "Followed",
@@ -920,6 +921,7 @@ export const dictionary = {
         tabTitle11: "Adding offer",
         tabTitle12: "Modifying offer",
         tabTitle13: "Terms of use",
+        tabTitle14: "Account activation",
         emailAddress: "E-mail address:",
         reportReasons: {
             "Nieodpowiednia treść":"Inappropriate content",

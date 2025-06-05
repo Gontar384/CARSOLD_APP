@@ -6,7 +6,6 @@ import {BadRequestError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 
 const AccountActivation: React.FC = () => {
-    document.title = "CARSOLD | Account Activation";
     const [count, setCount] = useState<number>(3);
     const [activationMessage, setActivationMessage] = useState<string | null>(null);
     const [color, setColor] = useState<"bg-lime" | "bg-coolYellow" | null>(null);
@@ -14,6 +13,10 @@ const AccountActivation: React.FC = () => {
     const navigate = useNavigate();
     const {handleCheckAuth} = useAuth();
     const {t} = useLanguage();
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle14")}`;
+    }, [t]);
 
     const handleErrorResult = (message: string) => {
         setActivationMessage(message);

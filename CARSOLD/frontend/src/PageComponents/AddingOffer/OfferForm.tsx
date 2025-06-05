@@ -31,7 +31,6 @@ import {carConditions, carConditionsPl} from "../Search/SearchFilters/Additional
 import {carSteeringWheel, carSteeringWheelPl} from "./Atomic/SelectInput/SelectData/carSteeringWheel.ts";
 import * as nsfwjs from 'nsfwjs';
 import OfferFormLoader from "../../Additional/Loading/OfferFormLoader.tsx";
-import {useUtil} from "../../GlobalProviders/Util/useUtil.ts";
 
 const OfferForm: React.FC = () => {
     const {t, language, translate, translateForBackend} = useLanguage();
@@ -173,11 +172,13 @@ const OfferForm: React.FC = () => {
     const [waitBanner, setWaitBanner] = useState<boolean>(false);
     const [wentWrongBanner, setWentWrongBanner] = useState<boolean>(false);
     const [tooManyBanner, setTooManyBanner] = useState<boolean>(false);
-    document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
-    const {isMobile} = useUtil();
     const nsfwModelRef = useRef<nsfwjs.NSFWJS | null>(null);
     const [modelLoading, setModelLoading] = useState<boolean>(true);
     const [tooLarge, setTooLarge] = useState<boolean>(false);
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
+    }, [t, permission, id]);
 
     useEffect(() => {
         const loadModel = async () => {
@@ -1103,17 +1104,15 @@ const OfferForm: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center">
-                <div className={`flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
-                 bg-lowLime ${isMobile ? "border-y" : "border"} border-gray-300 rounded-sm`}>
-                    <p className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
+            <div className="flex flex-col items-center -mb-[100px] m:mb-0">
+                <div className="flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
+                bg-lowLime border-y md:border border-gray-300 md:rounded">
+                    <h1 className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
                         {id !== null && permission === true ? t("offerForm1") : t("offerForm2")}
-                    </p>
-                    <div className="flex justify-center w-[80%] bg-white rounded-md border-2 border-gray-300">
-                        <p className="w-full text-lg m:text-xl p-4 m:p-6 text-center">
-                            {t("offerForm3")}
-                        </p>
-                    </div>
+                    </h1>
+                    <h2 className="flex justify-center w-[80%] bg-white rounded-md border-2 border-gray-300 text-lg m:text-xl p-4 m:p-6 text-center">
+                        {t("offerForm3")}
+                    </h2>
                     <div className="flex flex-col items-center w-full max-w-[800px] m:pl-3 mt-20 m:mb-24">
                         <div className="flex justify-center m:block w-full mb-14 m:mb-16">
                             <BasicInput label={t("offerForm26")} type="text" value={offer.title} setValue={handleSetOffer("title")} required={true}

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import ChatsBar from "./Atomic/ChatsBar.tsx";
 import ChatWindow from "./Atomic/ChatWindow.tsx";
@@ -22,11 +22,14 @@ const Messages: React.FC = () => {
     const [deleted, setDeleted] = useState<string>("");
     const [markSeen, setMarkSeen] = useState<boolean>(false);
     const {t} = useLanguage();
-    document.title = `CARSOLD | ${t("tabTitle8")}`;
+
+    useEffect(() => {
+        document.title = `CARSOLD | ${t("tabTitle8")}`;
+    }, [t]);
 
     return (
-        <div className={`flex flex-1 justify-center w-full h-full
-        ${bigWidth ? "flex-row mt-12" : "flex-col gap-[50px]"}`}>
+        <div className={`flex flex-1 justify-center w-full h-full ${bigWidth ? "flex-row mt-12" : "flex-col gap-[50px]"}`}>
+            <h1 className="hidden">Messages</h1>
             <div className={`${bigWidth ? "w-1/3 max-w-[470px] h-[630px]" : "w-full h-[520px] m:h-[600px] mb-[75px] order-2"}
             flex flex-col items-center`}>
                 <div className={`flex flex-col items-center h-full overflow-auto p-1 bg-white 
