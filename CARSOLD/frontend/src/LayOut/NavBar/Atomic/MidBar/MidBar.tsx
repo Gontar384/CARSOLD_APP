@@ -85,8 +85,8 @@ const MidBar: React.FC<MidBarProps> = ({excludedButtonRef, setIconAnimation}) =>
                     )}
                 </div>
                 <div className="flex flex-col items-start w-full pb-14">
-                    <BarButton label={t("dropdownButton1")} icon={faMoneyCheckDollar} path={"/details/myOffers"}/>
-                    <BarButton label={t("dropdownButton2")} icon={faHeart} path={"/details/followed"}/>
+                    <BarButton label={t("dropdownButton1")} icon={faMoneyCheckDollar} path={"/details/myOffers?page=0"}/>
+                    <BarButton label={t("dropdownButton2")} icon={faHeart} path={"/details/followed?page=0"}/>
                     <BarButton label={t("dropdownButton3")} icon={faMessage} path={"/details/messages"} count={unseenMessagesCount}/>
                     <BarButton label={t("dropdownButton4")} icon={faScrewdriverWrench} path={"/details/settings"} />
                     <BarButton label={t("dropdownButton8")} icon={faFileCirclePlus} path={"/addingOffer"}/>

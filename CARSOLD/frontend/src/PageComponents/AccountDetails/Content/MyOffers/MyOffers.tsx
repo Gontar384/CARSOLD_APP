@@ -48,6 +48,7 @@ const MyOffers: React.FC = () => {
     const itemsPerPage = 3;
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
+    const [fetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = `CARSOLD | ${t("tabTitle6")}`;
@@ -69,35 +70,43 @@ const MyOffers: React.FC = () => {
         setDeleted(false);
     }, [deleted]); //detects if offer was added, modified or deleted and displays banner
 
+    const manageHandleFetchAllUserOffers = async () => {
+        const offers = await handleFetchAllUserOffers(currentPage, itemsPerPage);
+        if (offers) {
+            const offersList = offers._embedded?.partialOfferDtoList ?? [];
+            const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
+                id: offer.id ?? "",
+                title: offer.title ?? "",
+                photoUrl: offer.photoUrl ?? "",
+                price: String(offer.price ?? ""),
+                currency: offer.currency ?? "",
+                power: String(offer.power ?? ""),
+                capacity: String(offer.capacity ?? ""),
+                transmission: offer.transmission ?? "",
+                fuel: offer.fuel ?? "",
+                mileage: String(offer.mileage ?? ""),
+                year: String(offer.year ?? ""),
+            }));
+            setOffers(formattedOffers);
+            setTotalPages(offers.page.totalPages);
+        } else {
+            setOffers([]);
+            setTotalPages(0);
+            setCurrentPage(0);
+        }
+    };
+
     useEffect(() => {
-        const manageHandleFetchAllUserOffers = async () => {
-            const offers = await handleFetchAllUserOffers(currentPage, itemsPerPage);
-            if (offers) {
-                const offersList = offers._embedded?.partialOfferDtoList ?? [];
-                const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
-                    id: offer.id ?? "",
-                    title: offer.title ?? "",
-                    photoUrl: offer.photoUrl ?? "",
-                    price: String(offer.price ?? ""),
-                    currency: offer.currency ?? "",
-                    power: String(offer.power ?? ""),
-                    capacity: String(offer.capacity ?? ""),
-                    transmission: offer.transmission ?? "",
-                    fuel: offer.fuel ?? "",
-                    mileage: String(offer.mileage ?? ""),
-                    year: String(offer.year ?? ""),
-                }));
-                setOffers(formattedOffers);
-                setTotalPages(offers.page.totalPages);
-            } else {
-                setOffers([]);
-                setTotalPages(0);
-                setCurrentPage(0);
-            }
-        };
-        manageHandleFetchAllUserOffers();
-        setDeleted(false);
-    }, [deleted, currentPage]); //fetch offers
+        setFetchTrigger(true);
+    }, [deleted, currentPage]); //triggers fetch
+
+    useEffect(() => {
+        if (fetchTrigger){
+            manageHandleFetchAllUserOffers();
+            setFetchTrigger(false);
+        }
+        if (deleted) setDeleted(false);
+    }, [fetchTrigger]); //fetches offers
 
     return (
         <>

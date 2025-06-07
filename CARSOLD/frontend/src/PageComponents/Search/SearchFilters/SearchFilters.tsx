@@ -93,8 +93,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const {phrase, setPhrase, trigger, setClicked} = useSearch();
     const {t, language, translate, translateForBackend} = useLanguage();
     const [loading, setLoading] = useState<boolean>(false);
+    const [searched, setSearched] = useState<boolean>(false);
 
     useEffect(() => {
+        if (!searched) return;
         const params = new URLSearchParams();
         if (filter.phrase) params.set("phrase", filter.phrase.trim());
         if (filter.brand) params.set("brand", filter.brand);
@@ -123,7 +125,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
         if (params.toString() !== searchParams.toString()) {
             setSearchParams(params, { replace: true });
         }
-    }, [filter, currentPage, searchParams]); //sets filter
+        setSearched(false);
+    }, [searched]); //sets filter in URL
 
     useEffect(() => {
         setFilter(prev => ({
@@ -139,11 +142,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     }, [language]); //updates filter when language changes
 
     const handleSetFilter = (key: keyof Filter) => (setValue: React.SetStateAction<string> | React.SetStateAction<string[]>) => {
-            setFilter(prev => ({
-                ...prev,
-                [key]: setValue
-            }));
-        };
+        setFilter(prev => ({
+            ...prev,
+            [key]: setValue
+        }));
+    };
 
     useEffect(() => {
         setFilter(prev => ({...prev, phrase: phrase}));
@@ -258,6 +261,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
             setTotalPages(0);
             setTotalElements(0);
         } finally {
+            setSearched(true);
             setFetched(true);
             setDisabled(false);
             setTimeout(() => setLoading(false), 200);
@@ -271,7 +275,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     useEffect(() => {
         setCurrentPage(0);
         setSearchTrigger(true);
-    }, [trigger, filter.sortBy]); //searches by using phrase or by sorting
+    }, [trigger]); //searches by using phrase
 
     const handleManageSearch = () => {
         setCurrentPage(0);
@@ -330,7 +334,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
                 <SearchFiltersButton label={t("search24")} onClick={handleMoreFilters} color="white"/>
                 <SearchFiltersButton label={t("search25")} onClick={handleManageSearch} color="lowLime"/>
             </div>
-            <SelectInput label={t("search26")} value={filter.sortBy} setValue={handleSetFilter("sortBy")} shrinked={true} options={language === "ENG" ? sortBy : sortByPl}/>
+            <SelectInput label={t("search26")} value={filter.sortBy} setValue={handleSetFilter("sortBy")} shrinked={true} options={language === "ENG" ? sortBy : sortByPl} typingBlocked={true}/>
             {loading && <RegisterAndSearchLoading usage="search"/>}
         </div>
     )

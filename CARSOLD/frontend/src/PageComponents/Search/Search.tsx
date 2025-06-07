@@ -6,7 +6,6 @@ import SmallOfferDisplay from "../AccountDetails/Content/MyOffers/Atomic/SmallOf
 import SearchOfferLoader from "../../Additional/Loading/SearchOfferLoader.tsx";
 import {usePagination} from "../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
-import {useSearchParams} from "react-router-dom";
 
 const Search: React.FC = () => {
     const [offers, setOffers] = useState<UpdatedOffer[]>([]);
@@ -15,18 +14,10 @@ const Search: React.FC = () => {
     const [totalElements, setTotalElements] = useState<number>(0);
     const {currentPage, setCurrentPage, setTotalPages, hasPrevPage, hasNextPage, prevPage, nextPage, hovered, bindHoverButtons} = usePagination();
     const {t} = useLanguage();
-    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         document.title = `CARSOLD | ${t("tabTitle2")}`;
     }, [t]);
-
-    useEffect(() => {
-        if (searchParams.has("page")) {
-            const page = Number(searchParams.get("page"));
-            if (!isNaN(page)) setCurrentPage(page);
-        }
-    }, []); //sets currentPage from URL on initial load (e.g. after refresh or back navigation)
 
     return (
         <LayOut>
@@ -80,7 +71,7 @@ const Search: React.FC = () => {
                             }
                         </div> :
                         <>
-                        {Array.from({length: 3}).map((_, index) => (
+                        {Array.from({length: 10}).map((_, index) => (
                                 <SearchOfferLoader key={index}/>
                             ))}
                         </>}

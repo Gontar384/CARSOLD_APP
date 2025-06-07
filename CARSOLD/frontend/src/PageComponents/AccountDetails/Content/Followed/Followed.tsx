@@ -44,40 +44,49 @@ const Followed: React.FC = () => {
     const {t} = useLanguage();
     const {bindHoverHandlers, buttonColor} = useButton();
     const navigate = useNavigate();
+    const [fetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = `CARSOLD | ${t("tabTitle7")}`;
     }, [t]);
 
+    const manageHandleFetchAllFollowed = async () => {
+        const offers = await handleFetchAllFollowed(currentPage, itemsPerPage);
+        if (offers) {
+            const offersList = offers._embedded?.partialOfferDtoList ?? [];
+            const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
+                id: offer.id ?? "",
+                title: offer.title ?? "",
+                photoUrl: offer.photoUrl ?? "",
+                price: String(offer.price ?? ""),
+                currency: offer.currency ?? "",
+                power: String(offer.power ?? ""),
+                capacity: String(offer.capacity ?? ""),
+                transmission: offer.transmission ?? "",
+                fuel: offer.fuel ?? "",
+                mileage: String(offer.mileage ?? ""),
+                year: String(offer.year ?? ""),
+            }));
+            setOffers(formattedOffers);
+            setTotalPages(offers.page.totalPages);
+        } else {
+            setOffers([]);
+            setTotalPages(0);
+            setCurrentPage(0);
+        }
+    };
+
     useEffect(() => {
-        const manageHandleFetchAllFollowed = async () => {
-            const offers = await handleFetchAllFollowed(currentPage, itemsPerPage);
-            if (offers) {
-                const offersList = offers._embedded?.partialOfferDtoList ?? [];
-                const formattedOffers: UpdatedOffer[] = offersList.map((offer: FetchedOffer) => ({
-                    id: offer.id ?? "",
-                    title: offer.title ?? "",
-                    photoUrl: offer.photoUrl ?? "",
-                    price: String(offer.price ?? ""),
-                    currency: offer.currency ?? "",
-                    power: String(offer.power ?? ""),
-                    capacity: String(offer.capacity ?? ""),
-                    transmission: offer.transmission ?? "",
-                    fuel: offer.fuel ?? "",
-                    mileage: String(offer.mileage ?? ""),
-                    year: String(offer.year ?? ""),
-                }));
-                setOffers(formattedOffers);
-                setTotalPages(offers.page.totalPages);
-            } else {
-                setOffers([]);
-                setTotalPages(0);
-                setCurrentPage(0);
-            }
-        };
-        manageHandleFetchAllFollowed();
-        setFollowed(false);
-    }, [followed, currentPage]); //fetch offers
+        setFetchTrigger(true);
+    }, [followed, currentPage]); //triggers fetch
+
+    useEffect(() => {
+        if (fetchTrigger) {
+            manageHandleFetchAllFollowed();
+            setFetchTrigger(false);
+        }
+        if (followed) setFollowed(false);
+    }, [fetchTrigger]); //fetches offers
 
     return (
         <>

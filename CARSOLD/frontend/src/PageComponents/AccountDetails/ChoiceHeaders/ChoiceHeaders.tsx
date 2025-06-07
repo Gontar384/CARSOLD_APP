@@ -38,7 +38,11 @@ const ChoiceHeaders: React.FC = () => {
     }, [section, navigate]);  //sets index to choice
 
     const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info" | "admin") => {
-        navigate(`/details/${destination}`);
+        if (destination === "myOffers" || "followed" || "admin"){
+            navigate(`/details/${destination}?page=0`)
+        } else {
+            navigate(`/details/${destination}`);
+        }
     }
 
     const LargeScreenLayout = () => (

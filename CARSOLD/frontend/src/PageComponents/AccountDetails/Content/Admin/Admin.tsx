@@ -8,6 +8,7 @@ import {usePagination} from "../../../../CustomHooks/usePagination.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
+import ReportLoader from "../../../../Additional/Loading/ReportLoader.tsx";
 
 interface Report {
     id: number | null;
@@ -31,6 +32,7 @@ const Admin: React.FC = () => {
     const [checkOfferButton, setCheckOfferButton] = useState<number | null>(null);
     const [deleteReportButton, setDeleteReportButton] = useState<number | null>(null);
     const {isMobile} = useUtil();
+    const [fetchTrigger, setFetchTrigger] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = "CARSOLD | Admin";
@@ -45,24 +47,32 @@ const Admin: React.FC = () => {
         manageCheckAdmin();
     }, []); //initial check for admin
 
-    useEffect(() => {
-        const manageFetchReports = async () => {
-            setFetched(false);
-            try {
-                const reports = await adminFetchReports(currentPage, itemsPerPage);
-                setReports(reports.data._embedded?.reportDtoList ?? []);
-                setTotalPages(reports.data.page.totalPages);
-            } catch (error) {
-                console.error("Unexpected error while fetching reports: ", error);
-                setReports([]);
-                setTotalPages(0);
-                setCurrentPage(0);
-            } finally {
-                setFetched(true);
-            }
+    const manageFetchReports = async () => {
+        setFetched(false);
+        try {
+            const reports = await adminFetchReports(currentPage, itemsPerPage);
+            setReports(reports.data._embedded?.reportDtoList ?? []);
+            setTotalPages(reports.data.page.totalPages);
+        } catch (error) {
+            console.error("Unexpected error while fetching reports: ", error);
+            setReports([]);
+            setTotalPages(0);
+            setCurrentPage(0);
+        } finally {
+            setFetched(true);
         }
-        if (admin) manageFetchReports();
-    }, [admin, deleted, currentPage]); //fetches reports
+    }
+
+    useEffect(() => {
+        setFetchTrigger(true);
+    }, [admin, deleted, currentPage]); //triggers fetch
+
+    useEffect(() => {
+        if (fetchTrigger) {
+            if (admin) manageFetchReports()
+            setFetchTrigger(false);
+        }
+    }, [fetchTrigger]); //fetches reports
 
     const handleDeleteReport = async (id: number | null) => {
         try {
@@ -84,7 +94,7 @@ const Admin: React.FC = () => {
         }
     }, []); //detects if offer or user was deleted by admin
 
-    if (!fetched) return null;
+    if (!fetched) return Array.from({length: 6}).map((_, index) => (<ReportLoader key={index}/>))
 
     return (
         <div className="w-[90%] m:w-[95%] h-full max-w-[700px] mt-10 m:mt-12">
@@ -96,8 +106,7 @@ const Admin: React.FC = () => {
                             <div className="flex flex-row items-center justify-between gap-1.5 m:gap-2 p-3 m:p-4 bg-white rounded-md">
                                 <p className="text-base m:text-lg truncate">{translate("reportReasons", report.reason ?? "")}</p>
                                 <div className="flex flex-row gap-1.5 m:gap-2">
-                                    <Link
-                                        className={`flex flex-row items-center gap-0.5 m:gap-1 ${checkOfferButton === report.id && "underline"}`}
+                                    <Link className={`flex flex-row items-center gap-0.5 m:gap-1 ${checkOfferButton === report.id && "underline"}`}
                                         onMouseEnter={!isMobile ? () => setCheckOfferButton(report.id) : undefined}
                                         onMouseLeave={!isMobile ? () => setCheckOfferButton(null) : undefined}
                                         onTouchStart={isMobile ? () => setCheckOfferButton(report.id) : undefined}

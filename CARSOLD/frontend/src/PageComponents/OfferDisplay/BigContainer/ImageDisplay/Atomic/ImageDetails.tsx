@@ -304,7 +304,6 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                          onDoubleClick={!isMobile ? handleDoubleClick : undefined}
                          onKeyDown={e => {
                              if (!fullScreen) return;
-                             e.preventDefault();
                              if (e.key === "ArrowLeft" && photoIndex > 0) changePhoto(-1);
                              else if (e.key === "ArrowRight" && photoIndex < photos.length - 1) changePhoto(1);
                          }} tabIndex={0} ref={imageRef}>
