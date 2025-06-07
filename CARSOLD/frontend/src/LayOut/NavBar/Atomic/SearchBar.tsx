@@ -48,7 +48,7 @@ const SearchBar: React.FC = () => {
         if (phrase !== "") {
             navigate(`/search?phrase=${phrase}&page=0&size=10`);
             setSearched(true);
-            setTrigger(prev => !prev);
+            setTrigger(true);
             if (isMobile) {
                 navigator.vibrate?.(50);
                 (document.activeElement as HTMLElement)?.blur();
@@ -65,7 +65,7 @@ const SearchBar: React.FC = () => {
                 setSearchParams(newParams);
             }
             setSearched(false);
-            setTrigger(prev => !prev);
+            setTrigger(true);
         }
         if (newParams.has("phrase") || phrase !== "") setClicked(true);
     }, [phrase]);

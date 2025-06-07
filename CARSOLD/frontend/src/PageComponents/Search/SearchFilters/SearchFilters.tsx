@@ -90,7 +90,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     const [disabled, setDisabled] = useState<boolean>(false);
     const {isMobile} = useUtil();
     const [searchTrigger, setSearchTrigger] = useState<boolean>(false);
-    const {phrase, setPhrase, trigger, setClicked} = useSearch();
+    const {phrase, setPhrase, trigger, setTrigger, setClicked} = useSearch();
     const {t, language, translate, translateForBackend} = useLanguage();
     const [loading, setLoading] = useState<boolean>(false);
     const [searched, setSearched] = useState<boolean>(false);
@@ -273,7 +273,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setOffers, setFetched, it
     }, [currentPage]); //searches after changing page
 
     useEffect(() => {
+        if (!trigger) return;
         setCurrentPage(0);
+        setTrigger(false);
         setSearchTrigger(true);
     }, [trigger]); //searches by using phrase
 

@@ -19,7 +19,6 @@ export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({childre
 
     useEffect(() => {
         setPhrase(searchParams.get("phrase") || "");
-        setSearched(true);
     }, []);
 
     return <SearchContext.Provider value={{phrase, setPhrase, trigger, setTrigger, clicked, setClicked, searched, setSearched}}>
