@@ -32,6 +32,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const dragStartPosition = useRef({x: 0, y: 0, offsetX: 0, offsetY: 0});
+    const [style, setStyle] = useState({});
 
     const changePhoto = (dir: number) => {
         if (disabled) return;
@@ -286,12 +287,67 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
         setPosition({ x: 0, y: 0 });
     }, [fullScreen, photoIndex]); //resets scale when changing photo or fullScreen
 
+    useEffect(() => {
+        const updateSize = () => {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const aspectRatio = 15 / 10;
+
+            const isPortrait = windowHeight > windowWidth;
+
+            if (isMobile && !isPortrait) {
+                setStyle({
+                    width: '100vw',
+                    height: '100vh',
+                    maxWidth: '100vw',
+                    maxHeight: '100vh',
+                });
+            } else if (isMobile && isPortrait) {
+                const width = windowWidth;
+                const height = width / aspectRatio;
+                setStyle({
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    maxWidth: '100vw',
+                    maxHeight: '100vh',
+                });
+            } else {
+                const maxWidthLimit = 1400;
+                const maxHeightLimit = 870;
+
+                let maxWidth = Math.min(windowWidth * 0.9, maxWidthLimit);
+                let maxHeight = Math.min(windowHeight * 0.9, maxHeightLimit);
+
+                if (maxWidth / aspectRatio > maxHeight) {
+                    maxWidth = maxHeight * aspectRatio;
+                } else {
+                    maxHeight = maxWidth / aspectRatio;
+                }
+
+                setStyle({
+                    maxWidth: `${maxWidth}px`,
+                    maxHeight: `${maxHeight}px`,
+                    width: '100%',
+                    height: 'auto',
+                });
+            }
+        };
+
+        if (fullScreen) {
+            updateSize();
+            window.addEventListener('resize', updateSize);
+            return () => window.removeEventListener('resize', updateSize);
+        } else {
+            setStyle({});
+        }
+    }, [fullScreen, isMobile]); //resizes image on fullScreen
+
     return (
             offerFetched ? (
                 photos.length > 0 && !error &&
-                    <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none bg-gray-100
-                    ${fullScreen && `max-w-[1300px] sm:h-full sm:max-h-[500px] md:max-h-[600px] lg:max-h-[800px]
-                    fixed inset-0 m-auto z-50`}`} style={{ userSelect: 'none' }}
+                    <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none bg-gray-200
+                    ${fullScreen && `fixed inset-0 m-auto z-50 ${!isMobile && "ring-2 ring-gray-600 rounded"}`}`}
+                         style={{userSelect: 'none', ...(fullScreen ? style : {})}}
                          onMouseEnter={!isMobile ? () => setPhotoHovered(true) : undefined}
                          onMouseLeave={!isMobile ? handleMouseLeave : undefined}
                          onMouseDown={!isMobile ? handleMouseDown : undefined}
@@ -318,12 +374,12 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                         <div className="flex items-center justify-center absolute inset-0">
                             {photoIndex > 0 &&
                                 <button className="absolute left-1"
-                                        onClick={photoIndex > 0 ? () => changePhoto(-1) : undefined}>
+                                        onClick={photoIndex > 0 ? () => changePhoto(-1) : undefined} onDoubleClick={e => e.stopPropagation()}>
                                     <FontAwesomeIcon icon={faPlay} className={`${isMobile ? "text-3xl pl-5 py-5" : "text-5xl p-2"} text-gray-300 opacity-90`} style={{transform: "rotate(180deg)"}}/>
                                 </button>}
                             {photoIndex < photos.length - 1 &&
                                 <button className="absolute right-1"
-                                        onClick={photoIndex < photos.length - 1 ? () => changePhoto(1) : undefined}>
+                                        onClick={photoIndex < photos.length - 1 ? () => changePhoto(1) : undefined} onDoubleClick={e => e.stopPropagation()}>
                                     <FontAwesomeIcon icon={faPlay} className={`${isMobile ? "text-3xl pl-5 py-5" : "text-5xl p-2"} text-gray-300 opacity-90`}/>
                                 </button>}
                             {photos.length > 1 &&

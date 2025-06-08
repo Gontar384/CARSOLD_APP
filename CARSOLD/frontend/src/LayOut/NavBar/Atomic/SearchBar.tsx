@@ -58,17 +58,16 @@ const SearchBar: React.FC = () => {
 
     useEffect(() => {
         searchRef.current = phrase;
-        const newParams = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(searchParams.toString());
         if (phrase === "" && searched) {
             if (searchParams.has("phrase")) {
-                newParams.delete("phrase");
-                setSearchParams(newParams);
+                params.delete("phrase");
+                setSearchParams(params);
             }
             setSearched(false);
             setTrigger(true);
         }
-        if (newParams.has("phrase") || phrase !== "") setClicked(true);
-    }, [phrase]);
+    }, [phrase]); //triggers search (reset search), when it was already searched by searchBar (phrase) and then phrase is deleted by user
 
     useEffect(() => {
         const hasPhrase = searchParams.has("phrase") || phrase !== "";
@@ -79,7 +78,7 @@ const SearchBar: React.FC = () => {
         } else {
             setLoading(false);
         }
-    }, []); //loading
+    }, []); //puts loading on searchBar on initial
 
     return (
         <div className="flex flex-row items-center justify-center gap-1 m:gap-1.5">

@@ -15,11 +15,15 @@ export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({childre
             setPhrase("");
             setTimeout(() => setClicked(false), 0);
         }
-    }, [location]);
+    }, [location]); //sets phrase === "" when navigating to different location
 
     useEffect(() => {
-        setPhrase(searchParams.get("phrase") || "");
-    }, []);
+        if (searchParams.has("phrase")) {
+            setPhrase(searchParams.get("phrase") || "");
+            setClicked(true);
+            setSearched(true);
+        }
+    }, []); //sets phrase from URL on initial
 
     return <SearchContext.Provider value={{phrase, setPhrase, trigger, setTrigger, clicked, setClicked, searched, setSearched}}>
         {children}
