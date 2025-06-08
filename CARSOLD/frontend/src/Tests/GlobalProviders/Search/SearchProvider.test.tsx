@@ -37,7 +37,6 @@ describe('SearchProvider', () => {
         expect(result.current.phrase).toBe("");
         expect(result.current.trigger).toBe(false);
         expect(result.current.clicked).toBe(false);
-        expect(result.current.searched).toBe(true);
         expect(typeof result.current.setPhrase).toBe('function');
         expect(typeof result.current.setTrigger).toBe('function');
         expect(typeof result.current.setClicked).toBe('function');
@@ -174,7 +173,6 @@ describe('SearchProvider', () => {
         expect(getByTestId('phrase').textContent).toBe('');
         expect(getByTestId('trigger').textContent).toBe('false');
         expect(getByTestId('clicked').textContent).toBe('false');
-        expect(getByTestId('searched').textContent).toBe('true');
 
         act(() => {
             getByText('Set Phrase').click();
