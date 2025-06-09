@@ -36,6 +36,8 @@ jest.mock('../../GlobalProviders/Messages/useMessages.ts', () => ({
     }),
 }));
 
+jest.mock('../../LayOut/Footer/Footer.tsx', () => () => <div data-testid="mock-footer" />);
+
 beforeEach(() => {
     localStorage.setItem("app_language", "ENG");
     jest.clearAllMocks();

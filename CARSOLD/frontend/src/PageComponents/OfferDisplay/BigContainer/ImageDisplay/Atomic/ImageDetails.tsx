@@ -315,8 +315,8 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
                 const maxWidthLimit = 1400;
                 const maxHeightLimit = 870;
 
-                let maxWidth = Math.min(windowWidth * 0.9, maxWidthLimit);
-                let maxHeight = Math.min(windowHeight * 0.9, maxHeightLimit);
+                let maxWidth = Math.min(windowWidth * 0.95, maxWidthLimit);
+                let maxHeight = Math.min(windowHeight * 0.95, maxHeightLimit);
 
                 if (maxWidth / aspectRatio > maxHeight) {
                     maxWidth = maxHeight * aspectRatio;

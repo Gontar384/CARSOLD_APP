@@ -15,7 +15,7 @@ const Info: React.FC = () => {
         <div className="flex flex-col items-center w-[95%] h-full text-center text-xl m:text-2xl rounded-sm">
             <h1 className="hidden">Info</h1>
             <Version v={1.0}/>
-            <Contact email="carsold.contact@gmail.com"/>
+            <Contact email={import.meta.env.VITE_CONTACT_EMAIL}/>
             <Socials active={true}/>
         </div>
     )

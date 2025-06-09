@@ -30,7 +30,7 @@ const Content: React.FC = () => {
     if (isLoading) return <ContentLoader/>
 
     return (
-        <div className="flex flex-col items-center w-full xl:rounded max-w-[1500px] min-h-[710px] m:min-h-[870px]
+        <div className="flex flex-col items-center w-full xl:rounded max-w-[1400px] min-h-[710px] m:min-h-[870px]
         bg-lowLime border-gray-300 border-y xl:border">
             {choice === "myOffers" ? <MyOffers/>
             : choice === "followed" ? <Followed/>

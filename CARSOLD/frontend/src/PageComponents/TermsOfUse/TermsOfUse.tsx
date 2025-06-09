@@ -37,7 +37,7 @@ const TermsOfUse: React.FC = () => {
                     <Section title={t("termsOfUse32")}
                              content={[t("termsOfUse33"), t("termsOfUse34")]}/>
                     <Section title={t("termsOfUse35")}
-                             content={[t("termsOfUse36"), "carsold.contact@gmail.com", t("termsOfUse38"),]}/>
+                             content={[t("termsOfUse36"), import.meta.env.VITE_CONTACT_EMAIL, t("termsOfUse38"),]}/>
                 </div>
             </div>
         </LayOut>
