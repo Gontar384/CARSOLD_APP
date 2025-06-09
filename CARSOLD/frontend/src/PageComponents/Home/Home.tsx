@@ -83,7 +83,7 @@ const Home: React.FC = () => {
         <LayOut>
             <div className={`flex ${bigWidth ? "flex-row" : "flex-col items-center"} w-full h-full -mb-[200px] m:-mb-[100px] overflow-hidden relative`}>
                 <div className={`flex flex-col bg-gradient-to-t from-lime to-darkLime border-y border-gray-300 animate-appearFastRev
-                ${bigWidth ? "w-[50%] min-h-[700px] justify-center z-10" : "w-full items-center min-h-[500px] text-center"}`}>
+                ${bigWidth ? "w-[50%] min-h-[670px] justify-center z-10" : "w-full items-center min-h-[500px] text-center"}`}>
                     <h1 className={`text-2xl m:text-3xl ${bigWidth ? `ml-20 ${initial && "animate-appearSlowRev"}` : "mt-24"}`}>
                         {t("home1")}
                     </h1>
@@ -114,22 +114,22 @@ const Home: React.FC = () => {
                     </h3>
                 </div>
                 <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime border-y border-gray-300 animate-appearFast
-                ${bigWidth ? "w-[60%] absolute right-0 min-h-[700px] z-20" : "w-full min-h-[600px] m:min-h-[860px] mt-5"}`}>
+                ${bigWidth ? "w-[60%] absolute right-0 min-h-[670px] z-20" : "w-full min-h-[600px] m:min-h-[860px] mt-5"}`}>
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"} -mt-8 m:-mt-10`}>
-                            <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
+                            <div className={`${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
                                 {fetched ? (offers[0] ? <SmallOfferDisplay type="search" offer={offers[0]}/> : null) : (
                                     <HomeOfferLoading/>)}
                             </div>
                         </div>
                         <div className={`flex justify-center ${bigWidth && `mr-5 ${initial && "animate-appearSlow"}`}`}>
-                            <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
+                            <div className={`${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
                                 {fetched ? (offers[1] ? <SmallOfferDisplay type="search" offer={offers[1]}/> : null) : (
                                     <HomeOfferLoading/>)}
                             </div>
                         </div>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"}`}>
-                            <div className={` ${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
+                            <div className={`${bigWidth ? "max-w-[580px]" : "max-w-[670px]"} w-full`}>
                                 {fetched ? (offers[2] ? <SmallOfferDisplay type="search" offer={offers[2]}/> : null) : (
                                     <HomeOfferLoading/>)}
                             </div>
