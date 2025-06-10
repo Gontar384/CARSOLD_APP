@@ -12,7 +12,7 @@ const TermsOfUse: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center -mb-[200px] m:-mb-[100px]">
+            <div className="flex flex-col items-center">
                 <div className={`flex flex-col w-full max-w-[1300px] p-5 m:p-7 bg-lowLime 
                 border-y xl:border-2 border-gray-300 xl:rounded`}>
                     <h1 className="text-2xl m:text-3xl text-center font-bold">

@@ -236,7 +236,7 @@ const OfferDisplay: React.FC = () => {
 
     return (
         <LayOut>
-            <div className={`flex flex-col items-center ${offerFetched && "-mb-[200px] m:mb-0"}`}>
+            <div className={`flex flex-col items-center ${!offerFetched && "mb-[200px]"}`}>
                 <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] m:gap-4">
                     <h1 className="hidden">Offer</h1>
                     <div className="flex flex-col w-full items-center lg:w-[70%] border-y lg:border

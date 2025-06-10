@@ -193,7 +193,7 @@ export const dictionary = {
         aside3: "Wystawienie samochodu na sprzedaż jest proste i szybkie.",
         aside4: "Pisz i poznawaj nowych ludzi.",
         aside5: "Testuj nowe funkcje.",
-        aside6: "Odblokuj tryb ciemny – dostępny tylko dla zalogowanych użytkowników!",
+        aside6: "Odblokuj tryb ciemny - dostępny tylko dla zalogowanych użytkowników!",
         aside7: "Zarejestruj się i sprawdź, jakie to proste!",
         aside8: "Dlaczego warto?",
         authHeader1: "Zaloguj się",

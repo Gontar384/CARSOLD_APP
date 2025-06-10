@@ -81,9 +81,9 @@ const PasswordRecovery: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center mb-[200px] m:mb-[100px]">
                 <h1 className="hidden">Password recovery</h1>
-                <div className="flex flex-col items-center w-full max-w-[750px] mt-32 py-10 m:py-11 bg-lime
+                <div className="flex flex-col items-center w-full max-w-[750px] mt-44 m:mt-32 py-10 m:py-11 bg-lime
                 border-y sm:border border-gray-300 sm:rounded">
                     <p className="w-11/12 text-center text-lg m:text-xl mb-8 m:mb-9">
                         {t("passwordRecovery1")}

@@ -1104,7 +1104,7 @@ const OfferForm: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center -mb-[100px] m:mb-0">
+            <div className="flex flex-col items-center">
                 <div className="flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
                 bg-lowLime border-y md:border border-gray-300 md:rounded">
                     <h1 className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">

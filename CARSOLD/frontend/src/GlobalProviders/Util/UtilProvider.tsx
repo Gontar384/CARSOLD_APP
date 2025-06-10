@@ -21,11 +21,11 @@ export const UtilProvider: React.FC<{ children: React.ReactNode }> = ({children}
         setDarkMode((prev) => {
             const newMode = !prev;
             if (newMode) {
-                document.body.style.transition = 'background-color 0.7s ease-in-out';
+                document.body.style.transition = 'background-color 0.5s ease-in-out';
                 document.body.style.backgroundColor = '#191a18';
                 localStorage.setItem('theme', 'dark');
             } else {
-                document.body.style.transition = 'background-color 0.7s ease-in-out';
+                document.body.style.transition = 'background-color 0.5s ease-in-out';
                 document.body.style.backgroundColor = 'white';
                 localStorage.setItem('theme', 'light');
             }

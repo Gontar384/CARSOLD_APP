@@ -6,7 +6,6 @@ import React from "react";
 import {AuthProvider} from "./GlobalProviders/Auth/AuthProvider.tsx";
 import {UtilProvider} from "./GlobalProviders/Util/UtilProvider.tsx";
 import {SearchProvider} from "./GlobalProviders/Search/SearchProvider.tsx";
-import AuthenticationPage from "./PageComponents/Authentication/Authentication.tsx";
 import AccountActivation from "./PageComponents/AccountActivation/AccountActivation.tsx";
 import TermsOfUse from "./PageComponents/TermsOfUse/TermsOfUse.tsx";
 import PasswordRecovery from "./PageComponents/PasswordRecovery/PasswordRecovery.tsx";
@@ -21,6 +20,7 @@ import Home from "./PageComponents/Home/Home.tsx";
 import {MessagesProvider} from "./GlobalProviders/Messages/MessagesProvider.tsx";
 import {UserUtilProvider} from "./GlobalProviders/UserUtil/UserUtilProvider.tsx";
 import {LanguageProvider} from "./GlobalProviders/Language/LanguageProvider.tsx";
+import Authentication from "./PageComponents/Authentication/Authentication.tsx";
 
 const App: React.FC = () => {
 
@@ -34,7 +34,7 @@ const App: React.FC = () => {
                                 <MessagesProvider> {/*sending messages util*/}
                                     <Routes>
                                         <Route element={<PublicRoutes/>}>
-                                            <Route path="/authenticate/:section?" element={<AuthenticationPage/>}/>
+                                            <Route path="/authenticate/:section?" element={<Authentication/>}/>
                                             <Route path="/activate" element={<AccountActivation/>}/>
                                             <Route path="/password-recovery" element={<PasswordRecovery/>}/>
                                             <Route path="/very3secret8password4change" element={<PasswordRecChange/>}/>

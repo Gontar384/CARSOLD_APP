@@ -1,8 +1,8 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass, faTableList} from "@fortawesome/free-solid-svg-icons";
+import {faFilter, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useRef, useState} from "react";
 import {useUtil} from "../../../GlobalProviders/Util/useUtil.ts";
-import {Link, useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {useSearch} from "../../../GlobalProviders/Search/useSearch.ts";
 import {useButton} from "../../../CustomHooks/useButton.ts";
 import {useLanguage} from "../../../GlobalProviders/Language/useLanguage.ts";
@@ -18,6 +18,7 @@ const SearchBar: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [loading, setLoading] = useState<boolean>(true);
     const {t} = useLanguage();
+    const location = useLocation();
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -80,12 +81,20 @@ const SearchBar: React.FC = () => {
         }
     }, []); //puts loading on searchBar on initial
 
+    const handleClickIcon = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        const currentPath = location.pathname;
+        const searchParams = new URLSearchParams(location.search);
+        const hasPage = searchParams.has("page");
+        const hasSize = searchParams.has("size");
+
+        if (currentPath === "/search" && hasPage && hasSize) e.preventDefault();
+    };
+
     return (
-        <div className="flex flex-row items-center justify-center gap-1 m:gap-1.5">
+        <div className="flex flex-row items-center justify-center gap-1">
             <div className="w-full m:max-w-[310px] relative" ref={componentRef}>
                 {!clicked && phrase === "" &&
-                    <FontAwesomeIcon className={`absolute top-[5px] left-[6px] m:left-2 text-xl m:text-2xl z-30 ${magnifierAnimation}`}
-                        icon={faMagnifyingGlass}/>}
+                    <FontAwesomeIcon className={`absolute top-[5px] left-[6px] m:left-2 text-xl m:text-2xl z-30 ${magnifierAnimation}`} icon={faMagnifyingGlass}/>}
                 <input className={`w-full h-7 m:h-8 text-xl m:text-2xl p-[6px] m:p-2 border border-black relative z-10 outline-none
                 ${clicked ? "bg-white rounded-sm border-opacity-0 ring-1 ring-blue-500/30 shadow-blue-500/50" : "bg-lime rounded-full"}`}
                        onClick={handleClick} value={phrase} onChange={e => setPhrase(e.target.value)}
@@ -98,8 +107,8 @@ const SearchBar: React.FC = () => {
                 {loading && <div className="w-full h-full absolute inset-0 m-auto bg-lime rounded-sm z-40"></div>}
             </div>
             {bigWidth &&
-                <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")}>
-                    <FontAwesomeIcon icon={faTableList} className="text-xl m:text-2xl p-1"/>
+                <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")} onClick={handleClickIcon}>
+                    <FontAwesomeIcon icon={faFilter} className="text-xl m:text-2xl p-1"/>
                 </Link>}
         </div>
     )

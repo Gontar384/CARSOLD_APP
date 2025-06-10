@@ -165,6 +165,11 @@ export default {
                     '50%': {transform: "scaleX(0.5)", transformOrigin: "top"},
                     '100%': {transform: "scaleX(1)", transformOrigin: "top"}
                 },
+                underlineRev: {
+                    '0%': {transform: "scaleX(1)", transformOrigin: "top"},
+                    '50%': {transform: "scaleX(0.5)", transformOrigin: "top"},
+                    '100%': {transform: "scaleX(0)", transformOrigin: "top"}
+                },
                 slideDownShow: {
                     '0%': {transform: "translateY(-100%)"},
                     '100%': {transform: "translateY(0)"},
@@ -202,6 +207,11 @@ export default {
                     '50%': {transform: "scaleY(2)", opacity: "1"},
                     '100%': {transform: "scaleY(1)", opacity: "0.7"},
                 },
+                pulseText: {
+                    '0%': { color: '#000000' },
+                    '50%': { color: '#3f4a4a' },
+                    '100%': { color: '#000000' },
+                },
             },
             animation: {
                 spinBounce: 'spinBounce 1s linear infinite',
@@ -236,6 +246,7 @@ export default {
                 unrollRev: 'unrollRev 0.2s linear forwards',
                 spin: 'spin 0.2s ease-in-out forwards',
                 underline: 'underline 0.2s linear forwards',
+                underlineRev: 'underlineRev 0.2s linear forwards',
                 slideDownShow: 'slideDownShow 0.2s ease-in-out forwards',
                 slideUpShow: 'slideUpShow 0.2s ease-in-out forwards',
                 appearSlow: 'appearSlow 1s ease-in-out forwards',
@@ -244,7 +255,8 @@ export default {
                 appearFastRev: 'appearFastRev 0.5s ease-in-out forwards',
                 slideUpAppear: 'slideUpAppear 0.3s ease-in-out forwards',
                 slideDownDisappear: 'slideDownDisappear 0.3s ease-in-out forwards',
-                pulseBar: 'pulseBar 1.2s ease-in-out infinite'
+                pulseBar: 'pulseBar 1.2s ease-in-out infinite',
+                pulseText: 'pulseText 5s ease-in-out infinite'
             },
         },
     },
