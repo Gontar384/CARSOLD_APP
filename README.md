@@ -56,17 +56,17 @@ CAR$OLD uses various ways to manage and protect data, following professional sta
 
 ### Security
 - Since it's SPA, session is completely stateless;
-- It uses JWT, being transferred in httpOnly cookie. Token renews every 5 minutes and is checked by filter on every request;
-- It has properly configured CORS;
-- It hashes passwords;
+- Uses JWT, being transferred in httpOnly cookie. Token renews every 5 minutes and is checked by filter on every request;
+- Has properly configured CORS;
+- Passwords are hashed;
 - OAuth2: has success and failure handlers, also custom request repository, which creates Google's token for
   authorization process in httpOnly cookie, to keep app entirely stateless;
 - When token expires, user will be informed and logged out;
 
 ### Request-Response flow
-- It uses professionally written structures;
-- It follows the best error/exception logging, by having error handlers for frontend and backend;
-- It has antispam mechanisms;
+- Follows REST standards;
+- Uses the best error/exception logging practices, by having error handlers for frontend and backend;
+- Includes anti-spam mechanisms and is optimized for performance and efficiency;
 
 ### Tests
 Tests for frontend (Jest) and backend (Mockito/SringBootTest) are included.
@@ -224,9 +224,9 @@ CAR$OLD korzysta z profesjonalnych standardów w zakresie ochrony danych:
 - Po wygaśnięciu tokena użytkownik zostaje automatycznie wylogowany;
 
 ### Przepływ request-response
-- Profesjonalnia napisana struktura przepływu;
-- Obsługa błędów i wyjątków zarówno po stronie backendu i frontendu;
-- Mechanizmy antyspamowe;
+- Wykorzystuje standardy REST;
+- Stosuje najlepsze praktyki logowania błędów i wyjątków, dzięki obsłudze błędów po stronie frontendu i backendu;
+- Zawiera mechanizmy antyspamowe i ogólnie optymalizuje cały proces.
 
 ### Testy
 Projekt zawiera testy dla frontendu (Jest) oraz backendu (Mockito/SpringBootTest).
