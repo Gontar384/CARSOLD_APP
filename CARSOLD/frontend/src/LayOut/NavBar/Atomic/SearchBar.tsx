@@ -19,6 +19,7 @@ const SearchBar: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const {t} = useLanguage();
     const location = useLocation();
+    const [filterButtonColor, setFilterButtonColor] = useState<boolean>(false);
 
     const handleClick = () => {
         setMagnifierAnimation("animate-disappear");
@@ -90,6 +91,18 @@ const SearchBar: React.FC = () => {
         if (currentPath === "/search" && hasPage && hasSize) e.preventDefault();
     };
 
+    const bindHoverButtonHandlers = () => ({
+        ...(isMobile
+            ? {
+                onTouchStart: () => setFilterButtonColor(true),
+                onTouchEnd: () => setFilterButtonColor(false),
+            }
+            : {
+                onMouseEnter: () => setFilterButtonColor(true),
+                onMouseLeave: () => setFilterButtonColor(false),
+            }),
+    });
+
     return (
         <div className="flex flex-row items-center justify-center gap-1">
             <div className="w-full m:max-w-[310px] relative" ref={componentRef}>
@@ -107,8 +120,8 @@ const SearchBar: React.FC = () => {
                 {loading && <div className="w-full h-full absolute inset-0 m-auto bg-lime rounded-sm z-40"></div>}
             </div>
             {bigWidth &&
-                <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")} onClick={handleClickIcon}>
-                    <FontAwesomeIcon icon={faFilter} className="text-xl m:text-2xl p-1"/>
+                <Link className="flex" to={"/search?page=0&size=10"} title={t("searchBar2")} onClick={handleClickIcon} {...bindHoverButtonHandlers()}>
+                    <FontAwesomeIcon icon={faFilter} className={`text-xl m:text-2xl p-1 ${filterButtonColor ? "text-white" : "text-black"}`}/>
                 </Link>}
         </div>
     )

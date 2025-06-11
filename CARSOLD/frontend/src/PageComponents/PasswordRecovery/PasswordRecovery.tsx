@@ -81,7 +81,7 @@ const PasswordRecovery: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center mb-[200px] m:mb-[100px]">
+            <div className="flex flex-col items-center">
                 <h1 className="hidden">Password recovery</h1>
                 <div className="flex flex-col items-center w-full max-w-[750px] mt-44 m:mt-32 py-10 m:py-11 bg-lime
                 border-y sm:border border-gray-300 sm:rounded">
@@ -93,7 +93,7 @@ const PasswordRecovery: React.FC = () => {
                     <SubmitButton label={t("passwordRecovery2")} disabled={isDisabled} onClick={handleSendPasswordRecoveryEmail}/>
                 </div>
             </div>
-            {isEmailSent && <AnimatedBanner text={t("passwordRecovery3")} onAnimationEnd={() => setIsEmailSent(false)}
+            {isEmailSent && <AnimatedBanner text={t("animatedBanner22")} onAnimationEnd={() => setIsEmailSent(false)}
                                             delay={4000} color={"bg-lowLime"} z={"z-50"}/>}
         </LayOut>
     )

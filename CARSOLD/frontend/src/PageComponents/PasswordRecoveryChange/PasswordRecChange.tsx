@@ -15,7 +15,7 @@ const PasswordRecChange: React.FC = () => {
 
     return (
         <LayOut>
-            <div className="flex flex-col items-center mb-[200px] m:mb-[100px]">
+            <div className="flex flex-col items-center">
                 <h1 className="hidden">Password recovery - change form</h1>
                 <div className="flex flex-col items-center w-full m:w-[95%] max-w-[850px] mt-36 m:mt-28 py-10 m:py-11 bg-lime
                 border-y sm:border border-gray-300 sm:rounded">
