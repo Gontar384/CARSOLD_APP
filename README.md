@@ -44,7 +44,7 @@ and UI/UX features. It's available in two languages: polish and english.
 - toggling dark mode;
 
 ### Data management and protection
-CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
+- CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
 - All data are always checked initially in frontend and backend, including external APIs checks like:
   Perspective Comment Analyser, Cloud Natural Language, Cloud Vision, Places;
 - Reporting mechanism: user is always able to report inappropriate offer, so then admin can verify and delete it
@@ -55,13 +55,14 @@ CAR$OLD uses various ways to manage and protect data, following professional sta
 - Data flow is fully optimized;
 
 ### Security
-- Since it's SPA, session is completely stateless;
-- Uses JWT, being transferred in httpOnly cookie. Token renews every 5 minutes and is checked by filter on every request;
-- Has properly configured CORS;
-- Passwords are hashed;
-- OAuth2: has success and failure handlers, also custom request repository, which creates Google's token for
-  authorization process in httpOnly cookie, to keep app entirely stateless;
-- When token expires, user will be informed and logged out;
+- Since it's SPA (Single Page Application), it's completely stateless: no server-side sessions and no CSRF token is used;
+- JWT is stored in HttpOnly cookie to prevent XSS. Token is renewed every 5 minutes and user will be informed
+  and logged out when it expires;
+- CORS is properly configured, mitigating CSRF risks;
+- OAuth2 login is implemented with custom success and failure handlers, and a custom authorization request
+  repository, which creates Google token, essential for Google authorization. It let application stay totally
+  stateless even then. After OAuth2 authentication, JWT is still issued and stored in HttpOnly cookie;
+- Passwords are securely hashed;
 
 ### Request-Response flow
 - Follows REST standards;
@@ -204,7 +205,7 @@ użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikac
 - Tryb ciemny (dark mode);
 
 ### Zarządzanie i ochrona danych
-CAR$OLD korzysta z profesjonalnych standardów w zakresie ochrony danych:
+- CAR$OLD korzysta z profesjonalnych standardów w zakresie ochrony danych:
 - Dane są walidowane zarówno po stronie frontendu, jak i backendu, z użyciem zewnętrznych API jak:
   Perspective Comment Analyser, Cloud Natural Language, Cloud Vision, Places;
 - Mechanizm zgłaszania ofert: każdy użytkownik może zgłosić ofertę, a administrator ma możliwość jej weryfikacji i ewentualnego
@@ -215,18 +216,20 @@ CAR$OLD korzysta z profesjonalnych standardów w zakresie ochrony danych:
 - Przepływ danych jest zoptymalizowany;
 
 ### Bezpieczeństwo
-- Aplikacja działa jako SPA, więc backend i autoryzacja nie bazuje na sesji;
-- JWT jest przesyłany w httpOnly cookie, odświeżany co 5 minut i weryfikowany przy każdym żądaniu;
-- Poprawnie skonfigurowany CORS;
-- Hasła są szyfrowane;
-- OAuth2 z własnymi handlerami oraz customowym request repository, token Google jest przesyłany jako httpOnly cookie
-  podczas autentykacji, by zachować bezstanowość aplikacji;
-- Po wygaśnięciu tokena użytkownik zostaje automatycznie wylogowany;
+- Aplikacja jest typu SPA (Single Page Application), dlatego działa całkowicie bezstanowo i nie wykorzystuje sesji
+  po stronie serwera ani tokenów CSRF;
+- JWT jest przechowywany w ciasteczku HttpOnly, co zapobiega atakom XSS. Token odnawia się co 5 minut, a po jego
+  wygaśnięciu użytkownik zostaje poinformowany i wylogowany;
+- CORS jest poprawnie skonfigurowany, co minimalizuje ryzyko ataków CSRF;
+- OAuth2 z własnymi handlerami oraz customowym request repository, dzięki któremu token potrzebny do autoryzacji Google
+  jest tworzony i przesyłany jako HttpOnly cookie, przez co zachowujemy bezstanowość. Po pomyślnej autoryzacji OAuth2,
+  token JWT również jest wydawany i zapisywany w ciasteczku HttpOnly;
+- Hasła są bezpiecznie haszowane;
 
 ### Przepływ request-response
 - Wykorzystuje standardy REST;
 - Stosuje najlepsze praktyki logowania błędów i wyjątków, dzięki obsłudze błędów po stronie frontendu i backendu;
-- Zawiera mechanizmy antyspamowe i ogólnie optymalizuje cały proces.
+- Zawiera mechanizmy antyspamowe i ogólnie optymalizuje cały proces;
 
 ### Testy
 Projekt zawiera testy dla frontendu (Jest) oraz backendu (Mockito/SpringBootTest).
