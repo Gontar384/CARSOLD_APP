@@ -16,7 +16,7 @@ const Home: React.FC = () => {
     const [hovered, setHovered] = useState<boolean[]>(Array(3).fill(false));
     const [initial, setInitial] = useState<boolean>(true);
     const {bigWidth, isMobile} = useUtil();
-    const {t} = useLanguage();
+    const {t, language} = useLanguage();
 
     useEffect(() => {
         document.title = `CARSOLD | ${t("tabTitle1")}`
@@ -95,21 +95,21 @@ const Home: React.FC = () => {
                         <Link className={`flex flex-row items-center w-fit gap-2 text-xl m:text-2xl relative`} to={"/authenticate/login"} {...bindHoverHandlers(0)}>
                             <p className="animate-pulseText">{t("home3")}</p>
                             <FontAwesomeIcon icon={faDoorOpen} className={`text-2xl m:text-3xl ${hovered[0] && "scale-110"}`}/>
-                            <div className={`w-[77%] h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[0] ? "animate-underlineRev" : "animate-underline"}`}/>
+                            <div className={`${language === "ENG" ? "w-[76%]" : "w-[79%]"} h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[0] ? "animate-underlineRev" : "animate-underline"}`}/>
                         </Link>
                     </h3>
                     <h3 className={`mt-10 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
                         <Link className={`flex flex-row items-center w-fit gap-2 text-xl m:text-2xl relative`} to={"/search?page=0&size=10"} {...bindHoverHandlers(1)}>
                             <p className="animate-pulseText">{t("home4")}</p>
                             <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-2xl m:text-3xl ${hovered[1] && "scale-110"}`}/>
-                            <div className={`w-[86%] h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[1] ? "animate-underlineRev" : "animate-underline"}`}/>
+                            <div className={`${language === "ENG" ? "w-[86%]" : "w-[87%]"} h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[1] ? "animate-underlineRev" : "animate-underline"}`}/>
                         </Link>
                     </h3>
                     <h3 className={`mt-10 ${bigWidth && `ml-20 ${initial && "animate-appearSlowRev"}`}`}>
                         <Link className={`flex flex-row items-center w-fit gap-2.5 text-xl m:text-2xl relative`} to={"/addingOffer"} {...bindHoverHandlers(2)}>
                             <p className="animate-pulseText">{t("home5")}</p>
                             <FontAwesomeIcon icon={faMoneyBillWave} className={`text-2xl m:text-3xl ${hovered[2] && "scale-110"}`}/>
-                            <div className={`w-[76%] h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[2] ? "animate-underlineRev" : "animate-underline"}`}/>
+                            <div className={`${language === "ENG" ? "w-[76%]" : "w-[86%]"} h-[1px] m:h-[2px] absolute bottom-0 bg-black ${hovered[2] ? "animate-underlineRev" : "animate-underline"}`}/>
                         </Link>
                     </h3>
                 </div>

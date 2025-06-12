@@ -1,4 +1,4 @@
-package org.gontar.carsold.ServiceTest.OfferServiceTest.AdminServiceTest;
+package org.gontar.carsold.ServiceTest.UserServiceTest.AdminServiceTest;
 
 import com.google.cloud.storage.Storage;
 import jakarta.transaction.Transactional;
@@ -9,7 +9,7 @@ import org.gontar.carsold.Exception.CustomException.OfferNotFound;
 import org.gontar.carsold.Exception.CustomException.UserNotFoundException;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
-import org.gontar.carsold.Service.OfferService.AdminService.AdminServiceImpl;
+import org.gontar.carsold.Service.UserService.AdminService.AdminServiceImpl;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

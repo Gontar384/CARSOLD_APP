@@ -1,7 +1,7 @@
-package org.gontar.carsold.Controller.OfferController;
+package org.gontar.carsold.Controller.UserController;
 
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
-import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
+import org.gontar.carsold.Service.UserService.AdminService.AdminService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;

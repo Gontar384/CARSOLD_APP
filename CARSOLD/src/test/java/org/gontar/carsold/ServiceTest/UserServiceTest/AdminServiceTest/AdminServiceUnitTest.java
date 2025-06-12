@@ -1,10 +1,10 @@
-package org.gontar.carsold.ServiceTest.OfferServiceTest.AdminServiceTest;
+package org.gontar.carsold.ServiceTest.UserServiceTest.AdminServiceTest;
 
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.Report.Report;
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.gontar.carsold.Repository.ReportRepository;
-import org.gontar.carsold.Service.OfferService.AdminService.AdminServiceImpl;
+import org.gontar.carsold.Service.UserService.AdminService.AdminServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

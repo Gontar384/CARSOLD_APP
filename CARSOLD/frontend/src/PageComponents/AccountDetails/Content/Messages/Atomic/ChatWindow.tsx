@@ -400,15 +400,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({setSent, setDeleted, setMarkSeen
             {fetched ?
                 userInfo.username ?
                     <div className="flex flex-col w-full h-full border-2 border-gray-300 rounded-sm">
-                        <div
-                            className="flex flex-row items-center w-full py-1 px-3 border-b-2 border-gray-300 rounded-sm shadow-bottom-l">
+                        <div className="flex flex-row items-center w-full py-1 px-3 border-b-2 border-gray-300 rounded-sm shadow-bottom-l">
                             <div className="flex flex-row items-center w-full gap-4">
                                 {userInfo.profilePic !== "" && !imageError ?
                                     <img src={userInfo.profilePic} alt="Img" onError={() => setImageError(true)}
                                          className="w-11 h-11 m:w-12 m:h-12 rounded-full object-cover border border-gray-500"/>
                                     : <FontAwesomeIcon icon={faCircleUser} className="w-11 h-11 m:w-12 m:h-12"/>}
-                                <span
-                                    className="text-[22px] m:text-2xl font-semibold text-gray-500">{userInfo.username}</span>
+                                <span className="text-[22px] m:text-2xl font-semibold text-gray-500">{userInfo.username}</span>
                             </div>
                             <div className="relative" ref={componentRef}>
                                 <button className={`pt-1 px-1 ${!isMobile && "hover:scale-[110%]"}`}
@@ -417,15 +415,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({setSent, setDeleted, setMarkSeen
                                                      icon={faCircleInfo}/>
                                 </button>
                                 {interactionButton &&
-                                    <div className="flex flex-col justify-center items-center w-[90px] h-[53px] m:h-[57px] text-xs m:text-sm
-                                    divide-y text-white absolute -bottom-[11px] m:-bottom-[12px] -left-[104px]">
-                                        <button
-                                            className={`w-full h-1/2 bg-coolRed ${!isMobile && "hover:text-lowBlack"}`}
+                                    <div className="flex flex-col justify-center items-center w-[90px] h-[55px] m:h-[59px] text-xs m:text-sm
+                                    divide-y text-white absolute -bottom-[12px] m:-bottom-[13px] -left-[104px]">
+                                        <button className={`w-full h-1/2 bg-coolRed ${!isMobile && "hover:text-lowBlack"}`}
                                             onClick={() => setDeleteDecision(true)}>
                                             {t("chatWindow1")}
                                         </button>
-                                        <button
-                                            className={`w-full h-1/2 ${userInfo.blockedByUser ? "bg-green-400" : "bg-coolRed"}
+                                        <button className={`w-full h-1/2 ${userInfo.blockedByUser ? "bg-green-400" : "bg-coolRed"}
                                         ${!isMobile && "hover:text-lowBlack"}`}
                                             onClick={() => setBlockUnblockDecision(true)}>
                                             {userInfo.blockedByUser ? t("chatWindow3") : t("chatWindow2")}
@@ -433,8 +429,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({setSent, setDeleted, setMarkSeen
                                     </div>}
                             </div>
                         </div>
-                        <div
-                            className="flex flex-col w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
+                        <div className="flex flex-col w-full h-full pt-2 pb-4 px-0.5 overflow-auto overscroll-contain relative"
                             ref={messageContainerRef} onScroll={handleScroll}>
                             {isLoadingMore &&
                                 <div className="flex justify-center items-center w-full sticky top-0 z-10 text-xs m:text-sm">

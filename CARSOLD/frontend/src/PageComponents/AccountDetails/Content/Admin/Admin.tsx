@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useUserInfo} from "../../../../CustomHooks/useUserInfo.ts";
 import {Link, useNavigate} from "react-router-dom";
-import {adminDeleteReport, adminFetchReports} from "../../../../ApiCalls/Services/OfferService.ts";
 import {faCar, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {usePagination} from "../../../../CustomHooks/usePagination.ts";
@@ -9,6 +8,7 @@ import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 import AnimatedBanner from "../../../../Additional/Banners/AnimatedBanner.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import ReportLoader from "../../../../Additional/Loading/ReportLoader.tsx";
+import {adminDeleteReport, adminFetchReports} from "../../../../ApiCalls/Services/UserService.ts";
 
 interface Report {
     id: number | null;

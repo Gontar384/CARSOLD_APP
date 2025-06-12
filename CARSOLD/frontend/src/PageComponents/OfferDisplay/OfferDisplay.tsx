@@ -12,12 +12,12 @@ import {faFlag, faHeart, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useButton} from "../../CustomHooks/useButton.ts";
 import {useAuth} from "../../GlobalProviders/Auth/useAuth.ts";
 import ConfirmDeleteWindow from "../AddingOffer/Atomic/Button/ConfirmDeleteWindow/ConfirmDeleteWindow.tsx";
-import {adminDeleteOffer, adminDeleteUser} from "../../ApiCalls/Services/OfferService.ts";
 import {MethodNotAllowedError, NotFoundError} from "../../ApiCalls/Errors/CustomErrors.ts";
 import ReportOffer from "./BigContainer/OfferDetails/Report/ReportOffer.tsx";
 import AnimatedBanner from "../../Additional/Banners/AnimatedBanner.tsx";
 import {useLanguage} from "../../GlobalProviders/Language/useLanguage.ts";
 import SpinningLoader from "../../Additional/Loading/SpinningLoader.tsx";
+import {adminDeleteOffer, adminDeleteUser} from "../../ApiCalls/Services/UserService.ts";
 
 const OfferDisplay: React.FC = () => {
     interface FetchedOffer {

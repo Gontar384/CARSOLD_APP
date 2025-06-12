@@ -1,8 +1,8 @@
-package org.gontar.carsold.ControllerTest.OfferControllerTest;
+package org.gontar.carsold.ControllerTest.UserControllerTest;
 
-import org.gontar.carsold.Controller.OfferController.AdminController;
+import org.gontar.carsold.Controller.UserController.AdminController;
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
-import org.gontar.carsold.Service.OfferService.AdminService.AdminService;
+import org.gontar.carsold.Service.UserService.AdminService.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service.OfferService.AdminService;
+package org.gontar.carsold.Service.UserService.AdminService;
 
 import org.gontar.carsold.Domain.Model.Report.ReportDto;
 import org.springframework.data.domain.Page;

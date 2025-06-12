@@ -1,4 +1,4 @@
-package org.gontar.carsold.Service.OfferService.AdminService;
+package org.gontar.carsold.Service.UserService.AdminService;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;

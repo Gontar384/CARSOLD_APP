@@ -99,38 +99,3 @@ export const fetchFilteredOffers = async (queryParams: string | null): Promise<A
         return Promise.reject();
     }
 };
-
-//---Admin---
-
-export const adminDeleteOffer = async (id: number | null): Promise<void> => {
-    try {
-        await api.delete(`api/private/admin/deleteOffer/${id}`);
-    } catch (error) {
-        handleError(error);
-    }
-};
-
-export const adminFetchReports = async (page: number, size: number): Promise<AxiosResponse> => {
-    try {
-        return await api.get("api/private/admin/fetchReports", { params: { page: page, size: size } });
-    } catch (error) {
-        handleError(error);
-        return Promise.reject();
-    }
-};
-
-export const adminDeleteReport = async (id: number | null): Promise<void> => {
-    try {
-        await api.delete(`api/private/admin/deleteReport/${id}`);
-    } catch (error) {
-        handleError(error);
-    }
-};
-
-export const adminDeleteUser = async (username: string | null): Promise<void> => {
-    try {
-        await api.delete(`api/private/admin/deleteUser/${username}`);
-    } catch (error) {
-        handleError(error);
-    }
-};
