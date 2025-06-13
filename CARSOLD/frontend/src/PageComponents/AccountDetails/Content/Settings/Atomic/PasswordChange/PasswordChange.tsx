@@ -10,7 +10,7 @@ const PasswordChange: React.FC<PasswordChangeProps> = ({setIsChanged}) => {
     const {t} = useLanguage();
 
     return (
-        <div className="mt-36 m:mt-40">
+        <div className="mt-36 m:mt-40 w-full max-w-[270px] m:max-w-[340px]">
             <h2 className="mb-8 m:mb-10 text-xl m:text-2xl text-center">
                 {t("changePassword1")}
             </h2>
