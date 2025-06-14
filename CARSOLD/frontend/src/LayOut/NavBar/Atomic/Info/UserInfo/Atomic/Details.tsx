@@ -20,7 +20,7 @@ const Details: React.FC<DetailsProps> = ({iconAnimation, letClick}) => {
 
     return (
         <div className="flex flex-row items-center h-full gap-[5px] relative cursor-pointer"
-             onClick={!isMobile || letClick ? () => navigate("/details/myOffers") : undefined}>
+             onClick={!isMobile || letClick ? () => navigate("/details/myOffers?page=0") : undefined}>
             <div className="w-7 h-7">
                 {profilePic !== "" && !imageError ? (
                     <img src={profilePic} alt="Profile Picture"

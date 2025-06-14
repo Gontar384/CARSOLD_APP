@@ -15,7 +15,6 @@ const ChoiceHeaders: React.FC = () => {
     const validSections: Array<"myOffers" | "followed" | "messages" | "settings" | "info" | "admin"> = [
         "myOffers", "followed", "messages", "settings", "info", "admin"
     ];
-    //sets true where index of validSections === choice, creates array of true and false
     const buttonState: boolean[] = validSections.map((_, index) => index === choice);
     const {handleCheckAdmin} = useUserInfo();
     const [admin, setAdmin] = useState<boolean>(false);
@@ -37,18 +36,14 @@ const ChoiceHeaders: React.FC = () => {
         }
     }, [section, navigate]);  //sets index to choice
 
-    const handleNavigation = (destination: "myOffers" | "followed" | "messages" | "settings" | "info" | "admin") => {
-        if (destination === "myOffers" || "followed" || "admin"){
-            navigate(`/details/${destination}?page=0`)
-        } else {
-            navigate(`/details/${destination}`);
-        }
-    }
+    const handleNavigation = (destination: "myOffers?page=0" | "followed?page=0" | "messages" | "settings" | "info" | "admin") => {
+        navigate(`/details/${destination}`);
+    };
 
     const LargeScreenLayout = () => (
         <div className="flex flex-row justify-evenly w-full">
-            <ChoiceButton label={t("choiceButton1")} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
-            <ChoiceButton label={t("choiceButton2")} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
+            <ChoiceButton label={t("choiceButton1")} onClick={() => handleNavigation("myOffers?page=0")} active={buttonState[0]}/>
+            <ChoiceButton label={t("choiceButton2")} onClick={() => handleNavigation("followed?page=0")} active={buttonState[1]}/>
             <ChoiceButton label={t("choiceButton3")} onClick={() => handleNavigation("messages")} active={buttonState[2]} count={unseenMessagesCount}/>
             <ChoiceButton label={t("choiceButton4")} onClick={() => handleNavigation("settings")} active={buttonState[3]}/>
             <ChoiceButton label={t("choiceButton5")} onClick={() => handleNavigation("info")} active={buttonState[4]}/>
@@ -59,8 +54,8 @@ const ChoiceHeaders: React.FC = () => {
     const SmallScreenLayout = () => (
         <div className="flex flex-col w-full gap-3 m:gap-4 items-center">
             <div className={`flex flex-row justify-evenly w-full max-w-[600px]`}>
-                <ChoiceButton label={t("choiceButton1")} onClick={() => handleNavigation("myOffers")} active={buttonState[0]}/>
-                <ChoiceButton label={t("choiceButton2")} onClick={() => handleNavigation("followed")} active={buttonState[1]}/>
+                <ChoiceButton label={t("choiceButton1")} onClick={() => handleNavigation("myOffers?page=0")} active={buttonState[0]}/>
+                <ChoiceButton label={t("choiceButton2")} onClick={() => handleNavigation("followed?page=0")} active={buttonState[1]}/>
                 <ChoiceButton label={t("choiceButton3")} onClick={() => handleNavigation("messages")} active={buttonState[2]} count={unseenMessagesCount}/>
             </div>
             <div className={`flex flex-row justify-evenly ${admin ? "w-full max-w-[600px]" : "w-[67%] max-w-[400px]"}`}>
