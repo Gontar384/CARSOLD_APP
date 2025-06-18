@@ -16,8 +16,8 @@ const Contact: React.FC<ContactProps> = ({email}) => {
     return (
         <div className="flex flex-col mt-10 m:mt-12">
             <h2>{t("contact")}</h2>
-            <div className="flex flex-row items-center justify-center gap-2 m:gap-3 mt-1 m:mt-[6px]">
-                <p className="font-bold mt-1.5 m:mt-2">{email}</p>
+            <div className="flex flex-row items-center justify-center gap-2 m:gap-3 mt-3 m:mt-4">
+                <p className="font-bold">{email}</p>
                 <FontAwesomeIcon icon={faEnvelope} className={`${animation}`}
                                  onMouseEnter={!isMobile ? () => setAnimation("animate-pop") : undefined}
                                  onMouseLeave={!isMobile ? () => setAnimation(null) : undefined}
