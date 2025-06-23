@@ -183,7 +183,7 @@ export const dictionary = {
         termsOfUse35: "Kontakt",
         termsOfUse36: "W przypadku pytań lub potrzeby pomocy prosimy o kontakt pod adresem:",
         termsOfUse38: "Korzystając z CARSOLD, potwierdzasz, że zapoznałeś się z regulaminem, zrozumiałeś go i akceptujesz jego postanowienia.",
-        home1: "Witamy w CAR$OLD!",
+        home1: "Witaj w CAR$OLD!",
         home2: "Świecie samochodów",
         home3: "Dołącz do nas",
         home4: "Znajdź wymarzone auto",
