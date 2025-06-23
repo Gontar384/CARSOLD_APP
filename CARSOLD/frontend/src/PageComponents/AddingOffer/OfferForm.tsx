@@ -190,7 +190,7 @@ const OfferForm: React.FC = () => {
                 nsfwModelRef.current = model;
             });
             const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error("Model loading timeout")), 7000);
+                setTimeout(() => reject(new Error("Model loading timeout")), 5000);
             });
             try {
                 await Promise.race([loadPromise, timeoutPromise]);
