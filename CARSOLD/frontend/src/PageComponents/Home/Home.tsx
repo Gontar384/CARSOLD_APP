@@ -113,7 +113,7 @@ const Home: React.FC = () => {
                         </Link>
                     </h3>
                 </div>
-                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-darkLime to-lime border-y border-gray-300 animate-appearFast
+                <div className={`flex flex-col items-center justify-center h-fit bg-gradient-to-t from-lime to-darkLime lg:from-darkLime lg:to-lime border-y border-gray-300 animate-appearFast
                 ${bigWidth ? "w-[60%] absolute right-0 min-h-[680px] z-20" : "w-full min-h-[600px] m:min-h-[860px] mt-5"}`}>
                     <div className={`flex flex-col justify-center ${bigWidth ? "w-full" : "w-[95%] gap-4 m:gap-6"}`}>
                         <div className={`flex ${bigWidth ? `justify-end mr-5 ${initial && "animate-appearSlow"}` : "justify-center"} -mt-8 m:-mt-10`}>
