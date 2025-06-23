@@ -2,15 +2,20 @@
 # Hello World!
 
 CAR$OLD is car advertising portal, build to be affordable for everyone. It's fullstack web application, written with
-SpringBoot (Java) and React (TypeScript and Tailwind for styling), using PostgreSQL as database. Project is highly connected with
-Google Cloud Project, which it uses APIs and buckets from. Let me shortly walk you through!
+SpringBoot (Java) and React (TypeScript and Tailwind for styling), using PostgreSQL as database. It's highly related to
+Google Cloud Project, because it uses its APIs and buckets to validate and store data. Running app locally is possible
+and I'll show you a full tutorial towards the end of this text. However it takes up some time to set up and I can confidently
+recommend visiting the site instead, where you can test it!
 
-Application is deployed at: [carsold.pl](https://carsold.pl)
-
+Application is currently available at: [carsold.pl](https://carsold.pl)  
+deployed using Render(backend), Netlify(frontend) and Neon(database)
+ 
 Presentation video (in Polish with English subtitles available): [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
 
 It's utterly responsive, with all features working 100% correctly on PC and mobile. Visual layer is full of animated components, 
-and UI/UX features. It's available in two languages: polish and english.
+and UI/UX features. It's available in two languages: polish and english. 
+
+Let me shortly walk you through its functionality!
 
 ### Unauthorized user features
 - Searching offers: user can either use navigation bar input or go to search page and use up to 20 filter options, sorting included;
@@ -60,7 +65,7 @@ and UI/UX features. It's available in two languages: polish and english.
 - Since it's SPA (Single Page Application), it's completely stateless: no server-side sessions and no CSRF token is used;
 - JWT is generated using a secure Base64-encoded HMAC key and stored in HttpOnly cookie to prevent XSS. Token is renewed
   every 5 minutes and user will be informed and logged out when it expires;
-- CORS is properly configured, mitigating CSRF risks;
+- CORS is properly configured, and with cookies set as Secure and SameSite=Lax, this mitigates CSRF risks;
 - OAuth2 login is implemented with custom success and failure handlers, and a custom authorization request
   repository, which creates Google token, essential for Google authorization. It let application stay totally
   stateless even then. After OAuth2 authentication, JWT is still issued and stored in HttpOnly cookie;
@@ -73,7 +78,7 @@ and UI/UX features. It's available in two languages: polish and english.
 - Includes anti-spam mechanisms and is optimized for performance and efficiency;
 
 ### Tests
-Tests for frontend (Jest) and backend (Mockito/SringBootTest) are included.
+The project includes unit tests for the frontend (Jest) and both unit and integration tests for the backend (Mockito and SpringBootTest).
 
 ## Running locally
 If you want to run CAR$OLD locally, you should clone my repo. I recommend to run it in InteliiJ. It would work
@@ -148,7 +153,7 @@ CLOUD_NATURAL_LANGUAGE_API_KEY=
 #Google Places API
 PLACES_API_KEY=
 ```
-Then you should put path to .env file in app run configuration.
+Then you must put path to .env file in app run configuration.
 
 Frontend (located in /frontend)
 
@@ -157,6 +162,8 @@ VITE_BACKEND_URL=http://localhost:8080
 VITE_MAPS_APIKEY=
 VITE_CONTACT_EMAIL=carsold.contact@gmail.com
 ```
+
+Then run ```npm run dev``` in the terminal inside the /frontend directory (React) and start the CarsoldApplication class (Spring Boot).
 
 ## CAR$OLD App is developed and owned solely by me
 Commercial use, redistribution, or representation of this application under any individual, group, or organization is strictly 
@@ -168,14 +175,19 @@ All rights to manage, modify, distribute, or license CAR$OLD App are fully reser
 
 CAR$OLD to samochodowy portal ogłoszeniowy, stworzony z myślą o tym, by był dostępny dla każdego. To pełnoprawna aplikacja
 webowa (fullstack), napisana w Spring Boot (Java) i React (TypeScript + Tailwind CSS), z bazą danych PostgreSQL. Projekt jest mocno
-zintegrowany z Google Cloud, wykorzystując jego API oraz zasoby (bucket-y). Pozwól, że krótko Ci go przedstawię!
+zintegrowany z Google Cloud, wykorzystując jego API oraz zasoby, takie jak buckety, do walidacji i przetrzymywania danych. 
+Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. Jednakże zajmuje to sporo czasu, dlatego mocno rekomenduję
+odwiedzenie strony internetowej, gdzie można ją przetestować!
 
-Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl)
+Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl)  
+wdrożona przy użyciu Render(backend), Netlify(frontend) i Neon(baza danych)
 
 Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
 
-Jest w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na komputerach i urządzeniach mobilnych. Interfejs 
+Jest ona w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na komputerach i urządzeniach mobilnych. Interfejs 
 użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikacja dostępna jest w dwóch językach: polskim i angielskim.
+
+Pozwól, że krótko Ci przedstawię jej funkcjonalność!
 
 ### Funkcjonalność dla użytkownika niezalogowanego
 - Wyszukiwanie ofert: można korzystać z wyszukiwarki w pasku nawigacyjnym lub przejść na stronę wyszukiwania i użyć do 20 różnych
@@ -225,7 +237,8 @@ użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikac
   po stronie serwera ani tokenów CSRF;
 - JWT jest generowany przy pomocy zabezpieczonego, Base64-enkodowanego klucza HMAC i przechowywany w ciasteczku HttpOnly,
   co zapobiega atakom XSS. Token odnawia się co 5 minut, a po jego wygaśnięciu użytkownik zostaje poinformowany i wylogowany;
-- CORS jest poprawnie skonfigurowany, co minimalizuje ryzyko ataków CSRF;
+- CORS jest poprawnie skonfigurowany, co w połączeniu z ciasteczkami ustawionymi na Secure i SameSite=Lax minimalizuje
+  ryzyko ataków CSRF;
 - OAuth2 z własnymi handlerami oraz customowym request repository, dzięki któremu token potrzebny do autoryzacji Google
   jest tworzony i przesyłany jako HttpOnly cookie, przez co zachowujemy bezstanowość. Po pomyślnej autoryzacji OAuth2,
   token JWT również jest wydawany i zapisywany w ciasteczku HttpOnly;
@@ -238,7 +251,7 @@ użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikac
 - Zawiera mechanizmy antyspamowe i ogólnie optymalizuje cały proces;
 
 ### Testy
-Projekt zawiera testy dla frontendu (Jest) oraz backendu (Mockito/SpringBootTest).
+Projekt zawiera testy jednostkowe dla frontendu (Jest) oraz testy jednostkowe i integracyjne dla backendu (Mockito, SpringBootTest).
 
 ### Uruchamianie lokalnie
 Jeśli chcesz uruchomić projekt lokalnie, sklonuj repozytorium. Zalecam uruchamianie w IntelliJ z użyciem Javy 22. Oprócz
@@ -319,6 +332,8 @@ VITE_BACKEND_URL=http://localhost:8080
 VITE_MAPS_APIKEY=
 VITE_CONTACT_EMAIL=carsold.contact@gmail.com
 ```
+
+Następnie należy wpisać ```npm run dev``` w terminalu w katalogu /frontend (React) i uruchomić klasę CarsoldApplication (Spring Boot).
 
 ## Aplikacja CAR$OLD została stworzona przeze mnie i jest w pełni moją właśnością
 Zabraniam wszelkiego komercyjnego użycia, redystrybucji lub reprezentowania tej aplikacji przez osoby trzecie.
