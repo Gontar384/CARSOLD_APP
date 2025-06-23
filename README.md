@@ -7,10 +7,10 @@ Google Cloud Project, because it uses its APIs and buckets to validate and store
 and I'll show you a full tutorial towards the end of this text. However it takes up some time to set up and I can confidently
 recommend visiting the site instead, where you can test it!
 
-Application is currently available at: [carsold.pl](https://carsold.pl)  
+### Application is currently available at: [carsold.pl](https://carsold.pl)
 deployed using Render(backend), Netlify(frontend) and Neon(database)
  
-Presentation video (in Polish with English subtitles available): [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
+### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
 
 It's utterly responsive, with all features working 100% correctly on PC and mobile. Visual layer is full of animated components, 
 and UI/UX features. It's available in two languages: polish and english. 
@@ -179,10 +179,10 @@ zintegrowany z Google Cloud, wykorzystując jego API oraz zasoby, takie jak buck
 Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. Jednakże zajmuje to sporo czasu, dlatego mocno rekomenduję
 odwiedzenie strony internetowej, gdzie można ją przetestować!
 
-Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl)  
+### Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl)
 wdrożona przy użyciu Render(backend), Netlify(frontend) i Neon(baza danych)
 
-Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
+### Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
 
 Jest ona w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na komputerach i urządzeniach mobilnych. Interfejs 
 użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikacja dostępna jest w dwóch językach: polskim i angielskim.
