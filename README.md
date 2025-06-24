@@ -59,7 +59,8 @@ Let me shortly walk you through its functionality!
 
 ![AccountDetails](https://storage.googleapis.com/carsold-app-imgs-test/config/img5.png)
 ![OfferForm](https://storage.googleapis.com/carsold-app-imgs-test/config/img6.png)
-![Messages](https://storage.googleapis.com/carsold-app-imgs-test/config/img7.png)
+![OfferForm1](https://storage.googleapis.com/carsold-app-imgs-test/config/img7.png)
+![Messages](https://storage.googleapis.com/carsold-app-imgs-test/config/img8.png)
 
 ### Secure data management
 - CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
