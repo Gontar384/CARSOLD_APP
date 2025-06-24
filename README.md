@@ -26,6 +26,7 @@ Let me shortly walk you through its functionality!
 - Changing language (Polish and English available);
 
 ![SearchUsingFilters](https://storage.googleapis.com/carsold-app-imgs-test/config/img2.png)
+![OfferDisplay](https://storage.googleapis.com/carsold-app-imgs-test/config/img3.png)
 
 ### Authentication
 - Registration (creating an account): e-mail and username are validated (internal mechanisms and external API), password
@@ -35,7 +36,7 @@ Let me shortly walk you through its functionality!
 - Password recovery: when password is forgotten, user may provide e-mail address and then he'll receive message with link
   to change his password;
 
-![Authentication](https://storage.googleapis.com/carsold-app-imgs-test/config/img3.png)  
+![Authentication](https://storage.googleapis.com/carsold-app-imgs-test/config/img4.png)  
 
 ### Authorized user features
 - Adding offer: user can add offer by filling all required fields in form and must meet all data requirements. It is possible
@@ -56,7 +57,6 @@ Let me shortly walk you through its functionality!
 - In Offer display: user can report offer, follow it or write to seller. Admins can delete offer or user from here;
 - toggling dark mode;
 
-![OfferDisplay](https://storage.googleapis.com/carsold-app-imgs-test/config/img4.png)
 ![AccountDetails](https://storage.googleapis.com/carsold-app-imgs-test/config/img5.png)
 ![OfferForm](https://storage.googleapis.com/carsold-app-imgs-test/config/img6.png)
 ![Messages](https://storage.googleapis.com/carsold-app-imgs-test/config/img7.png)
