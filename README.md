@@ -7,8 +7,10 @@ Google Cloud Project, because it uses its APIs and buckets to validate and store
 and I'll show you a full tutorial towards the end of this text. However it takes up some time to set up and I can confidently
 recommend visiting the site instead, where you can test it!
 
-### Application is currently available at: [carsold.pl](https://carsold.pl)
+### Application is currently available at: [carsold.pl](https://carsold.pl/search?page=0&size=10)
 deployed using Render(backend), Netlify(frontend) and Neon(database)
+
+![Search](https://storage.googleapis.com/carsold-app-imgs-test/config/img1.png)
  
 ### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
 
@@ -23,6 +25,8 @@ Let me shortly walk you through its functionality!
   Below, there are some key car details. On the right, there are more details and user contact information;
 - Changing language (Polish and English available);
 
+![SearchUsingFilters](https://storage.googleapis.com/carsold-app-imgs-test/config/img2.png)
+
 ### Authentication
 - Registration (creating an account): e-mail and username are validated (internal mechanisms and external API), password
   must meet requirements. User has to activate account, by clicking link he's received via e-mail;
@@ -30,6 +34,8 @@ Let me shortly walk you through its functionality!
 - OAuth2: user can authenticate via Google OAuth2;
 - Password recovery: when password is forgotten, user may provide e-mail address and then he'll receive message with link
   to change his password;
+
+![Authentication](https://storage.googleapis.com/carsold-app-imgs-test/config/img3.png)  
 
 ### Authorized user features
 - Adding offer: user can add offer by filling all required fields in form and must meet all data requirements. It is possible
@@ -49,6 +55,11 @@ Let me shortly walk you through its functionality!
   inappropriate offer;
 - In Offer display: user can report offer, follow it or write to seller. Admins can delete offer or user from here;
 - toggling dark mode;
+
+![OfferDisplay](https://storage.googleapis.com/carsold-app-imgs-test/config/img4.png)
+![AccountDetails](https://storage.googleapis.com/carsold-app-imgs-test/config/img5.png)
+![OfferForm](https://storage.googleapis.com/carsold-app-imgs-test/config/img6.png)
+![Messages](https://storage.googleapis.com/carsold-app-imgs-test/config/img7.png)
 
 ### Secure data management
 - CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
@@ -81,8 +92,8 @@ Let me shortly walk you through its functionality!
 The project includes unit tests for the frontend (Jest) and both unit and integration tests for the backend (Mockito and SpringBootTest).
 
 ## Running locally
-If you want to run CAR$OLD locally, you should clone my repo. I recommend to run it in InteliiJ. It would work
-properly with java 22. Apart from doing "npm install" for all React dependencies and installing maven dependencies,
+If you want to run CAR$OLD locally, you should clone my repo. I recommend to use InteliiJ. It would work properly with
+Java 22 and Node 22.11.0. Apart from doing ```npm install``` for all React dependencies and installing Maven dependencies,
 you'll have to:
 - Create key for JWT creation: Base64-encoded byte array format;
 - Provide e-mail for SMTP (gmail recommended) and password (App passwords);
@@ -165,6 +176,9 @@ VITE_CONTACT_EMAIL=carsold.contact@gmail.com
 
 Then run ```npm run dev``` in the terminal inside the /frontend directory (React) and start the CarsoldApplication class (Spring Boot).
 
+The project includes a Dockerfile used for containerizing the backend (Spring Boot). It's primarily used for deploying the application, 
+but it can also be used to run the backend locally. You still need to provide a .env file with the required environment variables.
+
 ## CAR$OLD App is developed and owned solely by me
 Commercial use, redistribution, or representation of this application under any individual, group, or organization is strictly 
 not permitted. You are welcome to view and explore the app in a non-commercial, read-only capacity.
@@ -179,7 +193,7 @@ zintegrowany z Google Cloud, wykorzystując jego API oraz zasoby, takie jak buck
 Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. Jednakże zajmuje to sporo czasu, dlatego mocno rekomenduję
 odwiedzenie strony internetowej, gdzie można ją przetestować!
 
-### Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl)
+### Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl/search?page=0&size=10)
 wdrożona przy użyciu Render(backend), Netlify(frontend) i Neon(baza danych)
 
 ### Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
@@ -254,8 +268,8 @@ Pozwól, że krótko Ci przedstawię jej funkcjonalność!
 Projekt zawiera testy jednostkowe dla frontendu (Jest) oraz testy jednostkowe i integracyjne dla backendu (Mockito, SpringBootTest).
 
 ### Uruchamianie lokalnie
-Jeśli chcesz uruchomić projekt lokalnie, sklonuj repozytorium. Zalecam uruchamianie w IntelliJ z użyciem Javy 22. Oprócz
-uruchomienia "npm install" dla zależności Reacta oraz instalacji zależności Maven, należy: 
+Jeśli chcesz uruchomić projekt lokalnie, sklonuj repozytorium. Zalecam użycie IntelliJ z Java 22 oraz Node 22.11.0. Oprócz
+uruchomienia ```npm install``` dla zależności Reacta i instalacji zależności Mavena, należy: 
 - Utworzyć klucz JWT w formacie Base64-encoded byte array;
 - Podać dane logowania SMTP (zalecane Gmail i hasło aplikacji);
 - Skonfigurować bazę danych (zalecane PostgreSQL) z URL, loginem i hasłem;
@@ -334,6 +348,9 @@ VITE_CONTACT_EMAIL=carsold.contact@gmail.com
 ```
 
 Następnie należy wpisać ```npm run dev``` w terminalu w katalogu /frontend (React) i uruchomić klasę CarsoldApplication (Spring Boot).
+
+Projekt zawiera Dockerfile służący do konteneryzacji backendu(Spring Boot). Jest on wykorzystywany do deployowania aplikacji, ale można
+go także użyć do lokalnego uruchomienia backendu. Wciąż jednak musimy zapewnić plik .env ze zmiennymi środowiskowymi.
 
 ## Aplikacja CAR$OLD została stworzona przeze mnie i jest w pełni moją właśnością
 Zabraniam wszelkiego komercyjnego użycia, redystrybucji lub reprezentowania tej aplikacji przez osoby trzecie.
