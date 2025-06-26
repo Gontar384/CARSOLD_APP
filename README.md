@@ -14,7 +14,7 @@ deployed using Render(backend), Netlify(frontend) and Neon(database)
  
 ### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
 
-It's utterly responsive, with all features working 100% correctly on PC and mobile. Visual layer is full of animated components, 
+It's utterly responsive, with all features working 100% correctly on **💻 PC and 📱 mobile**. Visual layer is full of animated components, 
 and UI/UX features. It's available in two languages: polish and english. 
 
 Let me shortly walk you through its functionality!
@@ -121,7 +121,7 @@ you'll have to:
 7) Places (New) API key;
 8) Maps JavaScript API key;
 
-### You'll need two .env files - for frontend and backend, filled with those environment variables:
+### You'll need two .env files - for frontend and backend, filled with generated keys and resources:
 
 Backend (located in root, next to src)  
 
@@ -199,7 +199,7 @@ wdrożona przy użyciu Render(backend), Netlify(frontend) i Neon(baza danych)
 
 ### Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
 
-Jest ona w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na komputerach i urządzeniach mobilnych. Interfejs 
+Jest ona w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na **💻 komputerach i 📱 urządzeniach mobilnych**. Interfejs 
 użytkownika zawiera wiele animowanych komponentów i rozwiązań UX/UI. Aplikacja dostępna jest w dwóch językach: polskim i angielskim.
 
 Pozwól, że krótko Ci przedstawię jej funkcjonalność!
@@ -296,7 +296,7 @@ uruchomienia ```npm install``` dla zależności Reacta i instalacji zależności
 6) Klucz do Google Places API;
 7) Klucz do Maps JavaScript API;
 
-### Potrzebujesz dwóch plików .env – dla frontendu i backendu:
+### Potrzebujesz dwóch plików .env – dla frontendu i backendu, wypełnionych wygenerowanymi kluczami i zasobami:
 
 Backend (w katalogu głównym, obok src):
 ```
