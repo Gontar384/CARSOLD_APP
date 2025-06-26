@@ -8,11 +8,12 @@ and I'll show you a full tutorial towards the end of this text. However it takes
 recommend visiting the site instead, where you can test it!
 
 ### Application is currently available at: [carsold.pl](https://carsold.pl/search?page=0&size=10)
-deployed using Render(backend), Netlify(frontend) and Neon(database)
-
-![Search](https://storage.googleapis.com/carsold-app-imgs-test/config/img1.png)
- 
 ### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
+
+<p align="center">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image1.png" width="791" alt="SearchImage">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image2.png" width="216" alt="MobileImage"> 
+</p>
 
 It's utterly responsive, with all features working 100% correctly on **💻 PC and 📱 mobile**. Visual layer is full of animated components, 
 and UI/UX features. It's available in two languages: polish and english. 
@@ -25,8 +26,10 @@ Let me shortly walk you through its functionality!
   Below, there are some key car details. On the right, there are more details and user contact information;
 - Changing language (Polish and English available);
 
-![SearchUsingFilters](https://storage.googleapis.com/carsold-app-imgs-test/config/img2.png)
-![OfferDisplay](https://storage.googleapis.com/carsold-app-imgs-test/config/img3.png)
+<p align="center">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image3.png" width="900" alt="SearchUsingFiltersImage">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image4.png" width="900" alt="OfferDisplayImage">
+</p>
 
 ### Authentication
 - Registration (creating an account): e-mail and username are validated (internal mechanisms and external API), password
@@ -36,7 +39,9 @@ Let me shortly walk you through its functionality!
 - Password recovery: when password is forgotten, user may provide e-mail address and then he'll receive message with link
   to change his password;
 
-![Authentication](https://storage.googleapis.com/carsold-app-imgs-test/config/img4.png)  
+<p align="center">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image5.png" width="900" alt="AuthenticationImage">
+</p>
 
 ### Authorized user features
 - Adding offer: user can add offer by filling all required fields in form and must meet all data requirements. It is possible
@@ -57,10 +62,12 @@ Let me shortly walk you through its functionality!
 - In Offer display: user can report offer, follow it or write to seller. Admins can delete offer or user from here;
 - toggling dark mode;
 
-![AccountDetails](https://storage.googleapis.com/carsold-app-imgs-test/config/img5.png)
-![OfferForm](https://storage.googleapis.com/carsold-app-imgs-test/config/img6.png)
-![OfferForm1](https://storage.googleapis.com/carsold-app-imgs-test/config/img7.png)
-![Messages](https://storage.googleapis.com/carsold-app-imgs-test/config/img8.png)
+<p align="center">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image6.png" width="900" alt="AccountDetailsImage">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image7.png" width="900" alt="OfferFormImage">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image8.png" width="900" alt="MoreOfferFormImage">
+  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image9.png" width="900" alt="MessagesImage">
+</p>
 
 ### Secure data management
 - CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
@@ -91,6 +98,10 @@ Let me shortly walk you through its functionality!
 
 ### Tests
 The project includes unit tests for the frontend (Jest) and both unit and integration tests for the backend (Mockito and SpringBootTest).
+
+### Deployment
+The application is currently deployed using **Render** for the backend (Dockerized), **Netlify** for the frontend (static build from `npm run build`),
+and **Neon** for the database.
 
 ## Running locally
 If you want to run CAR$OLD locally, you should clone my repo. I recommend to use InteliiJ. It would work properly with
@@ -195,8 +206,6 @@ Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. 
 odwiedzenie strony internetowej, gdzie można ją przetestować!
 
 ### Aplikacja jest dostępna pod adresem: [carsold.pl](https://carsold.pl/search?page=0&size=10)
-wdrożona przy użyciu Render(backend), Netlify(frontend) i Neon(baza danych)
-
 ### Wideo prezentujące aplikację: [youtube.com](https://www.youtube.com/watch?v=ImOQ-unvxQ0)
 
 Jest ona w pełni responsywna, a wszystkie funkcje działają w 100% poprawnie na **💻 komputerach i 📱 urządzeniach mobilnych**. Interfejs 
@@ -267,6 +276,10 @@ Pozwól, że krótko Ci przedstawię jej funkcjonalność!
 
 ### Testy
 Projekt zawiera testy jednostkowe dla frontendu (Jest) oraz testy jednostkowe i integracyjne dla backendu (Mockito, SpringBootTest).
+
+### Wdrożenie
+Aplikacja jest obecnie wdrożona z użyciem **Render** jako backendu (w kontenerze Docker), **Netlify** jako frontendu (statyczna wersja
+zbudowana przy użyciu `npm run build`) oraz **Neon** jako bazy danych.
 
 ### Uruchamianie lokalnie
 Jeśli chcesz uruchomić projekt lokalnie, sklonuj repozytorium. Zalecam użycie IntelliJ z Java 22 oraz Node 22.11.0. Oprócz
