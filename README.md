@@ -10,13 +10,13 @@ recommend visiting the site instead, where you can test it!
 ### Application is currently available at: [carsold.pl](https://carsold.pl/search?page=0&size=10)
 ### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
 
-![SearchImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image1.png)
+![SearchImage](./CARSOLD/screenshots/image1.png)
 
 It's utterly responsive, with all features working 100% correctly on **💻 PC and 📱 mobile**. Visual layer is full of animated components, 
 and UI/UX features. It's available in two languages: polish and english. 
 
 <p align="center">
-  <img src="https://storage.googleapis.com/carsold-app-imgs-test/config/image2.png" width="28%" alt="MobileImage" />
+  <img src="./CARSOLD/screenshots/image2.png" width="28%" alt="MobileImage" />
 </p>
 
 Let me shortly walk you through its functionality!
@@ -27,8 +27,8 @@ Let me shortly walk you through its functionality!
   Below, there are some key car details. On the right, there are more details and user contact information;
 - Changing language (Polish and English available);
 
-![SearchUsingFiltersImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image3.png)
-![OfferDisplayImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image4.png)
+![SearchUsingFiltersImage](./CARSOLD/screenshots/image3.png)
+![OfferDisplayImage](./CARSOLD/screenshots/image4.png)
 
 ### Authentication
 - Registration (creating an account): e-mail and username are validated (internal mechanisms and external API), password
@@ -38,7 +38,7 @@ Let me shortly walk you through its functionality!
 - Password recovery: when password is forgotten, user may provide e-mail address and then he'll receive message with link
   to change his password;
 
-![AuthenticationImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image5.png)
+![AuthenticationImage](./CARSOLD/screenshots/image5.png)
 
 ### Authorized user features
 - Adding offer: user can add offer by filling all required fields in form and must meet all data requirements. It is possible
@@ -59,10 +59,10 @@ Let me shortly walk you through its functionality!
 - In Offer display: user can report offer, follow it or write to seller. Admins can delete offer or user from here;
 - toggling dark mode;
 
-![AccountDetailsImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image6.png)
-![OfferFormImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image7.png)
-![MoreOfferFormImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image8.png)
-![MessagesImage](https://storage.googleapis.com/carsold-app-imgs-test/config/image9.png)
+![AccountDetailsImage](./CARSOLD/screenshots/image6.png)
+![OfferFormImage](./CARSOLD/screenshots/image7.png)
+![MoreOfferFormImage](./CARSOLD/screenshots/image8.png)
+![MessagesImage](./CARSOLD/screenshots/image9.png)
 
 ### Secure data management
 - CAR$OLD uses various ways to manage and protect data, following professional standards and best norms:
