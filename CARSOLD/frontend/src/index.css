@@ -38,9 +38,9 @@ body {
 }
 
 .shadow-top-l {
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1); /*top of element shadow light */
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1); /*top of element shadow - light version */
 }
 
 .shadow-bottom-l {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /*bottom of element shadow light*/
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /*bottom of element shadow - light version */
 }

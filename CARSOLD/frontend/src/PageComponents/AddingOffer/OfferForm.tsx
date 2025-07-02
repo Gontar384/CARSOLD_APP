@@ -31,6 +31,7 @@ import {carConditions, carConditionsPl} from "../Search/SearchFilters/Additional
 import {carSteeringWheel, carSteeringWheelPl} from "./Atomic/SelectInput/SelectData/carSteeringWheel.ts";
 import * as nsfwjs from 'nsfwjs';
 import OfferFormLoader from "../../Additional/Loading/OfferFormLoader.tsx";
+import CancelButton from "./Atomic/Button/CancelButton.tsx";
 
 const OfferForm: React.FC = () => {
     const {t, language, translate, translateForBackend} = useLanguage();
@@ -1105,8 +1106,7 @@ const OfferForm: React.FC = () => {
     return (
         <LayOut>
             <div className="flex flex-col items-center">
-                <div className="flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px]
-                bg-lowLime border-y md:border border-gray-300 md:rounded">
+                <div className="flex flex-col items-center w-full lg:w-10/12 max-w-[840px] lg:max-w-[1300px] bg-lowLime md:rounded">
                     <h1 className="text-3xl m:text-4xl mt-14 m:mt-16 mb-8 m:mb-10 text-center">
                         {id !== null && permission === true ? t("offerForm1") : t("offerForm2")}
                     </h1>
@@ -1182,12 +1182,10 @@ const OfferForm: React.FC = () => {
                         <div className="flex justify-center m:block w-full mb-24 m:mb-28">
                             <ContactDetails/>
                         </div>
-                        <div className="flex flex-row flex-wrap justify-center m:justify-start w-[97%] m:w-full gap-3 m:gap-4 mb-20 m:mb-24">
-                            <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer}
-                                               type={id !== null && permission === true}/>
-                            {id !== null && permission === true &&
-                                <DeleteOfferButton onClick={handleDeleteOffer}/>
-                            }
+                        <div className="flex flex-row flex-wrap justify-center m:justify-start w-[96%] m:w-full m:pr-3 gap-3 m:gap-4 mb-20 m:mb-24">
+                            <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer} type={id !== null && permission === true}/>
+                            {id !== null && permission === true && <DeleteOfferButton onClick={handleDeleteOffer}/>}
+                            <CancelButton onClick={() => navigate("/details/myOffers?page=0")}/>
                         </div>
                     </div>
                 </div>

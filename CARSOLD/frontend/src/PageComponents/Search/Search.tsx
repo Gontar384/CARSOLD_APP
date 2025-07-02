@@ -23,7 +23,7 @@ const Search: React.FC = () => {
         <LayOut>
             <div className="flex flex-col items-center -mt-12 m:-mt-14">
                 <div className="flex flex-col items-center bg-lowLime bg-opacity-90 w-full max-w-[1300px]
-                h-full min-h-[1500px] pb-32 m:pb-40 border-gray-300 border-b xl:border-x xl:rounded-b">
+                h-full min-h-[1500px] pb-32 m:pb-40 xl:rounded-b">
                     <h1 className="hidden">Search</h1>
                     <SearchFilters setOffers={setOffers} setFetched={setFetched} setCurrentPage={setCurrentPage}
                                    currentPage={currentPage} itemsPerPage={itemsPerPage} setTotalPages={setTotalPages}

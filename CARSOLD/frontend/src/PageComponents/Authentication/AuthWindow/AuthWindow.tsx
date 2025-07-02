@@ -26,8 +26,7 @@ const AuthWindow: React.FC = () => {
     if (isLoading) return <AuthWindowLoader choice={choice}/>
 
     return (
-        <div className="flex flex-col items-center w-full h-full bg-lime py-6 max-w-[460px] m:rounded
-        border-y m:border border-gray-300">
+        <div className="flex flex-col items-center w-full h-full bg-lime py-6 max-w-[460px] m:rounded">
             <Headers/>
             {choice === "login" ? <LoginForm/> : <RegisterForm/>}
         </div>

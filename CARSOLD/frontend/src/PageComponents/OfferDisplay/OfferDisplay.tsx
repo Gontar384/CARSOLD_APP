@@ -239,8 +239,7 @@ const OfferDisplay: React.FC = () => {
             <div className={`flex flex-col items-center ${!offerFetched && "mb-[500px]"}`}>
                 <div className="flex flex-col lg:flex-row justify-center w-full max-w-[1350px] m:gap-4">
                     <h1 className="hidden">Offer</h1>
-                    <div className="flex flex-col w-full items-center lg:w-[70%] border-y lg:border
-                    border-gray-300 bg-lowLime lg:rounded relative">
+                    <div className="flex flex-col w-full items-center lg:w-[70%] bg-lowLime lg:rounded relative">
                         <ImageDisplay photos={offer.photos} offerFetched={offerFetched}/>
                         {offerFetched &&
                             <OfferDetails brand={offer.brand} model={offer.model} bodyType={offer.bodyType} year={offer.year} mileage={offer.mileage}
@@ -267,7 +266,7 @@ const OfferDisplay: React.FC = () => {
                             </button>
                         }
                     </div>
-                    <div className={`flex flex-col items-center w-full lg:w-[30%] ${offerFetched && "border-y lg:border"} border-gray-300 bg-lowLime lg:rounded`}>
+                    <div className={`flex flex-col items-center w-full lg:w-[30%] bg-lowLime lg:rounded`}>
                     {offerFetched ?
                             <>
                                 <BaseInfo title={offer.title} price={offer.price} currency={offer.currency} createdOn={offer.createdOn}/>
