@@ -102,7 +102,7 @@ and **Neon** for the database.
 If you want to run CAR$OLD locally, you should clone my repo. I recommend to use InteliiJ. It would work properly with
 Java 22 and Node 22.11.0. Apart from doing ```npm install``` for all React dependencies and installing Maven dependencies,
 you'll have to:
-- Create key for JWT creation: Base64-encoded byte array format;
+- Create key for JWT creation: Base64-encoded byte array format - run ```head -c 32 /dev/urandom | base64``` in bash to generate;
 - Provide e-mail for SMTP (gmail recommended) and password (App passwords);
 - Database (PostgreSQL recommended) with its URL, user and password;
 - GCP with properly configured services:
@@ -279,7 +279,7 @@ zbudowana przy użyciu `npm run build`) oraz **Neon** jako bazy danych.
 ### Uruchamianie lokalnie
 Jeśli chcesz uruchomić projekt lokalnie, sklonuj repozytorium. Zalecam użycie IntelliJ z Java 22 oraz Node 22.11.0. Oprócz
 uruchomienia ```npm install``` dla zależności Reacta i instalacji zależności Mavena, należy: 
-- Utworzyć klucz JWT w formacie Base64-encoded byte array;
+- Utworzyć klucz JWT w formacie Base64-encoded byte array - uruchom ```head -c 32 /dev/urandom | base64``` w bashu, aby wygenerować;
 - Podać dane logowania SMTP (zalecane Gmail i hasło aplikacji);
 - Skonfigurować bazę danych (zalecane PostgreSQL) z URL, loginem i hasłem;
 - Utworzyć projekt na Google Cloud z aktywnymi usługami:
