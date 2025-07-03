@@ -735,6 +735,15 @@ const OfferForm: React.FC = () => {
         }
     }, [offer.price]);
 
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, []); //warns before page reload
+
     //offer logic
     //checks if values are valid before commiting
     const checkValues= () => {
@@ -1183,7 +1192,7 @@ const OfferForm: React.FC = () => {
                             <ContactDetails/>
                         </div>
                         <div className="flex flex-row flex-wrap justify-center m:justify-start w-[96%] m:w-full m:pr-3 gap-3 m:gap-4 mb-28 m:mb-16">
-                            <div className="flex justify-center w-full m:w-fit">
+                            <div className={`flex justify-center ${id !== null && permission === true ? "w-full m:w-fit" : "w-fit"}`}>
                                 <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer} type={id !== null && permission === true}/>
                             </div>
                             {id !== null && permission === true && <DeleteOfferButton onClick={handleDeleteOffer}/>}
