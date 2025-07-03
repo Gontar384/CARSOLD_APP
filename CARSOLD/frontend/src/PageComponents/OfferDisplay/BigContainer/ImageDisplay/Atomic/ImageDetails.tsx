@@ -33,6 +33,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     const [isDragging, setIsDragging] = useState(false);
     const dragStartPosition = useRef({x: 0, y: 0, offsetX: 0, offsetY: 0});
     const [style, setStyle] = useState({});
+    const [photosLoaded, setPhotosLoaded] = useState<boolean>(false);
 
     const changePhoto = (dir: number) => {
         if (disabled) return;
@@ -210,6 +211,33 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     };
 
     useEffect(() => {
+        if (photos.length === 0) {
+            setPhotosLoaded(true);
+            return;
+        }
+        let loaded = 0;
+        const images: HTMLImageElement[] = [];
+
+        photos.forEach((src, _) => {
+            const img = new Image();
+            images.push(img);
+            img.src = src;
+            img.onload = () => {
+                loaded++;
+                if (loaded === photos.length) {
+                    setPhotosLoaded(true);
+                }
+            };
+        });
+
+        return () => {
+            images.forEach(img => {
+                img.onload = null;
+            });
+        };
+    }, [photos]); //preloads images to prevent lazy loading
+
+    useEffect(() => {
         const handleClickOutside = (event: MouseEvent | TouchEvent) => {
             if (fullScreen && imageRef.current && !imageRef.current.contains(event.target as Node)) {
                 setFullScreen(false);
@@ -343,7 +371,7 @@ const ImageDetails: React.FC<ImageDetailsProps> = ({photos, fullScreen, setFullS
     }, [fullScreen, isMobile]); //resizes image on fullScreen
 
     return (
-            offerFetched ? (
+            offerFetched && photosLoaded ? (
                 photos.length > 0 && !error &&
                     <div className={`w-full aspect-[15/10] overflow-hidden cursor-pointer outline-none bg-gray-200
                     ${fullScreen && `fixed inset-0 m-auto z-50 ${!isMobile && "ring-2 ring-gray-600 rounded"}`}`}

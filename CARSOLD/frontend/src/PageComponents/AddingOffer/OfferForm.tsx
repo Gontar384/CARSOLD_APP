@@ -1182,7 +1182,7 @@ const OfferForm: React.FC = () => {
                         <div className="flex justify-center m:block w-full mb-20 m:mb-28">
                             <ContactDetails/>
                         </div>
-                        <div className="flex flex-row flex-wrap justify-center m:justify-start w-[96%] m:w-full m:pr-3 gap-3 m:gap-4 mb-24 m:mb-16">
+                        <div className="flex flex-row flex-wrap justify-center m:justify-start w-[96%] m:w-full m:pr-3 gap-3 m:gap-4 mb-28 m:mb-16">
                             <div className="flex justify-center w-full m:w-fit">
                                 <SubmitOfferButton onClick={id !== null && permission === true ? handleUpdateOffer : handleAddOffer} type={id !== null && permission === true}/>
                             </div>
