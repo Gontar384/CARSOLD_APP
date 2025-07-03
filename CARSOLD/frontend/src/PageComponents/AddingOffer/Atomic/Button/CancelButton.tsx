@@ -19,7 +19,7 @@ const CancelButton: React.FC<CancelButtonProps> = ({ onClick }) => {
     };
 
     return (
-        <button className="p-2 m:p-3 text-lg m:text-xl border-[3px] text-nowrap border-gray-300 rounded-lg bg-gray-200 relative"
+        <button className="p-2 m:p-3 text-lg m:text-xl text-nowrap border-2 border-gray-300 rounded-lg bg-gray-200 relative"
             onMouseEnter={!isMobile ? () => setHovered(true) : undefined}
             onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
             onTouchStart={isMobile ? handleTouchButton : undefined}

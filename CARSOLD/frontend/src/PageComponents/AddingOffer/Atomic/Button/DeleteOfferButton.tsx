@@ -20,7 +20,7 @@ const DeleteOfferButton: React.FC<DeleteOfferButtonProps> = ({onClick}) => {
 
     return (
         <>
-            <button className="p-2 m:p-3 text-lg m:text-xl text-white text-nowrap border-[3px] border-gray-300
+            <button className="p-2 m:p-3 text-lg m:text-xl text-white text-nowrap border-2 border-gray-300
             rounded-lg bg-coolRed relative "
                     onMouseEnter={!isMobile ? () => setHovered(true) : undefined}
                     onMouseLeave={!isMobile ? () => setHovered(false) : undefined}
