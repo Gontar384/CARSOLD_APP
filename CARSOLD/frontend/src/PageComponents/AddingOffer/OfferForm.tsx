@@ -176,6 +176,7 @@ const OfferForm: React.FC = () => {
     const nsfwModelRef = useRef<nsfwjs.NSFWJS | null>(null);
     const [modelLoading, setModelLoading] = useState<boolean>(true);
     const [tooLarge, setTooLarge] = useState<boolean>(false);
+    const initialOfferRef = useRef<RawOffer>(offer);
 
     useEffect(() => {
         document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
@@ -738,11 +739,15 @@ const OfferForm: React.FC = () => {
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             e.preventDefault();
+            e.returnValue = "";
         };
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, []); //warns before page reload
+        if (JSON.stringify(offer) !== JSON.stringify(initialOfferRef.current)) {
+            window.addEventListener("beforeunload", handleBeforeUnload);
+        } else {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        }
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [offer]); //warns before page reload
 
     //offer logic
     //checks if values are valid before commiting
@@ -1002,7 +1007,7 @@ const OfferForm: React.FC = () => {
             const response = await addOffer(offerData);
             if (response.status === 201) {
                 sessionStorage.setItem("offerAdded", "true");
-                navigate('/details/myOffers');
+                navigate('/details/myOffers?page=0');
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
@@ -1038,7 +1043,7 @@ const OfferForm: React.FC = () => {
     const handleUpdateOffer = async () => {
         if (isDisabled) return;
         if (!permission) {
-            navigate("/details/myOffers");
+            navigate("/details/myOffers?page=0");
             return;
         }
         if (!checkValues()) {
@@ -1053,7 +1058,7 @@ const OfferForm: React.FC = () => {
             const response = await updateOffer(id, offerData);
             if (response.status === 200) {
                 sessionStorage.setItem("offerUpdated", "true");
-                navigate("/details/myOffers");
+                navigate("/details/myOffers?page=0");
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
@@ -1089,16 +1094,15 @@ const OfferForm: React.FC = () => {
     const handleDeleteOffer = async () => {
         if (isDisabled) return;
         if (!permission) {
-            navigate("/details/myOffers");
+            navigate("/details/myOffers?page=0");
             return;
         }
-
         setIsDisabled(true);
         setLoading(true);
         try {
             await deleteOffer(id);
             sessionStorage.setItem("offerDeleted", "true");
-            navigate("/details/myOffers");
+            navigate("/details/myOffers?page=0");
         } catch (error: unknown) {
             setWentWrongBanner(true);
             if (error instanceof NotFoundError) {
