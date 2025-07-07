@@ -177,6 +177,7 @@ const OfferForm: React.FC = () => {
     const [modelLoading, setModelLoading] = useState<boolean>(true);
     const [tooLarge, setTooLarge] = useState<boolean>(false);
     const initialOfferRef = useRef<RawOffer>(offer);
+    const offerRef = useRef<RawOffer>(offer);
 
     useEffect(() => {
         document.title = `CARSOLD | ${(id !== null && permission === true) ? t("tabTitle12") : t("tabTitle11")}`
@@ -736,18 +737,21 @@ const OfferForm: React.FC = () => {
         }
     }, [offer.price]);
 
+    //warns before page reload
+    useEffect(() => {
+        offerRef.current = offer;
+    }, [offer]);
+
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            e.preventDefault();
-            e.returnValue = "";
+            if (JSON.stringify(offerRef.current) !== JSON.stringify(initialOfferRef.current)) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
         };
-        if (JSON.stringify(offer) !== JSON.stringify(initialOfferRef.current)) {
-            window.addEventListener("beforeunload", handleBeforeUnload);
-        } else {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-        }
+        window.addEventListener("beforeunload", handleBeforeUnload);
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-    }, [offer]); //warns before page reload
+    }, []);
 
     //offer logic
     //checks if values are valid before commiting
