@@ -2,10 +2,10 @@
 # Hello World!
 
 CAR$OLD is car advertising portal, build to be affordable for everyone. It's fullstack web application, written with
-SpringBoot (Java) and React (TypeScript and Tailwind for styling), using PostgreSQL as database. It's highly related to
-Google Cloud Project, because it uses its APIs and buckets to validate and store data. Running app locally is possible
-and I'll show you a full tutorial towards the end of this text. However it takes up some time to set up and I can confidently
-recommend visiting the site instead, where you can test it!
+SpringBoot (Java) and React (TypeScript). Every component is designed and styled by myself (no component libraries, pure Tailwind).
+By default it uses PostgreSQL as database. It's highly related to Google Cloud Project, because it uses its APIs and buckets to validate
+and store data. Running app locally is possible and I'll show you a full tutorial towards the end of this text. However it takes up some 
+time to set up and I can confidently recommend visiting the site instead, where you can test it!
 
 ### Application is currently available at: [carsold.pl](https://carsold.pl/search?page=0&size=10)
 ### App presentation video: [youtube.com](https://www.youtube.com/watch?v=rXg3ulcCdlM)
