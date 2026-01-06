@@ -191,12 +191,13 @@ Commercial use, redistribution, or representation of this application under any 
 not permitted. You are welcome to view and explore the app in a non-commercial, read-only capacity.
 All rights to manage, modify, distribute, or license CAR$OLD App are fully reserved by the author.
 
-## [POL]
+## [PL]
 # Witam wszystkich!
 
 CAR$OLD to samochodowy portal ogłoszeniowy, stworzony z myślą o tym, by był dostępny dla każdego. To pełnoprawna aplikacja
-webowa (fullstack), napisana w Spring Boot (Java) i React (TypeScript + Tailwind CSS), z bazą danych PostgreSQL. Projekt jest mocno
-zintegrowany z Google Cloud, wykorzystując jego API oraz zasoby, takie jak buckety, do walidacji i przetrzymywania danych. 
+webowa (fullstack), napisana w Spring Boot (Java) i React (TypeScript). Każdy komponent jest stworzony i stylizowany przeze mnie 
+(bez użycia bibliotek komponentów, tylko Tailwind). Domyślnie używa bazy danych PostgreSQL. Projekt jest mocno zintegrowany z Google Cloud,
+wykorzystując jego API oraz zasoby, takie jak buckety, do walidacji i przetrzymywania danych.
 Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. Jednakże zajmuje to sporo czasu, dlatego mocno rekomenduję
 odwiedzenie strony internetowej, gdzie można ją przetestować!
 
