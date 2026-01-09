@@ -1,8 +1,8 @@
 ## [ENG]
 # Hello World!
 
-CAR$OLD is car advertising portal, build to be affordable for everyone. It's fullstack web application, written with
-SpringBoot (Java) and React (TypeScript). Every component is designed by myself (no component libraries) and styled using Tailwind.
+CAR$OLD is car advertising portal, build to be affordable for everyone. It's a full-stack web application built with Java (Spring Boot) 
+and TypeScript (React). Every component is designed by myself (no component libraries used) and styled using Tailwind.
 By default it uses PostgreSQL as database. It's highly related to Google Cloud Project, because it uses its APIs and buckets to validate
 and store data. Running app locally is possible and I'll show you a full tutorial towards the end of this text. However it takes up some 
 time to set up and I can confidently recommend visiting the site instead, where you can test it!
@@ -195,9 +195,9 @@ All rights to manage, modify, distribute, or license CAR$OLD App are fully reser
 # Witam wszystkich!
 
 CAR$OLD to samochodowy portal ogłoszeniowy, stworzony z myślą o tym, by był dostępny dla każdego. To pełnoprawna aplikacja
-webowa (fullstack), napisana w Spring Boot (Java) i React (TypeScript). Każdy komponent jest stworzony przeze mnie (bez użycia bibliotek komponentów)
-i stylizowany przy użyciu Tailwind. Aplikacja domyślnie używa bazy danych PostgreSQL. Projekt jest mocno zintegrowany z Google Cloud,
-wykorzystując jego API oraz zasoby, takie jak buckety, do walidacji i przetrzymywania danych.
+webowa (fullstack), napisana w Java (Spring Boot) i TypeScript (React). Każdy komponent jest stworzony przeze mnie (bez użycia bibliotek
+komponentów) i stylizowany przy użyciu Tailwind. Aplikacja domyślnie używa bazy danych PostgreSQL. Projekt jest mocno zintegrowany z 
+Google Cloud, wykorzystując jego API oraz zasoby, takie jak buckety, do walidacji i przetrzymywania danych.
 Uruchomienie aplikacji lokalnie jest możliwe i dalej pokażę, jak to zrobić. Jednakże zajmuje to sporo czasu, dlatego mocno rekomenduję
 odwiedzenie strony internetowej, gdzie można ją przetestować!
 
