@@ -5,7 +5,13 @@ import ProfilePicLoader from "../../../../Additional/Loading/ProfilePicLoader.ts
 import LoadingPicAnimation from "../../../../Additional/Loading/LoadingPicAnimation.tsx";
 import {useUtil} from "../../../../GlobalProviders/Util/useUtil.ts";
 import {deleteProfilePic, uploadProfilePic} from "../../../../ApiCalls/Services/UserService.ts";
-import {InternalServerError, PayloadTooLargeError, UnprocessableEntityError, UnsupportedMediaTypeError} from "../../../../ApiCalls/Errors/CustomErrors.ts";
+import {
+    InternalServerError,
+    MethodNotAllowedError,
+    PayloadTooLargeError,
+    UnprocessableEntityError,
+    UnsupportedMediaTypeError
+} from "../../../../ApiCalls/Errors/CustomErrors.ts";
 import {useUserUtil} from "../../../../GlobalProviders/UserUtil/useUserUtil.ts";
 import {useLanguage} from "../../../../GlobalProviders/Language/useLanguage.ts";
 
@@ -103,6 +109,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                 setMessage(t("profilePic4"));
             } else if (error instanceof InternalServerError) {
                 setMessage(t("profilePic5"));
+            } else if (error instanceof MethodNotAllowedError) {
+                setMessage(t("profilePic8"));
             } else {
                 console.error("Unexpected error during image upload occurred: ", error);
             }
@@ -143,7 +151,8 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
              onMouseEnter={!isMobile ? handleActivateInput : undefined}
              onMouseLeave={!isMobile ? handleDeactivateInput : undefined}
              onTouchEnd={isMobile ? handleToggleInput : undefined}>
-            <div className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
+            <div
+                className={`relative w-[70px] h-[70px] m:w-[80px] m:h-[80px] overflow-hidden z-20 ${profilePicFetched ? "" : "bg-lowLime"}`}
                 style={{clipPath: 'circle(50%)'}}>
                 {profilePicFetched ? (
                     <div className="relative w-full h-full rounded-full">
@@ -157,9 +166,9 @@ const Image: React.FC<ImageProps> = ({setMessage}) => {
                         {inputActive && (
                             <div className="flex items-center justify-center absolute inset-0 w-full h-full
                             rounded-full bg-lowLime bg-opacity-50 z-20">
-                                    <input type="file" accept="image/*" title="" disabled={isMobile ? inputDisabled : false}
-                                           className="absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
-                                           onChange={handleUploadPic} onClick={() => setShowButton(true)}/>
+                                <input type="file" accept="image/*" title="" disabled={isMobile ? inputDisabled : false}
+                                       className="absolute inset-0 w-full h-full opacity-0 z-30 cursor-pointer"
+                                       onChange={handleUploadPic} onClick={() => setShowButton(true)}/>
                                 {showButton &&
                                     <FontAwesomeIcon icon={faCirclePlus} className="w-1/2 h-1/2 animate-shock"/>}
                             </div>

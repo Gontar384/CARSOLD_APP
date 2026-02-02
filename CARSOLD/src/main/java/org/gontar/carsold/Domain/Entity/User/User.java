@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.gontar.carsold.Domain.Entity.Message.Conversation;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
@@ -46,6 +47,9 @@ public class User {
 
     @Column
     private String profilePic;
+
+    @Column
+    private LocalDateTime profilePicLastUpdated;
 
     @Column(length = 20)
     @Size(max = 20, message = "Name must be under 20 characters")

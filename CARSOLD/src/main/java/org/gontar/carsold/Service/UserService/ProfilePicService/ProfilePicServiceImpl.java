@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 public class ProfilePicServiceImpl implements ProfilePicService {
@@ -47,9 +48,15 @@ public class ProfilePicServiceImpl implements ProfilePicService {
 
             User user = userDetailsService.loadUser();
 
+            if (user.getProfilePicLastUpdated() != null &&
+                    user.getProfilePicLastUpdated().isAfter(LocalDateTime.now().minusMinutes(1))) {
+                throw new InappropriateActionException("You can change your profile picture only once per minute.");
+            }
+
             String profilePicLink = uploadToStorage(file, user.getUsername());
 
             user.setProfilePic(profilePicLink);
+            user.setProfilePicLastUpdated(LocalDateTime.now());
             repository.save(user);
         } catch (IOException | ExternalCheckException e) {
             throw new ImageUploadException("Problem with checking image: " + e.getMessage());
