@@ -1,8 +1,12 @@
 package org.gontar.carsold.Service.UserService.UserManagementService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONArray;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
@@ -31,6 +35,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -39,8 +44,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
 
-    @Value("${PERSPECTIVE_API_KEY}")
-    private String perspectiveApiKey;
+    @Value("${CLOUD_NATURAL_LANGUAGE_API_KEY}")
+    private String cloudNaturalLanguageApiKey;
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
@@ -52,9 +57,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final JwtService jwtService;
     private final EmailService emailService;
     private final AuthenticationService authenticationService;
+    private final List<String> forbiddenWords;
 
     public UserManagementServiceImpl(UserRepository userRepository, OfferRepository offerRepository, MyUserDetailsService userDetailsService, BCryptPasswordEncoder encoder,
-                                     JwtService jwtService, EmailService emailService, AuthenticationService authenticationService) {
+                                     JwtService jwtService, EmailService emailService, AuthenticationService authenticationService) throws IOException {
         this.userRepository = userRepository;
         this.offerRepository = offerRepository;
         this.userDetailsService = userDetailsService;
@@ -62,6 +68,12 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.jwtService = jwtService;
         this.emailService = emailService;
         this.authenticationService = authenticationService;
+        ObjectMapper mapper = new ObjectMapper();
+        ForbiddenWords words = mapper.readValue(
+                new ClassPathResource("forbidden-words.json").getFile(),
+                ForbiddenWords.class
+        );
+        this.forbiddenWords = words.FORBIDDEN_WORDS;
     }
 
     @Transactional
@@ -122,7 +134,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private boolean isUsernameFreeOfInappropriateWords(String username) {
         String lowered = username.toLowerCase();
         LevenshteinDistance levenshtein = LevenshteinDistance.getDefaultInstance();
-        for (String word : ForbiddenWords.WORDS) {
+        for (String word : forbiddenWords) {
             String w = word.toLowerCase();
             if (lowered.contains(w)) return false;
             int len = w.length();
@@ -140,34 +152,42 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     private boolean isUsernameNonToxic(String username) {
         try {
-            String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
-            List<String> languages = List.of("en", "pl");
+            String apiUrl = "https://language.googleapis.com/v1/documents:moderateText?key=" + cloudNaturalLanguageApiKey;
 
-            RestTemplate restTemplate = new RestTemplate();
+            JSONObject document = new JSONObject();
+            document.put("type", "PLAIN_TEXT");
+            document.put("content", username);
 
             JSONObject payload = new JSONObject();
-            payload.put("comment", new JSONObject().put("text", username));
-            payload.put("languages", languages);
-            payload.put("requestedAttributes", new JSONObject().put("TOXICITY", new JSONObject()));
+            payload.put("document", document);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "application/json");
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            String fullUrl = apiUrl + "?key=" + perspectiveApiKey;
-
+            RestTemplate restTemplate = new RestTemplate();
             HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
 
-            JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(response.getBody()));
-            double toxicityScore = jsonResponse
-                    .getJSONObject("attributeScores")
-                    .getJSONObject("TOXICITY")
-                    .getJSONObject("summaryScore")
-                    .getDouble("value");
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, request, String.class);
+            JSONObject json = new JSONObject(Objects.requireNonNull(response.getBody()));
 
-            return toxicityScore < 0.5;
+            JSONArray categories = json.getJSONArray("moderationCategories");
+
+            for (Object obj : categories) {
+                JSONObject cat = (JSONObject) obj;
+                String name = cat.getString("name");
+                double confidence = cat.getDouble("confidence");
+
+                if ((name.equals("Toxic") ||
+                        name.equals("Insult") ||
+                        name.equals("Profanity") ||
+                        name.equals("Sexual") ||
+                        name.equals("Hate")) && confidence > 0.25) {
+                    return false;
+                }
+            }
+            return true;
         } catch (Exception e) {
-            throw new ExternalCheckException("Perspective API failed to check username  " + username + ": " + e.getMessage());
+            throw new ExternalCheckException("Natural Language failed to check username " + username + ": " + e.getMessage());
         }
     }
 
@@ -203,7 +223,8 @@ public class UserManagementServiceImpl implements UserManagementService {
         Objects.requireNonNull(oldPassword, "oldPassword cannot be null");
         Objects.requireNonNull(newPassword, "newPassword cannot be null");
         User user = userDetailsService.loadUser();
-        if (!encoder.matches(oldPassword, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
+        if (!encoder.matches(oldPassword, user.getPassword()))
+            throw new InvalidPasswordException("Passwords do not match");
 
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
@@ -237,7 +258,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     public void deleteUser(String password, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         User user = userDetailsService.loadUser();
         if (!user.getOauth2()) {
-            if (!encoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Passwords do not match");
+            if (!encoder.matches(password, user.getPassword()))
+                throw new InvalidPasswordException("Passwords do not match");
         }
 
         if (user.getOffers() != null) {
@@ -259,11 +281,11 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     private void deleteUserInCloudStorage(String username) {
         try {
-        String folderPrefix = username + "/";
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
-                .iterateAll()
-                .forEach(Blob::delete);
+            String folderPrefix = username + "/";
+            Storage storage = StorageOptions.getDefaultInstance().getService();
+            storage.list(bucketName, Storage.BlobListOption.prefix(folderPrefix))
+                    .iterateAll()
+                    .forEach(Blob::delete);
         } catch (StorageException e) {
             throw new ExternalDeleteException("Failed to delete user in Google Cloud: " + e.getMessage());
         }

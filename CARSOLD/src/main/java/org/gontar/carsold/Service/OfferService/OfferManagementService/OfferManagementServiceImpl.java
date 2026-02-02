@@ -11,6 +11,7 @@ import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
 @Service
 public class OfferManagementServiceImpl implements OfferManagementService {
 
-    @Value("${PERSPECTIVE_API_KEY}")
-    private String perspectiveApiKey;
+    @Value("${CLOUD_NATURAL_LANGUAGE_API_KEY}")
+    private String cloudNaturalLanguageApiKey;
 
     @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
     private String bucketName;
@@ -195,54 +195,47 @@ public class OfferManagementServiceImpl implements OfferManagementService {
 
     private boolean isContentToxic(String title, String description) {
         try {
-            String apiUrl = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze";
-            String fullUrl = apiUrl + "?key=" + perspectiveApiKey;
-            List<String> languages = List.of("en", "pl");
-            String combinedText = title + " " + description;
+            String apiUrl = "https://language.googleapis.com/v1/documents:moderateText?key=" + cloudNaturalLanguageApiKey;
+            String text = title + " " + description;
 
-            List<String> textChunks = new ArrayList<>();
-            int start = 0;
-            while (start < combinedText.length()) {
-                int end = Math.min(start + 300, combinedText.length());
+            JSONObject document = new JSONObject();
+            document.put("type", "PLAIN_TEXT");
+            document.put("content", text);
 
-                if (end < combinedText.length() && Character.isLetterOrDigit(combinedText.charAt(end))) {
-                    while (end > start && Character.isLetterOrDigit(combinedText.charAt(end - 1))) {
-                        end--;
-                    }
-                }
-                textChunks.add(combinedText.substring(start, end).trim());
-                start = end;
-            }
-            double totalScore = 0;
-            int count = 0;
+            JSONObject payload = new JSONObject();
+            payload.put("document", document);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "application/json");
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
             RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
 
-            for (String chunk : textChunks) {
-                JSONObject payload = new JSONObject();
-                payload.put("comment", new JSONObject().put("text", chunk));
-                payload.put("languages", languages);
-                payload.put("requestedAttributes", new JSONObject().put("TOXICITY", new JSONObject()));
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, request, String.class);
+            JSONObject json = new JSONObject(Objects.requireNonNull(response.getBody()));
 
-                HttpEntity<String> request = new HttpEntity<>(payload.toString(), headers);
-                ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
-                JSONObject jsonResponse = new JSONObject(Objects.requireNonNull(response.getBody()));
+            JSONArray categories = json.getJSONArray("moderationCategories");
 
-                double toxicityScore = jsonResponse
-                        .getJSONObject("attributeScores")
-                        .getJSONObject("TOXICITY")
-                        .getJSONObject("summaryScore")
-                        .getDouble("value");
+            double maxRisk = 0;
 
-                totalScore += toxicityScore;
-                count++;
+            for (Object obj : categories) {
+                JSONObject cat = (JSONObject) obj;
+                String name = cat.getString("name");
+                double confidence = cat.getDouble("confidence");
+
+                if (name.equals("Toxic") ||
+                        name.equals("Insult") ||
+                        name.equals("Profanity") ||
+                        name.equals("Sexual") ||
+                        name.equals("Violence") ||
+                        name.equals("Hate")) {
+
+                    maxRisk = Math.max(maxRisk, confidence);
+                }
             }
-            double averageToxicity = totalScore / count;
-            return averageToxicity > 0.3;
+            return maxRisk > 0.55;
         } catch (Exception e) {
-            log.error("Perspective API failed: {}", e.getMessage());
+            log.error("Natural Language moderation failed: {}", e.getMessage());
             return false;
         }
     }

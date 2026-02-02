@@ -26,7 +26,7 @@ const DescriptionInput: React.FC<DescriptionInputProps> = ({ value, setValue, er
                 <FontAwesomeIcon className="text-[10px] m:text-xs" icon={faAsterisk}/>
             </p>
             <div className="w-full h-64 m:h-80 max-w-[650px] mb-10">
-                <textarea className={`w-full h-full text-sm m:text-lg p-1 bg-white focus:outline-0 resize-none rounded-md border-2
+                <textarea className={`w-full h-full text-sm m:text-lg p-1 bg-white focus:outline-none resize-none rounded-md border-2
                 ${!error ? "border-gray-300 focus:border-darkLime" : "border-coolRed text-coolRed"}`}
                           value={value} onChange={handleChange} placeholder={t("offerForm107")}/>
                 <div className="flex flex-row justify-between text-xs m:text-sm">

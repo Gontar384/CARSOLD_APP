@@ -130,8 +130,8 @@ public class OfferManagementServiceIntegrationTest {
         createAndAuthenticateUser("testUser2", "testUser2@gmail.com");
 
         Offer mockOffer = new Offer();
-        mockOffer.setTitle("Moron Title");
-        mockOffer.setDescription("Moron Description");
+        mockOffer.setTitle("Dick Title");
+        mockOffer.setDescription("Dick Description");
 
         InappropriateContentException exception = assertThrows(InappropriateContentException.class,
                 () -> offerManagementService.createOffer(mockOffer, Collections.emptyList()));
