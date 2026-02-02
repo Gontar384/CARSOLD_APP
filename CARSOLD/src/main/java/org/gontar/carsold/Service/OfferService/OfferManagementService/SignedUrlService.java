@@ -22,10 +22,12 @@ public class SignedUrlService {
     }
 
     public String generateSignedUrl(String objectPath) {
+        if (objectPath == null || objectPath.isBlank()) {
+            return null;
+        }
         try {
             BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, objectPath).build();
-            int DEFAULT_EXPIRATION_MINUTES = 30;
-            return storage.signUrl(blobInfo, DEFAULT_EXPIRATION_MINUTES, TimeUnit.MINUTES,
+            return storage.signUrl(blobInfo, 30, TimeUnit.MINUTES,
                     Storage.SignUrlOption.withV4Signature()).toString();
         } catch (StorageException e) {
             throw new RuntimeException("Failed to generate signed URL for: " + objectPath, e);
