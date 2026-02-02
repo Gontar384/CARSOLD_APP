@@ -1,5 +1,6 @@
 package org.gontar.carsold.Service.MessageService;
 
+import org.gontar.carsold.Service.OfferService.OfferManagementService.SignedUrlService;
 import org.springframework.transaction.annotation.Transactional;
 import org.gontar.carsold.Domain.Entity.Message.Conversation;
 import org.gontar.carsold.Domain.Entity.Message.Message;
@@ -34,13 +35,15 @@ public class MessageServiceImpl implements MessageService {
     private final UserRepository userRepository;
     private final WebSocketService webSocketService;
     private final MyUserDetailsService userDetailsService;
+    private final SignedUrlService signedUrlService;
 
-    public MessageServiceImpl(ConversationRepository conversationRepository, MessageRepository messageRepository, UserRepository userRepository, WebSocketService webSocketService, MyUserDetailsService userDetailsService) {
+    public MessageServiceImpl(ConversationRepository conversationRepository, MessageRepository messageRepository, UserRepository userRepository, WebSocketService webSocketService, MyUserDetailsService userDetailsService, SignedUrlService signedUrlService) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.webSocketService = webSocketService;
         this.userDetailsService = userDetailsService;
+        this.signedUrlService = signedUrlService;
     }
 
     @Override
@@ -105,7 +108,7 @@ public class MessageServiceImpl implements MessageService {
 
         NotificationDto dto = new NotificationDto();
         dto.setSenderUsername(context.user.getUsername());
-        dto.setSenderProfilePic(context.user.getProfilePic());
+        dto.setSenderProfilePic(signedUrlService.generateSignedUrl(context.user.getProfilePic()));
         dto.setContent(content);
         dto.setTimestamp(message.getTimestamp());
         dto.setUnseenCount(unseenCount);
@@ -140,7 +143,7 @@ public class MessageServiceImpl implements MessageService {
 
                     return new ConversationDto(
                             otherUser.getUsername(),
-                            otherUser.getProfilePic(),
+                            signedUrlService.generateSignedUrl(otherUser.getProfilePic()),
                             latestMessage != null ? latestMessage.getContent() : "",
                             latestMessage != null ? latestMessage.getTimestamp() : null,
                             latestMessage != null ? latestMessage.getSender().getUsername() : null,
@@ -181,7 +184,7 @@ public class MessageServiceImpl implements MessageService {
 
         return new ConversationWithUserDto(
                 context.otherUser.getUsername(),
-                context.otherUser.getProfilePic(),
+                signedUrlService.generateSignedUrl(context.otherUser.getProfilePic()),
                 pagedMessages,
                 blockedByUser,
                 blockedUser,

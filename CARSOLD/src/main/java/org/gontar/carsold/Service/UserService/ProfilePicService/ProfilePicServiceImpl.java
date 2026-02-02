@@ -7,6 +7,7 @@ import org.gontar.carsold.Exception.CustomException.*;
 import org.gontar.carsold.Domain.Entity.User.User;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.gontar.carsold.Service.OfferService.OfferManagementService.SignedUrlService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,16 +22,20 @@ public class ProfilePicServiceImpl implements ProfilePicService {
 
     private final UserRepository repository;
     private final MyUserDetailsService userDetailsService;
+    private final SignedUrlService signedUrlService;
 
-    public ProfilePicServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService) {
+    public ProfilePicServiceImpl(UserRepository repository, MyUserDetailsService userDetailsService, SignedUrlService signedUrlService) {
         this.repository = repository;
         this.userDetailsService = userDetailsService;
+        this.signedUrlService = signedUrlService;
     }
 
     @Override
     public String fetchProfilePic() {
         User user = userDetailsService.loadUser();
-        return user != null ? user.getProfilePic() : null;
+        if (user == null || user.getProfilePic() == null) return null;
+
+        return signedUrlService.generateSignedUrl(user.getProfilePic());
     }
 
     @Override
@@ -101,13 +106,13 @@ public class ProfilePicServiceImpl implements ProfilePicService {
     }
 
     private String uploadToStorage(MultipartFile file, String username) throws StorageException, IOException {
-        String fileName = username + "/profilePic/profilePic";
+        String filePath = username + "/profilePic/profilePic";
         Storage storage = StorageOptions.getDefaultInstance().getService();
-        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobId blobId = BlobId.of(bucketName, filePath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, file.getBytes());
 
-        return String.format("https://storage.googleapis.com/%s/%s?timestamp=%d", bucketName, fileName, System.currentTimeMillis());
+        return filePath;
     }
 
     @Override

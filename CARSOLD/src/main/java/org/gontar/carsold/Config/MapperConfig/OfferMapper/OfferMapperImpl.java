@@ -5,6 +5,7 @@ import org.gontar.carsold.Config.MapperConfig.Mapper;
 import org.gontar.carsold.Domain.Entity.Offer.Offer;
 import org.gontar.carsold.Domain.Entity.Offer.OfferPhoto;
 import org.gontar.carsold.Domain.Model.Offer.OfferDto;
+import org.gontar.carsold.Service.OfferService.OfferManagementService.SignedUrlService;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,11 @@ import java.util.List;
 public class OfferMapperImpl implements Mapper<Offer, OfferDto> {
 
     private final ModelMapper mapper;
+    private final SignedUrlService signedUrlService;
 
-    public OfferMapperImpl(ModelMapper mapper) {
+    public OfferMapperImpl(ModelMapper mapper, SignedUrlService signedUrlService) {
         this.mapper = mapper;
+        this.signedUrlService = signedUrlService;
     }
 
     @PostConstruct
@@ -27,6 +30,7 @@ public class OfferMapperImpl implements Mapper<Offer, OfferDto> {
             if (photos == null) return List.of();
             return photos.stream()
                     .map(OfferPhoto::getPhotoUrl)
+                    .map(signedUrlService::generateSignedUrl)
                     .toList();
         };
         this.mapper.typeMap(Offer.class, OfferDto.class).addMappings(mapping -> {

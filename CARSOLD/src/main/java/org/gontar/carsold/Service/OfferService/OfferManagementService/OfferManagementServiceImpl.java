@@ -53,11 +53,13 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     private final OfferRepository offerRepository;
     private final UserRepository userRepository;
     private final MyUserDetailsService userDetailsService;
+    private final SignedUrlService signedUrlService;
 
-    public OfferManagementServiceImpl(OfferRepository offerRepository, UserRepository userRepository, MyUserDetailsService userDetailsService) {
+    public OfferManagementServiceImpl(OfferRepository offerRepository, UserRepository userRepository, MyUserDetailsService userDetailsService, SignedUrlService signedUrlService) {
         this.offerRepository = offerRepository;
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
+        this.signedUrlService = signedUrlService;
     }
 
     @Override
@@ -80,7 +82,11 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         dto.setId(offer.getId());
         dto.setTitle(offer.getTitle());
         if (offer.getPhotos() != null && !offer.getPhotos().isEmpty()) {
-            dto.setPhotoUrl(offer.getPhotos().stream().findFirst().map(OfferPhoto::getPhotoUrl).orElse(null));
+            dto.setPhotoUrl(
+                    offer.getPhotos().stream().findFirst()
+                            .map(photo -> signedUrlService.generateSignedUrl(photo.getPhotoUrl()))
+                            .orElse(null)
+            );
         }
         dto.setPrice(offer.getPrice());
         dto.setCurrency(offer.getCurrency());
@@ -122,11 +128,15 @@ public class OfferManagementServiceImpl implements OfferManagementService {
         offerWithUserDto.setDescription(offer.getDescription());
         offerWithUserDto.setPrice(offer.getPrice());
         offerWithUserDto.setCurrency(offer.getCurrency());
-        offerWithUserDto.setPhotos(offer.getPhotos().stream().map(OfferPhoto::getPhotoUrl).collect(Collectors.toList()));
+        offerWithUserDto.setPhotos(
+                offer.getPhotos().stream()
+                        .map(photo -> signedUrlService.generateSignedUrl(photo.getPhotoUrl()))
+                        .collect(Collectors.toList())
+        );
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         offerWithUserDto.setCreatedOn(offer.getCreatedOn().format(formatter));
         offerWithUserDto.setUsername(user.getUsername());
-        offerWithUserDto.setProfilePic(user.getProfilePic());
+        offerWithUserDto.setProfilePic(signedUrlService.generateSignedUrl(user.getProfilePic()));
         if (user.getContactPublic()) {
             offerWithUserDto.setName(user.getName());
             offerWithUserDto.setPhone(user.getPhone());
@@ -183,8 +193,10 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     public Offer createOffer(Offer offer, List<MultipartFile> photos) {
         Objects.requireNonNull(offer, "Offer cannot be null");
         User user = userDetailsService.loadUser();
-        if (offerRepository.countByUserId(user.getId()) >= 20) throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
-        if (isContentToxic(offer.getTitle(), offer.getDescription())) throw new InappropriateContentException("Title or description are inappropriate");
+        if (offerRepository.countByUserId(user.getId()) >= 20)
+            throw new InappropriateActionException("Couldn't add, user has added too many offers yet");
+        if (isContentToxic(offer.getTitle(), offer.getDescription()))
+            throw new InappropriateContentException("Title or description are inappropriate");
 
         offer.setUser(user);
         Offer savedOffer = offerRepository.save(offer);
@@ -290,15 +302,15 @@ public class OfferManagementServiceImpl implements OfferManagementService {
     }
 
     private String uploadToStorage(MultipartFile file, String username, Long id, int imageIndex) throws StorageException, IOException {
-        String fileName = username + "/offer" + id + "/offer" + id + "image" + imageIndex;
+        String filePath = username + "/offer" + id + "/offer" + id + "image" + imageIndex;
 
         Storage storage = StorageOptions.getDefaultInstance().getService();
-        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobId blobId = BlobId.of(bucketName, filePath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
         storage.create(blobInfo, file.getBytes());
 
-        return String.format("https://storage.googleapis.com/%s/%s?timestamp=%d", bucketName, fileName, System.currentTimeMillis());
+        return filePath;
     }
 
     @Transactional
