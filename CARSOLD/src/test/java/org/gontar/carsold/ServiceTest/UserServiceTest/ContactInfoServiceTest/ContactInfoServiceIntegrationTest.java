@@ -175,7 +175,7 @@ public class ContactInfoServiceIntegrationTest {
     @Test
     public void fetchCitySuggestions() {
         String input = "Ber";
-        List<String> expectedCityNames = Arrays.asList("Berlin, Germany", "Bergamo, Province of Bergamo, Italy", "Bergen, Norway", "Bern, Switzerland", "Berchtesgaden, Germany");
+        List<String> expectedCityNames = Arrays.asList("Berlin, Germany", "Bergamo, Province of Bergamo, Italy", "Bergen, Norway", "Bern, Switzerland", "Bertioga, State of São Paulo, Brazil");
         CitySuggestionsDto citySuggestions = contactInfoService.fetchCitySuggestions(input);
         System.out.println(citySuggestions);
 

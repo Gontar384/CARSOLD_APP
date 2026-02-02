@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,9 +53,6 @@ public class ProfilePicServiceIntegrationTest {
 
     @Mock
     private HttpServletRequest request;
-
-    @Value("${GOOGLE_CLOUD_BUCKET_NAME}")
-    private String bucketName;
 
     @Test
     public void uploadProfilePic_fileIsNotAnImage() throws IOException {
@@ -136,8 +132,8 @@ public class ProfilePicServiceIntegrationTest {
         profilePicService.uploadProfilePic(mockFile);
 
         assertNotNull(user.getProfilePic(), "Pic URL should be saved in DB");
-        String expectedUrlPrefix = "https://storage.googleapis.com/" + bucketName + "/" + user.getUsername();
-        assertTrue(user.getProfilePic().startsWith(expectedUrlPrefix), "Pic URL should point to the cloud storage");
+        String expectedUrl = user.getUsername() + "/profilePic/profilePic";
+        assertEquals(user.getProfilePic(), expectedUrl, "Pic URL should point to the cloud storage");
 
         profilePicService.deleteProfilePic();
 

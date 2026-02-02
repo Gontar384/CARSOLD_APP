@@ -12,6 +12,7 @@ import org.gontar.carsold.Exception.CustomException.NoPermissionException;
 import org.gontar.carsold.Repository.OfferRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.OfferService.OfferManagementService.OfferManagementServiceImpl;
+import org.gontar.carsold.Service.OfferService.OfferManagementService.SignedUrlService;
 import org.gontar.carsold.TestEnvConfig.TestEnvConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -68,6 +69,7 @@ public class OfferManagementServiceIntegrationTest {
         user.setEmail(email);
         user.setActive(true);
         user.setOauth2(false);
+        user.setProfilePic("testUser99/profilePic/profilePic.jpg");
         user = userRepository.saveAndFlush(user);
 
         Authentication authentication = mock(UsernamePasswordAuthenticationToken.class);

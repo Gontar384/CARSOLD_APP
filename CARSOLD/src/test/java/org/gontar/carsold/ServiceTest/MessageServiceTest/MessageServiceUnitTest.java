@@ -14,6 +14,7 @@ import org.gontar.carsold.Repository.MessageRepository;
 import org.gontar.carsold.Repository.UserRepository;
 import org.gontar.carsold.Service.MessageService.MessageServiceImpl;
 import org.gontar.carsold.Service.MyUserDetailsService.MyUserDetailsService;
+import org.gontar.carsold.Service.OfferService.OfferManagementService.SignedUrlService;
 import org.gontar.carsold.Service.WebSocketService.WebSocketService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,8 @@ public class MessageServiceUnitTest {
     private WebSocketService webSocketService;
     @Mock
     private MyUserDetailsService userDetailsService;
+    @Mock
+    private SignedUrlService signedUrlService;
 
     @InjectMocks
     private MessageServiceImpl messageService;
