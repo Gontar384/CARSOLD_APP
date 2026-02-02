@@ -124,8 +124,8 @@ work properly with Java 22 and Node 22.11.0
 root (backend)
 
 ```
-#Cookie(Secured): true
-DEPLOYMENT=false
+#Cookies secured when = production
+ENVIRONMENT=deployment
 
 DATASOURCE_URL=
 DATASOURCE_USER=
