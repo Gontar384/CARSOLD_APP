@@ -24,8 +24,8 @@ public class JwtService {
     @Value("${SESSION_TIME:24}")
     private int sessionTime;
 
-    @Value("${DEPLOYMENT:false}")
-    private boolean deployment;
+    @Value("${ENVIRONMENT}")
+    private String environment;
 
     private SecretKey secretKey;
 
@@ -101,7 +101,7 @@ public class JwtService {
         try {
             return ResponseCookie.from("AUTH", token)
                     .httpOnly(true)
-                    .secure(deployment)
+                    .secure(Objects.equals(environment, "production"))
                     .path("/")
                     .sameSite("Lax")
                     .maxAge(Duration.ofHours(timeInHours))
