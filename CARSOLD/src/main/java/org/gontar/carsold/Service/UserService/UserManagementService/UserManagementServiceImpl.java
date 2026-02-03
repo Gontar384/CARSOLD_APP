@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -69,10 +70,10 @@ public class UserManagementServiceImpl implements UserManagementService {
         this.emailService = emailService;
         this.authenticationService = authenticationService;
         ObjectMapper mapper = new ObjectMapper();
-        ForbiddenWords words = mapper.readValue(
-                new ClassPathResource("forbidden-words.json").getFile(),
-                ForbiddenWords.class
-        );
+        ForbiddenWords words;
+        try (InputStream is = new ClassPathResource("forbidden-words.json").getInputStream()) {
+            words = mapper.readValue(is, ForbiddenWords.class);
+        }
         this.forbiddenWords = words.FORBIDDEN_WORDS;
     }
 

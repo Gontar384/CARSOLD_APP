@@ -84,7 +84,7 @@ public class UserManagementServiceIntegrationTest {
     @Test
     public void registerUser_success() {
         User newUser = new User();
-        newUser.setUsername("testUser");
+        newUser.setUsername("testUser999");
         newUser.setEmail("test@example.com");
         newUser.setPassword("testPassword");
 
@@ -93,14 +93,14 @@ public class UserManagementServiceIntegrationTest {
         long countAfter = userRepository.count();
 
         assertNotNull(registeredUser);
-        assertEquals("testUser", registeredUser.getUsername());
+        assertEquals("testUser999", registeredUser.getUsername());
         assertEquals("test@example.com", registeredUser.getEmail());
         assertFalse(registeredUser.getActive());
         assertNotNull(registeredUser.getPassword());
 
         User savedUser = userRepository.findByEmail("test@example.com");
         assertNotNull(savedUser);
-        assertEquals("testUser", savedUser.getUsername());
+        assertEquals("testUser999", savedUser.getUsername());
         assertEquals(countBefore + 1, countAfter);
     }
 
