@@ -433,10 +433,10 @@ export const dictionary = {
         drive: {
             "FWD": "Na przednie koła",
             "RWD": "Na tylne koła",
-            "Full-time AWD": "4x4 stały",
-            "Part-Time AWD": "4x4 doł. ręcznie",
-            "Automatic AWD": "4x4 doł. automatycznie",
-            "Electric AWD": "4x4 elektryczny"
+            "Full-time 4WD": "4x4 stały",
+            "Part-Time 4WD": "4x4 dołączany ręcznie",
+            "Automatic 4WD": "4x4 dołączany automatycznie",
+            "Electric 4WD": "4x4 elektryczny"
         },
         transmission: {
             "Manual": "Manualna",
@@ -964,10 +964,10 @@ export const dictionary = {
         drive: {
             "Na przednie koła": "FWD",
             "Na tylne koła": "RWD",
-            "4x4 stały": "Full-time AWD",
-            "4x4 doł. ręcznie": "Part-Time AWD",
-            "4x4 doł. automatycznie": "Automatic AWD",
-            "4x4 elektryczny": "Electric AWD"
+            "4x4 stały": "Full-time 4WD",
+            "4x4 dołączany ręcznie": "Part-Time 4WD",
+            "4x4 dołączany automatycznie": "Automatic 4WD",
+            "4x4 elektryczny": "Electric 4WD"
         },
         transmission: {
             "Manualna": "Manual",
