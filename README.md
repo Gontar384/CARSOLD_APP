@@ -97,7 +97,7 @@
        - Enable API and generate restricted API key
        - set quotas to keep safe-billing
    - **Maps JavaScript API**
-       - Enable API and generate restricted API key (restrict additionally to Web application: "http://localhost:5173")
+       - Enable API and generate restricted API key (restrict additionally to Web application: `http://localhost:5173`)
        - set quotas to keep safe-billing
 4) **Prepare SQL Database (PostgreSQL recommended)**
 5) **Prepare JWT Secret Key: run `head -c 32 /dev/urandom | base64` in bash**
