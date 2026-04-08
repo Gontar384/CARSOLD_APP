@@ -1,25 +1,33 @@
-# Welcome car enthusiasts 💨🛞
+# 🚘 CARSOLD
 
-## **CARSOLD** is car advertising portal available for everyone! It provides solid features and matches the most popular websites 🌐🚘
+**CARSOLD is a fullstack car advertising portal** - a feature-rich platform for browsing, listing, and managing vehicle offers, built with a strong emphasis on data validation and user safety.
 
-### Functionalities 🎈
-- Search and filter offers 🔎
-- Display offer: watch images, car info and user details 🖥️
-- Add, edit, delete offers 🖋️
-- Add offers to favourites ❤️
-- Monitor own offers: check views and follows count 🔢
-- Chat with other users (send messages, get notifications, delete and block) 💬
-- Report offer ❗
-- Change language: Polish & English 🌍
-- Register with e-mail confirmation (or with Google) ®️
-- Authenticate and authorize: with login (username/e-mail) and password or with Google 👀
-- Password recovery via e-mail 📩
-- Change user contact details and profile picture 🙋‍♂️
-- Change password, delete account ❌
-- Admin: see report, verify and delete offer or user account 🚦
-- Full responsiveness: works perfectly on every device 📱
+Live project: **[carsold.pl](https://carsold.pl)**  
+Demo: **[YouTube](https://www.youtube.com/watch?v=rXg3ulcCdlM)**
 
-<br>
+---
+
+## ✨ Features
+
+- Search and filter offers
+- Display offer: images, car details and seller info
+- Add, edit, delete offers
+- Save offers to favourites
+- Monitor own offers: track views and follows
+- Real-time chat with other users (send messages, notifications, delete and block)
+- Report offer
+- Polish & English language support
+- Register with e-mail confirmation or Google
+- Authentication: login/password or Google OAuth2
+- Password recovery via e-mail
+- Edit profile: contact details and profile picture
+- Change password, delete account
+- Admin panel: review reports, verify and remove offers or accounts
+- Fully responsive - works on every device
+
+---
+
+## 📸 Screenshots
 
 <p align="center">
   <img src="./CARSOLD/screenshots/image1.png" width="49%" alt="FilterOffers" />
@@ -34,119 +42,112 @@
   <img src="./CARSOLD/screenshots/image6.png" width="49%" alt="Mobile" />
 </p>
 
-<br>
+---
 
-## TECH STACK (Fullstack App):
-- ✅ **Java 22, SpringBoot 3.4.1 (Maven)** - *Backend*
-- ✅ **Node.js 22.17.1, TypeScript 5.8.3, React 18.3.1 with Vite** - *Frontend*
-- ✅ **PostgreSQL 17.5** - *Database*
-- ✅ **Tailwind** - *Styling (0 Prebuilt UI Components)*
-- ✅ **Spring Security:**
-    - Stateless **JWT** authentication
-    - **HttpOnly Cookies** - *Secured, Lax*
-    - CSRF disabled (not required for HttpOnly cookie based JWT)
-    - CORS
-    - OAuth2 custom handlers
-- ✅ **Google Cloud Project (GCP):**
-    - **Storage** - *stores images, accessed with signed URLs*
-    - Cloud Vision API - *verifies images for inappropriate content*
-    - Cloud Natural Language API - *verifies phrases & text for inappropriate content*
-    - Places API (New) - *verifies and suggests locations*
-    - Maps JavaScript API - *displays maps*
-    - **OAuth2** - *Google Client for auth*
-- ✅ **SMTP** - *sends e-mails*
-- ✅ **WebSocket** - *enables sending and retrieving messages (chatting)*
-- ✅ **nsfwjs, libphonenumber** - *verifies data*
-- ✅ **Docker** - *deployment*
+## ⚡ Tech Stack
 
-**The application puts great emphasis on data validation and user safety 🙏**
+| Layer | Technology |
+|---|---|
+| Frontend | React, TypeScript, Vite, Tailwind CSS |
+| Backend | Java, Spring Boot (Maven) |
+| Database | PostgreSQL |
+| Auth | Spring Security, JWT (HttpOnly cookies), OAuth2 (Google) |
+| Storage | Google Cloud Storage (signed URLs) |
+| Real-time | WebSocket |
+| Content moderation | Cloud Vision API, Cloud Natural Language API |
+| Location | Places API, Maps JavaScript API |
+| Notifications | SMTP |
+| Infrastructure | Docker |
 
-<br>
+---
 
-## CAR$OLD should be available at: [carsold.pl](https://carsold.pl) 🛜
-## You can also check it out on YouTube: [YouTube](https://www.youtube.com/watch?v=rXg3ulcCdlM) 🎥
+## ⚙️ Local Setup
 
-<br>
+### Prerequisites
+- Java 22+
+- Node.js 20+
+- PostgreSQL
+- Google Cloud Project (GCP)
 
-## **Installation / Configuration 🔧**
+### 1. Clone the repository
+IntelliJ IDEA recommended for the backend.
 
-1) **Clone repository**
-   - IntelliJ recommended
-   - Java 22
-   - Node.js 22.17.1
-3) **Prepare GCP**
-   - **OAuth2 Client**
-       - Authorized JavaScript origins: `http://localhost:5173`
-       - Authorized redirect URIs: `http://localhost:8080/login/oauth2/code/google`
-       - Non-sensitive scopes: `./auth/userinfo.email, ./auth/userinfo.profile, openid`
-       - Save **Client ID and Client Secret**
-   - **Storage**
-       - Create bucket with **specified name**
-       - Public Access: Not public - prevent hotlinking and keep safe-billing
-       - Access control: Uniform
-       - CORS `origin: ["http://localhost:5173"], "responseHeader": ["Content-Type"], "method": ["GET", "HEAD", "OPTIONS"], "maxAgeSeconds": 3600`
-       - Create Service Account and set role on bucket: Storage Object Admin
-       - Generate and save cloud-storage-key.json for Service Account, then put it in /resources
-   - **Cloud Vision API**
-       - Enable API
-       - set quotas to keep safe-billing
-   - **Cloud Natural Language API**
-       - Enable API and generate restricted API key
-       - set quotas to keep safe-billing
-   - **Places API (New)**
-       - Enable API and generate restricted API key
-       - set quotas to keep safe-billing
-   - **Maps JavaScript API**
-       - Enable API and generate restricted API key (restrict additionally to Web application: `http://localhost:5173`)
-       - set quotas to keep safe-billing
-4) **Prepare SQL Database (PostgreSQL recommended)**
-5) **Prepare JWT Secret Key: run `head -c 32 /dev/urandom | base64` in bash**
-6) **Prepare e-mail and password for SMTP (Gmail recommended)**
-7) **Create .env file in root and fill with prepared values as shown. Then put path to .env in app run configuration**
-    ```
-    #Cookies secured when = production
-    ENVIRONMENT=deployment
-    
-    #Database
-    DATASOURCE_URL=
-    DATASOURCE_USER=
-    DATASOURCE_PASSWORD=
-    
-    FRONTEND_URL=http://localhost:5173
-    
-    #JWT cookie expiration time
-    SESSION_TIME=168
-    
-    JWT_SECRET_KEY=
-    
-    #SMTP
-    EMAIL=
-    EMAIL_PASSWORD=
-    
-    #OAuth2 - Google
-    GOOGLE_ID=
-    GOOGLE_SECRET=
-    
-    #Google Cloud Storage and Cloud Vision - cloud-storage-key.json absolute path
-    GOOGLE_APPLICATION_CREDENTIALS=
-    GOOGLE_CLOUD_PROJECT=
-    GOOGLE_CLOUD_BUCKET_NAME=
-    
-    CLOUD_NATURAL_LANGUAGE_API_KEY=
-    
-    PLACES_API_KEY=
-    ```
-8) **Create .env file in /frontend and fill with prepared values**
-    ```
-    VITE_BACKEND_URL=http://localhost:8080
-    VITE_MAPS_APIKEY=
-    VITE_CONTACT_EMAIL=carsold.contact@gmail.com
-    ```
-9) **Run `mvn clean install` in root and `npm install` in /frontend**
-10) **Start SpringBoot App and run `npm run dev` in /frontend**
+### 2. Configure GCP
 
-<br>
+**OAuth2 Client**
+- Authorized JavaScript origins: `http://localhost:5173`
+- Authorized redirect URIs: `http://localhost:8080/login/oauth2/code/google`
+- Scopes: `userinfo.email`, `userinfo.profile`, `openid`
+- Save **Client ID** and **Client Secret**
 
-## License
-This project is licensed under a custom non-commercial license.
-See the LICENSE file for details.
+**Cloud Storage**
+- Create a bucket (non-public, uniform access control)
+- CORS: `origin: ["http://localhost:5173"], method: ["GET", "HEAD", "OPTIONS"]`
+- Create a Service Account with **Storage Object Admin** role
+- Generate `cloud-storage-key.json` and place it in `/resources`
+
+**APIs to enable** (generate restricted API keys for each, set billing quotas):
+- Cloud Vision API
+- Cloud Natural Language API
+- Places API (New)
+- Maps JavaScript API (restrict to `http://localhost:5173`)
+
+### 3. Generate JWT secret
+```bash
+head -c 32 /dev/urandom | base64
+```
+
+### 4. Configure environment
+
+Backend - create `.env` in root:
+```env
+ENVIRONMENT=deployment
+
+DATASOURCE_URL=
+DATASOURCE_USER=
+DATASOURCE_PASSWORD=
+
+FRONTEND_URL=http://localhost:5173
+
+SESSION_TIME=168
+JWT_SECRET_KEY=
+
+EMAIL=
+EMAIL_PASSWORD=
+
+GOOGLE_ID=
+GOOGLE_SECRET=
+
+GOOGLE_APPLICATION_CREDENTIALS=
+GOOGLE_CLOUD_PROJECT=
+GOOGLE_CLOUD_BUCKET_NAME=
+
+CLOUD_NATURAL_LANGUAGE_API_KEY=
+PLACES_API_KEY=
+```
+
+Frontend - create `.env` in `/frontend`:
+```env
+VITE_BACKEND_URL=http://localhost:8080
+VITE_MAPS_APIKEY=
+VITE_CONTACT_EMAIL=carsold.contact@gmail.com
+```
+
+### 5. Run
+
+```bash
+# Backend
+mvn clean install
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 📄 License
+
+This project is licensed under a custom non-commercial license.  
+See the [LICENSE](./LICENSE) file for details.
