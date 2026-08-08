@@ -17,7 +17,7 @@ const HeaderButton: React.FC<HeaderButtonProps> = ({onClick, isGoogle, label}) =
         ${buttonColor ? "bg-white" : "bg-lime"} 
         ${label === t("authHeader1") ? "rounded-l-sm" : label === t("authHeader2") ? "rounded-r-sm" : "rounded-sm"}`}
                 onClick={onClick} {...bindHoverHandlers()}>
-            {isGoogle ? <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+            {isGoogle ? <img src="/svg/google.svg"
                              alt='Google logo' className="w-6 h-6 m:w-7 m:h-7 mr-1"/> : null}
             {label}
         </button>
