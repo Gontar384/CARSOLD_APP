@@ -5,7 +5,7 @@ import {dictionary, DictionaryKey, Language, TranslationCategory} from "./dictio
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [language, setLanguage] = useState<Language>(() => {
         const stored = localStorage.getItem("app_language");
-        return (stored as Language) || "POL";
+        return (stored as Language) || "ENG";
     });
     const [disabled, setDisabled] = useState<boolean>(false);
 
